@@ -9,7 +9,7 @@
 <meta name="author" content="He Wang">
 <meta name="dcterms.date" content="2026-05-29">
 
-<title>MATH 5110 Applied Linear Algebra and Matrix Analysis</title>
+<title>Linear Algebra in the AI Age: Geometry, Computation, and Data</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -108,7 +108,39 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -121,7 +153,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">MATH 5110 Applied Linear Algebra and Matrix Analysis</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Linear Algebra in the AI Age: Geometry, Computation, and Data</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -152,7 +184,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">MATH 5110 Applied Linear Algebra and Matrix Analysis</span></a>
+ <span class="menu-text">Linear Algebra in the AI Age: Geometry, Computation, and Data</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -164,7 +196,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./math-5110-book-overview.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Overview:</span></a>
+ <span class="menu-text">Overview</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -507,7 +539,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#course-information" id="toc-course-information" class="nav-link" data-scroll-target="#course-information">Course Information</a></li>
   <li><a href="#about-the-author" id="toc-about-the-author" class="nav-link" data-scroll-target="#about-the-author">About the Author</a></li>
   <li><a href="#about-this-book" id="toc-about-this-book" class="nav-link" data-scroll-target="#about-this-book">About This Book</a></li>
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview:</a></li>
   </ul></li>
+  <li><a href="#a-conceptual-map" id="toc-a-conceptual-map" class="nav-link" data-scroll-target="#a-conceptual-map">A conceptual map</a></li>
+  <li><a href="#course-learning-arc" id="toc-course-learning-arc" class="nav-link" data-scroll-target="#course-learning-arc">Course learning arc</a>
+  <ul class="collapse">
+  <li><a href="#part-i.-the-computational-beginning" id="toc-part-i.-the-computational-beginning" class="nav-link" data-scroll-target="#part-i.-the-computational-beginning">Part I. The computational beginning</a></li>
+  <li><a href="#part-ii.-the-language-of-vector-spaces" id="toc-part-ii.-the-language-of-vector-spaces" class="nav-link" data-scroll-target="#part-ii.-the-language-of-vector-spaces">Part II. The language of vector spaces</a></li>
+  <li><a href="#part-iii.-spectral-structure" id="toc-part-iii.-spectral-structure" class="nav-link" data-scroll-target="#part-iii.-spectral-structure">Part III. Spectral structure</a></li>
+  <li><a href="#part-iv.-geometry-from-inner-products" id="toc-part-iv.-geometry-from-inner-products" class="nav-link" data-scroll-target="#part-iv.-geometry-from-inner-products">Part IV. Geometry from inner products</a></li>
+  <li><a href="#part-v.-data-signals-networks-and-applications" id="toc-part-v.-data-signals-networks-and-applications" class="nav-link" data-scroll-target="#part-v.-data-signals-networks-and-applications">Part V. Data, signals, networks, and applications</a></li>
+  </ul></li>
+  <li><a href="#chapter-roadmap" id="toc-chapter-roadmap" class="nav-link" data-scroll-target="#chapter-roadmap">Chapter roadmap</a></li>
+  <li><a href="#how-to-use-this-book" id="toc-how-to-use-this-book" class="nav-link" data-scroll-target="#how-to-use-this-book">How to use this book</a></li>
+  <li><a href="#mathematical-habits-for-the-course" id="toc-mathematical-habits-for-the-course" class="nav-link" data-scroll-target="#mathematical-habits-for-the-course">Mathematical habits for the course</a>
+  <ul class="collapse">
+  <li><a href="#translate-among-representations" id="toc-translate-among-representations" class="nav-link" data-scroll-target="#translate-among-representations">Translate among representations</a></li>
+  <li><a href="#ask-the-invariant-question" id="toc-ask-the-invariant-question" class="nav-link" data-scroll-target="#ask-the-invariant-question">Ask the invariant question</a></li>
+  <li><a href="#connect-proof-and-computation" id="toc-connect-proof-and-computation" class="nav-link" data-scroll-target="#connect-proof-and-computation">Connect proof and computation</a></li>
+  </ul></li>
+  <li><a href="#ai-companion-prompts" id="toc-ai-companion-prompts" class="nav-link" data-scroll-target="#ai-companion-prompts">AI companion prompts</a></li>
+  <li><a href="#suggested-independent-study-routine" id="toc-suggested-independent-study-routine" class="nav-link" data-scroll-target="#suggested-independent-study-routine">Suggested independent-study routine</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/wanghemath/MATH5110/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/wanghemath/MATH5110/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -516,8 +568,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">MATH 5110 Applied Linear Algebra and Matrix Analysis</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
-<p class="subtitle lead">Linear Algebra for the AI Age: Geometry, Computation, and Data</p>
+<div class="quarto-title-block"><div><h1 class="title">Linear Algebra in the AI Age: Geometry, Computation, and Data</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<p class="subtitle lead">Book for: MATH 5110 Applied Linear Algebra and Matrix Analysis</p>
 </div>
 
 
@@ -582,17 +634,417 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li>Lecture-style chapters</li>
 <li>Independent study labs</li>
-<li>Python computation examples</li>
+<li>Python computation examples in each chapter (MATLAB examples will be added in the future.)</li>
 <li>Interactive HTML activities</li>
 <li>Conceptual explanations</li>
 <li>Applications to data, computation, and AI</li>
 </ul>
 <p>This book is based on my teaching materials of MATH 5110 for graduate students, motivated by MATH 7243 and MATH 7339 Machine Learning and Statistical Learning Theory 1 and 2. The ebook was written with the help of ChatGPT, Claude, and Gemini, and built with <a href="https://quarto.org/">Quarto</a></p>
+</section>
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview:</h2>
+<p>This book is an applied, story-driven introduction to <strong>linear algebra and matrix analysis</strong> for graduate students. The guiding idea is simple:</p>
+<blockquote class="blockquote">
+<p>Linear algebra is the <strong>language</strong> of structure, computation, geometry, data, and modern intelligent systems.</p>
+</blockquote>
+<p>We begin with the concrete problem of solving linear equations, then gradually uncover the abstract objects behind the computations: vector spaces, linear transformations, bases, coordinates, eigenvectors, inner products, projections, factorizations, spectral theory, and modern applications such as Markov chains, least squares, PCA, Fourier analysis, wavelets, graph theory, optimization, probability, and matrix calculus.</p>
+<p>The course is designed to move back and forth between four viewpoints:</p>
+<ol type="1">
+<li><strong>Algebraic:</strong> equations, matrices, subspaces, transformations, determinants, eigenvalues.</li>
+<li><strong>Geometric:</strong> dimension, coordinates, orthogonality, projections, distance, angles.</li>
+<li><strong>Computational:</strong> row reduction, LU, QR, Schur, SVD, FFT, sparse matrices, algorithms.</li>
+<li><strong>Applied/data-driven:</strong> least squares, compression, PCA, Markov chains, graph networks, optimization, Topological Data Analysis, probability, and AI.</li>
+</ol>
+</section>
+</section>
+<section id="a-conceptual-map" class="level1">
+<h1>A conceptual map</h1>
+<div class="cell" data-layout-align="default">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  X[Set and Maps]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  X --&gt; Y[Monoid, Group, Ring, Fiesds]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  Y --&gt; C[Vector spaces and linear transformations]</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  C --&gt; Z[Subspace, Sum, Quotient]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  E --&gt; U[Topological Data Analysis]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  E --&gt; B[Matrix algebra]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  B --&gt; D[Row operations, LU, determinant, rank]</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  Z --&gt; E[Basis, coordinates, dimension]</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  E --&gt; F[Eigenvalues and eigenspaces]</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  F --&gt; B</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  D --&gt; A[Linear systems] </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  A --&gt; W[Differential Equations]</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  F --&gt; G[Diagonalization and Jordan form]</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  G --&gt; H[Dynamical systems, Markov chains, PageRank]</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  E --&gt; I[Inner Product Spaces - Geometry] </span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  F --&gt; I</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  I --&gt; J[Orthogonal projection and orthogonal bases]</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  J --&gt; K[Least squares]</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  J --&gt; L[QR and Schur]</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  J --&gt; M[Spectral theorem]</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  M --&gt; N[SVD and PCA]</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  J --&gt; O[FFT and wavelets]</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  G --&gt; Q[Spectral graph theory]</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  I --&gt; R[Hilbert spaces]</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  E --&gt; S[Multilinear algebra]</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  D --&gt; T[Optimization]</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  D --&gt; P[matrix calculus]</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  D --&gt; V[Random Variables]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+  X[Set and Maps]
+  X --&gt; Y[Monoid, Group, Ring, Fiesds]
+  Y --&gt; C[Vector spaces and linear transformations]
+  C --&gt; Z[Subspace, Sum, Quotient]
+  E --&gt; U[Topological Data Analysis]
+  E --&gt; B[Matrix algebra]
+  B --&gt; D[Row operations, LU, determinant, rank]
+  Z --&gt; E[Basis, coordinates, dimension]
+  E --&gt; F[Eigenvalues and eigenspaces]
+  F --&gt; B
+  D --&gt; A[Linear systems] 
+  A --&gt; W[Differential Equations]
+  F --&gt; G[Diagonalization and Jordan form]
+  G --&gt; H[Dynamical systems, Markov chains, PageRank]
+  E --&gt; I[Inner Product Spaces - Geometry] 
+  F --&gt; I
+  I --&gt; J[Orthogonal projection and orthogonal bases]
+  J --&gt; K[Least squares]
+  J --&gt; L[QR and Schur]
+  J --&gt; M[Spectral theorem]
+  M --&gt; N[SVD and PCA]
+  J --&gt; O[FFT and wavelets]
+  G --&gt; Q[Spectral graph theory]
+  I --&gt; R[Hilbert spaces]
+  E --&gt; S[Multilinear algebra]
+  D --&gt; T[Optimization]
+  D --&gt; P[matrix calculus]
+  D --&gt; V[Random Variables]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="course-learning-arc" class="level1">
+<h1>Course learning arc</h1>
+<section id="part-i.-the-computational-beginning" class="level2">
+<h2 class="anchored" data-anchor-id="part-i.-the-computational-beginning">Part I. The computational beginning</h2>
+<p>The course begins with the practical question:</p>
+<blockquote class="blockquote">
+<p>When does a system of linear equations have no solution, one solution, or infinitely many solutions?</p>
+</blockquote>
+<p>This leads naturally to matrices, row operations, rank, null spaces, determinants, and matrix factorizations.</p>
+</section>
+<section id="part-ii.-the-language-of-vector-spaces" class="level2">
+<h2 class="anchored" data-anchor-id="part-ii.-the-language-of-vector-spaces">Part II. The language of vector spaces</h2>
+<p>A linear system is not only a calculation. It reveals the deeper language of vector spaces: subspaces, span, independence, bases, dimension, coordinates, linear transformations, kernels, images, and quotient spaces.</p>
+</section>
+<section id="part-iii.-spectral-structure" class="level2">
+<h2 class="anchored" data-anchor-id="part-iii.-spectral-structure">Part III. Spectral structure</h2>
+<p>Eigenvalues and eigenvectors reveal directions that a transformation preserves. This is the gateway to diagonalization, Jordan form, matrix powers, dynamical systems, Markov chains, Perron–Frobenius theory, and PageRank-type ideas.</p>
+</section>
+<section id="part-iv.-geometry-from-inner-products" class="level2">
+<h2 class="anchored" data-anchor-id="part-iv.-geometry-from-inner-products">Part IV. Geometry from inner products</h2>
+<p>Inner products give length, angle, distance, and orthogonality. This leads to projections, Gram–Schmidt, QR factorization, least squares, adjoints, symmetric/Hermitian matrices, Schur decomposition, spectral decomposition, and positive definiteness.</p>
+</section>
+<section id="part-v.-data-signals-networks-and-applications" class="level2">
+<h2 class="anchored" data-anchor-id="part-v.-data-signals-networks-and-applications">Part V. Data, signals, networks, and applications</h2>
+<p>The later chapters show how the same core ideas power modern applications: SVD and PCA, image compression, Haar wavelets, FFT, Grassmannians, numerical eigenvalue computation, multilinear algebra, Hilbert spaces, spectral graph theory, differential equations, optimization, probability, and matrix calculus.</p>
+</section>
+</section>
+<section id="chapter-roadmap" class="level1">
+<h1>Chapter roadmap</h1>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: right;">Chapter</th>
+<th>Topic</th>
+<th>Main ideas</th>
+<th>Chapter link</th>
+<th>Lab link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td>Linear Systems</td>
+<td>linear systems, row reduction, existence and uniqueness</td>
+<td><a href="./chapters/chapter-01-linear-systems.html">chapter-01</a></td>
+<td><a href="./labs/lab-01-linear-systems.html">lab-01</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td>Matrix Algebra</td>
+<td>matrix products, inverses, transpose, LU, rank</td>
+<td><a href="./chapters/chapter-02-matrix-algebra.html">chapter-02</a></td>
+<td><a href="./labs/lab-02-matrix-algebra.html">lab-02</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td>Linear Spaces, Subspaces, Linear Maps</td>
+<td>vector spaces, span, direct sums, kernels, images, quotients</td>
+<td><a href="./chapters/chapter-03-linear-spaces-subspaces-maps.html">chapter-03</a></td>
+<td><a href="./labs/lab-03-linear-spaces-subspaces-maps.html">lab-03</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td>Basis, Dimension, Rank-Nullity</td>
+<td>basis, coordinates, dimension, rank-nullity</td>
+<td><a href="./chapters/chapter-04-bases-dimension-rank-nullity.html">chapter-04</a></td>
+<td><a href="./labs/lab-04-bases-dimension-rank-nullity.html">lab-04</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td>Coordinates, Matrices, Change of Basis</td>
+<td>coordinate vectors, matrix representations, similarity</td>
+<td><a href="./chapters/chapter-05-coordinates-matrices-change-of-basis.html">chapter-05</a></td>
+<td><a href="./labs/lab-05-coordinates-matrices-change-of-basis.html">lab-05</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td>Determinants</td>
+<td>area/volume, invertibility, row operations, characteristic polynomial</td>
+<td><a href="./chapters/chapter-06-determinants.html">chapter-06</a></td>
+<td><a href="./labs/lab-06-determinants.html">lab-06</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td>Eigenvalues and Diagonalization</td>
+<td>eigenvectors, eigenspaces, diagonalization, powers</td>
+<td><a href="./chapters/chapter-07-diagonalization-eigenvalues.html">chapter-07</a></td>
+<td><a href="./labs/lab-07-diagonalization-eigenvalues.html">lab-07</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td>Jordan Canonical Form</td>
+<td>generalized eigenvectors, Jordan blocks, Cayley-Hamilton</td>
+<td><a href="./chapters/chapter-08-jordan-canonical-form.html">chapter-08</a></td>
+<td><a href="./labs/lab-08-jordan-canonical-form.html">lab-08</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td>Dynamical Systems and Markov Chains</td>
+<td>linear iteration, stochastic matrices, Perron-Frobenius</td>
+<td><a href="./chapters/chapter-09-dynamical-systems-markov-chains-perron-frobenius.html">chapter-09</a></td>
+<td><a href="./labs/lab-09-dynamical-systems-markov-chains.html">lab-09</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td>Inner Products, Projections, QR, Adjoints</td>
+<td>geometry, orthogonality, Gram-Schmidt, QR</td>
+<td><a href="./chapters/chapter-10-inner-products-projections-qr-adjoints.html">chapter-10</a></td>
+<td><a href="./labs/lab-10-inner-products-projections-qr-adjoints.html">lab-10</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">11</td>
+<td>Complex Inner Products and Schur</td>
+<td>Hermitian inner product, unitary matrices, Schur decomposition</td>
+<td><a href="./chapters/chapter-11-complex-inner-products-schur.html">chapter-11</a></td>
+<td><a href="./labs/lab-11-complex-inner-products-schur.html">lab-11</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12</td>
+<td>Least Squares and Data Fitting</td>
+<td>normal equations, projections, regression, data fitting</td>
+<td><a href="./chapters/chapter-12-least-squares-data-fitting.html">chapter-12</a></td>
+<td><a href="./labs/lab-12-least-squares-data-fitting.html">lab-12</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13</td>
+<td>Symmetric and Hermitian Matrices</td>
+<td>spectral theorem, quadratic forms, positive definiteness</td>
+<td><a href="./chapters/chapter-13-symmetric-hermitian-matrices.html">chapter-13</a></td>
+<td><a href="./labs/lab-13-symmetric-hermitian-matrices.html">lab-13</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">14</td>
+<td>Singular Value Decomposition</td>
+<td>SVD, low-rank approximation, image compression, PCA</td>
+<td><a href="./chapters/chapter-14-singular-value-decomposition.html">chapter-14</a></td>
+<td><a href="./labs/lab-14-singular-value-decomposition.html">lab-14</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">15</td>
+<td>Haar Bases and Wavelets</td>
+<td>orthogonal bases, multiscale signals, compression</td>
+<td><a href="./chapters/chapter-15-haar-bases-wavelet-transforms.html">chapter-15</a></td>
+<td><a href="./labs/lab-15-haar-bases-wavelet-transforms.html">lab-15</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">16</td>
+<td>Fast Fourier Transforms</td>
+<td>Fourier series, DFT, FFT, signals</td>
+<td><a href="./chapters/chapter-16-fast-fourier-transforms.html">chapter-16</a></td>
+<td><a href="./labs/lab-16-fast-fourier-transforms.html">lab-16</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">17</td>
+<td>Grassmannians and Subspace Distances</td>
+<td>principal angles, subspace geometry, data subspaces</td>
+<td><a href="./chapters/chapter-17-grassmannians-subspace-distances.html">chapter-17</a></td>
+<td><a href="./labs/lab-17-grassmannians-subspace-distances.html">lab-17</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">18</td>
+<td>Computational Complexity and Eigenvalues</td>
+<td>Big-O, sparse matrices, power method, QR algorithm</td>
+<td><a href="./chapters/chapter-18-computational-complexity-eigenvalues.html">chapter-18</a></td>
+<td><a href="./labs/lab-18-computational-complexity-eigenvalues.html">lab-18</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">19</td>
+<td>Applications of Multilinear Algebra</td>
+<td>tensor products, exterior products, multilinear maps</td>
+<td><a href="./chapters/chapter-19-applications-multilinear-algebra.html">chapter-19</a></td>
+<td><a href="./labs/lab-19-applications-multilinear-algebra.html">lab-19</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">20</td>
+<td>Hilbert Spaces and Applications</td>
+<td>metric/normed/inner product spaces, projection theorem</td>
+<td><a href="./chapters/chapter-20-hilbert-spaces-applications.html">chapter-20</a></td>
+<td><a href="./labs/lab-20-hilbert-spaces-applications.html">lab-20</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">21</td>
+<td>Topological Data Analysis</td>
+<td>chain complexes, homology, persistence, barcodes</td>
+<td><a href="./chapters/chapter-21-tda.html">chapter-21</a></td>
+<td><a href="./labs/lab-21-tda.html">lab-21</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">22</td>
+<td>Duality and Cohomology</td>
+<td>dual spaces, cochains, coboundaries, cohomology</td>
+<td><a href="./chapters/chapter-22-duality-cohomology.html">chapter-22</a></td>
+<td><a href="./labs/lab-22-duality-cohomology.html">lab-22</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">23</td>
+<td>Spectral Graph Theory</td>
+<td>graphs as matrices, Laplacian, spectrum, clustering</td>
+<td><a href="./chapters/chapter-23-spectral-graph-theory.html">chapter-23</a></td>
+<td><a href="./labs/lab-23-spectral-graph-theory.html">lab-23</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">24</td>
+<td>Linear Algebra and Differential Equations</td>
+<td>matrix exponential, systems of ODEs, stability</td>
+<td><a href="./chapters/chapter-24-linear-algebra-differential-equations.html">chapter-24</a></td>
+<td><a href="./labs/lab-24-linear-algebra-differential-equations.html">lab-24</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">25</td>
+<td>Linear Algebra and Optimization</td>
+<td>convexity, gradients, least squares, constraints</td>
+<td><a href="./chapters/chapter-25-linear-algebra-optimization.html">chapter-25</a></td>
+<td><a href="./labs/lab-25-linear-algebra-optimization.html">lab-25</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">26</td>
+<td>Linear Algebra and Probability</td>
+<td>random vectors, covariance, Gaussian distributions, random matrices</td>
+<td><a href="./chapters/chapter-26-linear-algebra-probability.html">chapter-26</a></td>
+<td><a href="./labs/lab-26-linear-algebra-probability.html">lab-26</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">27</td>
+<td>Matrix Calculus</td>
+<td>gradients, Hessians, Jacobians, optimization and ML</td>
+<td><a href="./chapters/chapter-27-matrix-calculus.html">chapter-27</a></td>
+<td><a href="./labs/lab-27-matrix-calculus.html">lab-27</a></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="how-to-use-this-book" class="level1">
+<h1>How to use this book</h1>
+<p>Each chapter is written as an independent learning unit. Most chapters include:</p>
+<ul>
+<li>a story-driven opening motivation;</li>
+<li>precise definitions, theorems, and examples;</li>
+<li>Python computations and numerical experiments;</li>
+<li>challenge questions;</li>
+<li>practice problems;</li>
+<li>hide/show proofs and solutions;</li>
+<li>AI companion activities for guided exploration.</li>
+</ul>
+<p>Each lab is designed for <strong>independent study</strong>. The labs usually include a Quarto lab page, an interactive HTML exploration, and a Jupyter notebook with guided solutions.</p>
+</section>
+<section id="mathematical-habits-for-the-course" class="level1">
+<h1>Mathematical habits for the course</h1>
+<p>The course repeatedly practices the following habits.</p>
+<section id="translate-among-representations" class="level2">
+<h2 class="anchored" data-anchor-id="translate-among-representations">Translate among representations</h2>
+<p>A single idea may appear as an equation, a matrix, a linear map, a geometric object, or a dataset.</p>
+<p>For example, a linear transformation can be viewed as:</p>
+<ul>
+<li>a function <span class="math inline">\(T:V\to W\)</span>;</li>
+<li>a matrix <span class="math inline">\(A\)</span> after choosing bases;</li>
+<li>a geometric machine acting on vectors;</li>
+<li>a data transformation acting on features;</li>
+<li>an operator whose structure is revealed by eigenvalues or singular values.</li>
+</ul>
+</section>
+<section id="ask-the-invariant-question" class="level2">
+<h2 class="anchored" data-anchor-id="ask-the-invariant-question">Ask the invariant question</h2>
+<p>Many computations are coordinate-dependent, but the important ideas are often invariant:</p>
+<ul>
+<li>dimension of a vector space;</li>
+<li>rank and nullity of a linear map;</li>
+<li>eigenvalues under similarity;</li>
+<li>singular values under orthogonal/unitary changes of coordinates;</li>
+<li>subspace angles on Grassmannians;</li>
+<li>connected components from Laplacian zero eigenvalues.</li>
+</ul>
+</section>
+<section id="connect-proof-and-computation" class="level2">
+<h2 class="anchored" data-anchor-id="connect-proof-and-computation">Connect proof and computation</h2>
+<p>A theorem is most useful when it becomes a computational tool. For example:</p>
+<ul>
+<li>the rank-nullity theorem gives computation of Betti numbers in TDA;</li>
+<li>the spectral theorem explains quadratic forms and PCA;</li>
+<li>the projection theorem explains least squares;</li>
+<li>the SVD explains low-rank approximation;</li>
+<li>the Perron–Frobenius theorem explains long-term behavior of positive systems;</li>
+<li>the Laplacian quadratic form explains smoothness and clustering on graphs.</li>
+</ul>
+</section>
+</section>
+<section id="ai-companion-prompts" class="level1">
+<h1>AI companion prompts</h1>
+<p>Use AI as a study partner, not as a replacement for mathematical reasoning.</p>
+<ol type="1">
+<li><strong>Concept check.</strong> Explain the difference between a matrix, a linear transformation, and a coordinate representation.</li>
+<li><strong>Proof coach.</strong> Give me hints for proving the rank-nullity theorem without giving the full solution first.</li>
+<li><strong>Computation coach.</strong> Generate a Python example where a matrix is diagonalizable and another where it is not.</li>
+<li><strong>Application bridge.</strong> Explain how projections lead to least squares, and how least squares leads to data fitting.</li>
+<li><strong>Synthesis.</strong> Make a concept map connecting QR, Schur, spectral decomposition, SVD, and PCA.</li>
+</ol>
+</section>
+<section id="suggested-independent-study-routine" class="level1">
+<h1>Suggested independent-study routine</h1>
+<p>For each chapter:</p>
+<ol type="1">
+<li>Read the story and definitions.</li>
+<li>Work through examples by hand.</li>
+<li>Run the Python computations.</li>
+<li>Try the interactive lab.</li>
+<li>Complete the practice problems before opening solutions.</li>
+<li>Ask an AI companion to generate one similar problem and then solve it independently.</li>
+</ol>
+<p>The interactive overview page is included with this file as: <a href="https://wanghemath.github.io/MATH5110/HTML/linear_algebra_interactive_overview.html">linear_algebra_interactive_overview</a></p>
 
 
 <!-- -->
 
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -1056,52 +1508,242 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># {.unnumbered}</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>--- </span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>title: "MATH 5110 Applied Linear Algebra and Matrix Analysis"</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>subtitle: "Linear Algebra for the AI Age: Geometry, Computation, and Data"</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>author: "<span class="co">[</span><span class="ot">He Wang</span><span class="co">](https://hewang.sites.northeastern.edu/)</span>"</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>date: "May 29, 2026"</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu"># Welcome {.unnumbered}</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>Welcome to **MATH 5110 Applied Linear Algebra and Matrix Analysis**.</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>This online book is an applied, story-driven introduction to **linear algebra and matrix analysis** for graduate students in [**MS Applied Mathematics**](https://graduate.northeastern.edu/programs/ms-applied-mathematics/master-of-science-in-applied-mathematics/) and [**MS Statistics**](https://graduate.northeastern.edu/programs/ms-statistics/master-of-science-in-statistics/) at **Northeastern University**. It is designed for graduate students studying applied linear algebra, matrix analysis, computation, data science, and artificial intelligence. The goal is to present linear algebra not only as a collection of techniques, but also as a language for understanding modern data, algorithms, and mathematical modeling.</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## Course Information {.unnumbered}</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>**Course:** MATH 5110 Applied Linear Algebra and Matrix Analysis  </span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>**Instructor:** He Wang  </span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>**Department:** Department of Mathematics  </span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>**University:** Northeastern University  </span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>**Personal Website:** <span class="co">[</span><span class="ot">He Wang's Website</span><span class="co">](https://hewang.sites.northeastern.edu/)</span>  </span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>**Course Website:** <span class="co">[</span><span class="ot">MATH 5110 Course Website</span><span class="co">](https://wanghemath.github.io/MATH5110)</span>  </span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>**Github:** <span class="co">[</span><span class="ot">Github Account</span><span class="co">](https://github.com/wanghemath)</span>  </span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">## About the Author {.unnumbered}</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>**He Wang** is an **Associate Teaching Professor** in the Department of Mathematics at Northeastern University. He serves as **Program Director** for several graduate programs, including **[MS Applied Mathematics](https://graduate.northeastern.edu/programs/ms-applied-mathematics/master-of-science-in-applied-mathematics/)**,  **[MS Statistics](https://graduate.northeastern.edu/programs/ms-statistics/master-of-science-in-statistics/)**, and <span class="co">[</span><span class="ot">MS Mathematics</span><span class="co">](https://graduate.northeastern.edu/programs/ms-mathematics/master-of-science-in-mathematics/)</span>. </span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>His teaching and academic interests include algebraic topology, mathematical foundations of data science and AI, optimization, and computational mathematics.</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## About This Book {.unnumbered}</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>This book develops linear algebra from foundational ideas to modern applications. Topics include systems of linear equations, matrix algebra, vector spaces, linear transformations, orthogonality, eigenvalues, singular value decomposition, optimization, Markov chains, and applications to data science and machine learning.</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>The book includes:</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Lecture-style chapters</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Independent study labs</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Python computation examples</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Interactive HTML activities</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Conceptual explanations</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Applications to data, computation, and AI</span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>This book is based on my teaching materials of MATH 5110 for graduate students, motivated by MATH 7243 and MATH 7339 Machine Learning and Statistical Learning Theory 1 and 2. The ebook was written with the help of ChatGPT, Claude, and Gemini, and built with <span class="co">[</span><span class="ot">Quarto</span><span class="co">](https://quarto.org/)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># {.unnumbered}</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>--- </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>title: "Linear Algebra in the AI Age: Geometry, Computation, and Data"</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>subtitle: "Book for: MATH 5110 Applied Linear Algebra and Matrix Analysis"</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>author: "<span class="co">[</span><span class="ot">He Wang</span><span class="co">](https://hewang.sites.northeastern.edu/)</span>"</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>date: "May 29, 2026"</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu"># Welcome {.unnumbered}</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>Welcome to **MATH 5110 Applied Linear Algebra and Matrix Analysis**.</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>This online book is an applied, story-driven introduction to **linear algebra and matrix analysis** for graduate students in [**MS Applied Mathematics**](https://graduate.northeastern.edu/programs/ms-applied-mathematics/master-of-science-in-applied-mathematics/) and [**MS Statistics**](https://graduate.northeastern.edu/programs/ms-statistics/master-of-science-in-statistics/) at **Northeastern University**. It is designed for graduate students studying applied linear algebra, matrix analysis, computation, data science, and artificial intelligence. The goal is to present linear algebra not only as a collection of techniques, but also as a language for understanding modern data, algorithms, and mathematical modeling.</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## Course Information {.unnumbered}</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>**Course:** MATH 5110 Applied Linear Algebra and Matrix Analysis  </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>**Instructor:** He Wang  </span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>**Department:** Department of Mathematics  </span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>**University:** Northeastern University  </span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>**Personal Website:** <span class="co">[</span><span class="ot">He Wang's Website</span><span class="co">](https://hewang.sites.northeastern.edu/)</span>  </span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>**Course Website:** <span class="co">[</span><span class="ot">MATH 5110 Course Website</span><span class="co">](https://wanghemath.github.io/MATH5110)</span>  </span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>**Github:** <span class="co">[</span><span class="ot">Github Account</span><span class="co">](https://github.com/wanghemath)</span>  </span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="fu">## About the Author {.unnumbered}</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>**He Wang** is an **Associate Teaching Professor** in the Department of Mathematics at Northeastern University. He serves as **Program Director** for several graduate programs, including **[MS Applied Mathematics](https://graduate.northeastern.edu/programs/ms-applied-mathematics/master-of-science-in-applied-mathematics/)**,  **[MS Statistics](https://graduate.northeastern.edu/programs/ms-statistics/master-of-science-in-statistics/)**, and <span class="co">[</span><span class="ot">MS Mathematics</span><span class="co">](https://graduate.northeastern.edu/programs/ms-mathematics/master-of-science-in-mathematics/)</span>. </span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>His teaching and academic interests include algebraic topology, mathematical foundations of data science and AI, optimization, and computational mathematics.</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## About This Book {.unnumbered}</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>This book develops linear algebra from foundational ideas to modern applications. Topics include systems of linear equations, matrix algebra, vector spaces, linear transformations, orthogonality, eigenvalues, singular value decomposition, optimization, Markov chains, and applications to data science and machine learning.</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>The book includes:</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Lecture-style chapters</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Independent study labs</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Python computation examples in each chapter (MATLAB examples will be added in the future.)</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Interactive HTML activities</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Conceptual explanations</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Applications to data, computation, and AI</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>This book is based on my teaching materials of MATH 5110 for graduate students, motivated by MATH 7243 and MATH 7339 Machine Learning and Statistical Learning Theory 1 and 2. The ebook was written with the help of ChatGPT, Claude, and Gemini, and built with <span class="co">[</span><span class="ot">Quarto</span><span class="co">](https://quarto.org/)</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="fu">## Overview:</span></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>This book is an applied, story-driven introduction to **linear algebra and matrix analysis** for graduate students. The guiding idea is simple:</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Linear algebra is the **language** of structure, computation, geometry, data, and modern intelligent systems.</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>We begin with the concrete problem of solving linear equations, then gradually uncover the abstract objects behind the computations: vector spaces, linear transformations, bases, coordinates, eigenvectors, inner products, projections, factorizations, spectral theory, and modern applications such as Markov chains, least squares, PCA, Fourier analysis, wavelets, graph theory, optimization, probability, and matrix calculus.</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>The course is designed to move back and forth between four viewpoints:</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Algebraic:** equations, matrices, subspaces, transformations, determinants, eigenvalues.</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Geometric:** dimension, coordinates, orthogonality, projections, distance, angles.</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Computational:** row reduction, LU, QR, Schur, SVD, FFT, sparse matrices, algorithms.</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Applied/data-driven:** least squares, compression, PCA, Markov chains, graph networks, optimization, Topological Data Analysis, probability, and AI.</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a><span class="fu"># A conceptual map</span></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>  X[Set <span class="ot">and</span> Maps]</span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>  X --&gt; Y[Monoid, Group, Ring, Fiesds]</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>  Y --&gt; C[Vector spaces <span class="ot">and</span> linear transformations]</span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>  C --&gt; Z[Subspace, Sum, Quotient]</span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>  E --&gt; U[Topological Data Analysis]</span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>  E --&gt; B[Matrix algebra]</span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>  B --&gt; D[Row operations, LU, determinant, rank]</span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>  Z --&gt; E[Basis, coordinates, dimension]</span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>  E --&gt; F[Eigenvalues <span class="ot">and</span> eigenspaces]</span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>  F --&gt; B</span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>  D --&gt; A[Linear systems] </span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>  A --&gt; W[Differential Equations]</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>  F --&gt; G[Diagonalization <span class="ot">and</span> Jordan form]</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>  G --&gt; H[Dynamical systems, Markov chains, PageRank]</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>  E --&gt; I[Inner Product Spaces - Geometry] </span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>  F --&gt; I</span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>  I --&gt; J[Orthogonal projection <span class="ot">and</span> orthogonal bases]</span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>  J --&gt; K[Least squares]</span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>  J --&gt; L[QR <span class="ot">and</span> Schur]</span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>  J --&gt; M[Spectral theorem]</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>  M --&gt; N[SVD <span class="ot">and</span> PCA]</span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>  J --&gt; O[FFT <span class="ot">and</span> wavelets]</span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>  G --&gt; Q[Spectral graph theory]</span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>  I --&gt; R[Hilbert spaces]</span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>  E --&gt; S[Multilinear algebra]</span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>  D --&gt; T[Optimization]</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>  D --&gt; P[matrix calculus]</span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>  D --&gt; V[Random Variables]</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a><span class="fu"># Course learning arc</span></span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a><span class="fu">## Part I. The computational beginning</span></span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>The course begins with the practical question:</span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; When does a system of linear equations have no solution, one solution, or infinitely many solutions?</span></span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>This leads naturally to matrices, row operations, rank, null spaces, determinants, and matrix factorizations.</span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a><span class="fu">## Part II. The language of vector spaces</span></span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>A linear system is not only a calculation. It reveals the deeper language of vector spaces: subspaces, span, independence, bases, dimension, coordinates, linear transformations, kernels, images, and quotient spaces.</span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a><span class="fu">## Part III. Spectral structure</span></span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>Eigenvalues and eigenvectors reveal directions that a transformation preserves. This is the gateway to diagonalization, Jordan form, matrix powers, dynamical systems, Markov chains, Perron--Frobenius theory, and PageRank-type ideas.</span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a><span class="fu">## Part IV. Geometry from inner products</span></span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a>Inner products give length, angle, distance, and orthogonality. This leads to projections, Gram--Schmidt, QR factorization, least squares, adjoints, symmetric/Hermitian matrices, Schur decomposition, spectral decomposition, and positive definiteness.</span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a><span class="fu">## Part V. Data, signals, networks, and applications</span></span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>The later chapters show how the same core ideas power modern applications: SVD and PCA, image compression, Haar wavelets, FFT, Grassmannians, numerical eigenvalue computation, multilinear algebra, Hilbert spaces, spectral graph theory, differential equations, optimization, probability, and matrix calculus.</span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a><span class="fu"># Chapter roadmap</span></span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Chapter <span class="pp">|</span> Topic <span class="pp">|</span> Main ideas <span class="pp">|</span> Chapter link  <span class="pp">|</span> Lab link <span class="pp">|</span></span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a><span class="pp">|---:|---|---|---|---|</span></span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 1 <span class="pp">|</span> Linear Systems <span class="pp">|</span> linear systems, row reduction, existence and uniqueness <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-01</span><span class="co">](chapters/chapter-01-linear-systems.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-01</span><span class="co">](labs/lab-01-linear-systems.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 2 <span class="pp">|</span> Matrix Algebra <span class="pp">|</span> matrix products, inverses, transpose, LU, rank <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-02</span><span class="co">](chapters/chapter-02-matrix-algebra.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-02</span><span class="co">](labs/lab-02-matrix-algebra.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 3 <span class="pp">|</span> Linear Spaces, Subspaces, Linear Maps <span class="pp">|</span> vector spaces, span, direct sums, kernels, images, quotients <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-03</span><span class="co">](chapters/chapter-03-linear-spaces-subspaces-maps.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-03</span><span class="co">](labs/lab-03-linear-spaces-subspaces-maps.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 4 <span class="pp">|</span> Basis, Dimension, Rank-Nullity <span class="pp">|</span> basis, coordinates, dimension, rank-nullity <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-04</span><span class="co">](chapters/chapter-04-bases-dimension-rank-nullity.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-04</span><span class="co">](labs/lab-04-bases-dimension-rank-nullity.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 5 <span class="pp">|</span> Coordinates, Matrices, Change of Basis <span class="pp">|</span> coordinate vectors, matrix representations, similarity <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-05</span><span class="co">](chapters/chapter-05-coordinates-matrices-change-of-basis.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-05</span><span class="co">](labs/lab-05-coordinates-matrices-change-of-basis.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 6 <span class="pp">|</span> Determinants <span class="pp">|</span> area/volume, invertibility, row operations, characteristic polynomial <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-06</span><span class="co">](chapters/chapter-06-determinants.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-06</span><span class="co">](labs/lab-06-determinants.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 7 <span class="pp">|</span> Eigenvalues and Diagonalization <span class="pp">|</span> eigenvectors, eigenspaces, diagonalization, powers <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-07</span><span class="co">](chapters/chapter-07-diagonalization-eigenvalues.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-07</span><span class="co">](labs/lab-07-diagonalization-eigenvalues.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 8 <span class="pp">|</span> Jordan Canonical Form <span class="pp">|</span> generalized eigenvectors, Jordan blocks, Cayley-Hamilton <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-08</span><span class="co">](chapters/chapter-08-jordan-canonical-form.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-08</span><span class="co">](labs/lab-08-jordan-canonical-form.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 9 <span class="pp">|</span> Dynamical Systems and Markov Chains <span class="pp">|</span> linear iteration, stochastic matrices, Perron-Frobenius <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-09</span><span class="co">](chapters/chapter-09-dynamical-systems-markov-chains-perron-frobenius.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-09</span><span class="co">](labs/lab-09-dynamical-systems-markov-chains.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 10 <span class="pp">|</span> Inner Products, Projections, QR, Adjoints <span class="pp">|</span> geometry, orthogonality, Gram-Schmidt, QR <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-10</span><span class="co">](chapters/chapter-10-inner-products-projections-qr-adjoints.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-10</span><span class="co">](labs/lab-10-inner-products-projections-qr-adjoints.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 11 <span class="pp">|</span> Complex Inner Products and Schur <span class="pp">|</span> Hermitian inner product, unitary matrices, Schur decomposition <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-11</span><span class="co">](chapters/chapter-11-complex-inner-products-schur.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-11</span><span class="co">](labs/lab-11-complex-inner-products-schur.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 12 <span class="pp">|</span> Least Squares and Data Fitting <span class="pp">|</span> normal equations, projections, regression, data fitting <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-12</span><span class="co">](chapters/chapter-12-least-squares-data-fitting.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-12</span><span class="co">](labs/lab-12-least-squares-data-fitting.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 13 <span class="pp">|</span> Symmetric and Hermitian Matrices <span class="pp">|</span> spectral theorem, quadratic forms, positive definiteness <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-13</span><span class="co">](chapters/chapter-13-symmetric-hermitian-matrices.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-13</span><span class="co">](labs/lab-13-symmetric-hermitian-matrices.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 14 <span class="pp">|</span> Singular Value Decomposition <span class="pp">|</span> SVD, low-rank approximation, image compression, PCA <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-14</span><span class="co">](chapters/chapter-14-singular-value-decomposition.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-14</span><span class="co">](labs/lab-14-singular-value-decomposition.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 15 <span class="pp">|</span> Haar Bases and Wavelets <span class="pp">|</span> orthogonal bases, multiscale signals, compression <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-15</span><span class="co">](chapters/chapter-15-haar-bases-wavelet-transforms.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-15</span><span class="co">](labs/lab-15-haar-bases-wavelet-transforms.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 16 <span class="pp">|</span> Fast Fourier Transforms <span class="pp">|</span> Fourier series, DFT, FFT, signals <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-16</span><span class="co">](chapters/chapter-16-fast-fourier-transforms.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-16</span><span class="co">](labs/lab-16-fast-fourier-transforms.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 17 <span class="pp">|</span> Grassmannians and Subspace Distances <span class="pp">|</span> principal angles, subspace geometry, data subspaces <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-17</span><span class="co">](chapters/chapter-17-grassmannians-subspace-distances.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-17</span><span class="co">](labs/lab-17-grassmannians-subspace-distances.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 18 <span class="pp">|</span> Computational Complexity and Eigenvalues <span class="pp">|</span> Big-O, sparse matrices, power method, QR algorithm <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-18</span><span class="co">](chapters/chapter-18-computational-complexity-eigenvalues.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-18</span><span class="co">](labs/lab-18-computational-complexity-eigenvalues.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 19 <span class="pp">|</span> Applications of Multilinear Algebra <span class="pp">|</span> tensor products, exterior products, multilinear maps <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-19</span><span class="co">](chapters/chapter-19-applications-multilinear-algebra.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-19</span><span class="co">](labs/lab-19-applications-multilinear-algebra.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 20 <span class="pp">|</span> Hilbert Spaces and Applications <span class="pp">|</span> metric/normed/inner product spaces, projection theorem <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-20</span><span class="co">](chapters/chapter-20-hilbert-spaces-applications.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-20</span><span class="co">](labs/lab-20-hilbert-spaces-applications.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 21 <span class="pp">|</span> Topological Data Analysis <span class="pp">|</span> chain complexes, homology, persistence, barcodes <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-21</span><span class="co">](chapters/chapter-21-tda.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-21</span><span class="co">](labs/lab-21-tda.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 22 <span class="pp">|</span> Duality and Cohomology <span class="pp">|</span> dual spaces, cochains, coboundaries, cohomology <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-22</span><span class="co">](chapters/chapter-22-duality-cohomology.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-22</span><span class="co">](labs/lab-22-duality-cohomology.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 23 <span class="pp">|</span> Spectral Graph Theory <span class="pp">|</span> graphs as matrices, Laplacian, spectrum, clustering <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-23</span><span class="co">](chapters/chapter-23-spectral-graph-theory.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-23</span><span class="co">](labs/lab-23-spectral-graph-theory.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 24 <span class="pp">|</span> Linear Algebra and Differential Equations <span class="pp">|</span> matrix exponential, systems of ODEs, stability <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-24</span><span class="co">](chapters/chapter-24-linear-algebra-differential-equations.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-24</span><span class="co">](labs/lab-24-linear-algebra-differential-equations.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 25 <span class="pp">|</span> Linear Algebra and Optimization <span class="pp">|</span> convexity, gradients, least squares, constraints <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-25</span><span class="co">](chapters/chapter-25-linear-algebra-optimization.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-25</span><span class="co">](labs/lab-25-linear-algebra-optimization.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 26 <span class="pp">|</span> Linear Algebra and Probability <span class="pp">|</span> random vectors, covariance, Gaussian distributions, random matrices <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-26</span><span class="co">](chapters/chapter-26-linear-algebra-probability.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-26</span><span class="co">](labs/lab-26-linear-algebra-probability.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 27 <span class="pp">|</span> Matrix Calculus <span class="pp">|</span> gradients, Hessians, Jacobians, optimization and ML <span class="pp">|</span> <span class="co">[</span><span class="ot">chapter-27</span><span class="co">](chapters/chapter-27-matrix-calculus.qmd)</span> <span class="pp">|</span> <span class="co">[</span><span class="ot">lab-27</span><span class="co">](labs/lab-27-matrix-calculus.qmd)</span> <span class="pp">|</span></span>
+<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a><span class="fu"># How to use this book</span></span>
+<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a>Each chapter is written as an independent learning unit. Most chapters include:</span>
+<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>a story-driven opening motivation;</span>
+<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>precise definitions, theorems, and examples;</span>
+<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Python computations and numerical experiments;</span>
+<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>challenge questions;</span>
+<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>practice problems;</span>
+<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>hide/show proofs and solutions;</span>
+<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>AI companion activities for guided exploration.</span>
+<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a>Each lab is designed for **independent study**. The labs usually include a Quarto lab page, an interactive HTML exploration, and a Jupyter notebook with guided solutions.</span>
+<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a><span class="fu"># Mathematical habits for the course</span></span>
+<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a>The course repeatedly practices the following habits.</span>
+<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a><span class="fu">## Translate among representations</span></span>
+<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a>A single idea may appear as an equation, a matrix, a linear map, a geometric object, or a dataset.</span>
+<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a>For example, a linear transformation can be viewed as:</span>
+<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>a function $T:V\to W$;</span>
+<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>a matrix $A$ after choosing bases;</span>
+<span id="cb2-189"><a href="#cb2-189" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>a geometric machine acting on vectors;</span>
+<span id="cb2-190"><a href="#cb2-190" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>a data transformation acting on features;</span>
+<span id="cb2-191"><a href="#cb2-191" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>an operator whose structure is revealed by eigenvalues or singular values.</span>
+<span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ask the invariant question</span></span>
+<span id="cb2-194"><a href="#cb2-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a>Many computations are coordinate-dependent, but the important ideas are often invariant:</span>
+<span id="cb2-196"><a href="#cb2-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-197"><a href="#cb2-197" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>dimension of a vector space;</span>
+<span id="cb2-198"><a href="#cb2-198" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>rank and nullity of a linear map;</span>
+<span id="cb2-199"><a href="#cb2-199" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>eigenvalues under similarity;</span>
+<span id="cb2-200"><a href="#cb2-200" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>singular values under orthogonal/unitary changes of coordinates;</span>
+<span id="cb2-201"><a href="#cb2-201" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>subspace angles on Grassmannians;</span>
+<span id="cb2-202"><a href="#cb2-202" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>connected components from Laplacian zero eigenvalues.</span>
+<span id="cb2-203"><a href="#cb2-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-204"><a href="#cb2-204" aria-hidden="true" tabindex="-1"></a><span class="fu">## Connect proof and computation</span></span>
+<span id="cb2-205"><a href="#cb2-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-206"><a href="#cb2-206" aria-hidden="true" tabindex="-1"></a>A theorem is most useful when it becomes a computational tool. For example:</span>
+<span id="cb2-207"><a href="#cb2-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-208"><a href="#cb2-208" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the rank-nullity theorem gives computation of Betti numbers in TDA;</span>
+<span id="cb2-209"><a href="#cb2-209" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the spectral theorem explains quadratic forms and PCA;</span>
+<span id="cb2-210"><a href="#cb2-210" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the projection theorem explains least squares;</span>
+<span id="cb2-211"><a href="#cb2-211" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the SVD explains low-rank approximation;</span>
+<span id="cb2-212"><a href="#cb2-212" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the Perron--Frobenius theorem explains long-term behavior of positive systems;</span>
+<span id="cb2-213"><a href="#cb2-213" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the Laplacian quadratic form explains smoothness and clustering on graphs.</span>
+<span id="cb2-214"><a href="#cb2-214" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb2-215"><a href="#cb2-215" aria-hidden="true" tabindex="-1"></a><span class="fu"># AI companion prompts</span></span>
+<span id="cb2-216"><a href="#cb2-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-217"><a href="#cb2-217" aria-hidden="true" tabindex="-1"></a>Use AI as a study partner, not as a replacement for mathematical reasoning.</span>
+<span id="cb2-218"><a href="#cb2-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-219"><a href="#cb2-219" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Concept check.** Explain the difference between a matrix, a linear transformation, and a coordinate representation.</span>
+<span id="cb2-220"><a href="#cb2-220" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Proof coach.** Give me hints for proving the rank-nullity theorem without giving the full solution first.</span>
+<span id="cb2-221"><a href="#cb2-221" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Computation coach.** Generate a Python example where a matrix is diagonalizable and another where it is not.</span>
+<span id="cb2-222"><a href="#cb2-222" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Application bridge.** Explain how projections lead to least squares, and how least squares leads to data fitting.</span>
+<span id="cb2-223"><a href="#cb2-223" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Synthesis.** Make a concept map connecting QR, Schur, spectral decomposition, SVD, and PCA.</span>
+<span id="cb2-224"><a href="#cb2-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-225"><a href="#cb2-225" aria-hidden="true" tabindex="-1"></a><span class="fu"># Suggested independent-study routine</span></span>
+<span id="cb2-226"><a href="#cb2-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-227"><a href="#cb2-227" aria-hidden="true" tabindex="-1"></a>For each chapter:</span>
+<span id="cb2-228"><a href="#cb2-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-229"><a href="#cb2-229" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Read the story and definitions.</span>
+<span id="cb2-230"><a href="#cb2-230" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Work through examples by hand.</span>
+<span id="cb2-231"><a href="#cb2-231" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Run the Python computations.</span>
+<span id="cb2-232"><a href="#cb2-232" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Try the interactive lab.</span>
+<span id="cb2-233"><a href="#cb2-233" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Complete the practice problems before opening solutions.</span>
+<span id="cb2-234"><a href="#cb2-234" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Ask an AI companion to generate one similar problem and then solve it independently.</span>
+<span id="cb2-235"><a href="#cb2-235" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb2-236"><a href="#cb2-236" aria-hidden="true" tabindex="-1"></a>The interactive overview page is included with this file as:</span>
+<span id="cb2-237"><a href="#cb2-237" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">linear_algebra_interactive_overview</span><span class="co">](https://wanghemath.github.io/MATH5110/HTML/linear_algebra_interactive_overview.html)</span></span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

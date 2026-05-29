@@ -2,31 +2,121 @@
   {
     "objectID": "index.html#course-information",
     "href": "index.html#course-information",
-    "title": "MATH 5110 Applied Linear Algebra and Matrix Analysis",
+    "title": "Linear Algebra in the AI Age: Geometry, Computation, and Data",
     "section": "Course Information",
     "text": "Course Information\nCourse: MATH 5110 Applied Linear Algebra and Matrix Analysis\nInstructor: He Wang\nDepartment: Department of Mathematics\nUniversity: Northeastern University\nPersonal Website: He Wang’s Website\nCourse Website: MATH 5110 Course Website\nGithub: Github Account",
     "crumbs": [
-      "MATH 5110 Applied Linear Algebra and Matrix Analysis"
+      "Linear Algebra in the AI Age: Geometry, Computation, and Data"
     ]
   },
   {
     "objectID": "index.html#about-the-author",
     "href": "index.html#about-the-author",
-    "title": "MATH 5110 Applied Linear Algebra and Matrix Analysis",
+    "title": "Linear Algebra in the AI Age: Geometry, Computation, and Data",
     "section": "About the Author",
     "text": "About the Author\nHe Wang is an Associate Teaching Professor in the Department of Mathematics at Northeastern University. He serves as Program Director for several graduate programs, including MS Applied Mathematics, MS Statistics, and MS Mathematics.\nHis teaching and academic interests include algebraic topology, mathematical foundations of data science and AI, optimization, and computational mathematics.",
     "crumbs": [
-      "MATH 5110 Applied Linear Algebra and Matrix Analysis"
+      "Linear Algebra in the AI Age: Geometry, Computation, and Data"
     ]
   },
   {
     "objectID": "index.html#about-this-book",
     "href": "index.html#about-this-book",
-    "title": "MATH 5110 Applied Linear Algebra and Matrix Analysis",
+    "title": "Linear Algebra in the AI Age: Geometry, Computation, and Data",
     "section": "About This Book",
-    "text": "About This Book\nThis book develops linear algebra from foundational ideas to modern applications. Topics include systems of linear equations, matrix algebra, vector spaces, linear transformations, orthogonality, eigenvalues, singular value decomposition, optimization, Markov chains, and applications to data science and machine learning.\nThe book includes:\n\nLecture-style chapters\nIndependent study labs\nPython computation examples\nInteractive HTML activities\nConceptual explanations\nApplications to data, computation, and AI\n\nThis book is based on my teaching materials of MATH 5110 for graduate students, motivated by MATH 7243 and MATH 7339 Machine Learning and Statistical Learning Theory 1 and 2. The ebook was written with the help of ChatGPT, Claude, and Gemini, and built with Quarto",
+    "text": "About This Book\nThis book develops linear algebra from foundational ideas to modern applications. Topics include systems of linear equations, matrix algebra, vector spaces, linear transformations, orthogonality, eigenvalues, singular value decomposition, optimization, Markov chains, and applications to data science and machine learning.\nThe book includes:\n\nLecture-style chapters\nIndependent study labs\nPython computation examples in each chapter (MATLAB examples will be added in the future.)\nInteractive HTML activities\nConceptual explanations\nApplications to data, computation, and AI\n\nThis book is based on my teaching materials of MATH 5110 for graduate students, motivated by MATH 7243 and MATH 7339 Machine Learning and Statistical Learning Theory 1 and 2. The ebook was written with the help of ChatGPT, Claude, and Gemini, and built with Quarto",
     "crumbs": [
-      "MATH 5110 Applied Linear Algebra and Matrix Analysis"
+      "Linear Algebra in the AI Age: Geometry, Computation, and Data"
+    ]
+  },
+  {
+    "objectID": "index.html#overview",
+    "href": "index.html#overview",
+    "title": "Linear Algebra in the AI Age: Geometry, Computation, and Data",
+    "section": "Overview:",
+    "text": "Overview:\nThis book is an applied, story-driven introduction to linear algebra and matrix analysis for graduate students. The guiding idea is simple:\n\nLinear algebra is the language of structure, computation, geometry, data, and modern intelligent systems.\n\nWe begin with the concrete problem of solving linear equations, then gradually uncover the abstract objects behind the computations: vector spaces, linear transformations, bases, coordinates, eigenvectors, inner products, projections, factorizations, spectral theory, and modern applications such as Markov chains, least squares, PCA, Fourier analysis, wavelets, graph theory, optimization, probability, and matrix calculus.\nThe course is designed to move back and forth between four viewpoints:\n\nAlgebraic: equations, matrices, subspaces, transformations, determinants, eigenvalues.\nGeometric: dimension, coordinates, orthogonality, projections, distance, angles.\nComputational: row reduction, LU, QR, Schur, SVD, FFT, sparse matrices, algorithms.\nApplied/data-driven: least squares, compression, PCA, Markov chains, graph networks, optimization, Topological Data Analysis, probability, and AI.",
+    "crumbs": [
+      "Linear Algebra in the AI Age: Geometry, Computation, and Data"
+    ]
+  },
+  {
+    "objectID": "index.html#part-i.-the-computational-beginning",
+    "href": "index.html#part-i.-the-computational-beginning",
+    "title": "Linear Algebra in the AI Age: Geometry, Computation, and Data",
+    "section": "Part I. The computational beginning",
+    "text": "Part I. The computational beginning\nThe course begins with the practical question:\n\nWhen does a system of linear equations have no solution, one solution, or infinitely many solutions?\n\nThis leads naturally to matrices, row operations, rank, null spaces, determinants, and matrix factorizations.",
+    "crumbs": [
+      "Linear Algebra in the AI Age: Geometry, Computation, and Data"
+    ]
+  },
+  {
+    "objectID": "index.html#part-ii.-the-language-of-vector-spaces",
+    "href": "index.html#part-ii.-the-language-of-vector-spaces",
+    "title": "Linear Algebra in the AI Age: Geometry, Computation, and Data",
+    "section": "Part II. The language of vector spaces",
+    "text": "Part II. The language of vector spaces\nA linear system is not only a calculation. It reveals the deeper language of vector spaces: subspaces, span, independence, bases, dimension, coordinates, linear transformations, kernels, images, and quotient spaces.",
+    "crumbs": [
+      "Linear Algebra in the AI Age: Geometry, Computation, and Data"
+    ]
+  },
+  {
+    "objectID": "index.html#part-iii.-spectral-structure",
+    "href": "index.html#part-iii.-spectral-structure",
+    "title": "Linear Algebra in the AI Age: Geometry, Computation, and Data",
+    "section": "Part III. Spectral structure",
+    "text": "Part III. Spectral structure\nEigenvalues and eigenvectors reveal directions that a transformation preserves. This is the gateway to diagonalization, Jordan form, matrix powers, dynamical systems, Markov chains, Perron–Frobenius theory, and PageRank-type ideas.",
+    "crumbs": [
+      "Linear Algebra in the AI Age: Geometry, Computation, and Data"
+    ]
+  },
+  {
+    "objectID": "index.html#part-iv.-geometry-from-inner-products",
+    "href": "index.html#part-iv.-geometry-from-inner-products",
+    "title": "Linear Algebra in the AI Age: Geometry, Computation, and Data",
+    "section": "Part IV. Geometry from inner products",
+    "text": "Part IV. Geometry from inner products\nInner products give length, angle, distance, and orthogonality. This leads to projections, Gram–Schmidt, QR factorization, least squares, adjoints, symmetric/Hermitian matrices, Schur decomposition, spectral decomposition, and positive definiteness.",
+    "crumbs": [
+      "Linear Algebra in the AI Age: Geometry, Computation, and Data"
+    ]
+  },
+  {
+    "objectID": "index.html#part-v.-data-signals-networks-and-applications",
+    "href": "index.html#part-v.-data-signals-networks-and-applications",
+    "title": "Linear Algebra in the AI Age: Geometry, Computation, and Data",
+    "section": "Part V. Data, signals, networks, and applications",
+    "text": "Part V. Data, signals, networks, and applications\nThe later chapters show how the same core ideas power modern applications: SVD and PCA, image compression, Haar wavelets, FFT, Grassmannians, numerical eigenvalue computation, multilinear algebra, Hilbert spaces, spectral graph theory, differential equations, optimization, probability, and matrix calculus.",
+    "crumbs": [
+      "Linear Algebra in the AI Age: Geometry, Computation, and Data"
+    ]
+  },
+  {
+    "objectID": "index.html#translate-among-representations",
+    "href": "index.html#translate-among-representations",
+    "title": "Linear Algebra in the AI Age: Geometry, Computation, and Data",
+    "section": "Translate among representations",
+    "text": "Translate among representations\nA single idea may appear as an equation, a matrix, a linear map, a geometric object, or a dataset.\nFor example, a linear transformation can be viewed as:\n\na function \\(T:V\\to W\\);\na matrix \\(A\\) after choosing bases;\na geometric machine acting on vectors;\na data transformation acting on features;\nan operator whose structure is revealed by eigenvalues or singular values.",
+    "crumbs": [
+      "Linear Algebra in the AI Age: Geometry, Computation, and Data"
+    ]
+  },
+  {
+    "objectID": "index.html#ask-the-invariant-question",
+    "href": "index.html#ask-the-invariant-question",
+    "title": "Linear Algebra in the AI Age: Geometry, Computation, and Data",
+    "section": "Ask the invariant question",
+    "text": "Ask the invariant question\nMany computations are coordinate-dependent, but the important ideas are often invariant:\n\ndimension of a vector space;\nrank and nullity of a linear map;\neigenvalues under similarity;\nsingular values under orthogonal/unitary changes of coordinates;\nsubspace angles on Grassmannians;\nconnected components from Laplacian zero eigenvalues.",
+    "crumbs": [
+      "Linear Algebra in the AI Age: Geometry, Computation, and Data"
+    ]
+  },
+  {
+    "objectID": "index.html#connect-proof-and-computation",
+    "href": "index.html#connect-proof-and-computation",
+    "title": "Linear Algebra in the AI Age: Geometry, Computation, and Data",
+    "section": "Connect proof and computation",
+    "text": "Connect proof and computation\nA theorem is most useful when it becomes a computational tool. For example:\n\nthe rank-nullity theorem gives computation of Betti numbers in TDA;\nthe spectral theorem explains quadratic forms and PCA;\nthe projection theorem explains least squares;\nthe SVD explains low-rank approximation;\nthe Perron–Frobenius theorem explains long-term behavior of positive systems;\nthe Laplacian quadratic form explains smoothness and clustering on graphs.",
+    "crumbs": [
+      "Linear Algebra in the AI Age: Geometry, Computation, and Data"
     ]
   },
   {
@@ -102,101 +192,101 @@
   {
     "objectID": "math-5110-book-overview.html",
     "href": "math-5110-book-overview.html",
-    "title": "Overview:",
+    "title": "Overview",
     "section": "",
     "text": "Linear Algebra for the AI Age: Geometry, Computation, and Data\nThis book is an applied, story-driven introduction to linear algebra and matrix analysis for graduate students. The guiding idea is simple:\nWe begin with the concrete problem of solving linear equations, then gradually uncover the abstract objects behind the computations: vector spaces, linear transformations, bases, coordinates, eigenvectors, inner products, projections, factorizations, spectral theory, and modern applications such as Markov chains, least squares, PCA, Fourier analysis, wavelets, graph theory, optimization, probability, and matrix calculus.\nThe course is designed to move back and forth between four viewpoints:",
     "crumbs": [
-      "Overview:"
+      "Overview"
     ]
   },
   {
     "objectID": "math-5110-book-overview.html#linear-algebra-for-the-ai-age-geometry-computation-and-data",
     "href": "math-5110-book-overview.html#linear-algebra-for-the-ai-age-geometry-computation-and-data",
-    "title": "Overview:",
+    "title": "Overview",
     "section": "",
-    "text": "Linear algebra is the language of structure, computation, geometry, data, and modern intelligent systems.\n\n\n\n\nAlgebraic: equations, matrices, subspaces, transformations, determinants, eigenvalues.\nGeometric: dimension, coordinates, orthogonality, projections, distance, angles.\nComputational: row reduction, LU, QR, Schur, SVD, FFT, sparse matrices, algorithms.\nApplied/data-driven: least squares, compression, PCA, Markov chains, graph networks, optimization, probability, and AI.",
+    "text": "Linear algebra is the language of structure, computation, geometry, data, and modern intelligent systems.\n\n\n\n\nAlgebraic: equations, matrices, subspaces, transformations, determinants, eigenvalues.\nGeometric: dimension, coordinates, orthogonality, projections, distance, angles.\nComputational: row reduction, LU, QR, Schur, SVD, FFT, sparse matrices, algorithms.\nApplied/data-driven: least squares, compression, PCA, Markov chains, graph networks, optimization, Topological Data Analysis, probability, and AI.",
     "crumbs": [
-      "Overview:"
+      "Overview"
     ]
   },
   {
     "objectID": "math-5110-book-overview.html#part-i.-the-computational-beginning",
     "href": "math-5110-book-overview.html#part-i.-the-computational-beginning",
-    "title": "Overview:",
+    "title": "Overview",
     "section": "Part I. The computational beginning",
     "text": "Part I. The computational beginning\nThe course begins with the practical question:\n\nWhen does a system of linear equations have no solution, one solution, or infinitely many solutions?\n\nThis leads naturally to matrices, row operations, rank, null spaces, determinants, and matrix factorizations.",
     "crumbs": [
-      "Overview:"
+      "Overview"
     ]
   },
   {
     "objectID": "math-5110-book-overview.html#part-ii.-the-language-of-vector-spaces",
     "href": "math-5110-book-overview.html#part-ii.-the-language-of-vector-spaces",
-    "title": "Overview:",
+    "title": "Overview",
     "section": "Part II. The language of vector spaces",
     "text": "Part II. The language of vector spaces\nA linear system is not only a calculation. It reveals the deeper language of vector spaces: subspaces, span, independence, bases, dimension, coordinates, linear transformations, kernels, images, and quotient spaces.",
     "crumbs": [
-      "Overview:"
+      "Overview"
     ]
   },
   {
     "objectID": "math-5110-book-overview.html#part-iii.-spectral-structure",
     "href": "math-5110-book-overview.html#part-iii.-spectral-structure",
-    "title": "Overview:",
+    "title": "Overview",
     "section": "Part III. Spectral structure",
     "text": "Part III. Spectral structure\nEigenvalues and eigenvectors reveal directions that a transformation preserves. This is the gateway to diagonalization, Jordan form, matrix powers, dynamical systems, Markov chains, Perron–Frobenius theory, and PageRank-type ideas.",
     "crumbs": [
-      "Overview:"
+      "Overview"
     ]
   },
   {
     "objectID": "math-5110-book-overview.html#part-iv.-geometry-from-inner-products",
     "href": "math-5110-book-overview.html#part-iv.-geometry-from-inner-products",
-    "title": "Overview:",
+    "title": "Overview",
     "section": "Part IV. Geometry from inner products",
     "text": "Part IV. Geometry from inner products\nInner products give length, angle, distance, and orthogonality. This leads to projections, Gram–Schmidt, QR factorization, least squares, adjoints, symmetric/Hermitian matrices, Schur decomposition, spectral decomposition, and positive definiteness.",
     "crumbs": [
-      "Overview:"
+      "Overview"
     ]
   },
   {
     "objectID": "math-5110-book-overview.html#part-v.-data-signals-networks-and-applications",
     "href": "math-5110-book-overview.html#part-v.-data-signals-networks-and-applications",
-    "title": "Overview:",
+    "title": "Overview",
     "section": "Part V. Data, signals, networks, and applications",
     "text": "Part V. Data, signals, networks, and applications\nThe later chapters show how the same core ideas power modern applications: SVD and PCA, image compression, Haar wavelets, FFT, Grassmannians, numerical eigenvalue computation, multilinear algebra, Hilbert spaces, spectral graph theory, differential equations, optimization, probability, and matrix calculus.",
     "crumbs": [
-      "Overview:"
+      "Overview"
     ]
   },
   {
     "objectID": "math-5110-book-overview.html#translate-among-representations",
     "href": "math-5110-book-overview.html#translate-among-representations",
-    "title": "Overview:",
+    "title": "Overview",
     "section": "Translate among representations",
     "text": "Translate among representations\nA single idea may appear as an equation, a matrix, a linear map, a geometric object, or a dataset.\nFor example, a linear transformation can be viewed as:\n\na function \\(T:V\\to W\\);\na matrix \\(A\\) after choosing bases;\na geometric machine acting on vectors;\na data transformation acting on features;\nan operator whose structure is revealed by eigenvalues or singular values.",
     "crumbs": [
-      "Overview:"
+      "Overview"
     ]
   },
   {
     "objectID": "math-5110-book-overview.html#ask-the-invariant-question",
     "href": "math-5110-book-overview.html#ask-the-invariant-question",
-    "title": "Overview:",
+    "title": "Overview",
     "section": "Ask the invariant question",
     "text": "Ask the invariant question\nMany computations are coordinate-dependent, but the important ideas are often invariant:\n\ndimension of a vector space;\nrank and nullity of a linear map;\neigenvalues under similarity;\nsingular values under orthogonal/unitary changes of coordinates;\nsubspace angles on Grassmannians;\nconnected components from Laplacian zero eigenvalues.",
     "crumbs": [
-      "Overview:"
+      "Overview"
     ]
   },
   {
     "objectID": "math-5110-book-overview.html#connect-proof-and-computation",
     "href": "math-5110-book-overview.html#connect-proof-and-computation",
-    "title": "Overview:",
+    "title": "Overview",
     "section": "Connect proof and computation",
     "text": "Connect proof and computation\nA theorem is most useful when it becomes a computational tool. For example:\n\nthe rank-nullity theorem explains free variables;\nthe spectral theorem explains quadratic forms and PCA;\nthe projection theorem explains least squares;\nthe SVD explains low-rank approximation;\nthe Perron–Frobenius theorem explains long-term behavior of positive systems;\nthe Laplacian quadratic form explains smoothness and clustering on graphs.",
     "crumbs": [
-      "Overview:"
+      "Overview"
     ]
   },
   {

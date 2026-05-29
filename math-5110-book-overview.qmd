@@ -1,5 +1,5 @@
 
-# Overview: {.unnumbered}
+# Overview {.unnumbered}
 
 ## Linear Algebra for the AI Age: Geometry, Computation, and Data 
 
@@ -14,7 +14,7 @@ The course is designed to move back and forth between four viewpoints:
 1. **Algebraic:** equations, matrices, subspaces, transformations, determinants, eigenvalues.
 2. **Geometric:** dimension, coordinates, orthogonality, projections, distance, angles.
 3. **Computational:** row reduction, LU, QR, Schur, SVD, FFT, sparse matrices, algorithms.
-4. **Applied/data-driven:** least squares, compression, PCA, Markov chains, graph networks, optimization, probability, and AI.
+4. **Applied/data-driven:** least squares, compression, PCA, Markov chains, graph networks, optimization, Topological Data Analysis, probability, and AI.
 
 # How to use this book
 
