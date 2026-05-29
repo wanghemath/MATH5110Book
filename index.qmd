@@ -11,7 +11,7 @@ date: "May 29, 2026"
 
 Welcome to **MATH 5110 Applied Linear Algebra and Matrix Analysis**.
 
-This onbook is an applied, story-driven introduction to **linear algebra and matrix analysis** for graduate students in **[MS Applied Mathematics](https://graduate.northeastern.edu/programs/ms-applied-mathematics/master-of-science-in-applied-mathematics/)** and **[MS Statistics](https://graduate.northeastern.edu/programs/ms-statistics/master-of-science-in-statistics/)** at **Northeastern University**. It is designed for graduate students studying applied linear algebra, matrix analysis, computation, data science, and artificial intelligence. The goal is to present linear algebra not only as a collection of techniques, but also as a language for understanding modern data, algorithms, and mathematical modeling.
+This online book is an applied, story-driven introduction to **linear algebra and matrix analysis** for graduate students in [**MS Applied Mathematics**](https://graduate.northeastern.edu/programs/ms-applied-mathematics/master-of-science-in-applied-mathematics/) and [**MS Statistics**](https://graduate.northeastern.edu/programs/ms-statistics/master-of-science-in-statistics/) at **Northeastern University**. It is designed for graduate students studying applied linear algebra, matrix analysis, computation, data science, and artificial intelligence. The goal is to present linear algebra not only as a collection of techniques, but also as a language for understanding modern data, algorithms, and mathematical modeling.
 
 
 ## Course Information {.unnumbered}
