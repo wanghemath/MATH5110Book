@@ -1,0 +1,139 @@
+# Lab 17: Grassmannians and Distances Between Subspaces {.unnumbered}
+ 
+
+# Lab goals
+
+In this lab you will compute and interpret distances between subspaces. The main computational objects are:
+
+- orthonormal basis matrices $Q_U$ and $Q_W$;
+- the matrix $Q_U^TQ_W$;
+- singular values $\sigma_i$;
+- principal angles $\theta_i=\cos^{-1}(\sigma_i)$;
+- Grassmannian distances such as geodesic and chordal distance.
+
+# Python practice notebook
+
+The Jupyter notebook version contains guided computations, solutions, and similar practice questions.
+
+[Download Lab 17 notebook](lab-17-grassmannians-subspace-distances-independent-study.ipynb)
+
+If your book is hosted on GitHub, you can also add a Colab link:
+ 
+[Open in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/labs/lab-17-grassmannians-subspace-distances-independent-study.ipynb)
+ 
+
+# Interactive lab
+
+Use the interactive HTML page to visualize principal angles between two planes in $\mathbb R^3$ and to compute Grassmannian distances.
+
+[Open Lab 17 Interactive](lab-17-interactive.html)
+
+# Background formulas
+
+If $Q_U$ and $Q_W$ are orthonormal basis matrices for two $k$-dimensional subspaces, then the principal angles are computed by
+
+$$
+Q_U^TQ_W=A_0\Sigma B_0^T,
+\qquad
+\cos\theta_i=\sigma_i.
+$$
+
+The Grassmann geodesic distance is
+
+$$
+d_{\operatorname{Gr}}(U,W)=\left(\sum_{i=1}^k\theta_i^2\right)^{1/2}.
+$$
+
+The chordal distance is
+
+$$
+d_{\mathrm{chordal}}(U,W)=\left(\sum_{i=1}^k\sin^2\theta_i\right)^{1/2}.
+$$
+
+The projection representation is
+
+$$
+P_U=Q_UQ_U^T.
+$$
+
+# Independent-study tasks
+
+## Task 1: Two lines
+
+Let
+
+$$
+U=\operatorname{span}\{(1,0)\},
+\qquad
+W=\operatorname{span}\{(1,1)\}.
+$$
+
+Compute the principal angle.
+
+<details>
+<summary><strong>Answer</strong></summary>
+
+Normalize $(1,1)$ to $\frac{1}{\sqrt2}(1,1)$. Then
+
+$$
+\cos\theta=(1,0)\cdot \frac{1}{\sqrt2}(1,1)=\frac{1}{\sqrt2}.
+$$
+
+Hence $\theta=\pi/4$.
+
+</details>
+
+## Task 2: Two planes sharing a line
+
+Let
+
+$$
+U=\operatorname{span}\{\vec e_1,\vec e_2\},
+\qquad
+W=\operatorname{span}\{\vec e_1,\cos\alpha\,\vec e_2+\sin\alpha\,\vec e_3\}.
+$$
+
+Find the principal angles and the geodesic distance.
+
+<details>
+<summary><strong>Answer</strong></summary>
+
+The subspaces share $\vec e_1$, so $\theta_1=0$. The second direction is rotated by $\alpha$, so $\theta_2=\alpha$. Thus
+
+$$
+d_{\operatorname{Gr}}(U,W)=\sqrt{0^2+\alpha^2}=\alpha.
+$$
+
+</details>
+
+## Task 3: Projection distance
+
+Let principal angles be $\theta_1=0.3$ and $\theta_2=0.8$. Compute the projection distance.
+
+<details>
+<summary><strong>Answer</strong></summary>
+
+The projection distance is
+
+$$
+d_{\mathrm{projection}}=\sin\theta_2=\sin(0.8)\approx 0.7174.
+$$
+
+</details>
+
+## Similar practice question
+
+Let principal angles be $\theta_1=0.1$, $\theta_2=0.4$, and $\theta_3=0.7$. Compute the geodesic and chordal distances.
+
+<details>
+<summary><strong>Answer</strong></summary>
+
+$$
+d_{\operatorname{Gr}}=\sqrt{0.1^2+0.4^2+0.7^2}\approx 0.8124.
+$$
+
+$$
+d_{\mathrm{chordal}}=\sqrt{\sin^2(0.1)+\sin^2(0.4)+\sin^2(0.7)}\approx 0.7580.
+$$
+
+</details>

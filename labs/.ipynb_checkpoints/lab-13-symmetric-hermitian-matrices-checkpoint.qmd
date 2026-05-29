@@ -1,0 +1,289 @@
+# Lab 13. Symmetric and Hermitian Matrices: Independent Study {.unnumbered}
+
+This lab accompanies **Chapter 13: Symmetric and Hermitian Matrices**.
+
+The goal is to connect symmetric/Hermitian structure with computation, geometry, energy, and data:
+
+1. symmetric and skew-symmetric decompositions;
+2. Hermitian matrices and conjugate transpose;
+3. spectral decomposition using orthonormal eigenvectors;
+4. quadratic and Hermitian forms;
+5. positive definite and positive semidefinite tests;
+6. Gram matrices and $A^*A$;
+7. Cholesky factorization.
+
+This is an **independent-study lab**. Each main question includes a worked solution and a similar practice question.
+
+## Python practice notebook
+
+You may use the Jupyter notebook version for longer Python practice:
+
+- [Download Lab 13 independent-study notebook](lab-13-symmetric-hermitian-matrices-independent-study.ipynb)
+- [Open Lab 13 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-13-symmetric-hermitian-matrices-independent-study.ipynb)
+
+## Interactive lab
+
+```{=html}
+<iframe
+  src="lab-13-interactive.html"
+  width="100%"
+  height="4300"
+  style="border:1px solid #ddd; border-radius:12px;">
+</iframe>
+```
+
+## Study guide and worked questions
+
+### Question 1. Symmetric and skew-symmetric decomposition
+
+Let
+
+$$
+M=\begin{bmatrix}1&4\\2&3\end{bmatrix}.
+$$
+
+Find the symmetric part and the skew-symmetric part of $M$.
+
+#### Solution
+
+Use
+
+$$
+S=\frac{M+M^T}{2},
+\qquad
+K=\frac{M-M^T}{2}.
+$$
+
+Then
+
+$$
+S=\begin{bmatrix}1&3\\3&3\end{bmatrix},
+\qquad
+K=\begin{bmatrix}0&1\\-1&0\end{bmatrix}.
+$$
+
+Thus
+
+$$
+M=S+K.
+$$
+
+#### Similar practice
+
+For
+
+$$
+M=\begin{bmatrix}2&-1\\5&0\end{bmatrix},
+$$
+
+find $S$ and $K$.
+
+#### Answer
+
+$$
+S=\begin{bmatrix}2&2\\2&0\end{bmatrix},
+\qquad
+K=\begin{bmatrix}0&-3\\3&0\end{bmatrix}.
+$$
+
+### Question 2. Hermitian check
+
+Determine whether
+
+$$
+H=\begin{bmatrix}2&1+i\\1-i&4\end{bmatrix}
+$$
+
+is Hermitian.
+
+#### Solution
+
+The diagonal entries are real. The off-diagonal entries are complex conjugates:
+
+$$
+\overline{1+i}=1-i.
+$$
+
+Therefore
+
+$$
+H^*=H.
+$$
+
+So $H$ is Hermitian.
+
+#### Similar practice
+
+Determine whether
+
+$$
+B=\begin{bmatrix}1&2+i\\2+i&3\end{bmatrix}
+$$
+
+is Hermitian.
+
+#### Answer
+
+No. The lower-left entry should be $2-i$, not $2+i$.
+
+### Question 3. Spectral decomposition
+
+Let
+
+$$
+A=\begin{bmatrix}3&1\\1&3\end{bmatrix}.
+$$
+
+Find an orthogonal diagonalization.
+
+#### Solution
+
+The eigenvalues are
+
+$$
+\lambda_1=4,
+\qquad
+\lambda_2=2.
+$$
+
+Corresponding unit eigenvectors are
+
+$$
+\vec{u}_1=\frac{1}{\sqrt2}\begin{bmatrix}1\\1\end{bmatrix},
+\qquad
+\vec{u}_2=\frac{1}{\sqrt2}\begin{bmatrix}1\\-1\end{bmatrix}.
+$$
+
+Thus
+
+$$
+Q=\frac{1}{\sqrt2}\begin{bmatrix}1&1\\1&-1\end{bmatrix},
+\qquad
+D=\begin{bmatrix}4&0\\0&2\end{bmatrix},
+$$
+
+and
+
+$$
+A=QDQ^T.
+$$
+
+#### Similar practice
+
+Find an orthogonal diagonalization of
+
+$$
+A=\begin{bmatrix}5&2\\2&5\end{bmatrix}.
+$$
+
+#### Answer
+
+Eigenvalues are $7$ and $3$, with the same orthonormal eigenvectors
+
+$$
+\frac{1}{\sqrt2}(1,1)^T,
+\qquad
+\frac{1}{\sqrt2}(1,-1)^T.
+$$
+
+### Question 4. Positive definite test by eigenvalues
+
+Classify
+
+$$
+A=\begin{bmatrix}3&1\\1&3\end{bmatrix}.
+$$
+
+#### Solution
+
+The eigenvalues are $4$ and $2$, both positive. Therefore $A$ is positive definite.
+
+#### Similar practice
+
+Classify
+
+$$
+B=\begin{bmatrix}1&2\\2&1\end{bmatrix}.
+$$
+
+#### Answer
+
+The eigenvalues are $3$ and $-1$. Since one eigenvalue is negative, $B$ is indefinite.
+
+### Question 5. Sylvester's criterion
+
+Use Sylvester's criterion to test whether
+
+$$
+A=\begin{bmatrix}
+2&1&0\\
+1&3&1\\
+0&1&2
+\end{bmatrix}
+$$
+
+is positive definite.
+
+#### Solution
+
+The leading principal minors are
+
+$$
+\Delta_1=2>0,
+$$
+
+$$
+\Delta_2=\det\begin{bmatrix}2&1\\1&3\end{bmatrix}=5>0,
+$$
+
+and
+
+$$
+\Delta_3=\det(A)=8>0.
+$$
+
+All leading principal minors are positive. Therefore $A$ is positive definite.
+
+#### Similar practice
+
+Test
+
+$$
+B=\begin{bmatrix}1&2\\2&1\end{bmatrix}.
+$$
+
+#### Answer
+
+The leading principal minors are $1$ and $-3$. Since the second is negative, $B$ is not positive definite.
+
+### Question 6. Why $A^TA$ is positive semidefinite
+
+Let $A\in\mathbb{R}^{m\times n}$. Prove that $A^TA$ is positive semidefinite.
+
+#### Solution
+
+For any $\vec{x}\in\mathbb{R}^n$,
+
+$$
+\vec{x}^{\,T}A^TA\vec{x}=(A\vec{x})^T(A\vec{x})=\|A\vec{x}\|^2\ge0.
+$$
+
+Therefore $A^TA$ is positive semidefinite.
+
+#### Similar practice
+
+When is $A^TA$ positive definite?
+
+#### Answer
+
+It is positive definite when $A$ has full column rank, because then $A\vec{x}\ne0$ for every nonzero $\vec{x}$.
+
+## Notebook submission suggestions
+
+In your notebook, include:
+
+1. at least one symbolic computation by hand;
+2. at least one numerical computation in Python;
+3. at least one explanation of the geometry or energy interpretation;
+4. one example you create yourself;
+5. one AI companion reflection, checked by your own computation.

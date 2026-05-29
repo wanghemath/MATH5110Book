@@ -1,0 +1,102 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "MATH 5110 Applied Linear Algebra and Matrix Analysis"
+  subtitle: "Linear Algebra for the AI Age: Geometry, Computation, and Data"
+  author:
+    - name: "He Wang"
+      affiliation: "Department of Mathematics, Northeastern University."
+      url: "https://cos.northeastern.edu/people/he-wang/"
+      
+  site-url: "https://wanghemath.github.io/MATH5110"
+  repo-url: "https://github.com/wanghemath/MATH5110"
+  repo-actions: [edit, issue]
+  search: true
+
+  page-footer:
+    left: |
+      MATH 5110 Applied Linear Algebra and Matrix Analysis  
+      Department of Mathematics, Northeastern University
+    right: |
+      Built with [Quarto](https://quarto.org/)
+
+  
+  chapters:
+    - index.qmd
+    - preface.qmd
+    - math-5110-book-overview.qmd
+    - chapters/chapter-01-linear-systems.qmd
+    - labs/lab-01-linear-systems.qmd
+    - chapters/chapter-02-matrix-algebra.qmd
+    - labs/lab-02-matrix-algebra.qmd
+    - chapters/chapter-03-linear-spaces-subspaces-maps.qmd
+    - labs/lab-03-linear-spaces-subspaces-maps.qmd
+    - chapters/chapter-04-bases-dimension-rank-nullity.qmd
+    - labs/lab-04-bases-dimension-rank-nullity.qmd
+    - chapters/chapter-05-coordinates-matrices-change-of-basis.qmd
+    - labs/lab-05-coordinates-matrices-change-of-basis.qmd
+    - chapters/chapter-06-determinants.qmd
+    - labs/lab-06-determinants.qmd
+    - chapters/chapter-07-diagonalization-eigenvalues.qmd
+    - labs/lab-07-diagonalization-eigenvalues.qmd
+    - chapters/chapter-08-jordan-canonical-form.qmd
+    - labs/lab-08-jordan-canonical-form.qmd   
+    - chapters/chapter-09-dynamical-systems-markov-chains-perron-frobenius.qmd
+    - labs/lab-09-dynamical-systems-markov-chains.qmd
+    - chapters/chapter-10-inner-products-projections-qr-adjoints.qmd
+    - labs/lab-10-inner-products-projections-qr-adjoints.qmd 
+    - chapters/chapter-11-complex-inner-products-schur.qmd
+    - labs/lab-11-complex-inner-products-schur.qmd 
+    - chapters/chapter-12-least-squares-data-fitting.qmd
+    - labs/lab-12-least-squares-data-fitting.qmd
+    - chapters/chapter-13-symmetric-hermitian-matrices.qmd
+    - labs/lab-13-symmetric-hermitian-matrices.qmd
+    - chapters/chapter-14-singular-value-decomposition.qmd
+    - labs/lab-14-singular-value-decomposition.qmd
+    - chapters/chapter-15-haar-bases-wavelet-transforms.qmd
+    - labs/lab-15-haar-bases-wavelet-transforms.qmd
+    - chapters/chapter-16-fast-fourier-transforms.qmd
+    - labs/lab-16-fast-fourier-transforms.qmd
+    - chapters/chapter-17-grassmannians-subspace-distances.qmd
+    - labs/lab-17-grassmannians-subspace-distances.qmd
+    - chapters/chapter-18-computational-complexity-eigenvalues.qmd
+    - labs/lab-18-computational-complexity-eigenvalues.qmd
+    - chapters/chapter-19-applications-multilinear-algebra.qmd
+    - labs/lab-19-applications-multilinear-algebra.qmd
+    - chapters/chapter-20-hilbert-spaces-applications.qmd
+    - labs/lab-20-hilbert-spaces-applications.qmd
+    - chapters/chapter-21-tda.qmd
+    - labs/lab-21-tda.qmd
+    - chapters/chapter-22-duality-cohomology.qmd
+    - labs/lab-22-duality-cohomology.qmd
+    - chapters/chapter-23-spectral-graph-theory.qmd
+    - labs/lab-23-spectral-graph-theory.qmd
+    - chapters/chapter-24-linear-algebra-differential-equations.qmd
+    - labs/lab-24-linear-algebra-differential-equations.qmd
+    - chapters/chapter-25-linear-algebra-optimization.qmd
+    - labs/lab-25-linear-algebra-optimization.qmd
+    - chapters/chapter-26-linear-algebra-probability.qmd
+    - labs/lab-26-linear-algebra-probability.qmd
+    - chapters/chapter-27-matrix-calculus.qmd
+    - labs/lab-27-matrix-calculus.qmd
+    
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
+    code-fold: true
+    code-tools: true
+    page-layout: full
+    grid:
+      sidebar-width: 220px
+      body-width: 1100px
+      margin-width: 180px
+
+execute:
+  echo: true
+  warning: false
+  message: false
+  freeze: auto

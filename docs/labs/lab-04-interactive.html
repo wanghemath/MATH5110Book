@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 4 Interactive: Bases, Dimension, and Rank--Nullity</title>
+<script>
+window.MathJax = {
+  tex: {inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']]},
+  svg: {fontCache: 'global'}
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root{--bg:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+  body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);} header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;} header h1{margin:0 0 8px;font-size:1.8rem;} header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;} main{max-width:1240px;margin:0 auto;padding:24px;} .grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;} .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;} h2{font-size:1.25rem;margin:0 0 12px;} h3{font-size:1.05rem;margin:18px 0 8px;} p{line-height:1.55;} label{display:block;margin:8px 0 4px;font-weight:600;} input[type=number]{width:62px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;} .matrix{display:grid;gap:6px;margin:8px 0 12px;align-items:center;} .m2{grid-template-columns:repeat(2,70px);} .m3{grid-template-columns:repeat(3,70px);} .m34{grid-template-columns:repeat(4,70px);} .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;} button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;} button.secondary{background:#fff;color:#111827;} select{padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff;} canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;} .result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;} .eq{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto;} .small{font-size:.92rem;color:var(--muted);} table{border-collapse:collapse;background:#fff;margin:8px 0;} th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;} .ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .warn{color:var(--amber);font-weight:700;} .task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;} textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;} code{background:#f3f4f6;padding:1px 4px;border-radius:4px;} @media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Lab 4 Interactive: Bases, Dimension, and Rank--Nullity</h1>
+  <p>Explore independence, bases, coordinates, rank, nullity, kernel, image, and change of basis. The goal is to see dimension as a precise way to count information.</p>
+</header>
+<main>
+  <section class="grid">
+    <div class="card">
+      <h2>1. Linear independence in \(\mathbb R^3\)</h2>
+      <p class="small">Enter three vectors as columns. The tool row-reduces the matrix \(A=[v_1\ v_2\ v_3]\) and tests whether \(Ax=0\) has only the trivial solution.</p>
+      <h3>Matrix \(A=[v_1\ v_2\ v_3]\)</h3>
+      <div class="matrix m3" id="indInputs"></div>
+      <button onclick="indPreset('dependent')">Dependent example</button><button onclick="indPreset('independent')">Independent example</button><button class="secondary" onclick="indPreset('zero')">Contains zero vector</button>
+      <div class="result" id="indResult"></div>
+    </div>
+    <div class="card">
+      <h2>2. Coordinates in a basis of \(\mathbb R^2\)</h2>
+      <p class="small">A basis is a coordinate system. Enter basis vectors \(b_1,b_2\) and a vector \(v\). The tool solves \(P_{\mathcal B}c=v\).</p>
+      <h3>Basis matrix \(P_{\mathcal B}=[b_1\ b_2]\)</h3>
+      <div class="matrix m2" id="basisInputs"></div>
+      <h3>Vector \(v\)</h3>
+      <div class="matrix m2" id="vecInputs"></div>
+      <button onclick="basisPreset('standard')">Standard basis</button><button onclick="basisPreset('diagonal')">Diagonal basis</button><button onclick="basisPreset('bad')">Not a basis</button>
+      <canvas id="coordCanvas" width="720" height="520"></canvas>
+      <div class="result" id="coordResult"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3. Basis from a spanning list</h2>
+    <p>Enter four vectors in \(\mathbb R^3\). The pivot columns of the original matrix form a basis for the span.</p>
+    <div class="matrix m34" id="spanBasisInputs"></div>
+    <button onclick="spanBasisPreset('chapter')">Chapter-style example</button><button onclick="spanBasisPreset('rank3')">Rank 3 example</button><button class="secondary" onclick="spanBasisPreset('rank1')">Rank 1 example</button>
+    <div class="result" id="spanBasisResult"></div>
+  </section>
+
+  <section class="card">
+    <h2>4. Rank--nullity for \(T:\mathbb R^4\to\mathbb R^3\)</h2>
+    <p>Let \(T(x)=Ax\). Edit the \(3\times4\) matrix and compute RREF, pivot columns, an image basis, a kernel basis, rank, and nullity.</p>
+    <div class="matrix m34" id="rankInputs"></div>
+    <button onclick="rankPreset('chapter')">Rank 2 example</button><button onclick="rankPreset('full')">Rank 3 example</button><button class="secondary" onclick="rankPreset('zero')">Zero map</button>
+    <div class="result" id="rankResult"></div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>5. Change of basis in \(\mathbb R^2\)</h2>
+      <p class="small">Input \([v]_{\mathcal B}\). The tool computes \(v=P_{\mathcal B}[v]_{\mathcal B}\), then \([v]_{\mathcal C}=P_{\mathcal C}^{-1}v\).</p>
+      <h3>Basis \(\mathcal B\)</h3><div class="matrix m2" id="basisBInputs"></div>
+      <h3>Basis \(\mathcal C\)</h3><div class="matrix m2" id="basisCInputs"></div>
+      <h3>Coordinates \([v]_{\mathcal B}\)</h3><div class="matrix m2" id="coordBInputs"></div>
+      <button onclick="changePreset('chapter')">Chapter-style example</button><button onclick="changePreset('standard')">C = standard</button>
+      <div class="result" id="changeResult"></div>
+    </div>
+    <div class="card">
+      <h2>6. Dimension counter</h2>
+      <p class="small">Use this to check the rank--nullity identity \(\dim V=\operatorname{rank}(T)+\operatorname{nullity}(T)\).</p>
+      <div class="row"><label>Domain dimension</label><input id="domainDim" type="number" value="4" step="1"><label>Rank</label><input id="rankDim" type="number" value="2" step="1"></div>
+      <div class="result" id="dimResult"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>7. Independent-study practice tasks with answers</h2>
+    <div class="task"><strong>Task A.</strong> Decide whether \((1,-3,4),(2,-2,5),(3,-1,6)\) are independent.<br><strong>Answer:</strong> They are dependent because \(v_1-2v_2+v_3=0\).</div>
+    <div class="task"><strong>Task B.</strong> For \(b_1=(1,1)\), \(b_2=(1,-1)\), find \([v]_{\mathcal B}\) for \(v=(4,2)\).<br><strong>Answer:</strong> \([v]_{\mathcal B}=(3,1)\), because \(3b_1+1b_2=(4,2)\).</div>
+    <div class="task"><strong>Task C.</strong> If \(A:\mathbb R^4\to\mathbb R^3\) has rank \(2\), what is the nullity?<br><strong>Answer:</strong> \(4-2=2\).</div>
+    <div class="task"><strong>Similar practice.</strong> If \(T:\mathbb R^7\to\mathbb R^5\) has rank \(4\), what is \(\dim\ker(T)\)?<br><strong>Answer:</strong> \(7-4=3\).</div>
+    <div class="task"><strong>Task D.</strong> Ask an AI tool to explain rank--nullity using information preserved/lost. Check whether it correctly identifies image as preserved information and kernel as lost directions.</div>
+  </section>
+
+  <section class="card"><h2>8. Workspace</h2><textarea placeholder="Write observations here. Copy final answers to your notebook or assignment."></textarea></section>
+</main>
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(row=>`<tr>${row.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function vecHTML(v){return matHTML(v.map(x=>[x]));}
+function createInputs(containerId,prefix,vals,cols){const el=document.getElementById(containerId);el.innerHTML=''; for(let i=0;i<vals.length;i++){for(let j=0;j<cols;j++){const input=document.createElement('input');input.type='number';input.step='1';input.value=vals[i][j] ?? vals[i];input.id=`${prefix}${i}${j}`;input.addEventListener('input',update);el.appendChild(input);}}}
+function getMat(prefix,rows,cols){let M=[];for(let i=0;i<rows;i++){let r=[];for(let j=0;j<cols;j++)r.push(Number(document.getElementById(`${prefix}${i}${j}`).value)||0);M.push(r);}return M;}
+function setMat(prefix,M){for(let i=0;i<M.length;i++)for(let j=0;j<M[0].length;j++)document.getElementById(`${prefix}${i}${j}`).value=M[i][j];}
+function setVec(prefix,v){for(let i=0;i<v.length;i++)document.getElementById(`${prefix}${i}0`).value=v[i];}
+function det2(A){return A[0][0]*A[1][1]-A[0][1]*A[1][0];}
+function inv2(A){let d=det2(A); if(Math.abs(d)<1e-10)return null; return [[A[1][1]/d,-A[0][1]/d],[-A[1][0]/d,A[0][0]/d]];}
+function matVec(A,v){return A.map(row=>row.reduce((s,x,j)=>s+x*v[j],0));}
+function matMul(A,B){let C=Array.from({length:A.length},()=>Array(B[0].length).fill(0));for(let i=0;i<A.length;i++)for(let j=0;j<B[0].length;j++)for(let k=0;k<B.length;k++)C[i][j]+=A[i][k]*B[k][j];return C;}
+function rref(A){let M=A.map(r=>r.slice().map(Number));let rows=M.length,cols=M[0].length,pivots=[],r=0;for(let c=0;c<cols&&r<rows;c++){let piv=r;for(let i=r;i<rows;i++)if(Math.abs(M[i][c])>Math.abs(M[piv][c]))piv=i;if(Math.abs(M[piv][c])<1e-10)continue;[M[r],M[piv]]=[M[piv],M[r]];let val=M[r][c];for(let j=c;j<cols;j++)M[r][j]/=val;for(let i=0;i<rows;i++){if(i!==r){let f=M[i][c];for(let j=c;j<cols;j++)M[i][j]-=f*M[r][j];}}pivots.push(c);r++;}return {M,pivots};}
+function nullBasisFromRref(rr,pivots,cols){let free=[];for(let j=0;j<cols;j++)if(!pivots.includes(j))free.push(j);let basis=[];for(const f of free){let x=Array(cols).fill(0);x[f]=1;for(let i=0;i<pivots.length;i++){let p=pivots[i];x[p]=-rr[i][f];}basis.push(x);}return basis;}
+function updateInd(){let A=getMat('I',3,3), rr=rref(A), rank=rr.pivots.length, nullbasis=nullBasisFromRref(rr.M,rr.pivots,3);let msg=`A = ${matHTML(A)} RREF(A) = ${matHTML(rr.M)} rank(A) = ${rank}<br>`;if(rank===3){msg+=`<span class='ok'>The three vectors are linearly independent.</span> There is a pivot in every column.`;}else{msg+=`<span class='bad'>The vectors are linearly dependent.</span> A nontrivial relation is given by any nonzero vector in ker(A).<br>`;msg+=`Kernel basis: ${nullbasis.length?nullbasis.map(vecHTML).join(''):'not available'}`;}indResult.innerHTML=msg;}
+function indPreset(t){if(t==='dependent')setMat('I',[[1,2,3],[-3,-2,-1],[4,5,6]]); if(t==='independent')setMat('I',[[1,0,2],[0,1,1],[1,1,0]]); if(t==='zero')setMat('I',[[1,0,2],[2,0,4],[3,0,6]]); update();}
+function updateCoords(){let P=getMat('BAS',2,2), v=getMat('VEC',2,1).map(r=>r[0]), inv=inv2(P);let msg=`P_B = ${matHTML(P)} v = ${vecHTML(v)} det(P_B) = ${fmt(det2(P))}<br>`;if(!inv){msg+=`<span class='bad'>The columns do not form a basis.</span> Coordinates are not unique or may not exist.`;}else{let c=matVec(inv,v);msg+=`<span class='ok'>The columns form a basis.</span><br>[v]_B = ${vecHTML(c)} because P_B [v]_B = v.`;}coordResult.innerHTML=msg;drawCoords(P,v);}
+function basisPreset(t){if(t==='standard'){setMat('BAS',[[1,0],[0,1]]);setVec('VEC',[4,2]);} if(t==='diagonal'){setMat('BAS',[[1,1],[1,-1]]);setVec('VEC',[4,2]);} if(t==='bad'){setMat('BAS',[[1,2],[2,4]]);setVec('VEC',[4,2]);} update();}
+function drawCoords(P,v){let c=coordCanvas,ctx=c.getContext('2d'),W=c.width,H=c.height,sc=45;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);function pt(x,y){return [W/2+x*sc,H/2-y*sc];}ctx.strokeStyle='#eef2f7';ctx.lineWidth=1;for(let x=-7;x<=7;x++){let p=pt(x,0)[0];ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,H);ctx.stroke();}for(let y=-5;y<=5;y++){let p=pt(0,y)[1];ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(W,p);ctx.stroke();}let ox=pt(0,0)[0],oy=pt(0,0)[1];ctx.strokeStyle='#9ca3af';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(W,oy);ctx.stroke();ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();function vec(a,color,label){let q=pt(a[0],a[1]);ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(q[0],q[1]);ctx.stroke();ctx.beginPath();ctx.arc(q[0],q[1],5,0,2*Math.PI);ctx.fill();ctx.font='15px system-ui';ctx.fillText(label,q[0]+8,q[1]-8);}vec([P[0][0],P[1][0]],'#2563eb','b1');vec([P[0][1],P[1][1]],'#f97316','b2');vec(v,'#111827','v');}
+function updateSpanBasis(){let A=getMat('SB',3,4), rr=rref(A), rank=rr.pivots.length, piv=rr.pivots;let imageCols=piv.map(j=>A.map(row=>row[j]));spanBasisResult.innerHTML=`A = ${matHTML(A)} RREF(A) = ${matHTML(rr.M)} Pivot columns: ${piv.map(x=>x+1).join(', ')||'none'}<br>dim span(S) = ${rank}<br><strong>Basis from original pivot columns:</strong> ${imageCols.length?imageCols.map(vecHTML).join(''):'span is {0}'}`;}
+function spanBasisPreset(t){if(t==='chapter')setMat('SB',[[1,0,1,2],[0,1,1,1],[1,1,2,3]]); if(t==='rank3')setMat('SB',[[1,0,0,2],[0,1,0,-1],[0,0,1,3]]); if(t==='rank1')setMat('SB',[[1,2,3,4],[2,4,6,8],[3,6,9,12]]); update();}
+function updateRank(){let A=getMat('R',3,4), rr=rref(A), piv=rr.pivots, rank=piv.length, nullity=4-rank, basis=nullBasisFromRref(rr.M,piv,4), imageCols=piv.map(j=>A.map(row=>row[j]));let txt=`A = ${matHTML(A)} RREF(A) = ${matHTML(rr.M)} Pivot columns: ${piv.map(x=>x+1).join(', ')||'none'}<br>rank(T) = ${rank}, nullity(T) = ${nullity}<br><span class='ok'>rank + nullity = ${rank} + ${nullity} = 4</span><br><strong>Image basis:</strong> ${imageCols.length?imageCols.map(vecHTML).join(''):'image is {0}'}<br><strong>Kernel basis:</strong> ${basis.length?basis.map(vecHTML).join(''):'kernel is {0}'}`;rankResult.innerHTML=txt;}
+function rankPreset(t){if(t==='chapter')setMat('R',[[1,0,2,1],[0,1,-1,3],[1,1,1,4]]); if(t==='full')setMat('R',[[1,0,0,2],[0,1,0,-1],[0,0,1,3]]); if(t==='zero')setMat('R',[[0,0,0,0],[0,0,0,0],[0,0,0,0]]); update();}
+function updateChange(){let PB=getMat('BB',2,2),PC=getMat('CC',2,2),cb=getMat('CB',2,1).map(r=>r[0]), invC=inv2(PC);let v=matVec(PB,cb);let msg=`P_B=${matHTML(PB)} P_C=${matHTML(PC)} [v]_B=${vecHTML(cb)} Standard vector v=P_B[v]_B=${vecHTML(v)}<br>`;if(!invC){msg+=`<span class='bad'>C is not a basis, so C-coordinates are undefined.</span>`;}else{let cc=matVec(invC,v);msg+=`<span class='ok'>[v]_C = ${vecHTML(cc)}</span>`;}changeResult.innerHTML=msg;}
+function changePreset(t){if(t==='chapter'){setMat('BB',[[1,1],[1,-1]]);setMat('CC',[[2,0],[0,3]]);setVec('CB',[3,1]);} if(t==='standard'){setMat('BB',[[1,1],[1,-1]]);setMat('CC',[[1,0],[0,1]]);setVec('CB',[2,3]);} update();}
+function updateDim(){let n=Number(domainDim.value)||0,r=Number(rankDim.value)||0;if(r>=0&&r<=n){dimResult.innerHTML=`nullity = domain dimension - rank = ${n} - ${r} = <span class='ok'>${n-r}</span>`;}else{dimResult.innerHTML=`<span class='bad'>Need 0 ≤ rank ≤ domain dimension.</span>`;}}
+function update(){updateInd();updateCoords();updateSpanBasis();updateRank();updateChange();updateDim(); if(window.MathJax) MathJax.typesetPromise();}
+createInputs('indInputs','I',[[1,2,3],[-3,-2,-1],[4,5,6]],3);createInputs('basisInputs','BAS',[[1,1],[1,-1]],2);createInputs('vecInputs','VEC',[[4],[2]],1);createInputs('spanBasisInputs','SB',[[1,0,1,2],[0,1,1,1],[1,1,2,3]],4);createInputs('rankInputs','R',[[1,0,2,1],[0,1,-1,3],[1,1,1,4]],4);createInputs('basisBInputs','BB',[[1,1],[1,-1]],2);createInputs('basisCInputs','CC',[[2,0],[0,3]],2);createInputs('coordBInputs','CB',[[3],[1]],1);['domainDim','rankDim'].forEach(id=>document.getElementById(id).addEventListener('input',update));update();
+</script>
+</body>
+</html>

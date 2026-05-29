@@ -1,0 +1,993 @@
+---
+title: "Chapter 15: Haar Bases and Wavelet Transforms"
+subtitle: "Averages, Details, Compression, and Multiscale Thinking"
+author: "He Wang"
+format:
+  html:
+    toc: true
+    number-sections: true
+    code-fold: true
+    code-tools: true
+jupyter: python3
+---
+
+# Chapter 15: Haar Bases and Wavelet Transforms
+
+## Opening story: seeing a signal at many distances
+
+Imagine that you are looking at a long signal: a sound wave, a row of pixels in an image, or a time series from a sensor. From far away, you first notice its **average level**. When you step closer, you notice whether the left half is brighter than the right half. When you step closer again, you notice smaller local changes.
+
+This is the basic idea of the **Haar basis**. Instead of describing a signal by its individual entries, we describe it by:
+
+1. an overall average;
+2. a coarse difference between two large blocks;
+3. smaller differences inside each block;
+4. even finer local differences.
+
+This is linear algebra in a new language: the same vector is written in a different basis, but this basis is designed for multiscale structure.
+
+::: {.callout-note}
+## Main idea
+A signal may look complicated in the standard basis, but simple in a basis that separates **averages** from **details**. Haar bases are the simplest wavelet bases. They are useful for compression, denoising, image processing, and multiresolution analysis.
+:::
+
+## 1. Why another basis?
+
+In earlier chapters, we used bases to turn vectors into coordinate lists and linear maps into matrices. The standard basis is convenient for storage, but it is not always the best basis for understanding data.
+
+For example, in the polynomial space $\mathbb{R}_n[x]$, the monomial basis
+
+$$
+1,x,x^2,\ldots,x^n
+$$
+
+is natural, but Bernstein polynomials are also a basis and are better adapted to splines and geometric design. Similarly, in $\mathbb{R}^{2^n}$, the standard basis stores signals entry by entry, while the Haar basis organizes signals by scale.
+
+## 2. The Haar basis in $\mathbb{R}^4$
+
+Let
+
+$$
+\mathcal U=\{\vec e_1,\vec e_2,\vec e_3,\vec e_4\}
+$$
+
+be the standard basis of $\mathbb{R}^4$. Define
+
+$$
+\vec w_1=\begin{bmatrix}1\\1\\1\\1\end{bmatrix},\qquad
+\vec w_2=\begin{bmatrix}1\\1\\-1\\-1\end{bmatrix},\qquad
+\vec w_3=\begin{bmatrix}1\\-1\\0\\0\end{bmatrix},\qquad
+\vec w_4=\begin{bmatrix}0\\0\\1\\-1\end{bmatrix}.
+$$
+
+::: {.callout-important}
+## Definition 15.1: Haar basis in $\mathbb{R}^4$
+The ordered basis
+
+$$
+\mathcal W=\{\vec w_1,\vec w_2,\vec w_3,\vec w_4\}
+$$
+
+is called the **Haar basis** of $\mathbb{R}^4$.
+:::
+
+The four vectors have different meanings:
+
+- $\vec w_1$ records the overall background level.
+- $\vec w_2$ compares the first half with the second half.
+- $\vec w_3$ measures detail inside the first half.
+- $\vec w_4$ measures detail inside the second half.
+
+::: {.callout-tip}
+## Theorem 15.2: Orthogonality in $\mathbb{R}^4$
+The vectors $\vec w_1,\vec w_2,\vec w_3,\vec w_4$ are pairwise orthogonal. Hence they form a basis of $\mathbb{R}^4$.
+:::
+
+<details>
+<summary><strong>Show proof</strong></summary>
+
+Compute the dot products:
+
+$$
+\vec w_1\cdot \vec w_2=1+1-1-1=0,
+$$
+
+$$
+\vec w_1\cdot \vec w_3=1-1+0+0=0,
+\qquad
+\vec w_1\cdot \vec w_4=0+0+1-1=0,
+$$
+
+$$
+\vec w_2\cdot \vec w_3=1-1+0+0=0,
+\qquad
+\vec w_2\cdot \vec w_4=0+0-1+1=0,
+$$
+
+and
+
+$$
+\vec w_3\cdot \vec w_4=0.
+$$
+
+Thus the vectors are nonzero and pairwise orthogonal. Pairwise orthogonal nonzero vectors are linearly independent. Since there are four of them in $\mathbb{R}^4$, they form a basis.
+
+</details>
+
+The Haar matrix whose columns are these vectors is
+
+$$
+W=\begin{bmatrix}
+1&1&1&0\\
+1&1&-1&0\\
+1&-1&0&1\\
+1&-1&0&-1
+\end{bmatrix}.
+$$
+
+Since the columns are orthogonal but not normalized,
+
+$$
+W^T W=\operatorname{diag}(4,4,2,2).
+$$
+
+Therefore
+
+$$
+W^{-1}=\operatorname{diag}\left(\frac14,\frac14,\frac12,\frac12\right)W^T.
+$$
+
+### Example 15.3: Coordinates of a short signal
+
+Let
+
+$$
+\vec v=\begin{bmatrix}6\\4\\5\\1\end{bmatrix}.
+$$
+
+Then
+
+$$
+\vec c=W^{-1}\vec v
+=\begin{bmatrix}4\\1\\1\\2\end{bmatrix}.
+$$
+
+Thus
+
+$$
+\vec v=4\vec w_1+1\vec w_2+1\vec w_3+2\vec w_4.
+$$
+
+The number $4$ is the average level, $1$ is the coarse difference between the first and second halves, and $1,2$ are local details.
+
+```{python}
+import numpy as np
+
+W = np.array([[1, 1, 1, 0],
+              [1, 1,-1, 0],
+              [1,-1, 0, 1],
+              [1,-1, 0,-1]], dtype=float)
+
+v = np.array([6,4,5,1], dtype=float)
+Winv = np.diag([1/4,1/4,1/2,1/2]) @ W.T
+c = Winv @ v
+print(c)
+print(W @ c)
+```
+
+## 3. Averaging and differencing
+
+For
+
+$$
+\vec v=\begin{bmatrix}v_1\\v_2\\v_3\\v_4\end{bmatrix},
+$$
+
+the Haar coefficients are
+
+$$
+c_1=\frac{v_1+v_2+v_3+v_4}{4},
+\qquad
+c_2=\frac{v_1+v_2-v_3-v_4}{4},
+$$
+
+$$
+c_3=\frac{v_1-v_2}{2},
+\qquad
+c_4=\frac{v_3-v_4}{2}.
+$$
+
+This is the smallest version of a general rule: the Haar transform repeatedly computes averages and differences.
+
+::: {.callout-note}
+## Interpretation
+- $c_1$ is the global average.
+- $c_2$ is a coarse detail.
+- $c_3,c_4$ are fine details.
+:::
+
+## 4. Haar bases in $\mathbb{R}^{2^n}$
+
+The Haar basis generalizes naturally to dimensions $2^n$. The construction reflects two operations:
+
+- **scaling:** compare larger or smaller blocks;
+- **shifting:** move the same comparison pattern to a different block.
+
+For dimension $2^n$, the first vector is the constant vector
+
+$$
+\vec w_1=(1,1,\ldots,1)^T.
+$$
+
+The remaining vectors are indexed by a scale $j$ and a location $k$, where
+
+$$
+0\le j\le n-1,
+\qquad
+0\le k\le 2^j-1.
+$$
+
+They are often denoted by $\vec h_k^j$.
+
+::: {.callout-important}
+## Definition 15.4: Discrete Haar vectors
+For $0\le j\le n-1$ and $0\le k\le 2^j-1$, define $\vec h_k^j\in \mathbb{R}^{2^n}$ by
+
+$$
+\vec h_k^j(i)=
+\begin{cases}
+1, & k2^{n-j}+1\le i\le k2^{n-j}+2^{n-j-1},\\
+-1, & k2^{n-j}+2^{n-j-1}+1\le i\le (k+1)2^{n-j},\\
+0, & \text{otherwise.}
+\end{cases}
+$$
+
+Together with $\vec w_1$, these vectors form the Haar basis of $\mathbb{R}^{2^n}$.
+:::
+
+### Example 15.5: Haar basis in $\mathbb{R}^8$
+
+One possible ordering of the Haar basis is
+
+$$
+\vec w_1,
+\quad \vec h_0^0,
+\quad \vec h_0^1,\vec h_1^1,
+\quad \vec h_0^2,\vec h_1^2,\vec h_2^2,\vec h_3^2.
+$$
+
+The corresponding non-normalized Haar matrix is
+
+$$
+W_3=\begin{bmatrix}
+1&1&1&0&1&0&0&0\\
+1&1&1&0&-1&0&0&0\\
+1&1&-1&0&0&1&0&0\\
+1&1&-1&0&0&-1&0&0\\
+1&-1&0&1&0&0&1&0\\
+1&-1&0&1&0&0&-1&0\\
+1&-1&0&-1&0&0&0&1\\
+1&-1&0&-1&0&0&0&-1
+\end{bmatrix}.
+$$
+
+::: {.callout-tip}
+## Theorem 15.6: Orthogonality of the Haar basis
+The Haar vectors in $\mathbb{R}^{2^n}$ are pairwise orthogonal. Hence they form a basis of $\mathbb{R}^{2^n}$.
+:::
+
+<details>
+<summary><strong>Show proof</strong></summary>
+
+Each Haar vector is supported on a dyadic interval. On its support, it is $1$ on the left half and $-1$ on the right half.
+
+If two Haar vectors have disjoint supports, their dot product is zero. If one support is contained inside a half of the support of the other vector, then the larger-scale vector is constant on the smaller support, while the smaller Haar vector has equally many $1$ and $-1$ entries. Therefore their dot product is again zero.
+
+Finally, a Haar vector is orthogonal to the constant vector because the sum of its entries is zero. Thus all distinct Haar vectors are orthogonal.
+
+There are
+
+$$
+1+\sum_{j=0}^{n-1}2^j=1+(2^n-1)=2^n
+$$
+
+vectors. Therefore they form an orthogonal basis of $\mathbb{R}^{2^n}$.
+
+</details>
+
+## 5. The normalized Haar matrix
+
+It is often more convenient to use an orthonormal Haar basis. Define
+
+$$
+\vec q_i=\frac{\vec w_i}{\|\vec w_i\|},
+\qquad
+H_n=[\vec q_1\ \vec q_2\ \cdots\ \vec q_{2^n}].
+$$
+
+::: {.callout-tip}
+## Proposition 15.7: The normalized Haar matrix is orthogonal
+The normalized Haar matrix $H_n$ satisfies
+
+$$
+H_n^T H_n=H_nH_n^T=I.
+$$
+
+Consequently,
+
+$$
+H_n^{-1}=H_n^T.
+$$
+:::
+
+<details>
+<summary><strong>Show proof</strong></summary>
+
+The columns of $H_n$ are normalized versions of pairwise orthogonal Haar vectors. Hence they form an orthonormal basis, so the matrix with these columns is orthogonal.
+
+</details>
+
+::: {.callout-note}
+## Energy preservation
+For the normalized Haar matrix,
+
+$$
+\|H_n^T\vec v\|_2=\|\vec v\|_2.
+$$
+
+This is the finite-dimensional version of Parseval's identity.
+:::
+
+## 6. Fast Haar transform
+
+The Haar transform can be computed without forming the matrix. It only requires repeated averaging and differencing.
+
+::: {.callout-important}
+## Definition 15.8: Fast Haar transform
+Let $\vec u\in \mathbb{R}^{2^n}$. Set $\vec c^{(n)}=\vec u$. For $j=n-1,n-2,\ldots,0$, define $\vec c^{(j)}$ from $\vec c^{(j+1)}$ by
+
+$$
+\vec c^{(j)}(i)=\frac{\vec c^{(j+1)}(2i-1)+\vec c^{(j+1)}(2i)}{2},
+$$
+
+$$
+\vec c^{(j)}(2^j+i)=\frac{\vec c^{(j+1)}(2i-1)-\vec c^{(j+1)}(2i)}{2},
+$$
+
+for $i=1,\ldots,2^j$. The Haar coefficient vector is $\vec c=\vec c^{(0)}$.
+:::
+
+### Example 15.9: A length-8 signal
+
+Let
+
+$$
+\vec u=(31,29,23,17,-6,-8,-2,-4).
+$$
+
+First average and difference adjacent pairs:
+
+$$
+(31,29),(23,17),(-6,-8),(-2,-4)
+$$
+
+gives
+
+$$
+\vec c^{(2)}=(30,20,-7,-3,1,3,1,1).
+$$
+
+Next average and difference the first four entries:
+
+$$
+\vec c^{(1)}=(25,-5,5,-2,1,3,1,1).
+$$
+
+Finally average and difference the first two entries:
+
+$$
+\vec c^{(0)}=(10,15,5,-2,1,3,1,1).
+$$
+
+Thus the Haar transform is
+
+$$
+\vec c=(10,15,5,-2,1,3,1,1).
+$$
+
+```{python}
+import numpy as np
+
+def haar_transform(x):
+    x = np.asarray(x, dtype=float).copy()
+    coeffs = x.copy()
+    length = len(coeffs)
+    while length > 1:
+        avg = (coeffs[:length:2] + coeffs[1:length:2]) / 2
+        diff = (coeffs[:length:2] - coeffs[1:length:2]) / 2
+        coeffs[:length//2] = avg
+        coeffs[length//2:length] = diff
+        length //= 2
+    return coeffs
+
+def inverse_haar_transform(c):
+    c = np.asarray(c, dtype=float).copy()
+    x = c.copy()
+    length = 1
+    n = len(x)
+    while length < n:
+        avg = x[:length].copy()
+        diff = x[length:2*length].copy()
+        x[:2*length:2] = avg + diff
+        x[1:2*length:2] = avg - diff
+        length *= 2
+    return x
+
+u = np.array([31,29,23,17,-6,-8,-2,-4])
+c = haar_transform(u)
+print(c)
+print(inverse_haar_transform(c))
+```
+
+::: {.callout-tip}
+## Proposition 15.10: Complexity of the fast Haar transform
+The fast Haar transform of a vector in $\mathbb{R}^{2^n}$ requires $O(2^n)$ arithmetic operations.
+:::
+
+<details>
+<summary><strong>Show proof</strong></summary>
+
+At the first level we process $2^n$ entries in pairs. At the next level we process $2^{n-1}$ averaged entries, then $2^{n-2}$, and so on. The total number of operations is bounded by a constant multiple of
+
+$$
+2^n+2^{n-1}+\cdots+2+1<2^{n+1}.
+$$
+
+Thus the complexity is $O(2^n)$.
+
+</details>
+
+## 7. Haar wavelets as functions
+
+A vector can be viewed as a piecewise constant function. If
+
+$$
+\vec u=(u_1,u_2,\ldots,u_m)^T,
+$$
+
+define $f_{\vec u}:[0,1)\to \mathbb{R}$ by
+
+$$
+f_{\vec u}(x)=u_i
+\quad\text{for}\quad
+\frac{i-1}{m}\le x<\frac{i}{m}.
+$$
+
+::: {.callout-important}
+## Definition 15.11: Mother Haar wavelet
+The mother Haar wavelet is
+
+$$
+\psi(x)=
+\begin{cases}
+1, & 0\le x<\frac12,\\
+-1, & \frac12\le x<1,\\
+0, & \text{otherwise.}
+\end{cases}
+$$
+
+The scaled and translated Haar wavelets are
+
+$$
+\psi_k^j(x)=\psi(2^jx-k),
+\qquad
+0\le j,
+\quad 0\le k\le 2^j-1.
+$$
+:::
+
+The vector Haar basis in $\mathbb{R}^{2^n}$ is a finite-dimensional shadow of the Haar wavelet system in $L^2([0,1])$. The wavelets $\psi_k^j$ measure local changes at scale $2^{-j}$.
+
+## 8. Compression and denoising
+
+A signal is often compressible in a Haar basis because many detail coefficients are small. The basic compression scheme is:
+
+1. Start with a signal $\vec u$.
+2. Compute Haar coefficients $\vec c$.
+3. Replace small coefficients by zero, producing $\widehat{\vec c}$.
+4. Reconstruct $\widehat{\vec u}$.
+
+### Example 15.12: A short signal
+
+Consider
+
+$$
+\vec u=(2.4,2.2,2.15,2.05,6.8,2.8,-1.1,-1.3).
+$$
+
+A Haar transform gives approximately
+
+$$
+\vec c=(2,0.2,0.1,3,0.1,0.05,2,0.1).
+$$
+
+If we discard coefficients with magnitude at most $0.2$, then
+
+$$
+\widehat{\vec c}=(2,0,0,3,0,0,2,0).
+$$
+
+The reconstructed signal is approximately
+
+$$
+\widehat{\vec u}=(2,2,2,2,7,3,-1,-1).
+$$
+
+This simplified signal keeps the main shape and removes small fluctuations.
+
+```{python}
+u = np.array([2.4,2.2,2.15,2.05,6.8,2.8,-1.1,-1.3])
+c = haar_transform(u)
+chat = c.copy()
+chat[np.abs(chat) <= 0.2] = 0
+uhat = inverse_haar_transform(chat)
+print("coefficients:", np.round(c, 3))
+print("compressed coefficients:", np.round(chat, 3))
+print("reconstruction:", np.round(uhat, 3))
+print("error norm:", np.linalg.norm(u-uhat))
+```
+
+::: {.callout-tip}
+## Theorem 15.13: Best thresholding in an orthonormal basis
+Let $\{\vec q_1,\ldots,\vec q_N\}$ be an orthonormal basis of $\mathbb{R}^N$, and write
+
+$$
+\vec u=\sum_{i=1}^N c_i\vec q_i.
+$$
+
+Among all approximations using exactly $k$ basis vectors, the smallest $\ell^2$ error is obtained by keeping the $k$ largest coefficients $|c_i|$.
+:::
+
+<details>
+<summary><strong>Show proof</strong></summary>
+
+If we keep coefficients indexed by $S$, then the approximation is
+
+$$
+\vec u_S=\sum_{i\in S}c_i\vec q_i.
+$$
+
+Since the basis is orthonormal,
+
+$$
+\|\vec u-\vec u_S\|_2^2
+=\left\|\sum_{i\notin S}c_i\vec q_i\right\|_2^2
+=\sum_{i\notin S}|c_i|^2.
+$$
+
+To minimize this error with $|S|=k$, we must exclude the smallest coefficients and keep the largest ones.
+
+</details>
+
+## 9. Two-dimensional Haar transform
+
+Images are matrices. A grayscale image can be stored as a matrix $A\in\mathbb{R}^{m\times n}$ whose entries are pixel intensities. If $m=2^r$ and $n=2^s$, the two-dimensional normalized Haar transform is
+
+$$
+C=H_r^T A H_s.
+$$
+
+The reconstruction is
+
+$$
+A=H_r C H_s^T.
+$$
+
+Equivalently, one first transforms the rows and then transforms the columns.
+
+For a $2\times2$ block
+
+$$
+A=\begin{bmatrix}a&b\\c&d\end{bmatrix},
+$$
+
+the first-level Haar quantities are combinations of
+
+$$
+\frac{a+b+c+d}{4},
+\qquad
+\frac{a+b-c-d}{4},
+\qquad
+\frac{a-b+c-d}{4},
+\qquad
+\frac{a-b-c+d}{4}.
+$$
+
+They represent average, vertical contrast, horizontal contrast, and diagonal contrast.
+
+```{python}
+def haar2(A):
+    A = np.asarray(A, dtype=float)
+    C = np.apply_along_axis(haar_transform, 1, A)
+    C = np.apply_along_axis(haar_transform, 0, C)
+    return C
+
+def inverse_haar2(C):
+    A = np.apply_along_axis(inverse_haar_transform, 0, C)
+    A = np.apply_along_axis(inverse_haar_transform, 1, A)
+    return A
+
+A = np.array([[70,56,61,49],
+              [52,46,39,43],
+              [63,45,46,54],
+              [53,39,40,44]], dtype=float)
+C = haar2(A)
+C_compressed = C.copy()
+C_compressed[np.abs(C_compressed) < 3] = 0
+A_reconstructed = inverse_haar2(C_compressed)
+print(np.round(C, 2))
+print(np.round(A_reconstructed, 2))
+```
+
+## 10. Kronecker product construction
+
+The Haar matrices can be constructed recursively using Kronecker products.
+
+::: {.callout-important}
+## Definition 15.14: Kronecker product
+If $A=[a_{ij}]\in\mathbb{R}^{m\times n}$ and $B\in\mathbb{R}^{p\times q}$, then
+
+$$
+A\otimes B=
+\begin{bmatrix}
+a_{11}B&a_{12}B&\cdots&a_{1n}B\\
+a_{21}B&a_{22}B&\cdots&a_{2n}B\\
+\vdots&\vdots&\ddots&\vdots\\
+a_{m1}B&a_{m2}B&\cdots&a_{mn}B
+\end{bmatrix}
+\in\mathbb{R}^{mp\times nq}.
+$$
+:::
+
+A recursive construction of the non-normalized Haar matrix is
+
+$$
+W_n=\left[\begin{array}{c|c}
+W_{n-1}\otimes \begin{bmatrix}1\\1\end{bmatrix}
+&
+I_{2^{n-1}}\otimes \begin{bmatrix}1\\-1\end{bmatrix}
+\end{array}\right],
+\qquad
+W_0=[1].
+$$
+
+::: {.callout-tip}
+## Theorem 15.15: Orthogonality of recursive Haar matrices
+The recursive matrices $W_n$ have pairwise orthogonal columns.
+:::
+
+<details>
+<summary><strong>Show proof</strong></summary>
+
+Proceed by induction. For $n=0$, the claim is clear. Suppose the columns of $W_{n-1}$ are orthogonal. The first block
+
+$$
+W_{n-1}\otimes \begin{bmatrix}1\\1\end{bmatrix}
+$$
+
+contains duplicated lower-scale vectors, while the second block
+
+$$
+I_{2^{n-1}}\otimes \begin{bmatrix}1\\-1\end{bmatrix}
+$$
+
+contains local difference vectors. Using
+
+$$
+(A\otimes B)^T(C\otimes D)=(A^T C)\otimes (B^T D),
+$$
+
+and
+
+$$
+\begin{bmatrix}1&1\end{bmatrix}\begin{bmatrix}1\\-1\end{bmatrix}=0,
+$$
+
+the two blocks are orthogonal to each other. The first block is orthogonal by the induction hypothesis, and the second block is orthogonal because the columns are supported on disjoint pairs.
+
+</details>
+
+## 11. Hadamard matrices and Walsh bases
+
+Haar bases are not the only orthogonal bases made from simple $\pm1$ patterns. Hadamard matrices give another important family.
+
+::: {.callout-important}
+## Definition 15.16: Hadamard matrix
+A real $n\times n$ matrix $H$ is a **Hadamard matrix** if each entry is $\pm1$ and
+
+$$
+H^T H=nI_n.
+$$
+:::
+
+Examples are
+
+$$
+H_2=\begin{bmatrix}1&1\\1&-1\end{bmatrix},
+\qquad
+H_4=\begin{bmatrix}
+1&1&1&1\\
+1&-1&1&-1\\
+1&1&-1&-1\\
+1&-1&-1&1
+\end{bmatrix}.
+$$
+
+::: {.callout-tip}
+## Proposition 15.17: Sylvester construction
+If $H$ is a Hadamard matrix of dimension $n$, then
+
+$$
+\begin{bmatrix}
+H&H\\
+H&-H
+\end{bmatrix}
+$$
+
+is a Hadamard matrix of dimension $2n$.
+:::
+
+<details>
+<summary><strong>Show proof</strong></summary>
+
+Let
+
+$$
+K=\begin{bmatrix}H&H\\H&-H\end{bmatrix}.
+$$
+
+Then
+
+$$
+K^T K=
+\begin{bmatrix}
+H^T&H^T\\
+H^T&-H^T
+\end{bmatrix}
+\begin{bmatrix}
+H&H\\
+H&-H
+\end{bmatrix}
+=
+\begin{bmatrix}
+2H^T H&0\\
+0&2H^T H
+\end{bmatrix}
+=2n I_{2n}.
+$$
+
+Thus $K$ is Hadamard.
+
+</details>
+
+## 12. Haar, Fourier, and SVD
+
+| Method | Building blocks | Main strength | Typical use |
+|---|---|---|---|
+| SVD | Rank-one matrices | Best low-rank approximation | Data compression, PCA |
+| Fourier | Sines, cosines, complex exponentials | Frequency analysis | Periodic signals, PDEs |
+| Haar wavelets | Averages and local jumps | Multiscale localization | Images, denoising, compression |
+
+The SVD is optimal for low-rank matrix approximation in the Frobenius norm. Fourier methods are effective for globally periodic oscillatory behavior. Haar wavelets are simple and fast, and they are especially useful when data has localized changes, edges, jumps, or piecewise constant structure.
+
+## 13. Practice problems
+
+### Problem 1: A signal in $\mathbb{R}^4$
+
+Let $\vec v=(8,4,2,2)^T$. Compute its Haar coefficients in the non-normalized $\mathbb{R}^4$ Haar basis.
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+Using
+
+$$
+c_1=\frac{v_1+v_2+v_3+v_4}{4},
+\quad
+c_2=\frac{v_1+v_2-v_3-v_4}{4},
+$$
+
+$$
+c_3=\frac{v_1-v_2}{2},
+\quad
+c_4=\frac{v_3-v_4}{2},
+$$
+
+we get
+
+$$
+c_1=4,
+\quad c_2=2,
+\quad c_3=2,
+\quad c_4=0.
+$$
+
+Thus $\vec c=(4,2,2,0)^T$.
+
+</details>
+
+### Problem 2: Reconstruct a signal
+
+Use inverse Haar reconstruction to recover $\vec u$ from coefficients
+
+$$
+\vec c=(10,15,5,-2,1,3,1,1).
+$$
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+The inverse transform gives
+
+$$
+\vec u=(31,29,23,17,-6,-8,-2,-4).
+$$
+
+</details>
+
+### Problem 3: Orthogonality
+
+Explain why $\vec h_0^1=(1,1,-1,-1,0,0,0,0)^T$ is orthogonal to $\vec h_2^2=(0,0,0,0,1,-1,0,0)^T$.
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+Their supports are disjoint: the first vector is supported on entries $1,2,3,4$, while the second is supported on entries $5,6$. Therefore their dot product is zero.
+
+</details>
+
+### Problem 4: Compression error
+
+In an orthonormal basis, suppose coefficients are $(8,3,1,0.5)$. If we keep only the two largest coefficients, what is the squared error?
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+Keep $8$ and $3$. The discarded coefficients are $1$ and $0.5$. Since the basis is orthonormal, the squared error is
+
+$$
+1^2+0.5^2=1.25.
+$$
+
+</details>
+
+### Problem 5: 2D Haar block
+
+For
+
+$$
+A=\begin{bmatrix}10&8\\4&2\end{bmatrix},
+$$
+
+compute the four first-level Haar quantities.
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+They are
+
+$$
+\frac{10+8+4+2}{4}=6,
+$$
+
+$$
+\frac{10+8-4-2}{4}=3,
+$$
+
+$$
+\frac{10-8+4-2}{4}=1,
+$$
+
+and
+
+$$
+\frac{10-8-4+2}{4}=0.
+$$
+
+So the block has average $6$, vertical contrast $3$, horizontal contrast $1$, and diagonal contrast $0$.
+
+</details>
+
+## 14. Classical challenge questions
+
+### Challenge 1: Haar versus Fourier for jumps
+
+Suppose a signal is mostly constant but has a sudden jump. Would a Haar representation or a Fourier representation usually be more localized? Explain.
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+A Haar representation is usually more localized. Haar wavelets are supported on dyadic intervals, so a jump affects mainly wavelets whose supports intersect the jump. Fourier basis functions are global, so a local jump influences many Fourier coefficients.
+
+</details>
+
+### Challenge 2: Best $k$-term approximation
+
+Prove that in an orthonormal basis, the best $k$-term approximation is obtained by keeping the $k$ largest coefficients in magnitude.
+
+<details>
+<summary><strong>Show proof</strong></summary>
+
+Let
+
+$$
+\vec u=\sum_{i=1}^N c_i\vec q_i
+$$
+
+with $\{\vec q_i\}$ orthonormal. If we keep a set $S$ of coefficients, then
+
+$$
+\vec u_S=\sum_{i\in S}c_i\vec q_i.
+$$
+
+The squared error is
+
+$$
+\|\vec u-\vec u_S\|_2^2=\sum_{i\notin S}|c_i|^2.
+$$
+
+To minimize this quantity with $|S|=k$, we must make the discarded sum as small as possible, so we keep the $k$ largest $|c_i|$.
+
+</details>
+
+### Challenge 3: Recursive Haar construction
+
+Use the Kronecker product formula to construct $W_3$ from $W_2$.
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+Use
+
+$$
+W_3=\left[\begin{array}{c|c}
+W_2\otimes \begin{bmatrix}1\\1\end{bmatrix}
+&
+I_4\otimes \begin{bmatrix}1\\-1\end{bmatrix}
+\end{array}\right].
+$$
+
+The first block duplicates each entry of a lower-scale Haar vector into adjacent pairs. The second block inserts local pair differences. This produces the standard non-normalized Haar basis in $\mathbb{R}^8$.
+
+</details>
+
+## 15. AI companion activities
+
+Use an AI assistant as a study partner, but verify the mathematics yourself.
+
+::: {.callout-note}
+## Activity A: Explain coefficients in words
+Ask:
+
+> Explain the Haar coefficients $(10,15,5,-2,1,3,1,1)$ as average, coarse detail, and fine detail. Then give a simple real-world signal that might have these coefficients.
+
+Check whether the response correctly separates the scales.
+:::
+
+::: {.callout-note}
+## Activity B: Debug a Haar transform
+Ask the AI to write Python code for the fast Haar transform and inverse transform. Then test whether applying the inverse after the transform returns the original vector.
+:::
+
+::: {.callout-note}
+## Activity C: Compare SVD, Fourier, and Haar
+Ask:
+
+> Compare SVD compression, Fourier compression, and Haar wavelet compression for image data. Give one situation where each method is natural.
+
+Then revise the answer using the table in this chapter.
+:::
+
+## 16. Summary
+
+The Haar basis is an orthogonal basis designed for multiscale data. It separates average information from details, admits a fast transform, and gives a simple model for compression and denoising. In one dimension, it transforms signals by repeated averaging and differencing. In two dimensions, it transforms images by separating average, horizontal, vertical, and diagonal information. Haar wavelets are the first example of a broad family of wavelet methods used in signal processing, image compression, numerical analysis, and data science.

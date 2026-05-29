@@ -1,0 +1,46 @@
+# {.unnumbered}
+
+--- 
+title: "MATH 5110 Applied Linear Algebra and Matrix Analysis"
+subtitle: "Linear Algebra for the AI Age: Geometry, Computation, and Data"
+author: "[He Wang](https://hewang.sites.northeastern.edu/)"
+date: "May 29, 2026"
+---
+
+# Welcome {.unnumbered}
+
+Welcome to **MATH 5110 Applied Linear Algebra and Matrix Analysis**.
+
+This online book is designed for graduate students studying applied linear algebra, matrix analysis, computation, data science, and artificial intelligence. The goal is to present linear algebra not only as a collection of techniques, but also as a language for understanding modern data, algorithms, and mathematical modeling.
+
+
+## Course Information {.unnumbered}
+
+**Course:** MATH 5110 Applied Linear Algebra and Matrix Analysis  
+**Instructor:** He Wang  
+**Department:** Department of Mathematics  
+**University:** Northeastern University  
+**Personal Website:** [He Wang's Website](https://hewang.sites.northeastern.edu/)  
+**Course Website:** [MATH 5110 Course Website](https://wanghemath.github.io/MATH5110)  
+**Github:** [Github Account](https://github.com/wanghemath)  
+
+## About the Author {.unnumbered}
+
+**He Wang** is an Associate Teaching Professor in the Department of Mathematics at Northeastern University. He serves as Program Director for several graduate programs, including MS Applied Mathematics, MS Mathematics, MS Statistics, and MS Operations Research.
+
+His teaching and academic interests include applied linear algebra, matrix analysis, mathematical foundations of data science and AI, optimization, topology, and computational mathematics.
+
+## About This Book {.unnumbered}
+
+This book develops linear algebra from foundational ideas to modern applications. Topics include systems of linear equations, matrix algebra, vector spaces, linear transformations, orthogonality, eigenvalues, singular value decomposition, optimization, Markov chains, and applications to data science and machine learning.
+
+The book includes:
+
+- Lecture-style chapters
+- Independent study labs
+- Python computation examples
+- Interactive HTML activities
+- Conceptual explanations
+- Applications to data, computation, and AI
+
+This book is based on my teaching materials of MATH 5110 for graduate students, motivated by MATH 7243 and MATH 7339 Machine Learning and Statistical Learning Theory 1 and 2. The ebook was written with the help of ChatGPT, Claude, and Gemini, and built with [Quarto](https://quarto.org/)

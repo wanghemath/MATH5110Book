@@ -1,0 +1,175 @@
+# Lab 18: Computational Complexity and Eigenvalue Computation {.unnumbered}
+
+# Lab goals
+
+In this lab you will practice computational thinking in applied linear algebra. You will compare operation counts, use sparse matrices, implement the power method, compute Rayleigh quotients, and interpret convergence.
+
+The main ideas are:
+
+- dense matrix storage costs $O(mn)$;
+- sparse storage depends on $\operatorname{nnz}(A)$;
+- matrix-vector multiplication is often much cheaper than matrix-matrix multiplication;
+- the power method approximates a dominant eigenvector;
+- the Rayleigh quotient estimates eigenvalues from eigenvectors.
+
+# Python practice notebook
+
+The Jupyter notebook version contains guided computations, solutions, and similar practice questions.
+
+[Download Lab 18 notebook](lab-18-computational-complexity-eigenvalues-independent-study.ipynb)
+
+If your book is hosted on GitHub, you can also add a Colab link:
+ 
+[Open in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/labs/lab-18-computational-complexity-eigenvalues-independent-study.ipynb)
+ 
+
+# Interactive lab
+
+Use the interactive HTML page to compare computational costs and experiment with the power method.
+
+[Open Lab 18 Interactive](lab-18-interactive.html)
+
+# Background formulas
+
+For matrix dimensions
+
+$$
+A\in\mathbb R^{m\times n},\qquad B\in\mathbb R^{n\times p},\qquad \vec x\in\mathbb R^p,
+$$
+
+we have
+
+$$
+(AB)\vec x=A(B\vec x),
+$$
+
+but the computational costs are approximately
+
+$$
+(AB)\vec x:\quad O(mnp)+O(mp),
+$$
+
+and
+
+$$
+A(B\vec x):\quad O(np)+O(mn).
+$$
+
+The normalized power method is
+
+$$
+\vec y_{k+1}=A\vec x_k,
+\qquad
+\vec x_{k+1}=\frac{\vec y_{k+1}}{\|\vec y_{k+1}\|}.
+$$
+
+The Rayleigh quotient is
+
+$$
+R_A(\vec x)=\frac{\vec x^TA\vec x}{\vec x^T\vec x}.
+$$
+
+# Independent-study tasks
+
+## Task 1: Cost comparison
+
+Let $A,B\in\mathbb R^{1000\times 1000}$ and $\vec x\in\mathbb R^{1000}$. Compare the cost of forming $(AB)\vec x$ versus computing $A(B\vec x)$.
+
+<details>
+<summary><strong>Answer</strong></summary>
+
+Forming $AB$ costs about $1000^3=10^9$ operations, and then multiplying by $\vec x$ costs about $10^6$ operations. Computing $A(B\vec x)$ uses two matrix-vector products, about $2\cdot 10^6$ operations. The second method is roughly hundreds of times cheaper.
+
+</details>
+
+## Task 2: Sparse matrix storage
+
+A tridiagonal $n\times n$ matrix has about $3n-2$ nonzero entries. What is the density when $n=10{,}000$?
+
+<details>
+<summary><strong>Answer</strong></summary>
+
+The density is approximately
+
+$$
+\frac{3n-2}{n^2}=\frac{29998}{10^8}\approx 0.00029998.
+$$
+
+So only about $0.03\%$ of entries are nonzero.
+
+</details>
+
+## Task 3: Power method by hand
+
+Let
+
+$$
+A=\begin{bmatrix}4&0\\0&1\end{bmatrix},
+\qquad
+\vec x_0=\begin{bmatrix}1\\1\end{bmatrix}.
+$$
+
+Compute $A^k\vec x_0$ and determine the limiting direction.
+
+<details>
+<summary><strong>Answer</strong></summary>
+
+We have
+
+$$
+A^k\vec x_0=\begin{bmatrix}4^k\\1\end{bmatrix}.
+$$
+
+After normalization, the direction converges to the $x$-axis, which is the eigendirection for the dominant eigenvalue $4$.
+
+</details>
+
+## Task 4: Rayleigh quotient
+
+For
+
+$$
+A=\begin{bmatrix}2&1\\1&2\end{bmatrix},
+$$
+
+compute $R_A(1,1)^T$.
+
+<details>
+<summary><strong>Answer</strong></summary>
+
+Since
+
+$$
+A\begin{bmatrix}1\\1\end{bmatrix}=\begin{bmatrix}3\\3\end{bmatrix},
+$$
+
+we get
+
+$$
+R_A(1,1)=\frac{(1,1)\cdot(3,3)}{(1,1)\cdot(1,1)}=\frac{6}{2}=3.
+$$
+
+</details>
+
+## Task 5: Similar practice question
+
+Let
+
+$$
+A=\begin{bmatrix}5&0\\0&2\end{bmatrix},
+\qquad
+\vec x_0=\begin{bmatrix}1\\3\end{bmatrix}.
+$$
+
+Predict the limiting direction of the power method.
+
+<details>
+<summary><strong>Answer</strong></summary>
+
+Since the dominant eigenvalue is $5$ and the initial vector has a nonzero component in the corresponding eigendirection, the normalized iterates converge to the direction of $(1,0)^T$.
+
+</details>
+
+# Suggested submission
+
+Submit your notebook with the code outputs, short written explanations for each task, and one paragraph explaining why computational complexity matters in applied linear algebra.

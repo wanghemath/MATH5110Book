@@ -1,0 +1,147 @@
+# Lab 23: Spectral Graph Theory {.unnumbered}
+
+## Python practice notebook
+
+This lab is designed for independent study. Start with the notebook version, because it contains worked solutions and Python computations.
+
+- [Download the Lab 23 Python notebook](lab-23-spectral-graph-theory-independent-study.ipynb)
+- [Open Lab 23 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-23-spectral-graph-theory-independent-study.ipynb)
+
+In the notebook you will:
+
+1. construct graphs using NetworkX;
+2. compute adjacency, degree, incidence, and Laplacian matrices;
+3. verify that powers of adjacency matrices count walks;
+4. verify the Laplacian energy identity;
+5. compute connected components from zero Laplacian eigenvalues;
+6. use the Fiedler vector for spectral clustering.
+
+## Interactive lab
+
+After the Python practice, use the interactive page to experiment visually.
+
+[Open the Lab 23 interactive page](lab-23-interactive.html)
+
+The interactive page lets you add and remove edges, compute graph matrices, inspect Laplacian eigenvalues, and visualize a Fiedler-vector partition.
+
+## Key formulas
+
+For a graph $G=(V,E)$ with adjacency matrix $A$, degree matrix $D$, and Laplacian $L$,
+
+$$
+D_{ii}=\sum_j A_{ij},
+\qquad
+L=D-A.
+$$
+
+The entries of powers of $A$ count walks:
+
+$$
+(A^k)_{ij}=\#\{\text{walks of length }k\text{ from }i\text{ to }j\}.
+$$
+
+The Laplacian quadratic form is
+
+$$
+x^TLx=\sum_{\{i,j\}\in E}w_{ij}(x_i-x_j)^2.
+$$
+
+The multiplicity of the eigenvalue $0$ of $L$ equals the number of connected components.
+
+## Independent-study questions with answers
+
+### Question 1
+
+For the path graph $1-2-3-4$, write $A$, $D$, and $L$.
+
+<details>
+<summary><strong>Show answer</strong></summary>
+
+$$
+A=\begin{bmatrix}
+0&1&0&0\\
+1&0&1&0\\
+0&1&0&1\\
+0&0&1&0
+\end{bmatrix},
+\quad
+D=\begin{bmatrix}
+1&0&0&0\\
+0&2&0&0\\
+0&0&2&0\\
+0&0&0&1
+\end{bmatrix},
+$$
+
+$$
+L=D-A=\begin{bmatrix}
+1&-1&0&0\\
+-1&2&-1&0\\
+0&-1&2&-1\\
+0&0&-1&1
+\end{bmatrix}.
+$$
+
+</details>
+
+### Question 2
+
+What does $(A^3)_{25}$ mean?
+
+<details>
+<summary><strong>Show answer</strong></summary>
+
+It is the number of walks of length $3$ from vertex $2$ to vertex $5$.
+
+</details>
+
+### Question 3
+
+A graph has Laplacian eigenvalues $0,0,2,4,5$. How many connected components does it have?
+
+<details>
+<summary><strong>Show answer</strong></summary>
+
+It has two connected components, because the zero eigenvalue has multiplicity two.
+
+</details>
+
+### Question 4
+
+Why is $L$ positive semidefinite?
+
+<details>
+<summary><strong>Show answer</strong></summary>
+
+For every vector $x$,
+$$
+x^TLx=\sum_{\{i,j\}\in E}w_{ij}(x_i-x_j)^2\ge 0.
+$$
+Therefore $L$ is positive semidefinite.
+
+</details>
+
+### Question 5
+
+How does the Fiedler vector suggest a two-way clustering?
+
+<details>
+<summary><strong>Show answer</strong></summary>
+
+The Fiedler vector is the eigenvector associated with the second-smallest Laplacian eigenvalue. A common clustering rule is to separate vertices according to the sign of their Fiedler-vector entries:
+$$
+S=\{i:u_2(i)<0\},\qquad S^c=\{i:u_2(i)\ge 0\}.
+$$
+
+</details>
+
+## Similar practice question
+
+Create a graph made of two triangles connected by one bridge edge. Compute its Laplacian eigenvalues and Fiedler vector. Which vertices should be clustered together?
+
+<details>
+<summary><strong>Show answer</strong></summary>
+
+The two triangles should form the two clusters. The Fiedler vector will typically have one sign on the first triangle and the opposite sign on the second triangle.
+
+</details>

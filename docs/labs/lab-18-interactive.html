@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 18 Interactive: Computational Complexity and Eigenvalues</title>
+<script>
+window.MathJax = {tex: {inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']]}, svg: {fontCache: 'global'}};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--bg:#fff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);} header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;} header h1{margin:0 0 8px;font-size:1.8rem;} header p{margin:0;max-width:1080px;color:var(--muted);line-height:1.55;} main{max-width:1240px;margin:0 auto;padding:24px;} .grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;} .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;} h2{font-size:1.25rem;margin:0 0 12px;} h3{font-size:1.05rem;margin:18px 0 8px;} p{line-height:1.55;} label{display:block;margin:8px 0 4px;font-weight:600;} input[type=number]{width:80px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;} .matrix{display:grid;gap:6px;margin:8px 0 12px;align-items:center;} .m2{grid-template-columns:repeat(2,88px);} .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;} button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;} button.secondary{background:#fff;color:#111827;} canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;} .result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;} .eq{background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto;} .small{font-size:.92rem;color:var(--muted);} table{border-collapse:collapse;background:#fff;margin:8px 0;} th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;} .ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .warn{color:var(--amber);font-weight:700;} .task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;} textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;} code{background:#f3f4f6;padding:1px 4px;border-radius:4px;} @media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+<h1>Lab 18 Interactive: Computational Complexity and Eigenvalue Computation</h1>
+<p>Compare operation counts, sparse storage, power-method convergence, and Rayleigh quotient estimates. This lab turns formulas such as $(AB)x=A(Bx)$ and $R_A(x)=\frac{x^TAx}{x^Tx}$ into experiments.</p>
+</header>
+<main>
+<section class="grid">
+<div class="card">
+<h2>1. Cost comparison</h2>
+<p class="small">Let $A\in\mathbb R^{m\times n}$, $B\in\mathbb R^{n\times p}$, and $x\in\mathbb R^p$.</p>
+<div class="row"><label>m</label><input id="m" type="number" value="1000" min="1"><label>n</label><input id="n" type="number" value="1000" min="1"><label>p</label><input id="p" type="number" value="1000" min="1"></div>
+<button onclick="presetCost('small')">Small</button><button onclick="presetCost('medium')">Medium</button><button onclick="presetCost('large')">Large</button>
+<div class="result" id="costResult"></div>
+</div>
+<div class="card">
+<h2>2. Growth of $n$, $n\log n$, $n^2$, and $n^3$</h2>
+<canvas id="growthCanvas" width="720" height="430"></canvas>
+<p class="small">The plot is log-scaled vertically so that different growth rates can be compared visually.</p>
+</div>
+</section>
+<section class="grid">
+<div class="card">
+<h2>3. Power method for a $2\times2$ matrix</h2>
+<p class="small">Edit $A$ and the initial vector $x_0$. The method normalizes at each step.</p>
+<h3>Matrix $A$</h3><div class="matrix m2" id="Ainputs"></div>
+<h3>Initial vector $x_0$</h3><div class="row"><label>x</label><input id="x0" type="number" value="1" step="0.1"><label>y</label><input id="y0" type="number" value="1" step="0.1"><label>steps</label><input id="steps" type="number" value="20" min="1" max="100"></div>
+<button onclick="presetPower('fast')">Fast convergence</button><button onclick="presetPower('slow')">Slow convergence</button><button onclick="presetPower('fail')">Failure case</button><button class="secondary" onclick="presetPower('mixed')">Mixed matrix</button>
+<div class="result" id="powerResult"></div>
+</div>
+<div class="card">
+<h2>4. Rayleigh quotient history</h2>
+<canvas id="rayCanvas" width="720" height="430"></canvas>
+<p class="small">The black dots show the Rayleigh quotient $R_A(x_k)$ at each power-method iteration.</p>
+</div>
+</section>
+<section class="grid">
+<div class="card">
+<h2>5. Sparse storage estimator</h2>
+<p class="small">For an $N\times N$ tridiagonal matrix, $\operatorname{nnz}=3N-2$.</p>
+<div class="row"><label>N</label><input id="sparseN" type="number" value="10000" min="2"></div>
+<div class="result" id="sparseResult"></div>
+</div>
+<div class="card">
+<h2>6. Generalized eigenvalue determinant</h2>
+<p class="small">For $2\times2$ matrices, generalized eigenvalues solve $\det(A-\lambda B)=0$.</p>
+<div class="eq">Default example: $A=\begin{bmatrix}1&2\\2&4\end{bmatrix}$, $B=\begin{bmatrix}1&1\\1&1\end{bmatrix}$.</div>
+<div class="result" id="genResult"></div>
+</div>
+</section>
+<section class="card">
+<h2>7. Independent-study tasks with answers</h2>
+<div class="task"><strong>Task A.</strong> Use $m=n=p=1000$. Compare forming $(AB)x$ first versus computing $A(Bx)$. <br><strong>Answer:</strong> Forming $AB$ costs about $10^9$ operations; two matrix-vector products cost about $2\cdot10^6$ operations.</div>
+<div class="task"><strong>Task B.</strong> Try the slow convergence preset. Why is it slow? <br><strong>Answer:</strong> The eigenvalue ratio $|\lambda_2/\lambda_1|$ is close to $1$.</div>
+<div class="task"><strong>Task C.</strong> Try the failure case. Why does it fail? <br><strong>Answer:</strong> The initial vector has no component in the dominant eigendirection.</div>
+<div class="task"><strong>Similar practice.</strong> Use $A=\operatorname{diag}(5,2)$ and $x_0=(1,3)^T$. Predict the limiting direction before pressing the preset buttons. <br><strong>Answer:</strong> The limiting direction is the $x$-axis, corresponding to the eigenvalue $5$.</div>
+</section>
+<section class="card"><h2>8. Workspace</h2><textarea placeholder="Write observations here. Copy final answers to your notebook or assignment."></textarea></section>
+</main>
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toPrecision(5).replace(/0+$/,'').replace(/\.$/,'');}
+function sci(x){if(x===0)return '0'; if(Math.abs(x)<10000 && Math.abs(x)>0.001)return fmt(x); return x.toExponential(3);}
+function matHTML(M){return `<table><tbody>${M.map(row=>`<tr>${row.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function createInputs(){let el=document.getElementById('Ainputs');el.innerHTML='';let vals=[[4,0],[0,1]];for(let i=0;i<2;i++)for(let j=0;j<2;j++){let input=document.createElement('input');input.type='number';input.step='0.1';input.value=vals[i][j];input.id=`A${i}${j}`;input.addEventListener('input',update);el.appendChild(input);}}
+function getA(){return [[Number(A00.value)||0,Number(A01.value)||0],[Number(A10.value)||0,Number(A11.value)||0]];}
+function setA(M){for(let i=0;i<2;i++)for(let j=0;j<2;j++)document.getElementById(`A${i}${j}`).value=M[i][j];}
+function updateCost(){let M=Number(m.value)||1,N=Number(n.value)||1,P=Number(p.value)||1;let form=M*N*P+M*P;let vec=N*P+M*N;let ratio=form/vec;costResult.innerHTML=`<strong>Cost of forming $AB$ first:</strong> ${sci(form)} operations<br><strong>Cost of $A(Bx)$:</strong> ${sci(vec)} operations<br><strong>Ratio:</strong> ${sci(ratio)} times larger if forming $AB$ first.<br><span class='ok'>Best for one vector: compute $B x$ first, then multiply by $A$.</span>`;drawGrowth();}
+function presetCost(t){if(t==='small'){m.value=10;n.value=10;p.value=10;} if(t==='medium'){m.value=1000;n.value=1000;p.value=1000;} if(t==='large'){m.value=10000;n.value=10000;p.value=10000;} update();}
+function eig2(A){let tr=A[0][0]+A[1][1], det=A[0][0]*A[1][1]-A[0][1]*A[1][0], disc=tr*tr-4*det;if(disc>=0){let s=Math.sqrt(disc);return [(tr+s)/2,(tr-s)/2];}else{return [NaN,NaN];}}
+function mmv(A,x){return [A[0][0]*x[0]+A[0][1]*x[1],A[1][0]*x[0]+A[1][1]*x[1]];}
+function norm(x){return Math.sqrt(x[0]*x[0]+x[1]*x[1]);}
+function rayleigh(A,x){let Ax=mmv(A,x);return (x[0]*Ax[0]+x[1]*Ax[1])/(x[0]*x[0]+x[1]*x[1]);}
+function power(){let A=getA(), x=[Number(x0.value)||0,Number(y0.value)||0], st=Math.max(1,Number(steps.value)||20);let nrm=norm(x); if(nrm<1e-12)x=[1,1]; else x=[x[0]/nrm,x[1]/nrm];let hist=[];let xs=[];for(let k=0;k<st;k++){let y=mmv(A,x);let yn=norm(y);if(yn<1e-12){hist.push(NaN);break;}x=[y[0]/yn,y[1]/yn];hist.push(rayleigh(A,x));xs.push(x.slice());}return {hist,xs,last:x,A};}
+function updatePower(){let out=power(), A=out.A, ev=eig2(A);let ratio='not available';if(isFinite(ev[0])&&isFinite(ev[1])){let abs=ev.map(Math.abs).sort((a,b)=>b-a);ratio=abs[0]>1e-12?fmt(abs[1]/abs[0]):'undefined';}let last=out.last;powerResult.innerHTML=`A = ${matHTML(A)}Approximate final direction: (${fmt(last[0])}, ${fmt(last[1])})<br>Eigenvalues (real case): ${ev.map(fmt).join(', ')}<br>Approximate convergence ratio $|\lambda_2/\lambda_1|$: ${ratio}<br>Final Rayleigh quotient: ${fmt(out.hist[out.hist.length-1])}`;drawRay(out.hist);if(window.MathJax)MathJax.typesetPromise();}
+function presetPower(t){if(t==='fast'){setA([[4,0],[0,1]]);x0.value=1;y0.value=1;steps.value=15;} if(t==='slow'){setA([[10,0],[0,9]]);x0.value=1;y0.value=1;steps.value=40;} if(t==='fail'){setA([[5,0],[0,2]]);x0.value=0;y0.value=1;steps.value=20;} if(t==='mixed'){setA([[3,1],[1,2]]);x0.value=1;y0.value=1;steps.value=20;} update();}
+function updateSparse(){let N=Math.max(2,Number(sparseN.value)||2);let nnz=3*N-2;let dense=N*N;let density=nnz/dense;sparseResult.innerHTML=`Dense entries: ${sci(dense)}<br>Tridiagonal nonzeros: ${sci(nnz)}<br>Density: ${sci(density)}<br><span class='ok'>Sparse storage saves a factor of about ${sci(dense/nnz)} in entry count.</span>`;}
+function updateGeneralized(){let A=[[1,2],[2,4]],B=[[1,1],[1,1]];let a=A[0][0],b=A[0][1],c=A[1][0],d=A[1][1], e=B[0][0],f=B[0][1],g=B[1][0],h=B[1][1];let C2=e*h-f*g;let C1=-(a*h+d*e-b*g-c*f);let C0=a*d-b*c;genResult.innerHTML=`For the default pair, $\det(A-\lambda B)=(${fmt(C2)})\lambda^2+(${fmt(C1)})\lambda+(${fmt(C0)})$.<br>Here this simplifies to $-\lambda$, so $\lambda=0$ is a generalized eigenvalue. A generalized eigenvector is $(-2,1)^T$.`;if(window.MathJax)MathJax.typesetPromise();}
+function drawGrowth(){let c=growthCanvas,ctx=c.getContext('2d'),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);let ns=[10,30,100,300,1000,3000,10000];let funcs=[['n',n=>n,'#2563eb'],['n log₂ n',n=>n*Math.log2(n),'#065f46'],['n²',n=>n*n,'#f97316'],['n³',n=>n*n*n,'#991b1b']];let vals=[];for(let [name,f,col] of funcs)for(let n of ns)vals.push(f(n));let min=Math.log10(Math.min(...vals)), max=Math.log10(Math.max(...vals));function X(i){return 55+i*(W-100)/(ns.length-1);}function Y(v){return H-45-(Math.log10(v)-min)/(max-min)*(H-85);}ctx.strokeStyle='#e5e7eb';ctx.lineWidth=1;for(let i=0;i<ns.length;i++){ctx.beginPath();ctx.moveTo(X(i),20);ctx.lineTo(X(i),H-45);ctx.stroke();ctx.fillStyle='#6b7280';ctx.font='12px system-ui';ctx.fillText(ns[i],X(i)-12,H-25);}funcs.forEach(([name,f,col],idx)=>{ctx.strokeStyle=col;ctx.lineWidth=3;ctx.beginPath();ns.forEach((n,i)=>{let x=X(i),y=Y(f(n));if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();ctx.fillStyle=col;ctx.fillText(name,W-90,30+idx*22);});ctx.fillStyle='#111827';ctx.font='14px system-ui';ctx.fillText('Problem size n',W/2-40,H-5);}
+function drawRay(hist){let c=rayCanvas,ctx=c.getContext('2d'),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);let clean=hist.filter(x=>isFinite(x));if(clean.length===0)return;let min=Math.min(...clean),max=Math.max(...clean);if(Math.abs(max-min)<1e-10){max+=1;min-=1;}function X(i){return 45+i*(W-80)/Math.max(1,hist.length-1);}function Y(v){return H-45-(v-min)/(max-min)*(H-85);}ctx.strokeStyle='#e5e7eb';ctx.lineWidth=1;for(let k=0;k<5;k++){let y=30+k*(H-85)/4;ctx.beginPath();ctx.moveTo(45,y);ctx.lineTo(W-35,y);ctx.stroke();}ctx.strokeStyle='#2563eb';ctx.lineWidth=2;ctx.beginPath();clean.forEach((v,i)=>{let x=X(i),y=Y(v);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();ctx.fillStyle='#111827';clean.forEach((v,i)=>{let x=X(i),y=Y(v);ctx.beginPath();ctx.arc(x,y,3,0,2*Math.PI);ctx.fill();});ctx.font='13px system-ui';ctx.fillText('iteration',W/2-25,H-10);ctx.fillText('Rayleigh quotient',10,20);ctx.fillText(fmt(max),8,35);ctx.fillText(fmt(min),8,H-45);}
+function update(){updateCost();updatePower();updateSparse();updateGeneralized();}
+createInputs();['m','n','p','x0','y0','steps','sparseN'].forEach(id=>document.getElementById(id).addEventListener('input',update));update();
+</script>
+</body>
+</html>

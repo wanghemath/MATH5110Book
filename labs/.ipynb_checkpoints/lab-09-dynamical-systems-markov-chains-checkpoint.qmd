@@ -1,0 +1,163 @@
+# Lab 9: Dynamical Systems, Markov Chains, and Perron--Frobenius Theory {.unnumbered}
+ 
+
+## Purpose
+
+This lab helps you practice Chapter 9 computationally. The main idea is that repeated matrix multiplication can model time:
+$$
+x_{k+1}=Ax_k,\qquad x_k=A^kx_0.
+$$
+You will study Markov chains, stationary distributions, PageRank-style damping, Perron--Frobenius behavior, and Leslie population models.
+
+## Python practice notebook
+
+Download and complete the independent-study notebook:
+
+- [Download Lab 9 notebook](lab-09-dynamical-systems-markov-chains-independent-study.ipynb)
+- [Open Lab 9 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-09-dynamical-systems-markov-chains-independent-study.ipynb)
+
+The notebook includes worked solutions and similar practice questions. It is designed for independent study.
+
+### Python practice topics
+
+1. Simulate $x_{k+1}=Ax_k$.
+2. Check whether a matrix is column stochastic.
+3. Compute stationary distributions by solving $A\pi=\pi$, $\sum_i\pi_i=1$.
+4. Use power iteration to approximate the long-term distribution.
+5. Compare regular and periodic Markov chains.
+6. Explore a PageRank-style damping matrix.
+7. Compute dominant eigenvectors for Perron--Frobenius examples.
+8. Simulate a Leslie population model.
+
+## Interactive lab
+
+Open the interactive HTML page:
+
+[Open Lab 9 Interactive HTML](lab-09-interactive.html)
+
+Use it to explore:
+
+- two-state Markov chains;
+- stationary distributions;
+- convergence versus periodic behavior;
+- PageRank damping;
+- Leslie population growth.
+
+## Independent-study tasks
+
+### Task A: Two-state Markov chain
+
+Use the interactive tool to study
+$$
+A=\begin{bmatrix}0.9&0.2\\0.1&0.8\end{bmatrix}.
+$$
+Start from $x_0=(0.5,0.5)^T$. Record several iterates and the stationary distribution.
+
+<details>
+<summary>Answer</summary>
+
+The stationary distribution satisfies
+$$
+A\pi=\pi,
+\qquad \pi_1+\pi_2=1.
+$$
+Solving gives
+$$
+\pi=\begin{bmatrix}2/3\\1/3\end{bmatrix}.
+$$
+The iterates converge to this vector.
+
+</details>
+
+### Task B: Create a periodic Markov chain
+
+Use
+$$
+A=\begin{bmatrix}0&1\\1&0\end{bmatrix}.
+$$
+Start from $x_0=(1,0)^T$. Does the sequence converge?
+
+<details>
+<summary>Answer</summary>
+
+No. The sequence alternates:
+$$
+(1,0)^T,(0,1)^T,(1,0)^T,(0,1)^T,\ldots
+$$
+The matrix is irreducible but not regular.
+
+</details>
+
+### Task C: PageRank damping
+
+Choose a web matrix $P$ and damping factor $\alpha=0.85$. Form
+$$
+G=\alpha P+(1-\alpha)\frac{1}{n}\mathbf 1\mathbf 1^T.
+$$
+Explain why $G$ converges more reliably than $P$.
+
+<details>
+<summary>Answer</summary>
+
+The damping term makes every entry of $G$ positive. Therefore $G$ is primitive. Perron--Frobenius theory implies a unique positive stationary distribution and convergence from every starting probability vector.
+
+</details>
+
+### Task D: Leslie model
+
+For
+$$
+L=\begin{bmatrix}0.2&1.4\\0.6&0\end{bmatrix},
+$$
+simulate $x_{k+1}=Lx_k$. What does the dominant eigenvalue tell you?
+
+<details>
+<summary>Answer</summary>
+
+The dominant eigenvalue gives the long-term growth factor per time step. The normalized population vector approaches the corresponding positive eigenvector, which represents the stable stage distribution.
+
+</details>
+
+## Similar practice questions
+
+### Practice 1
+For
+$$
+A=\begin{bmatrix}0.8&0.3\\0.2&0.7\end{bmatrix},
+$$
+find the stationary distribution.
+
+<details>
+<summary>Answer</summary>
+
+Solving $A\pi=\pi$, $\pi_1+\pi_2=1$, gives
+$$
+\pi=\begin{bmatrix}0.6\\0.4\end{bmatrix}.
+$$
+
+</details>
+
+### Practice 2
+Give an example of a stochastic matrix that has a stationary distribution but does not converge from every starting vector.
+
+<details>
+<summary>Answer</summary>
+
+$$
+A=\begin{bmatrix}0&1\\1&0\end{bmatrix}
+$$
+has stationary distribution $(1/2,1/2)^T$, but iterates starting from $(1,0)^T$ alternate forever.
+
+</details>
+
+## AI companion activity
+
+Ask an AI assistant to explain one of the following concepts in two ways: first for a beginner, then for a graduate applied linear algebra student.
+
+- stationary distribution;
+- regular Markov chain;
+- Perron eigenvector;
+- PageRank damping;
+- Leslie model.
+
+Then verify one numerical example in Python.

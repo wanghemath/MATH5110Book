@@ -1,0 +1,100 @@
+# Lab 1. Linear Systems: Interactive Practice {.unnumbered}
+
+This lab accompanies **Chapter 1: Linear Systems**.
+
+The goal is to connect three views of a linear system:
+
+1. **Algebra:** the equations and row-reduction.
+2. **Geometry:** the intersection of lines.
+3. **Computation:** rank tests and numerical/symbolic checking.
+
+
+
+## Python practice notebook
+
+You may also use the Jupyter notebook version for longer Python practice:
+
+- [Download Lab 1 notebook](lab-01-linear-systems.ipynb)
+- [Open Lab 1 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-01-linear-systems.ipynb)
+- [Download Lab 1 Plus notebook](lab-01-linear-systems.ipynb)
+- [Open Lab 1 Plus in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/Lab_1_Introduction_to_Python_Linear_Algebra.ipynb)
+
+## Interactive lab
+
+```{=html}
+<iframe
+  src="lab-01-interactive.html"
+  width="100%"
+  height="1250"
+  style="border:1px solid #ddd; border-radius:12px;">
+</iframe>
+```
+
+## Submission questions
+
+Submit short written answers to the following questions.
+
+### Question 1. Unique solution
+
+Use the interactive lab to create a system with exactly one solution.
+
+Record:
+
+- the two equations;
+- the coefficient matrix $A$;
+- the vector $b$;
+- the augmented matrix $[A \mid b]$;
+- $\operatorname{rank}(A)$;
+- $\operatorname{rank}([A \mid b])$;
+- the solution $(x,y)$.
+
+Explain why the system has a unique solution both algebraically and geometrically.
+
+### Question 2. No solution
+
+Use the interactive lab to create a system with no solution.
+
+Record the same information as in Question 1.
+
+Explain why
+
+$$
+\operatorname{rank}(A) < \operatorname{rank}([A \mid b]).
+$$
+
+Also explain the geometry of the two lines.
+
+### Question 3. Infinitely many solutions
+
+Use the interactive lab to create a system with infinitely many solutions.
+
+Record the same information as in Question 1.
+
+Explain why
+
+$$
+\operatorname{rank}(A)=\operatorname{rank}([A \mid b])<2.
+$$
+
+Also explain why the two equations describe the same line.
+
+### Question 4. Change only the right-hand side
+
+Start from a system with infinitely many solutions. Then change only $c_2$.
+
+What changes geometrically? What changes algebraically? What happens to the ranks?
+
+### Question 5. AI companion
+
+Ask an AI tool:
+
+> Explain the rank test for consistency of a linear system $Ax=b$.
+
+Then critique the answer.
+
+Your critique should answer:
+
+1. Is the statement mathematically correct?
+2. Does it distinguish $A$ from $[A \mid b]$?
+3. Does it explain the geometric meaning?
+4. Can you give a concrete example where the system has no solution?

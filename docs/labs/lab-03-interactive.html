@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 3 Interactive: Linear Spaces, Subspaces, and Linear Maps</title>
+<style>
+  :root{--bg:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+  body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);} header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;} header h1{margin:0 0 8px;font-size:1.8rem;} header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;} main{max-width:1240px;margin:0 auto;padding:24px;} .grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;} .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;} h2{font-size:1.25rem;margin:0 0 12px;} h3{font-size:1.05rem;margin:18px 0 8px;} p{line-height:1.55;} label{display:block;margin:8px 0 4px;font-weight:600;} input[type=number]{width:62px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;} .matrix{display:grid;gap:6px;margin:8px 0 12px;align-items:center;} .m2{grid-template-columns:repeat(2,70px);} .m3{grid-template-columns:repeat(3,70px);} .m34{grid-template-columns:repeat(4,70px);} .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;} button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;} button.secondary{background:#fff;color:#111827;} select{padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff;} canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;} .result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;} .eq{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto;} .small{font-size:.92rem;color:var(--muted);} table{border-collapse:collapse;background:#fff;margin:8px 0;} th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;} .ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .warn{color:var(--amber);font-weight:700;} .task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;} textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;} code{background:#f3f4f6;padding:1px 4px;border-radius:4px;} @media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+
+<script>
+
+function renderMath(){
+  if (window.MathJax && window.MathJax.typesetPromise) {
+    window.MathJax.typesetPromise();
+  }
+}
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)'], ['$', '$']],
+    displayMath: [['\\[', '\\]'], ['$$', '$$']],
+    processEscapes: true,
+    packages: {'[+]': ['ams']}
+  },
+  svg: {fontCache: 'global'}
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+<header>
+  <h1>Lab 3 Interactive: Linear Spaces, Subspaces, and Linear Maps</h1>
+  <p>Explore span, subspaces, direct sums, kernels, images, quotient dimensions, and Kronecker products. The goal is to make abstract vector-space language computational and visual.</p>
+</header>
+<main>
+  <section class="grid">
+    <div class="card">
+      <h2>1. Subspace test in the plane</h2>
+      <p class="small">A line \(ax+by=c\) is a subspace of \(\mathbb{R}^2\) exactly when it passes through the origin, i.e. \(c=0\).</p>
+      <div class="row"><label>a</label><input id="linea" type="number" value="2" step="1"><label>b</label><input id="lineb" type="number" value="-1" step="1"><label>c</label><input id="linec" type="number" value="0" step="1"></div>
+      <button onclick="linePreset('subspace')">Subspace line</button><button onclick="linePreset('affine')">Affine line</button><button class="secondary" onclick="linePreset('vertical')">Vertical line</button>
+      <div class="result" id="lineResult"></div>
+    </div>
+    <div class="card">
+      <h2>2. Geometry of a line through the origin</h2>
+      <canvas id="lineCanvas" width="720" height="520"></canvas>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>3. Span and membership in R³</h2>
+      <p class="small">Enter two generators \(u,v\) and a target vector \(w\). The tool solves \(su+tv=w\).</p>
+      <h3>u</h3><div class="matrix m3" id="uInputs"></div>
+      <h3>v</h3><div class="matrix m3" id="vInputs"></div>
+      <h3>w</h3><div class="matrix m3" id="wInputs"></div>
+      <button onclick="spanPreset('inside')">w inside span</button><button onclick="spanPreset('outside')">w outside span</button><button onclick="spanPreset('dependent')">dependent generators</button>
+      <div class="result" id="spanResult"></div>
+    </div>
+    <div class="card">
+      <h2>4. Direct sum in R²</h2>
+      <p class="small">Two lines through the origin give \(\mathbb{R}^2=U\oplus W\) if they are different lines.</p>
+      <div class="row"><label>Angle of U</label><input id="angleU" type="number" value="0" step="5"><label>Angle of W</label><input id="angleW" type="number" value="90" step="5"></div>
+      <button onclick="directPreset('direct')">Direct sum</button><button onclick="directPreset('same')">Not direct</button><button class="secondary" onclick="directPreset('close')">Almost same</button>
+      <canvas id="directCanvas" width="720" height="430"></canvas>
+      <div class="result" id="directResult"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>5. Kernel and image of a linear transformation</h2>
+    <p>Let \(T:\mathbb{R}^4\to\mathbb{R}^3\) be given by \(T(x)=Ax\). Edit the matrix and compute RREF, pivot columns, image basis, kernel basis, rank, and nullity.</p>
+    <div class="matrix m34" id="A34Inputs"></div>
+    <button onclick="kernelPreset('lecture')">Lecture example</button><button onclick="kernelPreset('fullrank')">Rank 3 example</button><button class="secondary" onclick="kernelPreset('zero')">Zero map</button>
+    <div class="result" id="kernelResult"></div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>6. Quotient dimension</h2>
+      <p class="small">For finite-dimensional spaces, \(\dim(V/N)=\dim(V)-\dim(N)\).</p>
+      <div class="row"><label>dim(V)</label><input id="dimV" type="number" value="4" step="1"><label>dim(N)</label><input id="dimN" type="number" value="2" step="1"></div>
+      <div class="result" id="quotientResult"></div>
+    </div>
+    <div class="card">
+      <h2>7. Kronecker product</h2>
+      <p class="small">The Kronecker product is a matrix model for tensor-product computations.</p>
+      <h3>A</h3><div class="matrix m2" id="KronA"></div>
+      <h3>B</h3><div class="matrix m2" id="KronB"></div>
+      <button onclick="kronPreset('basic')">Basic example</button><button onclick="kronPreset('swap')">Swap/sign example</button>
+      <div class="result" id="kronResult"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>8. Independent-study practice tasks with answers</h2>
+    <div class="task"><strong>Task A.</strong> Decide whether \(\{(x,y):2x-y=0\}\) is a subspace. <br><strong>Answer:</strong> Yes. It contains the origin and is the kernel of the linear functional \(T(x,y)=2x-y\).</div>
+    <div class="task"><strong>Task B.</strong> Decide whether \(\{(x,y):2x-y=1\}\) is a subspace. <br><strong>Answer:</strong> No. It does not contain \((0,0)\). It is an affine line, not a linear subspace.</div>
+    <div class="task"><strong>Task C.</strong> For \(u=(1,0,2)\), \(v=(0,1,-1)\), decide whether \(w=(3,4,2)\) belongs to \(\operatorname{span}(u,v)\). <br><strong>Answer:</strong> Solve \(su+tv=(s,t,2s-t)=(3,4,2)\). Then \(s=3\), \(t=4\), and \(2s-t=2\). So yes.</div>
+    <div class="task"><strong>Similar practice.</strong> Try \(w=(3,4,1)\) with the same \(u,v\). <br><strong>Answer:</strong> No, because \(2s-t=2\) for \(s=3,t=4\), not \(1\).</div>
+    <div class="task"><strong>Task D.</strong> If \(T:\mathbb{R}^4\to\mathbb{R}^3\) has rank \(2\), what is \(\dim\ker(T)\)? <br><strong>Answer:</strong> By rank-nullity, \(\dim\ker(T)=4-2=2\).</div>
+    <div class="task"><strong>Task E.</strong> If \(N\) is a 2-dimensional subspace of \(\mathbb{R}^4\), what is \(\dim(\mathbb{R}^4/N)\)? <br><strong>Answer:</strong> \(4-2=2\).</div>
+  </section>
+
+  <section class="card"><h2>9. Workspace</h2><textarea placeholder="Write observations here. Copy final answers to your notebook or assignment."></textarea></section>
+</main>
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(row=>`<tr>${row.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function vecHTML(v){return matHTML(v.map(x=>[x]));}
+function createInputs(containerId,prefix,vals,cols){const el=document.getElementById(containerId);el.innerHTML=''; for(let i=0;i<vals.length;i++){for(let j=0;j<cols;j++){const input=document.createElement('input');input.type='number';input.step='1';input.value=vals[i][j] ?? vals[i];input.id=`${prefix}${i}${j}`;input.addEventListener('input',update);el.appendChild(input);}}}
+function getMat(prefix,rows,cols){let M=[];for(let i=0;i<rows;i++){let r=[];for(let j=0;j<cols;j++)r.push(Number(document.getElementById(`${prefix}${i}${j}`).value)||0);M.push(r);}return M;}
+function setMat(prefix,M){for(let i=0;i<M.length;i++)for(let j=0;j<M[0].length;j++)document.getElementById(`${prefix}${i}${j}`).value=M[i][j];}
+function setVec(prefix,v){for(let i=0;i<v.length;i++)document.getElementById(`${prefix}${i}0`).value=v[i];}
+function dot(a,b){return a.reduce((s,x,i)=>s+x*b[i],0);} function norm(a){return Math.sqrt(dot(a,a));}
+function rref(A){let M=A.map(r=>r.slice().map(Number));let rows=M.length,cols=M[0].length,pivots=[],r=0;for(let c=0;c<cols&&r<rows;c++){let piv=r;for(let i=r;i<rows;i++)if(Math.abs(M[i][c])>Math.abs(M[piv][c]))piv=i;if(Math.abs(M[piv][c])<1e-10)continue;[M[r],M[piv]]=[M[piv],M[r]];let val=M[r][c];for(let j=c;j<cols;j++)M[r][j]/=val;for(let i=0;i<rows;i++){if(i!==r){let f=M[i][c];for(let j=c;j<cols;j++)M[i][j]-=f*M[r][j];}}pivots.push(c);r++;}return {M,pivots};}
+function solve2Cols(u,v,w){let A=[[u[0],v[0],w[0]],[u[1],v[1],w[1]],[u[2],v[2],w[2]]];let rr=rref(A);let inconsistent=rr.M.some(row=>Math.abs(row[0])<1e-10&&Math.abs(row[1])<1e-10&&Math.abs(row[2])>1e-10);let sol=null;if(!inconsistent){let s=0,t=0;for(let i=0;i<rr.M.length;i++){if(Math.abs(rr.M[i][0]-1)<1e-10 && Math.abs(rr.M[i][1])<1e-10)s=rr.M[i][2]; if(Math.abs(rr.M[i][1]-1)<1e-10 && Math.abs(rr.M[i][0])<1e-10)t=rr.M[i][2];} sol=[s,t];}return {rr,inconsistent,sol};}
+function kernelBasis(A, rr, pivots){let rows=A.length, cols=A[0].length;let free=[];for(let j=0;j<cols;j++)if(!pivots.includes(j))free.push(j);let basis=[];for(const f of free){let x=Array(cols).fill(0);x[f]=1;for(let i=0;i<pivots.length;i++){let p=pivots[i];x[p]=-rr[i][f];}basis.push(x);}return basis;}
+function updateLine(){let a=Number(linea.value)||0,b=Number(lineb.value)||0,c=Number(linec.value)||0;let isSub=Math.abs(c)<1e-10 && (Math.abs(a)>1e-10 || Math.abs(b)>1e-10);lineResult.innerHTML=`Line equation: ${fmt(a)}x + ${fmt(b)}y = ${fmt(c)}<br>`+(isSub?`<span class='ok'>This is a subspace of R².</span> It is the kernel of T(x,y)=${fmt(a)}x+${fmt(b)}y.`:`<span class='bad'>This is not a subspace of R².</span> It fails the zero-vector test unless c=0.`);drawLine();}
+function drawLine(){let c=document.getElementById('lineCanvas'),ctx=c.getContext('2d'),W=c.width,H=c.height,sc=55;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);function pt(x,y){return [W/2+x*sc,H/2-y*sc];}ctx.strokeStyle='#eef2f7';ctx.lineWidth=1;for(let x=-6;x<=6;x++){let p=pt(x,0)[0];ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,H);ctx.stroke();}for(let y=-4;y<=4;y++){let p=pt(0,y)[1];ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(W,p);ctx.stroke();}ctx.strokeStyle='#9ca3af';ctx.lineWidth=1.5;let ox=pt(0,0)[0],oy=pt(0,0)[1];ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(W,oy);ctx.stroke();ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();let a=Number(linea.value)||0,b=Number(lineb.value)||0,d=Number(linec.value)||0;ctx.strokeStyle=Math.abs(d)<1e-10?'#065f46':'#f97316';ctx.lineWidth=4;ctx.beginPath();let points=[];if(Math.abs(b)>1e-10){for(let x=-6;x<=6;x+=0.1){let y=(d-a*x)/b;points.push(pt(x,y));}}else if(Math.abs(a)>1e-10){let x=d/a;points=[pt(x,-4.5),pt(x,4.5)];}points.forEach((p,i)=>{if(i===0)ctx.moveTo(p[0],p[1]);else ctx.lineTo(p[0],p[1]);});ctx.stroke();ctx.fillStyle='#111827';ctx.font='15px system-ui';ctx.fillText('origin',ox+8,oy-8);}
+function linePreset(t){if(t==='subspace'){linea.value=2;lineb.value=-1;linec.value=0;} if(t==='affine'){linea.value=2;lineb.value=-1;linec.value=1;} if(t==='vertical'){linea.value=1;lineb.value=0;linec.value=0;} update();}
+function updateSpan(){let u=getMat('u',3,1).map(r=>r[0]),v=getMat('v',3,1).map(r=>r[0]),w=getMat('w',3,1).map(r=>r[0]);let res=solve2Cols(u,v,w);let rankUV=rref([[u[0],v[0]],[u[1],v[1]],[u[2],v[2]]]).pivots.length;spanResult.innerHTML=`rank([u v]) = ${rankUV}<br>RREF of [u v | w] = ${matHTML(res.rr.M)} `+(res.inconsistent?`<span class='bad'>No solution, so w is not in span(u,v).</span>`:`<span class='ok'>Solution exists.</span> One solution is s=${fmt(res.sol[0])}, t=${fmt(res.sol[1])}.`);}
+function spanPreset(t){if(t==='inside'){setVec('u',[1,0,2]);setVec('v',[0,1,-1]);setVec('w',[3,4,2]);} if(t==='outside'){setVec('u',[1,0,2]);setVec('v',[0,1,-1]);setVec('w',[3,4,1]);} if(t==='dependent'){setVec('u',[1,2,3]);setVec('v',[2,4,6]);setVec('w',[3,6,9]);} update();}
+function updateDirect(){let a=Number(angleU.value)||0,b=Number(angleW.value)||0;let diff=Math.abs(((a-b)%180+180)%180);diff=Math.min(diff,180-diff);let ok=diff>1e-8;directResult.innerHTML=ok?`<span class='ok'>The two lines are different, so R² = U ⊕ W.</span>`:`<span class='bad'>The two lines are the same, so U ∩ W = U is not {0}. Not a direct sum.</span>`;drawDirect();}
+function drawDirect(){let c=directCanvas,ctx=c.getContext('2d'),W=c.width,H=c.height,sc=100;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);let ox=W/2,oy=H/2;ctx.strokeStyle='#9ca3af';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(W,oy);ctx.stroke();ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();function draw(angle,color,label){let th=angle*Math.PI/180,dx=Math.cos(th),dy=Math.sin(th);ctx.strokeStyle=color;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(ox-3*sc*dx,oy+3*sc*dy);ctx.lineTo(ox+3*sc*dx,oy-3*sc*dy);ctx.stroke();ctx.fillStyle=color;ctx.font='16px system-ui';ctx.fillText(label,ox+1.7*sc*dx+8,oy-1.7*sc*dy-8);}draw(Number(angleU.value)||0,'#2563eb','U');draw(Number(angleW.value)||0,'#f97316','W');}
+function updateKernel(){let A=getMat('M',3,4), rr=rref(A), piv=rr.pivots, rank=piv.length, basis=kernelBasis(A,rr.M,piv);let imageCols=piv.map(j=>A.map(row=>row[j]));let txt=`A = ${matHTML(A)} RREF(A) = ${matHTML(rr.M)} Pivot columns: ${piv.map(x=>x+1).join(', ') || 'none'}<br>rank(T) = ${rank}, nullity(T) = ${4-rank}<br><strong>Image basis from original pivot columns:</strong> ${imageCols.length?imageCols.map(vecHTML).join(''): 'empty image {0}'}<br><strong>Kernel basis:</strong> ${basis.length?basis.map(vecHTML).join(''):'kernel is {0}'}`;kernelResult.innerHTML=txt;quotientUpdate();}
+function kernelPreset(t){if(t==='lecture')setMat('M',[[0,0,2,8],[1,5,2,-5],[2,10,6,-2]]); if(t==='fullrank')setMat('M',[[1,0,0,2],[0,1,0,-1],[0,0,1,3]]); if(t==='zero')setMat('M',[[0,0,0,0],[0,0,0,0],[0,0,0,0]]); update();}
+function quotientUpdate(){let V=Number(dimV.value)||0,N=Number(dimN.value)||0;quotientResult.innerHTML=(N<=V&&N>=0)?`dim(V/N) = dim(V)-dim(N) = ${V}-${N} = <span class='ok'>${V-N}</span>`:`<span class='bad'>Need 0 ≤ dim(N) ≤ dim(V).</span>`;}
+function kron(A,B){let C=[];for(let i=0;i<A.length;i++){for(let r=0;r<B.length;r++){let row=[];for(let j=0;j<A[0].length;j++){for(let s=0;s<B[0].length;s++)row.push(A[i][j]*B[r][s]);}C.push(row);}}return C;}
+function updateKron(){let A=getMat('KA',2,2),B=getMat('KB',2,2);kronResult.innerHTML=`A ⊗ B = ${matHTML(kron(A,B))}`;}
+function kronPreset(t){if(t==='basic'){setMat('KA',[[1,2],[3,4]]);setMat('KB',[[0,5],[6,7]]);} if(t==='swap'){setMat('KA',[[0,1],[1,0]]);setMat('KB',[[1,0],[0,-1]]);} update();}
+function update(){updateLine();updateSpan();updateDirect();updateKernel();quotientUpdate();updateKron();renderMath();}
+createInputs('uInputs','u',[[1],[0],[2]],1);createInputs('vInputs','v',[[0],[1],[-1]],1);createInputs('wInputs','w',[[3],[4],[2]],1);createInputs('A34Inputs','M',[[0,0,2,8],[1,5,2,-5],[2,10,6,-2]],4);createInputs('KronA','KA',[[1,2],[3,4]],2);createInputs('KronB','KB',[[0,5],[6,7]],2);['linea','lineb','linec','angleU','angleW','dimV','dimN'].forEach(id=>document.getElementById(id).addEventListener('input',update));update();
+</script>
+</body>
+</html>

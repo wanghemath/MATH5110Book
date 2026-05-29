@@ -1,0 +1,209 @@
+
+# Overview: {.unnumbered}
+
+## Linear Algebra for the AI Age: Geometry, Computation, and Data 
+
+This book is an applied, story-driven introduction to **linear algebra and matrix analysis** for graduate students. The guiding idea is simple:
+
+> Linear algebra is the language of structure, computation, geometry, data, and modern intelligent systems.
+
+We begin with the concrete problem of solving linear equations, then gradually uncover the abstract objects behind the computations: vector spaces, linear transformations, bases, coordinates, eigenvectors, inner products, projections, factorizations, spectral theory, and modern applications such as Markov chains, least squares, PCA, Fourier analysis, wavelets, graph theory, optimization, probability, and matrix calculus.
+
+The course is designed to move back and forth between four viewpoints:
+
+1. **Algebraic:** equations, matrices, subspaces, transformations, determinants, eigenvalues.
+2. **Geometric:** dimension, coordinates, orthogonality, projections, distance, angles.
+3. **Computational:** row reduction, LU, QR, Schur, SVD, FFT, sparse matrices, algorithms.
+4. **Applied/data-driven:** least squares, compression, PCA, Markov chains, graph networks, optimization, probability, and AI.
+
+# How to use this book
+
+Each chapter is written as an independent learning unit. Most chapters include:
+
+- a story-driven opening motivation;
+- precise definitions, theorems, and examples;
+- Python computations and numerical experiments;
+- challenge questions;
+- practice problems;
+- hide/show proofs and solutions;
+- AI companion activities for guided exploration.
+
+Each lab is designed for **independent study**. The labs usually include a Quarto lab page, an interactive HTML exploration, and a Jupyter notebook with guided solutions.
+
+# Interactive overview
+
+The interactive overview page is included with this file as:
+ 
+[linear_algebra_interactive_overview](https://wanghemath.github.io/MATH5110/HTML/linear_algebra_interactive_overview.html)
+
+# Course learning arc
+
+## Part I. The computational beginning
+
+The course begins with the practical question:
+
+> When does a system of linear equations have no solution, one solution, or infinitely many solutions?
+
+This leads naturally to matrices, row operations, rank, null spaces, determinants, and matrix factorizations.
+
+## Part II. The language of vector spaces
+
+A linear system is not only a calculation. It reveals the deeper language of vector spaces: subspaces, span, independence, bases, dimension, coordinates, linear transformations, kernels, images, and quotient spaces.
+
+## Part III. Spectral structure
+
+Eigenvalues and eigenvectors reveal directions that a transformation preserves. This is the gateway to diagonalization, Jordan form, matrix powers, dynamical systems, Markov chains, Perron--Frobenius theory, and PageRank-type ideas.
+
+## Part IV. Geometry from inner products
+
+Inner products give length, angle, distance, and orthogonality. This leads to projections, Gram--Schmidt, QR factorization, least squares, adjoints, symmetric/Hermitian matrices, Schur decomposition, spectral decomposition, and positive definiteness.
+
+## Part V. Data, signals, networks, and applications
+
+The later chapters show how the same core ideas power modern applications: SVD and PCA, image compression, Haar wavelets, FFT, Grassmannians, numerical eigenvalue computation, multilinear algebra, Hilbert spaces, spectral graph theory, differential equations, optimization, probability, and matrix calculus.
+ 
+# Chapter roadmap
+
+| Chapter | Topic | Main ideas | Chapter link  | Lab link |
+|---:|---|---|---|---|
+| 1 | Linear Systems | linear systems, row reduction, existence and uniqueness | [chapter-01](chapters/chapter-01-linear-systems.qmd) | [lab-01](labs/lab-01-linear-systems.qmd) |
+| 2 | Matrix Algebra | matrix products, inverses, transpose, LU, rank | [chapter-02](chapters/chapter-02-matrix-algebra.qmd) | [lab-02](labs/lab-02-matrix-algebra.qmd) |
+| 3 | Linear Spaces, Subspaces, Linear Maps | vector spaces, span, direct sums, kernels, images, quotients | [chapter-03](chapters/chapter-03-linear-spaces-subspaces-maps.qmd) | [lab-03](labs/lab-03-linear-spaces-subspaces-maps.qmd) |
+| 4 | Basis, Dimension, Rank-Nullity | basis, coordinates, dimension, rank-nullity | [chapter-04](chapters/chapter-04-bases-dimension-rank-nullity.qmd) | [lab-04](labs/lab-04-bases-dimension-rank-nullity.qmd) |
+| 5 | Coordinates, Matrices, Change of Basis | coordinate vectors, matrix representations, similarity | [chapter-05](chapters/chapter-05-coordinates-matrices-change-of-basis.qmd) | [lab-05](labs/lab-05-coordinates-matrices-change-of-basis.qmd) |
+| 6 | Determinants | area/volume, invertibility, row operations, characteristic polynomial | [chapter-06](chapters/chapter-06-determinants.qmd) | [lab-06](labs/lab-06-determinants.qmd) |
+| 7 | Eigenvalues and Diagonalization | eigenvectors, eigenspaces, diagonalization, powers | [chapter-07](chapters/chapter-07-diagonalization-eigenvalues.qmd) | [lab-07](labs/lab-07-diagonalization-eigenvalues.qmd) |
+| 8 | Jordan Canonical Form | generalized eigenvectors, Jordan blocks, Cayley-Hamilton | [chapter-08](chapters/chapter-08-jordan-canonical-form.qmd) | [lab-08](labs/lab-08-jordan-canonical-form.qmd) |
+| 9 | Dynamical Systems and Markov Chains | linear iteration, stochastic matrices, Perron-Frobenius | [chapter-09](chapters/chapter-09-dynamical-systems-markov-chains-perron-frobenius.qmd) | [lab-09](labs/lab-09-dynamical-systems-markov-chains.qmd) |
+| 10 | Inner Products, Projections, QR, Adjoints | geometry, orthogonality, Gram-Schmidt, QR | [chapter-10](chapters/chapter-10-inner-products-projections-qr-adjoints.qmd) | [lab-10](labs/lab-10-inner-products-projections-qr-adjoints.qmd) |
+| 11 | Complex Inner Products and Schur | Hermitian inner product, unitary matrices, Schur decomposition | [chapter-11](chapters/chapter-11-complex-inner-products-schur.qmd) | [lab-11](labs/lab-11-complex-inner-products-schur.qmd) |
+| 12 | Least Squares and Data Fitting | normal equations, projections, regression, data fitting | [chapter-12](chapters/chapter-12-least-squares-data-fitting.qmd) | [lab-12](labs/lab-12-least-squares-data-fitting.qmd) |
+| 13 | Symmetric and Hermitian Matrices | spectral theorem, quadratic forms, positive definiteness | [chapter-13](chapters/chapter-13-symmetric-hermitian-matrices.qmd) | [lab-13](labs/lab-13-symmetric-hermitian-matrices.qmd) |
+| 14 | Singular Value Decomposition | SVD, low-rank approximation, image compression, PCA | [chapter-14](chapters/chapter-14-singular-value-decomposition.qmd) | [lab-14](labs/lab-14-singular-value-decomposition.qmd) |
+| 15 | Haar Bases and Wavelets | orthogonal bases, multiscale signals, compression | [chapter-15](chapters/chapter-15-haar-bases-wavelet-transforms.qmd) | [lab-15](labs/lab-15-haar-bases-wavelet-transforms.qmd) |
+| 16 | Fast Fourier Transforms | Fourier series, DFT, FFT, signals | [chapter-16](chapters/chapter-16-fast-fourier-transforms.qmd) | [lab-16](labs/lab-16-fast-fourier-transforms.qmd) |
+| 17 | Grassmannians and Subspace Distances | principal angles, subspace geometry, data subspaces | [chapter-17](chapters/chapter-17-grassmannians-subspace-distances.qmd) | [lab-17](labs/lab-17-grassmannians-subspace-distances.qmd) |
+| 18 | Computational Complexity and Eigenvalues | Big-O, sparse matrices, power method, QR algorithm | [chapter-18](chapters/chapter-18-computational-complexity-eigenvalues.qmd) | [lab-18](labs/lab-18-computational-complexity-eigenvalues.qmd) |
+| 19 | Applications of Multilinear Algebra | tensor products, exterior products, multilinear maps | [chapter-19](chapters/chapter-19-applications-multilinear-algebra.qmd) | [lab-19](labs/lab-19-applications-multilinear-algebra.qmd) |
+| 20 | Hilbert Spaces and Applications | metric/normed/inner product spaces, projection theorem | [chapter-20](chapters/chapter-20-hilbert-spaces-applications.qmd) | [lab-20](labs/lab-20-hilbert-spaces-applications.qmd) |
+| 21 | Topological Data Analysis | chain complexes, homology, persistence, barcodes | [chapter-21](chapters/chapter-21-tda.qmd) | [lab-21](labs/lab-21-tda.qmd) |
+| 22 | Duality and Cohomology | dual spaces, cochains, coboundaries, cohomology | [chapter-22](chapters/chapter-22-duality-cohomology.qmd) | [lab-22](labs/lab-22-duality-cohomology.qmd) |
+| 23 | Spectral Graph Theory | graphs as matrices, Laplacian, spectrum, clustering | [chapter-23](chapters/chapter-23-spectral-graph-theory.qmd) | [lab-23](labs/lab-23-spectral-graph-theory.qmd) |
+| 24 | Linear Algebra and Differential Equations | matrix exponential, systems of ODEs, stability | [chapter-24](chapters/chapter-24-linear-algebra-differential-equations.qmd) | [lab-24](labs/lab-24-linear-algebra-differential-equations.qmd) |
+| 25 | Linear Algebra and Optimization | convexity, gradients, least squares, constraints | [chapter-25](chapters/chapter-25-linear-algebra-optimization.qmd) | [lab-25](labs/lab-25-linear-algebra-optimization.qmd) |
+| 26 | Linear Algebra and Probability | random vectors, covariance, Gaussian distributions, random matrices | [chapter-26](chapters/chapter-26-linear-algebra-probability.qmd) | [lab-26](labs/lab-26-linear-algebra-probability.qmd) |
+| 27 | Matrix Calculus | gradients, Hessians, Jacobians, optimization and ML | [chapter-27](chapters/chapter-27-matrix-calculus.qmd) | [lab-27](labs/lab-27-matrix-calculus.qmd) |
+
+
+# A conceptual map
+
+```{mermaid}
+flowchart TD
+  X[Set and Maps]
+  X --> Y[Monoid, Group, Ring, Fiesds]
+  Y --> C[Vector spaces and linear transformations]
+  C --> Z[Subspace, Sum, Quotient]
+  E --> U[Topological Data Analysis]
+  E --> B[Matrix algebra]
+  B --> D[Row operations, LU, determinant, rank]
+  Z --> E[Basis, coordinates, dimension]
+  E --> F[Eigenvalues and eigenspaces]
+  F --> B
+  D --> A[Linear systems] 
+  A --> W[Differential Equations]
+  F --> G[Diagonalization and Jordan form]
+  G --> H[Dynamical systems, Markov chains, PageRank]
+  E --> I[Inner Product Spaces - Geometry] 
+  F --> I
+  I --> J[Orthogonal projection and orthogonal bases]
+  J --> K[Least squares]
+  J --> L[QR and Schur]
+  J --> M[Spectral theorem]
+  M --> N[SVD and PCA]
+  J --> O[FFT and wavelets]
+  G --> Q[Spectral graph theory]
+  I --> R[Hilbert spaces]
+  E --> S[Multilinear algebra]
+  D --> T[Optimization]
+  D --> P[matrix calculus]
+  D --> V[Random Variables]
+```
+
+# Mathematical habits for the course
+
+The course repeatedly practices the following habits.
+
+## Translate among representations
+
+A single idea may appear as an equation, a matrix, a linear map, a geometric object, or a dataset.
+
+For example, a linear transformation can be viewed as:
+
+- a function $T:V\to W$;
+- a matrix $A$ after choosing bases;
+- a geometric machine acting on vectors;
+- a data transformation acting on features;
+- an operator whose structure is revealed by eigenvalues or singular values.
+
+## Ask the invariant question
+
+Many computations are coordinate-dependent, but the important ideas are often invariant:
+
+- dimension of a vector space;
+- rank and nullity of a linear map;
+- eigenvalues under similarity;
+- singular values under orthogonal/unitary changes of coordinates;
+- subspace angles on Grassmannians;
+- connected components from Laplacian zero eigenvalues.
+
+## Connect proof and computation
+
+A theorem is most useful when it becomes a computational tool. For example:
+
+- the rank-nullity theorem explains free variables;
+- the spectral theorem explains quadratic forms and PCA;
+- the projection theorem explains least squares;
+- the SVD explains low-rank approximation;
+- the Perron--Frobenius theorem explains long-term behavior of positive systems;
+- the Laplacian quadratic form explains smoothness and clustering on graphs.
+
+# Python practice: a small preview
+
+```{python}
+import numpy as np
+
+A = np.array([[2, 1], [1, 2]], dtype=float)
+w, V = np.linalg.eigh(A)
+print("A =")
+print(A)
+print("Eigenvalues:", w)
+print("Orthonormal eigenvectors:")
+print(V)
+print("Reconstruction error ||A - V diag(w) V.T||:", np.linalg.norm(A - V @ np.diag(w) @ V.T))
+```
+
+# AI companion prompts
+
+Use AI as a study partner, not as a replacement for mathematical reasoning.
+
+1. **Concept check.** Explain the difference between a matrix, a linear transformation, and a coordinate representation.
+2. **Proof coach.** Give me hints for proving the rank-nullity theorem without giving the full solution first.
+3. **Computation coach.** Generate a Python example where a matrix is diagonalizable and another where it is not.
+4. **Application bridge.** Explain how projections lead to least squares, and how least squares leads to data fitting.
+5. **Synthesis.** Make a concept map connecting QR, Schur, spectral decomposition, SVD, and PCA.
+
+# Suggested independent-study routine
+
+For each chapter:
+
+1. Read the story and definitions.
+2. Work through examples by hand.
+3. Run the Python computations.
+4. Try the interactive lab.
+5. Complete the practice problems before opening solutions.
+6. Ask an AI companion to generate one similar problem and then solve it independently.
+
+# References and further study
+
+The course draws on standard references in applied and advanced linear algebra, matrix analysis, numerical linear algebra, optimization, probability, signal processing, graph theory, and machine learning. Recommended references include texts by Boyd and Vandenberghe, Gockenbach, Strang, Shores, Olver and Shakiban, Garcia and Horn, Meyer, Roman, and Gallier and Quaintance.
+

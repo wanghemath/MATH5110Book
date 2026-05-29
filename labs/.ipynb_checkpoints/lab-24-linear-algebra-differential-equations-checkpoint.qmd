@@ -1,0 +1,188 @@
+# Lab 24: Linear Algebra and Differential Equations {.unnumbered}
+
+# Lab goals
+
+In this independent-study lab, you will use Python and an interactive visualization to study linear differential equations through linear algebra.
+
+By the end, you should be able to:
+
+1. solve $\mathbf x'=A\mathbf x$ using $e^{At}$;
+2. compute eigenvalues and use them to classify stability;
+3. compare exact matrix exponential solutions with forward Euler approximations;
+4. simulate diffusion on a graph using a graph Laplacian;
+5. recognize how eigenvectors are the natural coordinates for differential equations.
+
+# Python practice notebook
+
+Download and work through the notebook first:
+
+- [Download Lab 24 Python notebook](lab-24-linear-algebra-differential-equations-independent-study.ipynb)
+- [Open Lab 24 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-24-linear-algebra-differential-equations-independent-study.ipynb)
+
+The notebook contains worked examples, similar practice questions, and solutions. It is designed for independent study.
+
+# Interactive lab
+
+After the notebook, use the interactive lab:
+
+[Open Lab 24 interactive HTML](lab-24-interactive.html)
+
+The interactive page lets you explore:
+
+- a two-dimensional system $\mathbf x'=A\mathbf x$;
+- eigenvalues, trace, determinant, and stability;
+- vector fields and trajectories;
+- forward Euler time stepping;
+- graph heat diffusion on a path graph.
+
+# Independent-study instructions
+
+For each section, do the following:
+
+1. Read the short explanation.
+2. Run the Python code.
+3. Answer the practice question before opening the solution.
+4. Use the interactive page to test at least two additional examples.
+5. Write a short reflection connecting the computation to the theorem.
+
+# Problems to submit or discuss
+
+## Problem 1: Matrix exponential solution
+
+Let
+
+$$
+A=\begin{bmatrix}2&1\\1&2\end{bmatrix},
+\qquad
+\mathbf x_0=\begin{bmatrix}4\\2\end{bmatrix}.
+$$
+
+Use eigenvectors to find $\mathbf x(t)$.
+
+<details>
+<summary>Solution</summary>
+
+The eigenpairs are
+
+$$
+\lambda_1=3,
+\quad
+\mathbf v_1=\begin{bmatrix}1\\1\end{bmatrix},
+\qquad
+\lambda_2=1,
+\quad
+\mathbf v_2=\begin{bmatrix}1\\-1\end{bmatrix}.
+$$
+
+Since
+
+$$
+\begin{bmatrix}4\\2\end{bmatrix}
+=3\begin{bmatrix}1\\1\end{bmatrix}
++1\begin{bmatrix}1\\-1\end{bmatrix},
+$$
+
+we have
+
+$$
+\mathbf x(t)=3e^{3t}\begin{bmatrix}1\\1\end{bmatrix}
++e^t\begin{bmatrix}1\\-1\end{bmatrix}.
+$$
+
+</details>
+
+## Problem 2: Stability
+
+Classify the equilibrium $\mathbf 0$ for
+
+$$
+A=\begin{bmatrix}-1&-4\\1&-1\end{bmatrix}.
+$$
+
+<details>
+<summary>Solution</summary>
+
+The characteristic polynomial is
+
+$$
+\lambda^2+2\lambda+5=0.
+$$
+
+Thus
+
+$$
+\lambda=-1\pm2i.
+$$
+
+The real parts are negative, so the equilibrium is asymptotically stable. The nonzero imaginary parts mean solutions spiral as they decay.
+
+</details>
+
+## Problem 3: Jordan block
+
+Compute $e^{Jt}$ for
+
+$$
+J=\begin{bmatrix}3&1\\0&3\end{bmatrix}.
+$$
+
+<details>
+<summary>Solution</summary>
+
+Write $J=3I+N$, where
+
+$$
+N=\begin{bmatrix}0&1\\0&0\end{bmatrix}
+$$
+
+and $N^2=0$. Therefore
+
+$$
+e^{Jt}=e^{3t}(I+tN)
+=e^{3t}\begin{bmatrix}1&t\\0&1\end{bmatrix}.
+$$
+
+</details>
+
+## Problem 4: Euler stability
+
+For $x'=-10x$, determine the range of $h>0$ for which forward Euler decays.
+
+<details>
+<summary>Solution</summary>
+
+Forward Euler gives
+
+$$
+x_{k+1}=(1-10h)x_k.
+$$
+
+Decay requires
+
+$$
+|1-10h|<1.
+$$
+
+Thus
+
+$$
+0<h<\frac15.
+$$
+
+</details>
+
+# Reflection questions
+
+1. Why does an eigenbasis make a system easier to solve?
+2. What does the sign of $\operatorname{Re}(\lambda)$ tell you about long-time behavior?
+3. Why can Euler's method be unstable even when the exact system is stable?
+4. In the graph heat equation, why does the final state become constant on a connected graph?
+
+# AI companion prompts
+
+Try these prompts after completing your own work:
+
+- “Explain the matrix exponential solution of $\mathbf x'=A\mathbf x$ using a $2\times2$ example.”
+- “Give me a stable spiral matrix and explain its eigenvalues.”
+- “Help me compare forward Euler with the exact matrix exponential for a stiff system.”
+- “Explain graph heat diffusion using eigenvectors of the Laplacian.”

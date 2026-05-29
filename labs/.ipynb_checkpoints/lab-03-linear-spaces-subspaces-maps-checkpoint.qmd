@@ -1,0 +1,288 @@
+# Lab 3. Linear Spaces, Subspaces, and Linear Maps: Independent Study {.unnumbered}
+
+This lab accompanies **Chapter 3: Linear Spaces, Subspaces, Linear Transformations, Quotients, and Matrices**.
+
+The goal is to connect the abstract language of vector spaces with concrete computation:
+
+1. **Subspaces:** zero-vector test, closure, span, and direct sums.
+2. **Linear maps:** kernels, images, injectivity, surjectivity, and rank-nullity.
+3. **Quotients:** collapsing a subspace to zero and counting the remaining dimensions.
+4. **Tensors:** Kronecker products as a computational model of tensor products.
+
+This is an **independent-study lab**. The questions include solutions so that students can check their work as they go.
+
+## Python practice notebook
+
+You may also use the Jupyter notebook version for longer Python practice:
+
+- [Download Lab 3 independent-study notebook](lab-03-linear-spaces-subspaces-maps-independent-study.ipynb)
+- [Open Lab 3 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-03-linear-spaces-subspaces-maps-independent-study.ipynb)
+
+## Interactive lab
+
+```{=html}
+<iframe
+  src="lab-03-interactive.html"
+  width="100%"
+  height="2600"
+  style="border:1px solid #ddd; border-radius:12px;">
+</iframe>
+```
+
+
+## Study guide and worked questions
+
+### Question 1. Subspace or affine set?
+
+Determine whether each set is a subspace of the indicated vector space.
+
+1. $U=\{(x,y)\in\mathbb R^2:2x-y=0\}$.
+2. $A=\{(x,y)\in\mathbb R^2:2x-y=1\}$.
+3. $C=\{(x,y)\in\mathbb R^2:x\ge 0, y\ge 0\}$.
+
+#### Solution
+
+1. $U$ is a subspace. It is the kernel of the linear functional $T(x,y)=2x-y$.
+2. $A$ is not a subspace because $(0,0)\notin A$.
+3. $C$ is not a subspace because it is not closed under multiplication by negative scalars. For example, $(1,1)\in C$, but $-(1,1)=(-1,-1)\notin C$.
+
+#### Similar practice
+
+Determine whether $H=\{(x,y,z)\in\mathbb R^3:x+2y-z=0\}$ is a subspace.
+
+**Answer:** Yes. It is the kernel of $T(x,y,z)=x+2y-z$.
+
+### Question 2. Span and membership
+
+Let
+
+$$
+u_1=(1,0,2),\qquad \nu_2=(0,1,-1),$$
+
+and let $W=\operatorname{span}(\nu_1,\nu_2)$.
+
+1. Describe all vectors in $W$.
+2. Determine whether $(3,4,2)$ belongs to $W$.
+3. Determine whether $(3,4,1)$ belongs to $W$.
+
+#### Solution
+
+A general vector in $W$ has the form
+
+$$
+s\nu_1+t\nu_2=(s,t,2s-t).
+$$
+
+Thus
+
+$$
+W=\{(x,y,z)\in\mathbb R^3:z=2x-y\}.
+$$
+
+For $(3,4,2)$, choose $s=3$ and $t=4$. Then $2s-t=6-4=2$, so $(3,4,2)\in W$.
+
+For $(3,4,1)$, the first two coordinates force $s=3$ and $t=4$, but then $2s-t=2\ne 1$. Hence $(3,4,1)\notin W$.
+
+#### Similar practice
+
+For the same $W$, determine whether $(2,-1,5)$ belongs to $W$.
+
+**Answer:** Yes, because $2(2)-(-1)=5$.
+
+### Question 3. Direct sums
+
+Let
+
+$$
+U=\{(x,0,0):x\in\mathbb R\},\qquad
+W=\{(0,y,z):y,z\in\mathbb R\}.
+$$
+
+Show that $\mathbb R^3=U\oplus W$.
+
+#### Solution
+
+Every vector $(a,b,c)\in\mathbb R^3$ can be written as
+
+$$
+(a,b,c)=(a,0,0)+(0,b,c),
+$$
+
+where $(a,0,0)\in U$ and $(0,b,c)\in W$. Also,
+
+$$
+U\cap W=\{(0,0,0)\}.
+$$
+
+Therefore $\mathbb R^3=U\oplus W$.
+
+#### Similar practice
+
+Let
+
+$$
+U=\{(x,y,0):x,y\in\mathbb R\},\qquad
+W=\{(0,y,z):y,z\in\mathbb R\}.
+$$
+
+Is $\mathbb R^3=U\oplus W$?
+
+**Answer:** No. Although $U+W=\mathbb R^3$, the intersection is $U\cap W=\{(0,y,0):y\in\mathbb R\}$, which is not $\{0\}$.
+
+### Question 4. Kernel and image
+
+Let $T:\mathbb R^4\to\mathbb R^3$ be defined by $T(x)=Ax$, where
+
+$$
+A=\begin{bmatrix}
+0&0&2&8\\
+1&5&2&-5\\
+2&10&6&-2
+\end{bmatrix}.
+$$
+
+A row reduction gives
+
+$$
+\operatorname{rref}(A)=
+\begin{bmatrix}
+1&5&0&-13\\
+0&0&1&4\\
+0&0&0&0
+\end{bmatrix}.
+$$
+
+Find bases for $\operatorname{im}(T)$ and $\ker(T)$.
+
+#### Solution
+
+The pivot columns are columns $1$ and $3$ of the original matrix. Therefore
+
+$$
+\operatorname{im}(T)=\operatorname{span}\left\{
+\begin{bmatrix}0\\1\\2\end{bmatrix},
+\begin{bmatrix}2\\2\\6\end{bmatrix}
+\right\}.
+$$
+
+From the RREF equations,
+
+$$
+x_1+5x_2-13x_4=0,\qquad x_3+4x_4=0.
+$$
+
+Thus
+
+$$
+x_1=-5x_2+13x_4,\qquad x_3=-4x_4.
+$$
+
+Let $x_2=s$ and $x_4=t$. Then
+
+$$
+x=s\begin{bmatrix}-5\\1\\0\\0\end{bmatrix}
++t\begin{bmatrix}13\\0\\-4\\1\end{bmatrix}.
+$$
+
+Hence
+
+$$
+\ker(T)=\operatorname{span}\left\{
+\begin{bmatrix}-5\\1\\0\\0\end{bmatrix},
+\begin{bmatrix}13\\0\\-4\\1\end{bmatrix}
+\right\}.
+$$
+
+Rank-nullity also checks the answer:
+
+$$
+\dim\operatorname{im}(T)+\dim\ker(T)=2+2=4.
+$$
+
+#### Similar practice
+
+Let
+
+$$
+B=\begin{bmatrix}
+1&0&0&2\\
+0&1&0&-1\\
+0&0&1&3
+\end{bmatrix}.
+$$
+
+Find $\ker(B)$.
+
+**Answer:** The equations are $x_1+2x_4=0$, $x_2-x_4=0$, $x_3+3x_4=0$. Let $x_4=t$. Then
+
+$$
+\ker(B)=\operatorname{span}\left\{\begin{bmatrix}-2\\1\\-3\\1\end{bmatrix}\right\}.
+$$
+
+### Question 5. Quotient dimension
+
+Let $N$ be a 2-dimensional subspace of $\mathbb R^4$. What is $\dim(\mathbb R^4/N)$?
+
+#### Solution
+
+By the quotient dimension formula,
+
+$$
+\dim(\mathbb R^4/N)=\dim(\mathbb R^4)-\dim(N)=4-2=2.
+$$
+
+#### Similar practice
+
+Let $N=\operatorname{span}\{(1,0,0),(0,1,0)\}\subseteq\mathbb R^3$. What is $\dim(\mathbb R^3/N)$?
+
+**Answer:** $3-2=1$.
+
+### Question 6. Kronecker product
+
+Let
+
+$$
+A=\begin{bmatrix}1&2\\3&4\end{bmatrix},\qquad
+B=\begin{bmatrix}0&5\\6&7\end{bmatrix}.
+$$
+
+Compute $A\otimes B$.
+
+#### Solution
+
+By definition,
+
+$$
+A\otimes B=
+\begin{bmatrix}
+1B&2B\\
+3B&4B
+\end{bmatrix}.
+$$
+
+Therefore
+
+$$
+A\otimes B=
+\begin{bmatrix}
+0&5&0&10\\
+6&7&12&14\\
+0&15&0&20\\
+18&21&24&28
+\end{bmatrix}.
+$$
+
+### Question 7. AI companion critique
+
+Ask an AI tool:
+
+> Explain the difference between a vector space, a subspace, and a quotient space using examples from $\mathbb R^3$.
+
+Then critique the response.
+
+Your critique should answer:
+
+1. Does it correctly state that a subspace must contain the zero vector?
+2. Does it distinguish a plane through the origin from an affine plane?
+3. Does it explain that a quotient space identifies vectors differing by a subspace?
+4. Does it include a dimension example such as $\dim(\mathbb R^3/N)=3-\dim(N)$?

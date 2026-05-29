@@ -1,0 +1,735 @@
+---
+title: "Chapter 17: Grassmannians and Distances Between Subspaces"
+subtitle: "When data are not points, but linear worlds"
+author: "He Wang"
+format:
+  html:
+    toc: true
+    number-sections: true
+    code-fold: true
+    code-tools: true
+execute:
+  echo: true
+  warning: false
+  message: false
+jupyter: python3
+---
+
+# The story: comparing directions, not only points
+
+In earlier chapters, a vector was often the main object. A vector could be a point, a signal, an image, a list of coefficients, or a feature representation.
+
+But in many modern applications, the important object is not one vector. It is a **subspace**.
+
+A data set with columns
+
+$$
+A=[\vec a_1\ \vec a_2\ \cdots\ \vec a_k]\in \mathbb R^{n\times k}
+$$
+
+carries the linear information
+
+$$
+\operatorname{im}(A)=\operatorname{span}\{\vec a_1,\ldots,\vec a_k\}\subseteq \mathbb R^n.
+$$
+
+In PCA, the first few principal components span a low-dimensional subspace. In computer vision, several images of the same object may span a subspace. In signal processing, a family of observations may be represented by a subspace. In machine learning, a group of embeddings may be compared by comparing the subspaces they generate.
+
+So the central question of this chapter is:
+
+::: {.callout-important}
+## Guiding question
+How do we measure the distance between two linear subspaces?
+:::
+
+A first attempt fails immediately. If $U,W\subseteq \mathbb R^n$ are linear subspaces, then both contain $\vec 0$. Therefore
+
+$$
+\min_{\vec u\in U,\ \vec w\in W}\|\vec u-\vec w\|=0
+$$
+
+for every pair of subspaces. This quantity cannot distinguish two identical subspaces from two very different subspaces. To compare subspaces, we must compare **directions**.
+
+# Metric spaces and the problem of subspace distance
+
+::: {.callout-definition}
+## Definition 17.1: Metric
+Let $S$ be a set. A function
+
+$$
+d:S\times S\to \mathbb R
+$$
+
+is called a **metric** if for all $x,y,z\in S$:
+
+1. $d(x,y)\ge 0$, and $d(x,y)=0$ if and only if $x=y$;
+2. $d(x,y)=d(y,x)$;
+3. $d(x,z)\le d(x,y)+d(y,z)$.
+
+A set equipped with a metric is called a **metric space**.
+:::
+
+The Euclidean metric on $\mathbb R^n$ is
+
+$$
+d(\vec x,\vec y)=\|\vec x-\vec y\|_2.
+$$
+
+But the objects in this chapter are not vectors. They are subspaces. Thus we need a metric on a space whose points are themselves subspaces.
+
+# The Grassmannian
+
+::: {.callout-definition}
+## Definition 17.2: Grassmannian
+For integers $0\le k\le n$, the **Grassmannian** $\operatorname{Gr}(k,n)$ is the set of all $k$-dimensional linear subspaces of $\mathbb R^n$:
+
+$$
+\operatorname{Gr}(k,n)=\{U\subseteq \mathbb R^n: U\text{ is a linear subspace and }\dim U=k\}.
+$$
+:::
+
+A point of $\operatorname{Gr}(k,n)$ is not a vector. It is an entire $k$-dimensional subspace.
+
+## Example 17.3: Lines through the origin
+
+The Grassmannian $\operatorname{Gr}(1,n)$ is the set of all lines through the origin in $\mathbb R^n$. A nonzero vector $\vec u$ determines the same line as every nonzero scalar multiple $c\vec u$.
+
+Thus $\operatorname{Gr}(1,n)$ remembers direction, but forgets length and sign.
+
+::: {.callout-note}
+## Story interpretation
+A nonzero vector is like a road sign pointing in a direction. The line it spans is the direction itself. If we multiply the sign by $2$, $-3$, or $100$, the direction is still the same line.
+:::
+
+# Orthonormal frames and the Stiefel manifold
+
+A subspace can be represented by a basis matrix. For numerical work, the best basis matrix is usually an orthonormal one.
+
+::: {.callout-definition}
+## Definition 17.4: Stiefel manifold
+The real **Stiefel manifold** $\operatorname{St}(k,n)$ is the set of all $n\times k$ matrices with orthonormal columns:
+
+$$
+\operatorname{St}(k,n)=\{Q\in \mathbb R^{n\times k}: Q^TQ=I_k\}.
+$$
+:::
+
+Each $Q\in \operatorname{St}(k,n)$ determines a $k$-dimensional subspace $\operatorname{im}(Q)$. But many different orthonormal bases represent the same subspace.
+
+::: {.callout-theorem}
+## Proposition 17.5: Grassmannian as a quotient
+The Grassmannian can be represented as
+
+$$
+\operatorname{Gr}(k,n)=\operatorname{St}(k,n)/O(k),
+$$
+
+where $O(k)$ is the group of $k\times k$ orthogonal matrices.
+:::
+
+<details>
+<summary><strong>Proof</strong></summary>
+
+Let $Q\in \operatorname{St}(k,n)$. Its columns form an orthonormal basis for the subspace $U=\operatorname{im}(Q)$.
+
+If $R\in O(k)$, then $QR$ also has orthonormal columns because
+
+$$
+(QR)^T(QR)=R^TQ^TQR=R^TIR=I.
+$$
+
+Also $\operatorname{im}(QR)=\operatorname{im}(Q)$, because multiplying on the right by $R$ only rotates the coordinate system inside the same subspace.
+
+Conversely, suppose $Q_1,Q_2\in \operatorname{St}(k,n)$ have the same column space. Then each column of $Q_2$ is a linear combination of the columns of $Q_1$, so $Q_2=Q_1R$ for some $k\times k$ matrix $R$. Since both have orthonormal columns,
+
+$$
+I=Q_2^TQ_2=R^TQ_1^TQ_1R=R^TR.
+$$
+
+Thus $R\in O(k)$. Therefore quotienting by $O(k)$ identifies exactly the different orthonormal bases of the same subspace.
+
+</details>
+
+# Principal angles between subspaces
+
+For unit vectors $\vec u$ and $\vec v$, the angle $\theta$ between them is determined by
+
+$$
+\cos\theta=\vec u^T\vec v.
+$$
+
+For two $k$-dimensional subspaces, one angle is usually not enough. We need a list of angles.
+
+::: {.callout-definition}
+## Definition 17.6: Principal angles
+Let $U,W\in \operatorname{Gr}(k,n)$. The **principal angles**
+
+$$
+0\le \theta_1\le \theta_2\le \cdots\le \theta_k\le \frac{\pi}{2}
+$$
+
+are defined recursively by
+
+$$
+\cos\theta_j=
+\max
+\left\{
+\langle \vec u,\vec w\rangle:
+\begin{array}{l}
+\vec u\in U,\ \vec w\in W,\\
+\|\vec u\|=\|\vec w\|=1,\\
+\vec u\perp \vec u_1,\ldots,\vec u_{j-1},\\
+\vec w\perp \vec w_1,\ldots,\vec w_{j-1}
+\end{array}
+\right\}.
+$$
+
+The maximizing vectors are called **principal vectors**.
+:::
+
+The first principal angle finds the closest pair of directions. The second angle finds the closest pair after removing the first pair, and so on.
+
+# Computing principal angles by QR and SVD
+
+The recursive definition is conceptually clear, but it is not how we compute principal angles in practice. Numerically, we use QR and SVD.
+
+::: {.callout-theorem}
+## Theorem 17.7: Principal angles from SVD
+Let $U,W\in \operatorname{Gr}(k,n)$. Let
+
+$$
+Q_U,Q_W\in \mathbb R^{n\times k}
+$$
+
+have orthonormal columns spanning $U$ and $W$. Let
+
+$$
+Q_U^TQ_W=A_0\Sigma B_0^T
+$$
+
+be a singular value decomposition, where
+
+$$
+\Sigma=\operatorname{diag}(\sigma_1,\ldots,\sigma_k),
+\qquad
+\sigma_1\ge\sigma_2\ge\cdots\ge\sigma_k\ge 0.
+$$
+
+Then the principal angles satisfy
+
+$$
+\cos\theta_i=\sigma_i,
+\qquad i=1,\ldots,k.
+$$
+:::
+
+<details>
+<summary><strong>Proof</strong></summary>
+
+Every unit vector in $U$ can be written as $Q_U\vec x$ with $\|\vec x\|=1$. Every unit vector in $W$ can be written as $Q_W\vec y$ with $\|\vec y\|=1$. Therefore
+
+$$
+\langle Q_U\vec x,Q_W\vec y\rangle
+=\vec x^TQ_U^TQ_W\vec y.
+$$
+
+The first principal angle is determined by
+
+$$
+\max_{\|\vec x\|=\|\vec y\|=1} \vec x^T(Q_U^TQ_W)\vec y.
+$$
+
+By the variational characterization of singular values, this maximum is the largest singular value $\sigma_1$. After imposing orthogonality to the previously selected vectors, the same argument gives $\sigma_2,\ldots,\sigma_k$. Hence $\cos\theta_i=\sigma_i$.
+
+</details>
+
+::: {.callout-tip}
+## Computational recipe
+Given data matrices $A$ and $B$:
+
+1. Compute orthonormal bases $Q_A$ and $Q_B$ for their column spaces using QR.
+2. Compute the singular values of $Q_A^TQ_B$.
+3. Clip the singular values into $[0,1]$ to avoid roundoff errors.
+4. Compute $\theta_i=\cos^{-1}(\sigma_i)$.
+:::
+
+# Worked examples
+
+## Example 17.8: Two lines in the plane
+
+Let
+
+$$
+U=\operatorname{span}\left\{\begin{bmatrix}1\\0\end{bmatrix}\right\},
+\qquad
+W=\operatorname{span}\left\{\begin{bmatrix}\cos\alpha\\ \sin\alpha\end{bmatrix}\right\},
+$$
+
+where $0\le \alpha\le \pi/2$. Then
+
+$$
+Q_U^TQ_W=egin{bmatrix}1&0\end{bmatrix}
+\begin{bmatrix}\cos\alpha\\ \sin\alpha\end{bmatrix}=\cos\alpha.
+$$
+
+The only singular value is $\sigma_1=\cos\alpha$, so $\theta_1=\alpha$.
+
+## Example 17.9: Two planes in $\mathbb R^3$
+
+Let
+
+$$
+U=\operatorname{span}\{\vec e_1,\vec e_2\},
+\qquad
+W=\operatorname{span}\{\vec e_1,\cos\alpha\,\vec e_2+\sin\alpha\,\vec e_3\}.
+$$
+
+The subspaces share the direction $\vec e_1$, so $\theta_1=0$. The second direction is rotated by angle $\alpha$, so $\theta_2=\alpha$.
+
+Matrix computation confirms this:
+
+$$
+Q_U=\begin{bmatrix}1&0\\0&1\\0&0\end{bmatrix},
+\qquad
+Q_W=\begin{bmatrix}1&0\\0&\cos\alpha\\0&\sin\alpha\end{bmatrix}.
+$$
+
+Then
+
+$$
+Q_U^TQ_W=\begin{bmatrix}1&0\\0&\cos\alpha\end{bmatrix},
+$$
+
+whose singular values are $1$ and $\cos\alpha$.
+
+# Distances on the Grassmannian
+
+Once the principal angles are known, several distances can be defined.
+
+::: {.callout-definition}
+## Definition 17.10: Grassmann geodesic distance
+For $U,W\in \operatorname{Gr}(k,n)$ with principal angles $\theta_1,\ldots,\theta_k$, the **Grassmann geodesic distance** is
+
+$$
+d_{\operatorname{Gr}}(U,W)=\left(\sum_{i=1}^k \theta_i^2\right)^{1/2}.
+$$
+:::
+
+::: {.callout-definition}
+## Definition 17.11: Common Grassmannian distances
+Let $\theta_1,\ldots,\theta_k$ be the principal angles between $U$ and $W$.
+
+$$
+d_{\mathrm{Asimov}}(U,W)=\theta_k.
+$$
+
+$$
+d_{\mathrm{chordal}}(U,W)=\left(\sum_{i=1}^k \sin^2\theta_i\right)^{1/2}.
+$$
+
+$$
+d_{\mathrm{Fubini\text{-}Study}}(U,W)=\cos^{-1}\left(\prod_{i=1}^k\cos\theta_i\right).
+$$
+
+$$
+d_{\mathrm{projection}}(U,W)=\sin\theta_k.
+$$
+
+$$
+d_{\mathrm{Procrustes}}(U,W)=2\left(\sum_{i=1}^k \sin^2(\theta_i/2)\right)^{1/2}.
+$$
+:::
+
+For nearby subspaces, $\sin\theta_i\approx \theta_i$, so the chordal distance and geodesic distance are close.
+
+# Projection matrices and chordal distance
+
+A subspace $U\in \operatorname{Gr}(k,n)$ can be represented by its orthogonal projection matrix.
+If $Q_U$ has orthonormal columns spanning $U$, then
+
+$$
+P_U=Q_UQ_U^T.
+$$
+
+::: {.callout-theorem}
+## Proposition 17.12: Projection representation is basis-independent
+If $Q_U$ and $\widetilde Q_U$ are two orthonormal basis matrices for the same subspace $U$, then
+
+$$
+Q_UQ_U^T=\widetilde Q_U\widetilde Q_U^T.
+$$
+:::
+
+<details>
+<summary><strong>Proof</strong></summary>
+
+Since $Q_U$ and $\widetilde Q_U$ have the same column space, there exists $R\in O(k)$ such that $\widetilde Q_U=Q_UR$. Therefore
+
+$$
+\widetilde Q_U\widetilde Q_U^T
+=Q_URR^TQ_U^T
+=Q_UIQ_U^T
+=Q_UQ_U^T.
+$$
+
+</details>
+
+::: {.callout-theorem}
+## Theorem 17.13: Chordal distance from projection matrices
+Let $U,W\in \operatorname{Gr}(k,n)$, and let $P_U,P_W$ be their orthogonal projection matrices. Then
+
+$$
+\frac{1}{\sqrt 2}\|P_U-P_W\|_F
+=\left(\sum_{i=1}^k\sin^2\theta_i\right)^{1/2}.
+$$
+
+Thus
+
+$$
+d_{\mathrm{chordal}}(U,W)=\frac{1}{\sqrt 2}\|P_U-P_W\|_F.
+$$
+:::
+
+<details>
+<summary><strong>Proof</strong></summary>
+
+Let $P_U=Q_UQ_U^T$ and $P_W=Q_WQ_W^T$. Since projection matrices are symmetric and idempotent,
+
+$$
+\|P_U-P_W\|_F^2
+=\operatorname{tr}((P_U-P_W)^T(P_U-P_W)).
+$$
+
+Thus
+
+$$
+\|P_U-P_W\|_F^2
+=\operatorname{tr}(P_U)+\operatorname{tr}(P_W)-2\operatorname{tr}(P_UP_W).
+$$
+
+Because $P_U$ and $P_W$ project onto $k$-dimensional subspaces,
+
+$$
+\operatorname{tr}(P_U)=\operatorname{tr}(P_W)=k.
+$$
+
+Also,
+
+$$
+\operatorname{tr}(P_UP_W)
+=\operatorname{tr}(Q_UQ_U^TQ_WQ_W^T)
+=\operatorname{tr}(Q_U^TQ_WQ_W^TQ_U)
+=\|Q_U^TQ_W\|_F^2.
+$$
+
+The singular values of $Q_U^TQ_W$ are $\cos\theta_1,\ldots,\cos\theta_k$. Hence
+
+$$
+\operatorname{tr}(P_UP_W)=\sum_{i=1}^k\cos^2\theta_i.
+$$
+
+Therefore
+
+$$
+\|P_U-P_W\|_F^2
+=2k-2\sum_{i=1}^k\cos^2\theta_i
+=2\sum_{i=1}^k\sin^2\theta_i.
+$$
+
+Taking square roots gives the result.
+
+</details>
+
+# Python computation
+
+```{python}
+import numpy as np
+
+
+def orthonormal_basis(A, tol=1e-12):
+    """Return an orthonormal basis for the column space of A."""
+    Q, R = np.linalg.qr(A)
+    diag = np.abs(np.diag(R))
+    r = int(np.sum(diag > tol))
+    return Q[:, :r]
+
+
+def principal_angles(A, B):
+    """Principal angles between column spaces of A and B."""
+    QA = orthonormal_basis(A)
+    QB = orthonormal_basis(B)
+    if QA.shape[1] != QB.shape[1]:
+        raise ValueError("This function assumes equal-dimensional subspaces.")
+    s = np.linalg.svd(QA.T @ QB, compute_uv=False)
+    s = np.clip(s, 0.0, 1.0)
+    return np.arccos(s)
+
+
+def distances_from_angles(theta):
+    return {
+        "geodesic": np.linalg.norm(theta),
+        "chordal": np.linalg.norm(np.sin(theta)),
+        "projection": np.sin(np.max(theta)),
+        "Asimov": np.max(theta),
+        "Procrustes": 2*np.linalg.norm(np.sin(theta/2)),
+        "Fubini-Study": np.arccos(np.prod(np.cos(theta)))
+    }
+
+alpha = np.pi/6
+A = np.array([[1,0],[0,1],[0,0]], dtype=float)
+B = np.array([[1,0],[0,np.cos(alpha)],[0,np.sin(alpha)]], dtype=float)
+
+theta = principal_angles(A, B)
+print("Principal angles in radians:", theta)
+print("Principal angles in degrees:", theta*180/np.pi)
+print(distances_from_angles(theta))
+```
+
+## Comparing PCA subspaces
+
+```{python}
+np.random.seed(7)
+
+# Two synthetic data clouds in R^5 with dominant 2D structure.
+n = 5
+m = 200
+U_true = orthonormal_basis(np.random.randn(n, 2))
+noise = 0.15*np.random.randn(n, m)
+X = U_true @ np.random.randn(2, m) + noise
+
+# Rotate the true subspace slightly to create a second data set.
+R = np.eye(n)
+R[1,1] = np.cos(0.35)
+R[1,2] = -np.sin(0.35)
+R[2,1] = np.sin(0.35)
+R[2,2] = np.cos(0.35)
+V_true = R @ U_true
+Y = V_true @ np.random.randn(2, m) + 0.15*np.random.randn(n, m)
+
+# PCA by SVD of centered data.
+Xc = X - X.mean(axis=1, keepdims=True)
+Yc = Y - Y.mean(axis=1, keepdims=True)
+Ux, sx, _ = np.linalg.svd(Xc, full_matrices=False)
+Uy, sy, _ = np.linalg.svd(Yc, full_matrices=False)
+
+PX = Ux[:, :2]
+PY = Uy[:, :2]
+theta_pca = principal_angles(PX, PY)
+print("PCA subspace angles in degrees:", theta_pca*180/np.pi)
+print("Grassmann distance:", np.linalg.norm(theta_pca))
+```
+
+# Classical challenge questions
+
+## Challenge 17.1: Why point-to-point distance fails
+
+Let $U,W\subseteq \mathbb R^n$ be two linear subspaces. Explain why
+
+$$
+\min_{\vec u\in U,\ \vec w\in W}\|\vec u-\vec w\|
+$$
+
+is not a useful distance between linear subspaces.
+
+<details>
+<summary><strong>Solution</strong></summary>
+
+Since $U$ and $W$ are linear subspaces, both contain the zero vector. Choosing $\vec u=\vec 0$ and $\vec w=\vec 0$ gives
+
+$$
+\|\vec u-\vec w\|=0.
+$$
+
+Therefore the minimum is always $0$, no matter how different the two subspaces are. A useful subspace distance must compare directions.
+
+</details>
+
+## Challenge 17.2: Two planes sharing a line
+
+Let
+
+$$
+U=\operatorname{span}\{\vec e_1,\vec e_2\},
+\qquad
+W=\operatorname{span}\{\vec e_1,\cos\alpha\,\vec e_2+\sin\alpha\,\vec e_3\}.
+$$
+
+Find the principal angles and the Grassmann geodesic distance.
+
+<details>
+<summary><strong>Solution</strong></summary>
+
+The subspaces share the direction $\vec e_1$, so $\theta_1=0$. The remaining direction is rotated by angle $\alpha$, so $\theta_2=\alpha$. Therefore
+
+$$
+(\theta_1,\theta_2)=(0,\alpha)
+$$
+
+and
+
+$$
+d_{\operatorname{Gr}}(U,W)=\sqrt{0^2+\alpha^2}=\alpha.
+$$
+
+</details>
+
+## Challenge 17.3: Projection matrix representation
+
+Let $Q\in \mathbb R^{n\times k}$ have orthonormal columns. Show that $P=QQ^T$ is the orthogonal projection matrix onto $\operatorname{im}(Q)$.
+
+<details>
+<summary><strong>Solution</strong></summary>
+
+First, $P^T=(QQ^T)^T=QQ^T=P$, so $P$ is symmetric. Second,
+
+$$
+P^2=QQ^TQQ^T=Q(Q^TQ)Q^T=QIQ^T=QQ^T=P.
+$$
+
+For any $\vec x$, $P\vec x=QQ^T\vec x\in \operatorname{im}(Q)$. Also,
+
+$$
+Q^T(\vec x-P\vec x)=Q^T\vec x-Q^TQQ^T\vec x=0.
+$$
+
+Thus the error $\vec x-P\vec x$ is orthogonal to $\operatorname{im}(Q)$. Hence $P\vec x$ is the orthogonal projection of $\vec x$ onto $\operatorname{im}(Q)$.
+
+</details>
+
+## Challenge 17.4: Chordal distance from projections
+
+Prove that
+
+$$
+d_{\mathrm{chordal}}(U,W)=\frac{1}{\sqrt 2}\|P_U-P_W\|_F.
+$$
+
+<details>
+<summary><strong>Solution</strong></summary>
+
+The proof follows from the trace computation:
+
+$$
+\|P_U-P_W\|_F^2=2k-2\operatorname{tr}(P_UP_W).
+$$
+
+Using orthonormal bases $Q_U,Q_W$,
+
+$$
+\operatorname{tr}(P_UP_W)=\|Q_U^TQ_W\|_F^2.
+$$
+
+The singular values of $Q_U^TQ_W$ are $\cos\theta_1,\ldots,\cos\theta_k$, so
+
+$$
+\operatorname{tr}(P_UP_W)=\sum_{i=1}^k\cos^2\theta_i.
+$$
+
+Therefore
+
+$$
+\|P_U-P_W\|_F^2=2\sum_{i=1}^k\sin^2\theta_i.
+$$
+
+Taking square roots gives the result.
+
+</details>
+
+# Practice problems
+
+## Problem 17.1
+
+Let $U=\operatorname{span}\{(1,0)\}$ and $W=\operatorname{span}\{(1,1)\}$. Find the principal angle between $U$ and $W$.
+
+<details>
+<summary><strong>Solution</strong></summary>
+
+Normalize the vector $(1,1)$:
+
+$$
+\vec w=\frac{1}{\sqrt2}(1,1).
+$$
+
+Then
+
+$$
+\cos\theta=(1,0)\cdot \frac{1}{\sqrt2}(1,1)=\frac{1}{\sqrt2}.
+$$
+
+Thus $\theta=\pi/4$.
+
+</details>
+
+## Problem 17.2
+
+Let $U=\operatorname{span}\{\vec e_1,\vec e_2\}$ and $W=\operatorname{span}\{\vec e_2,\vec e_3\}$ in $\mathbb R^3$. Find the principal angles.
+
+<details>
+<summary><strong>Solution</strong></summary>
+
+The two planes share the direction $\vec e_2$, so $\theta_1=0$. The remaining directions are $\vec e_1$ and $\vec e_3$, which are orthogonal, so $\theta_2=\pi/2$. Therefore
+
+$$
+(\theta_1,\theta_2)=(0,\pi/2).
+$$
+
+</details>
+
+## Problem 17.3
+
+If two two-dimensional subspaces have principal angles $\theta_1=0.2$ and $\theta_2=0.6$, compute the Grassmann geodesic distance and chordal distance.
+
+<details>
+<summary><strong>Solution</strong></summary>
+
+The geodesic distance is
+
+$$
+d_{\operatorname{Gr}}=\sqrt{0.2^2+0.6^2}=\sqrt{0.40}\approx 0.6325.
+$$
+
+The chordal distance is
+
+$$
+d_{\mathrm{chordal}}=\sqrt{\sin^2(0.2)+\sin^2(0.6)}\approx 0.5985.
+$$
+
+</details>
+
+# AI companion activities
+
+::: {.callout-tip}
+## Activity 17.A: Explain the geometry
+Ask an AI tool:
+
+> Explain why comparing two subspaces requires comparing directions rather than comparing closest points.
+
+Then improve the response by requiring it to include the zero-vector argument.
+:::
+
+::: {.callout-tip}
+## Activity 17.B: Check a computation
+Use Python to compute principal angles for two subspaces. Then ask an AI tool:
+
+> Here are my matrices $Q_U$ and $Q_W$. Explain why the singular values of $Q_U^TQ_W$ give the cosines of the principal angles.
+
+Check whether the explanation correctly uses orthonormal bases.
+:::
+
+::: {.callout-tip}
+## Activity 17.C: Applications search prompt
+Ask:
+
+> Give three applications where Grassmannian distances are useful in data science, computer vision, or signal processing. For each one, explain what the subspaces represent.
+:::
+
+# Summary
+
+- The Grassmannian $\operatorname{Gr}(k,n)$ is the set of all $k$-dimensional subspaces of $\mathbb R^n$.
+- The Stiefel manifold $\operatorname{St}(k,n)$ is the set of orthonormal $k$-frames.
+- A subspace can be represented by many orthonormal bases, so $\operatorname{Gr}(k,n)=\operatorname{St}(k,n)/O(k)$.
+- Principal angles measure how two subspaces are positioned relative to each other.
+- Principal angles are computed from the singular values of $Q_U^TQ_W$.
+- Grassmannian distances are built from principal angles.
+- Projection matrices give a basis-independent representation of subspaces.
+- Grassmannian geometry appears in PCA, computer vision, signal processing, subspace clustering, and machine learning.

@@ -1,0 +1,2505 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="He Wang">
+
+<title>17&nbsp; Chapter 17: Grassmannians and Distances Between Subspaces – MATH 5110 Applied Linear Algebra and Matrix Analysis</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../labs/lab-17-grassmannians-subspace-distances.html" rel="next">
+<link href="../labs/lab-16-fast-fourier-transforms.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-9cf0e9df7683d73191c8157c06a27d17.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/chapter-17-grassmannians-subspace-distances.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Chapter 17: Grassmannians and Distances Between Subspaces</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">MATH 5110 Applied Linear Algebra and Matrix Analysis</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/wanghemath/MATH5110" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MATH 5110 Applied Linear Algebra and Matrix Analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../math-5110-book-overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview:</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-01-linear-systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Chapter 1. The First Language: Systems, Sets, and Structure</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-01-linear-systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 1. Linear Systems: Interactive Practice</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-02-matrix-algebra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Chapter 2. Matrices as Machines: Algebra, Inverses, Rank, and LU</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-02-matrix-algebra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 2. Matrix Algebra: Interactive Practice</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-03-linear-spaces-subspaces-maps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Chapter 3. The Many Homes of Vectors: Spaces, Subspaces, and Linear Maps</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-03-linear-spaces-subspaces-maps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 3. Linear Spaces, Subspaces, and Linear Maps: Independent Study</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-04-bases-dimension-rank-nullity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Chapter 4. Coordinates: Bases, Dimension, and Rank–Nullity</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-04-bases-dimension-rank-nullity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 4. Bases, Dimension, Coordinates, and Rank–Nullity: Independent Study</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-05-coordinates-matrices-change-of-basis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Chapter 5. Coordinates, Matrices, and Change of Basis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-05-coordinates-matrices-change-of-basis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 5. Coordinates, Matrices of Linear Transformations, and Change of Basis: Independent Study</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-06-determinants.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Chapter 6. Determinants</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-06-determinants.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 6. Determinants: Independent Study</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-07-diagonalization-eigenvalues.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Chapter 7. Directions That Stay Directions: Eigenvalues, Eigenvectors, and Diagonalization</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-07-diagonalization-eigenvalues.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 7. Eigenvalues, Eigenvectors, and Diagonalization: Independent Study</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-08-jordan-canonical-form.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Chapter 8. When Diagonalization Fails: Jordan Canonical Form</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-08-jordan-canonical-form.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 8. Jordan Canonical Form: Independent Study</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-09-dynamical-systems-markov-chains-perron-frobenius.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Chapter 9: Dynamical Systems, Markov Chains, and Perron–Frobenius Theory</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-09-dynamical-systems-markov-chains.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 9: Dynamical Systems, Markov Chains, and Perron–Frobenius Theory</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-10-inner-products-projections-qr-adjoints.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Chapter 10: Inner Product Spaces, Orthogonal Projection, QR Factorization, and Adjoints</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-10-inner-products-projections-qr-adjoints.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 10. Inner Products, Projections, QR, and Adjoints: Independent Study</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-11-complex-inner-products-schur.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Chapter 11: Complex Inner Products, Unitary Geometry, Hermitian Matrices, and Schur Decomposition</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-11-complex-inner-products-schur.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 11. Complex Inner Products, Unitary Matrices, Hermitian Matrices, and Schur Decomposition: Independent Study</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-12-least-squares-data-fitting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Chapter 12. Least Squares and Data Fitting</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-12-least-squares-data-fitting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 12. Least Squares and Data Fitting: Independent Study</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-13-symmetric-hermitian-matrices.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Chapter 13. Symmetric and Hermitian Matrices</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-13-symmetric-hermitian-matrices.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 13. Symmetric and Hermitian Matrices: Independent Study</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-14-singular-value-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Chapter 14: Singular Value Decomposition</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-14-singular-value-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 14: Singular Value Decomposition</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-15-haar-bases-wavelet-transforms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Chapter 15: Haar Bases and Wavelet Transforms</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-15-haar-bases-wavelet-transforms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 15: Haar Bases and Wavelet Transforms</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-16-fast-fourier-transforms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Chapter 16: Fast Fourier Transforms</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-16-fast-fourier-transforms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 16: Fast Fourier Transforms</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-17-grassmannians-subspace-distances.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Chapter 17: Grassmannians and Distances Between Subspaces</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-17-grassmannians-subspace-distances.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 17: Grassmannians and Distances Between Subspaces</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-18-computational-complexity-eigenvalues.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Chapter 18: Computational Complexity and Computation of Eigenvalues</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-18-computational-complexity-eigenvalues.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 18: Computational Complexity and Eigenvalue Computation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-19-applications-multilinear-algebra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Chapter 19: Applications of Multilinear Algebra</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-19-applications-multilinear-algebra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 19. Applications of Multilinear Algebra: Independent Study</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-20-hilbert-spaces-applications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Chapter 20: Hilbert Spaces and Applications</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-20-hilbert-spaces-applications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 20: Hilbert Spaces and Applications</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-21-tda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Chapter TDA: Topological Data Analysis from Linear Algebra</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-21-tda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab TDA: Topological Data Analysis from Linear Algebra</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-22-duality-cohomology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Chapter 22: Duality, Dual Spaces, and Cohomology</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-22-duality-cohomology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 22: Duality and Cohomology</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-23-spectral-graph-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Chapter 23: Spectral Graph Theory from Linear Algebra</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-23-spectral-graph-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 23: Spectral Graph Theory</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-24-linear-algebra-differential-equations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Chapter 24: Linear Algebra and Differential Equations</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-24-linear-algebra-differential-equations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 24: Linear Algebra and Differential Equations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-25-linear-algebra-optimization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Chapter 25: Linear Algebra and Optimization</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-25-linear-algebra-optimization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 25: Linear Algebra and Optimization</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-26-linear-algebra-probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Chapter 26: Linear Algebra and Probability</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-26-linear-algebra-probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 26: Linear Algebra and Probability</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/chapter-27-matrix-calculus.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Chapter 27: Matrix Calculus</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-27-matrix-calculus.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 27. Matrix Calculus: Independent Study</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-story-comparing-directions-not-only-points" id="toc-the-story-comparing-directions-not-only-points" class="nav-link active" data-scroll-target="#the-story-comparing-directions-not-only-points"><span class="header-section-number">18</span> The story: comparing directions, not only points</a></li>
+  <li><a href="#metric-spaces-and-the-problem-of-subspace-distance" id="toc-metric-spaces-and-the-problem-of-subspace-distance" class="nav-link" data-scroll-target="#metric-spaces-and-the-problem-of-subspace-distance"><span class="header-section-number">19</span> Metric spaces and the problem of subspace distance</a>
+  <ul class="collapse">
+  <li><a href="#definition-17.1-metric" id="toc-definition-17.1-metric" class="nav-link" data-scroll-target="#definition-17.1-metric"><span class="header-section-number">19.1</span> Definition 17.1: Metric</a></li>
+  </ul></li>
+  <li><a href="#the-grassmannian" id="toc-the-grassmannian" class="nav-link" data-scroll-target="#the-grassmannian"><span class="header-section-number">20</span> The Grassmannian</a>
+  <ul class="collapse">
+  <li><a href="#definition-17.2-grassmannian" id="toc-definition-17.2-grassmannian" class="nav-link" data-scroll-target="#definition-17.2-grassmannian"><span class="header-section-number">20.1</span> Definition 17.2: Grassmannian</a></li>
+  <li><a href="#example-17.3-lines-through-the-origin" id="toc-example-17.3-lines-through-the-origin" class="nav-link" data-scroll-target="#example-17.3-lines-through-the-origin"><span class="header-section-number">20.2</span> Example 17.3: Lines through the origin</a></li>
+  </ul></li>
+  <li><a href="#orthonormal-frames-and-the-stiefel-manifold" id="toc-orthonormal-frames-and-the-stiefel-manifold" class="nav-link" data-scroll-target="#orthonormal-frames-and-the-stiefel-manifold"><span class="header-section-number">21</span> Orthonormal frames and the Stiefel manifold</a>
+  <ul class="collapse">
+  <li><a href="#definition-17.4-stiefel-manifold" id="toc-definition-17.4-stiefel-manifold" class="nav-link" data-scroll-target="#definition-17.4-stiefel-manifold"><span class="header-section-number">21.1</span> Definition 17.4: Stiefel manifold</a></li>
+  <li><a href="#proposition-17.5-grassmannian-as-a-quotient" id="toc-proposition-17.5-grassmannian-as-a-quotient" class="nav-link" data-scroll-target="#proposition-17.5-grassmannian-as-a-quotient"><span class="header-section-number">21.2</span> Proposition 17.5: Grassmannian as a quotient</a></li>
+  </ul></li>
+  <li><a href="#principal-angles-between-subspaces" id="toc-principal-angles-between-subspaces" class="nav-link" data-scroll-target="#principal-angles-between-subspaces"><span class="header-section-number">22</span> Principal angles between subspaces</a>
+  <ul class="collapse">
+  <li><a href="#definition-17.6-principal-angles" id="toc-definition-17.6-principal-angles" class="nav-link" data-scroll-target="#definition-17.6-principal-angles"><span class="header-section-number">22.1</span> Definition 17.6: Principal angles</a></li>
+  </ul></li>
+  <li><a href="#computing-principal-angles-by-qr-and-svd" id="toc-computing-principal-angles-by-qr-and-svd" class="nav-link" data-scroll-target="#computing-principal-angles-by-qr-and-svd"><span class="header-section-number">23</span> Computing principal angles by QR and SVD</a>
+  <ul class="collapse">
+  <li><a href="#theorem-17.7-principal-angles-from-svd" id="toc-theorem-17.7-principal-angles-from-svd" class="nav-link" data-scroll-target="#theorem-17.7-principal-angles-from-svd"><span class="header-section-number">23.1</span> Theorem 17.7: Principal angles from SVD</a></li>
+  </ul></li>
+  <li><a href="#worked-examples" id="toc-worked-examples" class="nav-link" data-scroll-target="#worked-examples"><span class="header-section-number">24</span> Worked examples</a>
+  <ul class="collapse">
+  <li><a href="#example-17.8-two-lines-in-the-plane" id="toc-example-17.8-two-lines-in-the-plane" class="nav-link" data-scroll-target="#example-17.8-two-lines-in-the-plane"><span class="header-section-number">24.1</span> Example 17.8: Two lines in the plane</a></li>
+  <li><a href="#example-17.9-two-planes-in-mathbb-r3" id="toc-example-17.9-two-planes-in-mathbb-r3" class="nav-link" data-scroll-target="#example-17.9-two-planes-in-mathbb-r3"><span class="header-section-number">24.2</span> Example 17.9: Two planes in <span class="math inline">\(\mathbb R^3\)</span></a></li>
+  </ul></li>
+  <li><a href="#distances-on-the-grassmannian" id="toc-distances-on-the-grassmannian" class="nav-link" data-scroll-target="#distances-on-the-grassmannian"><span class="header-section-number">25</span> Distances on the Grassmannian</a>
+  <ul class="collapse">
+  <li><a href="#definition-17.10-grassmann-geodesic-distance" id="toc-definition-17.10-grassmann-geodesic-distance" class="nav-link" data-scroll-target="#definition-17.10-grassmann-geodesic-distance"><span class="header-section-number">25.1</span> Definition 17.10: Grassmann geodesic distance</a></li>
+  <li><a href="#definition-17.11-common-grassmannian-distances" id="toc-definition-17.11-common-grassmannian-distances" class="nav-link" data-scroll-target="#definition-17.11-common-grassmannian-distances"><span class="header-section-number">25.2</span> Definition 17.11: Common Grassmannian distances</a></li>
+  </ul></li>
+  <li><a href="#projection-matrices-and-chordal-distance" id="toc-projection-matrices-and-chordal-distance" class="nav-link" data-scroll-target="#projection-matrices-and-chordal-distance"><span class="header-section-number">26</span> Projection matrices and chordal distance</a>
+  <ul class="collapse">
+  <li><a href="#proposition-17.12-projection-representation-is-basis-independent" id="toc-proposition-17.12-projection-representation-is-basis-independent" class="nav-link" data-scroll-target="#proposition-17.12-projection-representation-is-basis-independent"><span class="header-section-number">26.1</span> Proposition 17.12: Projection representation is basis-independent</a></li>
+  <li><a href="#theorem-17.13-chordal-distance-from-projection-matrices" id="toc-theorem-17.13-chordal-distance-from-projection-matrices" class="nav-link" data-scroll-target="#theorem-17.13-chordal-distance-from-projection-matrices"><span class="header-section-number">26.2</span> Theorem 17.13: Chordal distance from projection matrices</a></li>
+  </ul></li>
+  <li><a href="#python-computation" id="toc-python-computation" class="nav-link" data-scroll-target="#python-computation"><span class="header-section-number">27</span> Python computation</a>
+  <ul class="collapse">
+  <li><a href="#comparing-pca-subspaces" id="toc-comparing-pca-subspaces" class="nav-link" data-scroll-target="#comparing-pca-subspaces"><span class="header-section-number">27.1</span> Comparing PCA subspaces</a></li>
+  </ul></li>
+  <li><a href="#classical-challenge-questions" id="toc-classical-challenge-questions" class="nav-link" data-scroll-target="#classical-challenge-questions"><span class="header-section-number">28</span> Classical challenge questions</a>
+  <ul class="collapse">
+  <li><a href="#challenge-17.1-why-point-to-point-distance-fails" id="toc-challenge-17.1-why-point-to-point-distance-fails" class="nav-link" data-scroll-target="#challenge-17.1-why-point-to-point-distance-fails"><span class="header-section-number">28.1</span> Challenge 17.1: Why point-to-point distance fails</a></li>
+  <li><a href="#challenge-17.2-two-planes-sharing-a-line" id="toc-challenge-17.2-two-planes-sharing-a-line" class="nav-link" data-scroll-target="#challenge-17.2-two-planes-sharing-a-line"><span class="header-section-number">28.2</span> Challenge 17.2: Two planes sharing a line</a></li>
+  <li><a href="#challenge-17.3-projection-matrix-representation" id="toc-challenge-17.3-projection-matrix-representation" class="nav-link" data-scroll-target="#challenge-17.3-projection-matrix-representation"><span class="header-section-number">28.3</span> Challenge 17.3: Projection matrix representation</a></li>
+  <li><a href="#challenge-17.4-chordal-distance-from-projections" id="toc-challenge-17.4-chordal-distance-from-projections" class="nav-link" data-scroll-target="#challenge-17.4-chordal-distance-from-projections"><span class="header-section-number">28.4</span> Challenge 17.4: Chordal distance from projections</a></li>
+  </ul></li>
+  <li><a href="#practice-problems" id="toc-practice-problems" class="nav-link" data-scroll-target="#practice-problems"><span class="header-section-number">29</span> Practice problems</a>
+  <ul class="collapse">
+  <li><a href="#problem-17.1" id="toc-problem-17.1" class="nav-link" data-scroll-target="#problem-17.1"><span class="header-section-number">29.1</span> Problem 17.1</a></li>
+  <li><a href="#problem-17.2" id="toc-problem-17.2" class="nav-link" data-scroll-target="#problem-17.2"><span class="header-section-number">29.2</span> Problem 17.2</a></li>
+  <li><a href="#problem-17.3" id="toc-problem-17.3" class="nav-link" data-scroll-target="#problem-17.3"><span class="header-section-number">29.3</span> Problem 17.3</a></li>
+  </ul></li>
+  <li><a href="#ai-companion-activities" id="toc-ai-companion-activities" class="nav-link" data-scroll-target="#ai-companion-activities"><span class="header-section-number">30</span> AI companion activities</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">31</span> Summary</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/wanghemath/MATH5110/edit/main/chapters/chapter-17-grassmannians-subspace-distances.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/wanghemath/MATH5110/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Chapter 17: Grassmannians and Distances Between Subspaces</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<p class="subtitle lead">When data are not points, but linear worlds</p>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>He Wang </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="the-story-comparing-directions-not-only-points" class="level1" data-number="18">
+<h1 data-number="18"><span class="header-section-number">18</span> The story: comparing directions, not only points</h1>
+<p>In earlier chapters, a vector was often the main object. A vector could be a point, a signal, an image, a list of coefficients, or a feature representation.</p>
+<p>But in many modern applications, the important object is not one vector. It is a <strong>subspace</strong>.</p>
+<p>A data set with columns</p>
+<p><span class="math display">\[
+A=[\vec a_1\ \vec a_2\ \cdots\ \vec a_k]\in \mathbb R^{n\times k}
+\]</span></p>
+<p>carries the linear information</p>
+<p><span class="math display">\[
+\operatorname{im}(A)=\operatorname{span}\{\vec a_1,\ldots,\vec a_k\}\subseteq \mathbb R^n.
+\]</span></p>
+<p>In PCA, the first few principal components span a low-dimensional subspace. In computer vision, several images of the same object may span a subspace. In signal processing, a family of observations may be represented by a subspace. In machine learning, a group of embeddings may be compared by comparing the subspaces they generate.</p>
+<p>So the central question of this chapter is:</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Guiding question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>How do we measure the distance between two linear subspaces?</p>
+</div>
+</div>
+<p>A first attempt fails immediately. If <span class="math inline">\(U,W\subseteq \mathbb R^n\)</span> are linear subspaces, then both contain <span class="math inline">\(\vec 0\)</span>. Therefore</p>
+<p><span class="math display">\[
+\min_{\vec u\in U,\ \vec w\in W}\|\vec u-\vec w\|=0
+\]</span></p>
+<p>for every pair of subspaces. This quantity cannot distinguish two identical subspaces from two very different subspaces. To compare subspaces, we must compare <strong>directions</strong>.</p>
+</section>
+<section id="metric-spaces-and-the-problem-of-subspace-distance" class="level1" data-number="19">
+<h1 data-number="19"><span class="header-section-number">19</span> Metric spaces and the problem of subspace distance</h1>
+<section id="definition-17.1-metric" class="level2 callout-definition" data-number="19.1">
+<h2 data-number="19.1" class="anchored" data-anchor-id="definition-17.1-metric"><span class="header-section-number">19.1</span> Definition 17.1: Metric</h2>
+<p>Let <span class="math inline">\(S\)</span> be a set. A function</p>
+<p><span class="math display">\[
+d:S\times S\to \mathbb R
+\]</span></p>
+<p>is called a <strong>metric</strong> if for all <span class="math inline">\(x,y,z\in S\)</span>:</p>
+<ol type="1">
+<li><span class="math inline">\(d(x,y)\ge 0\)</span>, and <span class="math inline">\(d(x,y)=0\)</span> if and only if <span class="math inline">\(x=y\)</span>;</li>
+<li><span class="math inline">\(d(x,y)=d(y,x)\)</span>;</li>
+<li><span class="math inline">\(d(x,z)\le d(x,y)+d(y,z)\)</span>.</li>
+</ol>
+<p>A set equipped with a metric is called a <strong>metric space</strong>.</p>
+</section>
+<p>The Euclidean metric on <span class="math inline">\(\mathbb R^n\)</span> is</p>
+<p><span class="math display">\[
+d(\vec x,\vec y)=\|\vec x-\vec y\|_2.
+\]</span></p>
+<p>But the objects in this chapter are not vectors. They are subspaces. Thus we need a metric on a space whose points are themselves subspaces.</p>
+</section>
+<section id="the-grassmannian" class="level1" data-number="20">
+<h1 data-number="20"><span class="header-section-number">20</span> The Grassmannian</h1>
+<section id="definition-17.2-grassmannian" class="level2 callout-definition" data-number="20.1">
+<h2 data-number="20.1" class="anchored" data-anchor-id="definition-17.2-grassmannian"><span class="header-section-number">20.1</span> Definition 17.2: Grassmannian</h2>
+<p>For integers <span class="math inline">\(0\le k\le n\)</span>, the <strong>Grassmannian</strong> <span class="math inline">\(\operatorname{Gr}(k,n)\)</span> is the set of all <span class="math inline">\(k\)</span>-dimensional linear subspaces of <span class="math inline">\(\mathbb R^n\)</span>:</p>
+<p><span class="math display">\[
+\operatorname{Gr}(k,n)=\{U\subseteq \mathbb R^n: U\text{ is a linear subspace and }\dim U=k\}.
+\]</span></p>
+</section>
+<p>A point of <span class="math inline">\(\operatorname{Gr}(k,n)\)</span> is not a vector. It is an entire <span class="math inline">\(k\)</span>-dimensional subspace.</p>
+<section id="example-17.3-lines-through-the-origin" class="level2" data-number="20.2">
+<h2 data-number="20.2" class="anchored" data-anchor-id="example-17.3-lines-through-the-origin"><span class="header-section-number">20.2</span> Example 17.3: Lines through the origin</h2>
+<p>The Grassmannian <span class="math inline">\(\operatorname{Gr}(1,n)\)</span> is the set of all lines through the origin in <span class="math inline">\(\mathbb R^n\)</span>. A nonzero vector <span class="math inline">\(\vec u\)</span> determines the same line as every nonzero scalar multiple <span class="math inline">\(c\vec u\)</span>.</p>
+<p>Thus <span class="math inline">\(\operatorname{Gr}(1,n)\)</span> remembers direction, but forgets length and sign.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Story interpretation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A nonzero vector is like a road sign pointing in a direction. The line it spans is the direction itself. If we multiply the sign by <span class="math inline">\(2\)</span>, <span class="math inline">\(-3\)</span>, or <span class="math inline">\(100\)</span>, the direction is still the same line.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="orthonormal-frames-and-the-stiefel-manifold" class="level1" data-number="21">
+<h1 data-number="21"><span class="header-section-number">21</span> Orthonormal frames and the Stiefel manifold</h1>
+<p>A subspace can be represented by a basis matrix. For numerical work, the best basis matrix is usually an orthonormal one.</p>
+<section id="definition-17.4-stiefel-manifold" class="level2 callout-definition" data-number="21.1">
+<h2 data-number="21.1" class="anchored" data-anchor-id="definition-17.4-stiefel-manifold"><span class="header-section-number">21.1</span> Definition 17.4: Stiefel manifold</h2>
+<p>The real <strong>Stiefel manifold</strong> <span class="math inline">\(\operatorname{St}(k,n)\)</span> is the set of all <span class="math inline">\(n\times k\)</span> matrices with orthonormal columns:</p>
+<p><span class="math display">\[
+\operatorname{St}(k,n)=\{Q\in \mathbb R^{n\times k}: Q^TQ=I_k\}.
+\]</span></p>
+</section>
+<p>Each <span class="math inline">\(Q\in \operatorname{St}(k,n)\)</span> determines a <span class="math inline">\(k\)</span>-dimensional subspace <span class="math inline">\(\operatorname{im}(Q)\)</span>. But many different orthonormal bases represent the same subspace.</p>
+<section id="proposition-17.5-grassmannian-as-a-quotient" class="level2 callout-theorem" data-number="21.2">
+<h2 data-number="21.2" class="anchored" data-anchor-id="proposition-17.5-grassmannian-as-a-quotient"><span class="header-section-number">21.2</span> Proposition 17.5: Grassmannian as a quotient</h2>
+<p>The Grassmannian can be represented as</p>
+<p><span class="math display">\[
+\operatorname{Gr}(k,n)=\operatorname{St}(k,n)/O(k),
+\]</span></p>
+<p>where <span class="math inline">\(O(k)\)</span> is the group of <span class="math inline">\(k\times k\)</span> orthogonal matrices.</p>
+</section>
+<details>
+<summary>
+<strong>Proof</strong>
+</summary>
+<p>Let <span class="math inline">\(Q\in \operatorname{St}(k,n)\)</span>. Its columns form an orthonormal basis for the subspace <span class="math inline">\(U=\operatorname{im}(Q)\)</span>.</p>
+<p>If <span class="math inline">\(R\in O(k)\)</span>, then <span class="math inline">\(QR\)</span> also has orthonormal columns because</p>
+<p><span class="math display">\[
+(QR)^T(QR)=R^TQ^TQR=R^TIR=I.
+\]</span></p>
+<p>Also <span class="math inline">\(\operatorname{im}(QR)=\operatorname{im}(Q)\)</span>, because multiplying on the right by <span class="math inline">\(R\)</span> only rotates the coordinate system inside the same subspace.</p>
+<p>Conversely, suppose <span class="math inline">\(Q_1,Q_2\in \operatorname{St}(k,n)\)</span> have the same column space. Then each column of <span class="math inline">\(Q_2\)</span> is a linear combination of the columns of <span class="math inline">\(Q_1\)</span>, so <span class="math inline">\(Q_2=Q_1R\)</span> for some <span class="math inline">\(k\times k\)</span> matrix <span class="math inline">\(R\)</span>. Since both have orthonormal columns,</p>
+<p><span class="math display">\[
+I=Q_2^TQ_2=R^TQ_1^TQ_1R=R^TR.
+\]</span></p>
+<p>Thus <span class="math inline">\(R\in O(k)\)</span>. Therefore quotienting by <span class="math inline">\(O(k)\)</span> identifies exactly the different orthonormal bases of the same subspace.</p>
+</details>
+</section>
+<section id="principal-angles-between-subspaces" class="level1" data-number="22">
+<h1 data-number="22"><span class="header-section-number">22</span> Principal angles between subspaces</h1>
+<p>For unit vectors <span class="math inline">\(\vec u\)</span> and <span class="math inline">\(\vec v\)</span>, the angle <span class="math inline">\(\theta\)</span> between them is determined by</p>
+<p><span class="math display">\[
+\cos\theta=\vec u^T\vec v.
+\]</span></p>
+<p>For two <span class="math inline">\(k\)</span>-dimensional subspaces, one angle is usually not enough. We need a list of angles.</p>
+<section id="definition-17.6-principal-angles" class="level2 callout-definition" data-number="22.1">
+<h2 data-number="22.1" class="anchored" data-anchor-id="definition-17.6-principal-angles"><span class="header-section-number">22.1</span> Definition 17.6: Principal angles</h2>
+<p>Let <span class="math inline">\(U,W\in \operatorname{Gr}(k,n)\)</span>. The <strong>principal angles</strong></p>
+<p><span class="math display">\[
+0\le \theta_1\le \theta_2\le \cdots\le \theta_k\le \frac{\pi}{2}
+\]</span></p>
+<p>are defined recursively by</p>
+<p><span class="math display">\[
+\cos\theta_j=
+\max
+\left\{
+\langle \vec u,\vec w\rangle:
+\begin{array}{l}
+\vec u\in U,\ \vec w\in W,\\
+\|\vec u\|=\|\vec w\|=1,\\
+\vec u\perp \vec u_1,\ldots,\vec u_{j-1},\\
+\vec w\perp \vec w_1,\ldots,\vec w_{j-1}
+\end{array}
+\right\}.
+\]</span></p>
+<p>The maximizing vectors are called <strong>principal vectors</strong>.</p>
+</section>
+<p>The first principal angle finds the closest pair of directions. The second angle finds the closest pair after removing the first pair, and so on.</p>
+</section>
+<section id="computing-principal-angles-by-qr-and-svd" class="level1" data-number="23">
+<h1 data-number="23"><span class="header-section-number">23</span> Computing principal angles by QR and SVD</h1>
+<p>The recursive definition is conceptually clear, but it is not how we compute principal angles in practice. Numerically, we use QR and SVD.</p>
+<section id="theorem-17.7-principal-angles-from-svd" class="level2 callout-theorem" data-number="23.1">
+<h2 data-number="23.1" class="anchored" data-anchor-id="theorem-17.7-principal-angles-from-svd"><span class="header-section-number">23.1</span> Theorem 17.7: Principal angles from SVD</h2>
+<p>Let <span class="math inline">\(U,W\in \operatorname{Gr}(k,n)\)</span>. Let</p>
+<p><span class="math display">\[
+Q_U,Q_W\in \mathbb R^{n\times k}
+\]</span></p>
+<p>have orthonormal columns spanning <span class="math inline">\(U\)</span> and <span class="math inline">\(W\)</span>. Let</p>
+<p><span class="math display">\[
+Q_U^TQ_W=A_0\Sigma B_0^T
+\]</span></p>
+<p>be a singular value decomposition, where</p>
+<p><span class="math display">\[
+\Sigma=\operatorname{diag}(\sigma_1,\ldots,\sigma_k),
+\qquad
+\sigma_1\ge\sigma_2\ge\cdots\ge\sigma_k\ge 0.
+\]</span></p>
+<p>Then the principal angles satisfy</p>
+<p><span class="math display">\[
+\cos\theta_i=\sigma_i,
+\qquad i=1,\ldots,k.
+\]</span></p>
+</section>
+<details>
+<summary>
+<strong>Proof</strong>
+</summary>
+<p>Every unit vector in <span class="math inline">\(U\)</span> can be written as <span class="math inline">\(Q_U\vec x\)</span> with <span class="math inline">\(\|\vec x\|=1\)</span>. Every unit vector in <span class="math inline">\(W\)</span> can be written as <span class="math inline">\(Q_W\vec y\)</span> with <span class="math inline">\(\|\vec y\|=1\)</span>. Therefore</p>
+<p><span class="math display">\[
+\langle Q_U\vec x,Q_W\vec y\rangle
+=\vec x^TQ_U^TQ_W\vec y.
+\]</span></p>
+<p>The first principal angle is determined by</p>
+<p><span class="math display">\[
+\max_{\|\vec x\|=\|\vec y\|=1} \vec x^T(Q_U^TQ_W)\vec y.
+\]</span></p>
+<p>By the variational characterization of singular values, this maximum is the largest singular value <span class="math inline">\(\sigma_1\)</span>. After imposing orthogonality to the previously selected vectors, the same argument gives <span class="math inline">\(\sigma_2,\ldots,\sigma_k\)</span>. Hence <span class="math inline">\(\cos\theta_i=\sigma_i\)</span>.</p>
+</details>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Computational recipe
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Given data matrices <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>:</p>
+<ol type="1">
+<li>Compute orthonormal bases <span class="math inline">\(Q_A\)</span> and <span class="math inline">\(Q_B\)</span> for their column spaces using QR.</li>
+<li>Compute the singular values of <span class="math inline">\(Q_A^TQ_B\)</span>.</li>
+<li>Clip the singular values into <span class="math inline">\([0,1]\)</span> to avoid roundoff errors.</li>
+<li>Compute <span class="math inline">\(\theta_i=\cos^{-1}(\sigma_i)\)</span>.</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="worked-examples" class="level1" data-number="24">
+<h1 data-number="24"><span class="header-section-number">24</span> Worked examples</h1>
+<section id="example-17.8-two-lines-in-the-plane" class="level2" data-number="24.1">
+<h2 data-number="24.1" class="anchored" data-anchor-id="example-17.8-two-lines-in-the-plane"><span class="header-section-number">24.1</span> Example 17.8: Two lines in the plane</h2>
+<p>Let</p>
+<p><span class="math display">\[
+U=\operatorname{span}\left\{\begin{bmatrix}1\\0\end{bmatrix}\right\},
+\qquad
+W=\operatorname{span}\left\{\begin{bmatrix}\cos\alpha\\ \sin\alpha\end{bmatrix}\right\},
+\]</span></p>
+<p>where <span class="math inline">\(0\le \alpha\le \pi/2\)</span>. Then</p>
+<p><span class="math display">\[
+Q_U^TQ_W=egin{bmatrix}1&amp;0\end{bmatrix}
+\begin{bmatrix}\cos\alpha\\ \sin\alpha\end{bmatrix}=\cos\alpha.
+\]</span></p>
+<p>The only singular value is <span class="math inline">\(\sigma_1=\cos\alpha\)</span>, so <span class="math inline">\(\theta_1=\alpha\)</span>.</p>
+</section>
+<section id="example-17.9-two-planes-in-mathbb-r3" class="level2" data-number="24.2">
+<h2 data-number="24.2" class="anchored" data-anchor-id="example-17.9-two-planes-in-mathbb-r3"><span class="header-section-number">24.2</span> Example 17.9: Two planes in <span class="math inline">\(\mathbb R^3\)</span></h2>
+<p>Let</p>
+<p><span class="math display">\[
+U=\operatorname{span}\{\vec e_1,\vec e_2\},
+\qquad
+W=\operatorname{span}\{\vec e_1,\cos\alpha\,\vec e_2+\sin\alpha\,\vec e_3\}.
+\]</span></p>
+<p>The subspaces share the direction <span class="math inline">\(\vec e_1\)</span>, so <span class="math inline">\(\theta_1=0\)</span>. The second direction is rotated by angle <span class="math inline">\(\alpha\)</span>, so <span class="math inline">\(\theta_2=\alpha\)</span>.</p>
+<p>Matrix computation confirms this:</p>
+<p><span class="math display">\[
+Q_U=\begin{bmatrix}1&amp;0\\0&amp;1\\0&amp;0\end{bmatrix},
+\qquad
+Q_W=\begin{bmatrix}1&amp;0\\0&amp;\cos\alpha\\0&amp;\sin\alpha\end{bmatrix}.
+\]</span></p>
+<p>Then</p>
+<p><span class="math display">\[
+Q_U^TQ_W=\begin{bmatrix}1&amp;0\\0&amp;\cos\alpha\end{bmatrix},
+\]</span></p>
+<p>whose singular values are <span class="math inline">\(1\)</span> and <span class="math inline">\(\cos\alpha\)</span>.</p>
+</section>
+</section>
+<section id="distances-on-the-grassmannian" class="level1" data-number="25">
+<h1 data-number="25"><span class="header-section-number">25</span> Distances on the Grassmannian</h1>
+<p>Once the principal angles are known, several distances can be defined.</p>
+<section id="definition-17.10-grassmann-geodesic-distance" class="level2 callout-definition" data-number="25.1">
+<h2 data-number="25.1" class="anchored" data-anchor-id="definition-17.10-grassmann-geodesic-distance"><span class="header-section-number">25.1</span> Definition 17.10: Grassmann geodesic distance</h2>
+<p>For <span class="math inline">\(U,W\in \operatorname{Gr}(k,n)\)</span> with principal angles <span class="math inline">\(\theta_1,\ldots,\theta_k\)</span>, the <strong>Grassmann geodesic distance</strong> is</p>
+<p><span class="math display">\[
+d_{\operatorname{Gr}}(U,W)=\left(\sum_{i=1}^k \theta_i^2\right)^{1/2}.
+\]</span></p>
+</section>
+<section id="definition-17.11-common-grassmannian-distances" class="level2 callout-definition" data-number="25.2">
+<h2 data-number="25.2" class="anchored" data-anchor-id="definition-17.11-common-grassmannian-distances"><span class="header-section-number">25.2</span> Definition 17.11: Common Grassmannian distances</h2>
+<p>Let <span class="math inline">\(\theta_1,\ldots,\theta_k\)</span> be the principal angles between <span class="math inline">\(U\)</span> and <span class="math inline">\(W\)</span>.</p>
+<p><span class="math display">\[
+d_{\mathrm{Asimov}}(U,W)=\theta_k.
+\]</span></p>
+<p><span class="math display">\[
+d_{\mathrm{chordal}}(U,W)=\left(\sum_{i=1}^k \sin^2\theta_i\right)^{1/2}.
+\]</span></p>
+<p><span class="math display">\[
+d_{\mathrm{Fubini\text{-}Study}}(U,W)=\cos^{-1}\left(\prod_{i=1}^k\cos\theta_i\right).
+\]</span></p>
+<p><span class="math display">\[
+d_{\mathrm{projection}}(U,W)=\sin\theta_k.
+\]</span></p>
+<p><span class="math display">\[
+d_{\mathrm{Procrustes}}(U,W)=2\left(\sum_{i=1}^k \sin^2(\theta_i/2)\right)^{1/2}.
+\]</span></p>
+</section>
+<p>For nearby subspaces, <span class="math inline">\(\sin\theta_i\approx \theta_i\)</span>, so the chordal distance and geodesic distance are close.</p>
+</section>
+<section id="projection-matrices-and-chordal-distance" class="level1" data-number="26">
+<h1 data-number="26"><span class="header-section-number">26</span> Projection matrices and chordal distance</h1>
+<p>A subspace <span class="math inline">\(U\in \operatorname{Gr}(k,n)\)</span> can be represented by its orthogonal projection matrix. If <span class="math inline">\(Q_U\)</span> has orthonormal columns spanning <span class="math inline">\(U\)</span>, then</p>
+<p><span class="math display">\[
+P_U=Q_UQ_U^T.
+\]</span></p>
+<section id="proposition-17.12-projection-representation-is-basis-independent" class="level2 callout-theorem" data-number="26.1">
+<h2 data-number="26.1" class="anchored" data-anchor-id="proposition-17.12-projection-representation-is-basis-independent"><span class="header-section-number">26.1</span> Proposition 17.12: Projection representation is basis-independent</h2>
+<p>If <span class="math inline">\(Q_U\)</span> and <span class="math inline">\(\widetilde Q_U\)</span> are two orthonormal basis matrices for the same subspace <span class="math inline">\(U\)</span>, then</p>
+<p><span class="math display">\[
+Q_UQ_U^T=\widetilde Q_U\widetilde Q_U^T.
+\]</span></p>
+</section>
+<details>
+<summary>
+<strong>Proof</strong>
+</summary>
+<p>Since <span class="math inline">\(Q_U\)</span> and <span class="math inline">\(\widetilde Q_U\)</span> have the same column space, there exists <span class="math inline">\(R\in O(k)\)</span> such that <span class="math inline">\(\widetilde Q_U=Q_UR\)</span>. Therefore</p>
+<p><span class="math display">\[
+\widetilde Q_U\widetilde Q_U^T
+=Q_URR^TQ_U^T
+=Q_UIQ_U^T
+=Q_UQ_U^T.
+\]</span></p>
+</details>
+<section id="theorem-17.13-chordal-distance-from-projection-matrices" class="level2 callout-theorem" data-number="26.2">
+<h2 data-number="26.2" class="anchored" data-anchor-id="theorem-17.13-chordal-distance-from-projection-matrices"><span class="header-section-number">26.2</span> Theorem 17.13: Chordal distance from projection matrices</h2>
+<p>Let <span class="math inline">\(U,W\in \operatorname{Gr}(k,n)\)</span>, and let <span class="math inline">\(P_U,P_W\)</span> be their orthogonal projection matrices. Then</p>
+<p><span class="math display">\[
+\frac{1}{\sqrt 2}\|P_U-P_W\|_F
+=\left(\sum_{i=1}^k\sin^2\theta_i\right)^{1/2}.
+\]</span></p>
+<p>Thus</p>
+<p><span class="math display">\[
+d_{\mathrm{chordal}}(U,W)=\frac{1}{\sqrt 2}\|P_U-P_W\|_F.
+\]</span></p>
+</section>
+<details>
+<summary>
+<strong>Proof</strong>
+</summary>
+<p>Let <span class="math inline">\(P_U=Q_UQ_U^T\)</span> and <span class="math inline">\(P_W=Q_WQ_W^T\)</span>. Since projection matrices are symmetric and idempotent,</p>
+<p><span class="math display">\[
+\|P_U-P_W\|_F^2
+=\operatorname{tr}((P_U-P_W)^T(P_U-P_W)).
+\]</span></p>
+<p>Thus</p>
+<p><span class="math display">\[
+\|P_U-P_W\|_F^2
+=\operatorname{tr}(P_U)+\operatorname{tr}(P_W)-2\operatorname{tr}(P_UP_W).
+\]</span></p>
+<p>Because <span class="math inline">\(P_U\)</span> and <span class="math inline">\(P_W\)</span> project onto <span class="math inline">\(k\)</span>-dimensional subspaces,</p>
+<p><span class="math display">\[
+\operatorname{tr}(P_U)=\operatorname{tr}(P_W)=k.
+\]</span></p>
+<p>Also,</p>
+<p><span class="math display">\[
+\operatorname{tr}(P_UP_W)
+=\operatorname{tr}(Q_UQ_U^TQ_WQ_W^T)
+=\operatorname{tr}(Q_U^TQ_WQ_W^TQ_U)
+=\|Q_U^TQ_W\|_F^2.
+\]</span></p>
+<p>The singular values of <span class="math inline">\(Q_U^TQ_W\)</span> are <span class="math inline">\(\cos\theta_1,\ldots,\cos\theta_k\)</span>. Hence</p>
+<p><span class="math display">\[
+\operatorname{tr}(P_UP_W)=\sum_{i=1}^k\cos^2\theta_i.
+\]</span></p>
+<p>Therefore</p>
+<p><span class="math display">\[
+\|P_U-P_W\|_F^2
+=2k-2\sum_{i=1}^k\cos^2\theta_i
+=2\sum_{i=1}^k\sin^2\theta_i.
+\]</span></p>
+<p>Taking square roots gives the result.</p>
+</details>
+</section>
+<section id="python-computation" class="level1" data-number="27">
+<h1 data-number="27"><span class="header-section-number">27</span> Python computation</h1>
+<div id="3bbd3149" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> orthonormal_basis(A, tol<span class="op">=</span><span class="fl">1e-12</span>):</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return an orthonormal basis for the column space of A."""</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    Q, R <span class="op">=</span> np.linalg.qr(A)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    diag <span class="op">=</span> np.<span class="bu">abs</span>(np.diag(R))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> <span class="bu">int</span>(np.<span class="bu">sum</span>(diag <span class="op">&gt;</span> tol))</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Q[:, :r]</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> principal_angles(A, B):</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Principal angles between column spaces of A and B."""</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    QA <span class="op">=</span> orthonormal_basis(A)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    QB <span class="op">=</span> orthonormal_basis(B)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> QA.shape[<span class="dv">1</span>] <span class="op">!=</span> QB.shape[<span class="dv">1</span>]:</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"This function assumes equal-dimensional subspaces."</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> np.linalg.svd(QA.T <span class="op">@</span> QB, compute_uv<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> np.clip(s, <span class="fl">0.0</span>, <span class="fl">1.0</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.arccos(s)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> distances_from_angles(theta):</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">"geodesic"</span>: np.linalg.norm(theta),</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">"chordal"</span>: np.linalg.norm(np.sin(theta)),</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">"projection"</span>: np.sin(np.<span class="bu">max</span>(theta)),</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Asimov"</span>: np.<span class="bu">max</span>(theta),</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Procrustes"</span>: <span class="dv">2</span><span class="op">*</span>np.linalg.norm(np.sin(theta<span class="op">/</span><span class="dv">2</span>)),</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Fubini-Study"</span>: np.arccos(np.prod(np.cos(theta)))</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> np.pi<span class="op">/</span><span class="dv">6</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="dv">1</span>,<span class="dv">0</span>],[<span class="dv">0</span>,<span class="dv">1</span>],[<span class="dv">0</span>,<span class="dv">0</span>]], dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> np.array([[<span class="dv">1</span>,<span class="dv">0</span>],[<span class="dv">0</span>,np.cos(alpha)],[<span class="dv">0</span>,np.sin(alpha)]], dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> principal_angles(A, B)</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Principal angles in radians:"</span>, theta)</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Principal angles in degrees:"</span>, theta<span class="op">*</span><span class="dv">180</span><span class="op">/</span>np.pi)</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(distances_from_angles(theta))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Principal angles in radians: [0.         0.52359878]
+Principal angles in degrees: [ 0. 30.]
+{'geodesic': 0.5235987755982985, 'chordal': 0.49999999999999967, 'projection': 0.49999999999999967, 'Asimov': 0.5235987755982985, 'Procrustes': 0.5176380902050411, 'Fubini-Study': 0.5235987755982985}</code></pre>
+</div>
+</div>
+<section id="comparing-pca-subspaces" class="level2" data-number="27.1">
+<h2 data-number="27.1" class="anchored" data-anchor-id="comparing-pca-subspaces"><span class="header-section-number">27.1</span> Comparing PCA subspaces</h2>
+<div id="f0743e0b" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">7</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Two synthetic data clouds in R^5 with dominant 2D structure.</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="dv">200</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>U_true <span class="op">=</span> orthonormal_basis(np.random.randn(n, <span class="dv">2</span>))</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>noise <span class="op">=</span> <span class="fl">0.15</span><span class="op">*</span>np.random.randn(n, m)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> U_true <span class="op">@</span> np.random.randn(<span class="dv">2</span>, m) <span class="op">+</span> noise</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Rotate the true subspace slightly to create a second data set.</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>R <span class="op">=</span> np.eye(n)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>R[<span class="dv">1</span>,<span class="dv">1</span>] <span class="op">=</span> np.cos(<span class="fl">0.35</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>R[<span class="dv">1</span>,<span class="dv">2</span>] <span class="op">=</span> <span class="op">-</span>np.sin(<span class="fl">0.35</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>R[<span class="dv">2</span>,<span class="dv">1</span>] <span class="op">=</span> np.sin(<span class="fl">0.35</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>R[<span class="dv">2</span>,<span class="dv">2</span>] <span class="op">=</span> np.cos(<span class="fl">0.35</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>V_true <span class="op">=</span> R <span class="op">@</span> U_true</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> V_true <span class="op">@</span> np.random.randn(<span class="dv">2</span>, m) <span class="op">+</span> <span class="fl">0.15</span><span class="op">*</span>np.random.randn(n, m)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co"># PCA by SVD of centered data.</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>Xc <span class="op">=</span> X <span class="op">-</span> X.mean(axis<span class="op">=</span><span class="dv">1</span>, keepdims<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>Yc <span class="op">=</span> Y <span class="op">-</span> Y.mean(axis<span class="op">=</span><span class="dv">1</span>, keepdims<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>Ux, sx, _ <span class="op">=</span> np.linalg.svd(Xc, full_matrices<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>Uy, sy, _ <span class="op">=</span> np.linalg.svd(Yc, full_matrices<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>PX <span class="op">=</span> Ux[:, :<span class="dv">2</span>]</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>PY <span class="op">=</span> Uy[:, :<span class="dv">2</span>]</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>theta_pca <span class="op">=</span> principal_angles(PX, PY)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"PCA subspace angles in degrees:"</span>, theta_pca<span class="op">*</span><span class="dv">180</span><span class="op">/</span>np.pi)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Grassmann distance:"</span>, np.linalg.norm(theta_pca))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>PCA subspace angles in degrees: [4.31762243 9.17458385]
+Grassmann distance: 0.17697230014103085</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="classical-challenge-questions" class="level1" data-number="28">
+<h1 data-number="28"><span class="header-section-number">28</span> Classical challenge questions</h1>
+<section id="challenge-17.1-why-point-to-point-distance-fails" class="level2" data-number="28.1">
+<h2 data-number="28.1" class="anchored" data-anchor-id="challenge-17.1-why-point-to-point-distance-fails"><span class="header-section-number">28.1</span> Challenge 17.1: Why point-to-point distance fails</h2>
+<p>Let <span class="math inline">\(U,W\subseteq \mathbb R^n\)</span> be two linear subspaces. Explain why</p>
+<p><span class="math display">\[
+\min_{\vec u\in U,\ \vec w\in W}\|\vec u-\vec w\|
+\]</span></p>
+<p>is not a useful distance between linear subspaces.</p>
+<details>
+<summary>
+<strong>Solution</strong>
+</summary>
+<p>Since <span class="math inline">\(U\)</span> and <span class="math inline">\(W\)</span> are linear subspaces, both contain the zero vector. Choosing <span class="math inline">\(\vec u=\vec 0\)</span> and <span class="math inline">\(\vec w=\vec 0\)</span> gives</p>
+<p><span class="math display">\[
+\|\vec u-\vec w\|=0.
+\]</span></p>
+<p>Therefore the minimum is always <span class="math inline">\(0\)</span>, no matter how different the two subspaces are. A useful subspace distance must compare directions.</p>
+</details>
+</section>
+<section id="challenge-17.2-two-planes-sharing-a-line" class="level2" data-number="28.2">
+<h2 data-number="28.2" class="anchored" data-anchor-id="challenge-17.2-two-planes-sharing-a-line"><span class="header-section-number">28.2</span> Challenge 17.2: Two planes sharing a line</h2>
+<p>Let</p>
+<p><span class="math display">\[
+U=\operatorname{span}\{\vec e_1,\vec e_2\},
+\qquad
+W=\operatorname{span}\{\vec e_1,\cos\alpha\,\vec e_2+\sin\alpha\,\vec e_3\}.
+\]</span></p>
+<p>Find the principal angles and the Grassmann geodesic distance.</p>
+<details>
+<summary>
+<strong>Solution</strong>
+</summary>
+<p>The subspaces share the direction <span class="math inline">\(\vec e_1\)</span>, so <span class="math inline">\(\theta_1=0\)</span>. The remaining direction is rotated by angle <span class="math inline">\(\alpha\)</span>, so <span class="math inline">\(\theta_2=\alpha\)</span>. Therefore</p>
+<p><span class="math display">\[
+(\theta_1,\theta_2)=(0,\alpha)
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+d_{\operatorname{Gr}}(U,W)=\sqrt{0^2+\alpha^2}=\alpha.
+\]</span></p>
+</details>
+</section>
+<section id="challenge-17.3-projection-matrix-representation" class="level2" data-number="28.3">
+<h2 data-number="28.3" class="anchored" data-anchor-id="challenge-17.3-projection-matrix-representation"><span class="header-section-number">28.3</span> Challenge 17.3: Projection matrix representation</h2>
+<p>Let <span class="math inline">\(Q\in \mathbb R^{n\times k}\)</span> have orthonormal columns. Show that <span class="math inline">\(P=QQ^T\)</span> is the orthogonal projection matrix onto <span class="math inline">\(\operatorname{im}(Q)\)</span>.</p>
+<details>
+<summary>
+<strong>Solution</strong>
+</summary>
+<p>First, <span class="math inline">\(P^T=(QQ^T)^T=QQ^T=P\)</span>, so <span class="math inline">\(P\)</span> is symmetric. Second,</p>
+<p><span class="math display">\[
+P^2=QQ^TQQ^T=Q(Q^TQ)Q^T=QIQ^T=QQ^T=P.
+\]</span></p>
+<p>For any <span class="math inline">\(\vec x\)</span>, <span class="math inline">\(P\vec x=QQ^T\vec x\in \operatorname{im}(Q)\)</span>. Also,</p>
+<p><span class="math display">\[
+Q^T(\vec x-P\vec x)=Q^T\vec x-Q^TQQ^T\vec x=0.
+\]</span></p>
+<p>Thus the error <span class="math inline">\(\vec x-P\vec x\)</span> is orthogonal to <span class="math inline">\(\operatorname{im}(Q)\)</span>. Hence <span class="math inline">\(P\vec x\)</span> is the orthogonal projection of <span class="math inline">\(\vec x\)</span> onto <span class="math inline">\(\operatorname{im}(Q)\)</span>.</p>
+</details>
+</section>
+<section id="challenge-17.4-chordal-distance-from-projections" class="level2" data-number="28.4">
+<h2 data-number="28.4" class="anchored" data-anchor-id="challenge-17.4-chordal-distance-from-projections"><span class="header-section-number">28.4</span> Challenge 17.4: Chordal distance from projections</h2>
+<p>Prove that</p>
+<p><span class="math display">\[
+d_{\mathrm{chordal}}(U,W)=\frac{1}{\sqrt 2}\|P_U-P_W\|_F.
+\]</span></p>
+<details>
+<summary>
+<strong>Solution</strong>
+</summary>
+<p>The proof follows from the trace computation:</p>
+<p><span class="math display">\[
+\|P_U-P_W\|_F^2=2k-2\operatorname{tr}(P_UP_W).
+\]</span></p>
+<p>Using orthonormal bases <span class="math inline">\(Q_U,Q_W\)</span>,</p>
+<p><span class="math display">\[
+\operatorname{tr}(P_UP_W)=\|Q_U^TQ_W\|_F^2.
+\]</span></p>
+<p>The singular values of <span class="math inline">\(Q_U^TQ_W\)</span> are <span class="math inline">\(\cos\theta_1,\ldots,\cos\theta_k\)</span>, so</p>
+<p><span class="math display">\[
+\operatorname{tr}(P_UP_W)=\sum_{i=1}^k\cos^2\theta_i.
+\]</span></p>
+<p>Therefore</p>
+<p><span class="math display">\[
+\|P_U-P_W\|_F^2=2\sum_{i=1}^k\sin^2\theta_i.
+\]</span></p>
+<p>Taking square roots gives the result.</p>
+</details>
+</section>
+</section>
+<section id="practice-problems" class="level1" data-number="29">
+<h1 data-number="29"><span class="header-section-number">29</span> Practice problems</h1>
+<section id="problem-17.1" class="level2" data-number="29.1">
+<h2 data-number="29.1" class="anchored" data-anchor-id="problem-17.1"><span class="header-section-number">29.1</span> Problem 17.1</h2>
+<p>Let <span class="math inline">\(U=\operatorname{span}\{(1,0)\}\)</span> and <span class="math inline">\(W=\operatorname{span}\{(1,1)\}\)</span>. Find the principal angle between <span class="math inline">\(U\)</span> and <span class="math inline">\(W\)</span>.</p>
+<details>
+<summary>
+<strong>Solution</strong>
+</summary>
+<p>Normalize the vector <span class="math inline">\((1,1)\)</span>:</p>
+<p><span class="math display">\[
+\vec w=\frac{1}{\sqrt2}(1,1).
+\]</span></p>
+<p>Then</p>
+<p><span class="math display">\[
+\cos\theta=(1,0)\cdot \frac{1}{\sqrt2}(1,1)=\frac{1}{\sqrt2}.
+\]</span></p>
+<p>Thus <span class="math inline">\(\theta=\pi/4\)</span>.</p>
+</details>
+</section>
+<section id="problem-17.2" class="level2" data-number="29.2">
+<h2 data-number="29.2" class="anchored" data-anchor-id="problem-17.2"><span class="header-section-number">29.2</span> Problem 17.2</h2>
+<p>Let <span class="math inline">\(U=\operatorname{span}\{\vec e_1,\vec e_2\}\)</span> and <span class="math inline">\(W=\operatorname{span}\{\vec e_2,\vec e_3\}\)</span> in <span class="math inline">\(\mathbb R^3\)</span>. Find the principal angles.</p>
+<details>
+<summary>
+<strong>Solution</strong>
+</summary>
+<p>The two planes share the direction <span class="math inline">\(\vec e_2\)</span>, so <span class="math inline">\(\theta_1=0\)</span>. The remaining directions are <span class="math inline">\(\vec e_1\)</span> and <span class="math inline">\(\vec e_3\)</span>, which are orthogonal, so <span class="math inline">\(\theta_2=\pi/2\)</span>. Therefore</p>
+<p><span class="math display">\[
+(\theta_1,\theta_2)=(0,\pi/2).
+\]</span></p>
+</details>
+</section>
+<section id="problem-17.3" class="level2" data-number="29.3">
+<h2 data-number="29.3" class="anchored" data-anchor-id="problem-17.3"><span class="header-section-number">29.3</span> Problem 17.3</h2>
+<p>If two two-dimensional subspaces have principal angles <span class="math inline">\(\theta_1=0.2\)</span> and <span class="math inline">\(\theta_2=0.6\)</span>, compute the Grassmann geodesic distance and chordal distance.</p>
+<details>
+<summary>
+<strong>Solution</strong>
+</summary>
+<p>The geodesic distance is</p>
+<p><span class="math display">\[
+d_{\operatorname{Gr}}=\sqrt{0.2^2+0.6^2}=\sqrt{0.40}\approx 0.6325.
+\]</span></p>
+<p>The chordal distance is</p>
+<p><span class="math display">\[
+d_{\mathrm{chordal}}=\sqrt{\sin^2(0.2)+\sin^2(0.6)}\approx 0.5985.
+\]</span></p>
+</details>
+</section>
+</section>
+<section id="ai-companion-activities" class="level1" data-number="30">
+<h1 data-number="30"><span class="header-section-number">30</span> AI companion activities</h1>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 17.A: Explain the geometry
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Ask an AI tool:</p>
+<blockquote class="blockquote">
+<p>Explain why comparing two subspaces requires comparing directions rather than comparing closest points.</p>
+</blockquote>
+<p>Then improve the response by requiring it to include the zero-vector argument.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 17.B: Check a computation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Use Python to compute principal angles for two subspaces. Then ask an AI tool:</p>
+<blockquote class="blockquote">
+<p>Here are my matrices <span class="math inline">\(Q_U\)</span> and <span class="math inline">\(Q_W\)</span>. Explain why the singular values of <span class="math inline">\(Q_U^TQ_W\)</span> give the cosines of the principal angles.</p>
+</blockquote>
+<p>Check whether the explanation correctly uses orthonormal bases.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 17.C: Applications search prompt
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Ask:</p>
+<blockquote class="blockquote">
+<p>Give three applications where Grassmannian distances are useful in data science, computer vision, or signal processing. For each one, explain what the subspaces represent.</p>
+</blockquote>
+</div>
+</div>
+</section>
+<section id="summary" class="level1" data-number="31">
+<h1 data-number="31"><span class="header-section-number">31</span> Summary</h1>
+<ul>
+<li>The Grassmannian <span class="math inline">\(\operatorname{Gr}(k,n)\)</span> is the set of all <span class="math inline">\(k\)</span>-dimensional subspaces of <span class="math inline">\(\mathbb R^n\)</span>.</li>
+<li>The Stiefel manifold <span class="math inline">\(\operatorname{St}(k,n)\)</span> is the set of orthonormal <span class="math inline">\(k\)</span>-frames.</li>
+<li>A subspace can be represented by many orthonormal bases, so <span class="math inline">\(\operatorname{Gr}(k,n)=\operatorname{St}(k,n)/O(k)\)</span>.</li>
+<li>Principal angles measure how two subspaces are positioned relative to each other.</li>
+<li>Principal angles are computed from the singular values of <span class="math inline">\(Q_U^TQ_W\)</span>.</li>
+<li>Grassmannian distances are built from principal angles.</li>
+<li>Projection matrices give a basis-independent representation of subspaces.</li>
+<li>Grassmannian geometry appears in PCA, computer vision, signal processing, subspace clustering, and machine learning.</li>
+</ul>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/wanghemath\.github\.io\/MATH5110");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../labs/lab-16-fast-fourier-transforms.html" class="pagination-link" aria-label="Lab 16: Fast Fourier Transforms">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Lab 16: Fast Fourier Transforms</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../labs/lab-17-grassmannians-subspace-distances.html" class="pagination-link" aria-label="Lab 17: Grassmannians and Distances Between Subspaces">
+        <span class="nav-page-text">Lab 17: Grassmannians and Distances Between Subspaces</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Chapter 17: Grassmannians and Distances Between Subspaces"</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "When data are not points, but linear worlds"</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "He Wang"</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">    number-sections: true</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: true</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="fu"># The story: comparing directions, not only points</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>In earlier chapters, a vector was often the main object. A vector could be a point, a signal, an image, a list of coefficients, or a feature representation.</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>But in many modern applications, the important object is not one vector. It is a **subspace**.</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>A data set with columns</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>A=<span class="co">[</span><span class="ot">\vec a_1\ \vec a_2\ \cdots\ \vec a_k</span><span class="co">]</span>\in \mathbb R^{n\times k}</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>carries the linear information</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>\operatorname{im}(A)=\operatorname{span}<span class="sc">\{</span>\vec a_1,\ldots,\vec a_k<span class="sc">\}</span>\subseteq \mathbb R^n.</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>In PCA, the first few principal components span a low-dimensional subspace. In computer vision, several images of the same object may span a subspace. In signal processing, a family of observations may be represented by a subspace. In machine learning, a group of embeddings may be compared by comparing the subspaces they generate.</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>So the central question of this chapter is:</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>::: {.callout-important}</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## Guiding question</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>How do we measure the distance between two linear subspaces?</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>A first attempt fails immediately. If $U,W\subseteq \mathbb R^n$ are linear subspaces, then both contain $\vec 0$. Therefore</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>\min_{\vec u\in U,\ \vec w\in W}<span class="sc">\|</span>\vec u-\vec w<span class="sc">\|</span>=0</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>for every pair of subspaces. This quantity cannot distinguish two identical subspaces from two very different subspaces. To compare subspaces, we must compare **directions**.</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a><span class="fu"># Metric spaces and the problem of subspace distance</span></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>::: {.callout-definition}</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a><span class="fu">## Definition 17.1: Metric</span></span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>Let $S$ be a set. A function</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>d:S\times S\to \mathbb R</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>is called a **metric** if for all $x,y,z\in S$:</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>$d(x,y)\ge 0$, and $d(x,y)=0$ if and only if $x=y$;</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>$d(x,y)=d(y,x)$;</span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>$d(x,z)\le d(x,y)+d(y,z)$.</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>A set equipped with a metric is called a **metric space**.</span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>The Euclidean metric on $\mathbb R^n$ is</span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>d(\vec x,\vec y)=<span class="sc">\|</span>\vec x-\vec y<span class="sc">\|</span>_2.</span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>But the objects in this chapter are not vectors. They are subspaces. Thus we need a metric on a space whose points are themselves subspaces.</span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a><span class="fu"># The Grassmannian</span></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>::: {.callout-definition}</span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a><span class="fu">## Definition 17.2: Grassmannian</span></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>For integers $0\le k\le n$, the **Grassmannian** $\operatorname{Gr}(k,n)$ is the set of all $k$-dimensional linear subspaces of $\mathbb R^n$:</span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>\operatorname{Gr}(k,n)=<span class="sc">\{</span>U\subseteq \mathbb R^n: U\text{ is a linear subspace and }\dim U=k<span class="sc">\}</span>.</span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>A point of $\operatorname{Gr}(k,n)$ is not a vector. It is an entire $k$-dimensional subspace.</span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a><span class="fu">## Example 17.3: Lines through the origin</span></span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>The Grassmannian $\operatorname{Gr}(1,n)$ is the set of all lines through the origin in $\mathbb R^n$. A nonzero vector $\vec u$ determines the same line as every nonzero scalar multiple $c\vec u$.</span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a>Thus $\operatorname{Gr}(1,n)$ remembers direction, but forgets length and sign.</span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a><span class="fu">## Story interpretation</span></span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>A nonzero vector is like a road sign pointing in a direction. The line it spans is the direction itself. If we multiply the sign by $2$, $-3$, or $100$, the direction is still the same line.</span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a><span class="fu"># Orthonormal frames and the Stiefel manifold</span></span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>A subspace can be represented by a basis matrix. For numerical work, the best basis matrix is usually an orthonormal one.</span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a>::: {.callout-definition}</span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a><span class="fu">## Definition 17.4: Stiefel manifold</span></span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a>The real **Stiefel manifold** $\operatorname{St}(k,n)$ is the set of all $n\times k$ matrices with orthonormal columns:</span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>\operatorname{St}(k,n)=<span class="sc">\{</span>Q\in \mathbb R^{n\times k}: Q^TQ=I_k<span class="sc">\}</span>.</span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a>Each $Q\in \operatorname{St}(k,n)$ determines a $k$-dimensional subspace $\operatorname{im}(Q)$. But many different orthonormal bases represent the same subspace.</span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a>::: {.callout-theorem}</span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a><span class="fu">## Proposition 17.5: Grassmannian as a quotient</span></span>
+<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a>The Grassmannian can be represented as</span>
+<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a>\operatorname{Gr}(k,n)=\operatorname{St}(k,n)/O(k),</span>
+<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a>where $O(k)$ is the group of $k\times k$ orthogonal matrices.</span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">summary</span><span class="dt">&gt;&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>Proof<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
+<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a>Let $Q\in \operatorname{St}(k,n)$. Its columns form an orthonormal basis for the subspace $U=\operatorname{im}(Q)$.</span>
+<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a>If $R\in O(k)$, then $QR$ also has orthonormal columns because</span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>(QR)^T(QR)=R^TQ^TQR=R^TIR=I.</span>
+<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a>Also $\operatorname{im}(QR)=\operatorname{im}(Q)$, because multiplying on the right by $R$ only rotates the coordinate system inside the same subspace.</span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a>Conversely, suppose $Q_1,Q_2\in \operatorname{St}(k,n)$ have the same column space. Then each column of $Q_2$ is a linear combination of the columns of $Q_1$, so $Q_2=Q_1R$ for some $k\times k$ matrix $R$. Since both have orthonormal columns,</span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a>I=Q_2^TQ_2=R^TQ_1^TQ_1R=R^TR.</span>
+<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a>Thus $R\in O(k)$. Therefore quotienting by $O(k)$ identifies exactly the different orthonormal bases of the same subspace.</span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a><span class="fu"># Principal angles between subspaces</span></span>
+<span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a>For unit vectors $\vec u$ and $\vec v$, the angle $\theta$ between them is determined by</span>
+<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a>\cos\theta=\vec u^T\vec v.</span>
+<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a>For two $k$-dimensional subspaces, one angle is usually not enough. We need a list of angles.</span>
+<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a>::: {.callout-definition}</span>
+<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a><span class="fu">## Definition 17.6: Principal angles</span></span>
+<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a>Let $U,W\in \operatorname{Gr}(k,n)$. The **principal angles**</span>
+<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a>0\le \theta_1\le \theta_2\le \cdots\le \theta_k\le \frac{\pi}{2}</span>
+<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a>are defined recursively by</span>
+<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a>\cos\theta_j=</span>
+<span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a>\max</span>
+<span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a>\left<span class="sc">\{</span></span>
+<span id="cb5-177"><a href="#cb5-177" aria-hidden="true" tabindex="-1"></a>\langle \vec u,\vec w\rangle:</span>
+<span id="cb5-178"><a href="#cb5-178" aria-hidden="true" tabindex="-1"></a>\begin{array}{l}</span>
+<span id="cb5-179"><a href="#cb5-179" aria-hidden="true" tabindex="-1"></a>\vec u\in U,\ \vec w\in W,<span class="sc">\\</span></span>
+<span id="cb5-180"><a href="#cb5-180" aria-hidden="true" tabindex="-1"></a><span class="sc">\|</span>\vec u<span class="sc">\|</span>=<span class="sc">\|</span>\vec w<span class="sc">\|</span>=1,<span class="sc">\\</span></span>
+<span id="cb5-181"><a href="#cb5-181" aria-hidden="true" tabindex="-1"></a>\vec u\perp \vec u_1,\ldots,\vec u_{j-1},<span class="sc">\\</span></span>
+<span id="cb5-182"><a href="#cb5-182" aria-hidden="true" tabindex="-1"></a>\vec w\perp \vec w_1,\ldots,\vec w_{j-1}</span>
+<span id="cb5-183"><a href="#cb5-183" aria-hidden="true" tabindex="-1"></a>\end{array}</span>
+<span id="cb5-184"><a href="#cb5-184" aria-hidden="true" tabindex="-1"></a>\right<span class="sc">\}</span>.</span>
+<span id="cb5-185"><a href="#cb5-185" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-186"><a href="#cb5-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-187"><a href="#cb5-187" aria-hidden="true" tabindex="-1"></a>The maximizing vectors are called **principal vectors**.</span>
+<span id="cb5-188"><a href="#cb5-188" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-189"><a href="#cb5-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-190"><a href="#cb5-190" aria-hidden="true" tabindex="-1"></a>The first principal angle finds the closest pair of directions. The second angle finds the closest pair after removing the first pair, and so on.</span>
+<span id="cb5-191"><a href="#cb5-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-192"><a href="#cb5-192" aria-hidden="true" tabindex="-1"></a><span class="fu"># Computing principal angles by QR and SVD</span></span>
+<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-194"><a href="#cb5-194" aria-hidden="true" tabindex="-1"></a>The recursive definition is conceptually clear, but it is not how we compute principal angles in practice. Numerically, we use QR and SVD.</span>
+<span id="cb5-195"><a href="#cb5-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-196"><a href="#cb5-196" aria-hidden="true" tabindex="-1"></a>::: {.callout-theorem}</span>
+<span id="cb5-197"><a href="#cb5-197" aria-hidden="true" tabindex="-1"></a><span class="fu">## Theorem 17.7: Principal angles from SVD</span></span>
+<span id="cb5-198"><a href="#cb5-198" aria-hidden="true" tabindex="-1"></a>Let $U,W\in \operatorname{Gr}(k,n)$. Let</span>
+<span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a>Q_U,Q_W\in \mathbb R^{n\times k}</span>
+<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a>have orthonormal columns spanning $U$ and $W$. Let</span>
+<span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a>Q_U^TQ_W=A_0\Sigma B_0^T</span>
+<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a>be a singular value decomposition, where</span>
+<span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a>\Sigma=\operatorname{diag}(\sigma_1,\ldots,\sigma_k),</span>
+<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a>\qquad</span>
+<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a>\sigma_1\ge\sigma_2\ge\cdots\ge\sigma_k\ge 0.</span>
+<span id="cb5-216"><a href="#cb5-216" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-217"><a href="#cb5-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a>Then the principal angles satisfy</span>
+<span id="cb5-219"><a href="#cb5-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-221"><a href="#cb5-221" aria-hidden="true" tabindex="-1"></a>\cos\theta_i=\sigma_i,</span>
+<span id="cb5-222"><a href="#cb5-222" aria-hidden="true" tabindex="-1"></a>\qquad i=1,\ldots,k.</span>
+<span id="cb5-223"><a href="#cb5-223" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-224"><a href="#cb5-224" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-225"><a href="#cb5-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-226"><a href="#cb5-226" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-227"><a href="#cb5-227" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">summary</span><span class="dt">&gt;&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>Proof<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
+<span id="cb5-228"><a href="#cb5-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-229"><a href="#cb5-229" aria-hidden="true" tabindex="-1"></a>Every unit vector in $U$ can be written as $Q_U\vec x$ with $<span class="sc">\|</span>\vec x<span class="sc">\|</span>=1$. Every unit vector in $W$ can be written as $Q_W\vec y$ with $<span class="sc">\|</span>\vec y<span class="sc">\|</span>=1$. Therefore</span>
+<span id="cb5-230"><a href="#cb5-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-231"><a href="#cb5-231" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-232"><a href="#cb5-232" aria-hidden="true" tabindex="-1"></a>\langle Q_U\vec x,Q_W\vec y\rangle</span>
+<span id="cb5-233"><a href="#cb5-233" aria-hidden="true" tabindex="-1"></a>=\vec x^TQ_U^TQ_W\vec y.</span>
+<span id="cb5-234"><a href="#cb5-234" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-235"><a href="#cb5-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-236"><a href="#cb5-236" aria-hidden="true" tabindex="-1"></a>The first principal angle is determined by</span>
+<span id="cb5-237"><a href="#cb5-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-238"><a href="#cb5-238" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-239"><a href="#cb5-239" aria-hidden="true" tabindex="-1"></a>\max_{<span class="sc">\|</span>\vec x<span class="sc">\|</span>=<span class="sc">\|</span>\vec y<span class="sc">\|</span>=1} \vec x^T(Q_U^TQ_W)\vec y.</span>
+<span id="cb5-240"><a href="#cb5-240" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-241"><a href="#cb5-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-242"><a href="#cb5-242" aria-hidden="true" tabindex="-1"></a>By the variational characterization of singular values, this maximum is the largest singular value $\sigma_1$. After imposing orthogonality to the previously selected vectors, the same argument gives $\sigma_2,\ldots,\sigma_k$. Hence $\cos\theta_i=\sigma_i$.</span>
+<span id="cb5-243"><a href="#cb5-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-244"><a href="#cb5-244" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-245"><a href="#cb5-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-246"><a href="#cb5-246" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb5-247"><a href="#cb5-247" aria-hidden="true" tabindex="-1"></a><span class="fu">## Computational recipe</span></span>
+<span id="cb5-248"><a href="#cb5-248" aria-hidden="true" tabindex="-1"></a>Given data matrices $A$ and $B$:</span>
+<span id="cb5-249"><a href="#cb5-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-250"><a href="#cb5-250" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Compute orthonormal bases $Q_A$ and $Q_B$ for their column spaces using QR.</span>
+<span id="cb5-251"><a href="#cb5-251" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Compute the singular values of $Q_A^TQ_B$.</span>
+<span id="cb5-252"><a href="#cb5-252" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Clip the singular values into $<span class="co">[</span><span class="ot">0,1</span><span class="co">]</span>$ to avoid roundoff errors.</span>
+<span id="cb5-253"><a href="#cb5-253" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Compute $\theta_i=\cos^{-1}(\sigma_i)$.</span>
+<span id="cb5-254"><a href="#cb5-254" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-255"><a href="#cb5-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-256"><a href="#cb5-256" aria-hidden="true" tabindex="-1"></a><span class="fu"># Worked examples</span></span>
+<span id="cb5-257"><a href="#cb5-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-258"><a href="#cb5-258" aria-hidden="true" tabindex="-1"></a><span class="fu">## Example 17.8: Two lines in the plane</span></span>
+<span id="cb5-259"><a href="#cb5-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-260"><a href="#cb5-260" aria-hidden="true" tabindex="-1"></a>Let</span>
+<span id="cb5-261"><a href="#cb5-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-262"><a href="#cb5-262" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-263"><a href="#cb5-263" aria-hidden="true" tabindex="-1"></a>U=\operatorname{span}\left<span class="sc">\{</span>\begin{bmatrix}1<span class="sc">\\</span>0\end{bmatrix}\right<span class="sc">\}</span>,</span>
+<span id="cb5-264"><a href="#cb5-264" aria-hidden="true" tabindex="-1"></a>\qquad</span>
+<span id="cb5-265"><a href="#cb5-265" aria-hidden="true" tabindex="-1"></a>W=\operatorname{span}\left<span class="sc">\{</span>\begin{bmatrix}\cos\alpha<span class="sc">\\</span> \sin\alpha\end{bmatrix}\right<span class="sc">\}</span>,</span>
+<span id="cb5-266"><a href="#cb5-266" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-267"><a href="#cb5-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-268"><a href="#cb5-268" aria-hidden="true" tabindex="-1"></a>where $0\le \alpha\le \pi/2$. Then</span>
+<span id="cb5-269"><a href="#cb5-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-270"><a href="#cb5-270" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-271"><a href="#cb5-271" aria-hidden="true" tabindex="-1"></a>Q_U^TQ_W=egin{bmatrix}1&amp;0\end{bmatrix}</span>
+<span id="cb5-272"><a href="#cb5-272" aria-hidden="true" tabindex="-1"></a>\begin{bmatrix}\cos\alpha<span class="sc">\\</span> \sin\alpha\end{bmatrix}=\cos\alpha.</span>
+<span id="cb5-273"><a href="#cb5-273" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-274"><a href="#cb5-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-275"><a href="#cb5-275" aria-hidden="true" tabindex="-1"></a>The only singular value is $\sigma_1=\cos\alpha$, so $\theta_1=\alpha$.</span>
+<span id="cb5-276"><a href="#cb5-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-277"><a href="#cb5-277" aria-hidden="true" tabindex="-1"></a><span class="fu">## Example 17.9: Two planes in $\mathbb R^3$</span></span>
+<span id="cb5-278"><a href="#cb5-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-279"><a href="#cb5-279" aria-hidden="true" tabindex="-1"></a>Let</span>
+<span id="cb5-280"><a href="#cb5-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-281"><a href="#cb5-281" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-282"><a href="#cb5-282" aria-hidden="true" tabindex="-1"></a>U=\operatorname{span}<span class="sc">\{</span>\vec e_1,\vec e_2<span class="sc">\}</span>,</span>
+<span id="cb5-283"><a href="#cb5-283" aria-hidden="true" tabindex="-1"></a>\qquad</span>
+<span id="cb5-284"><a href="#cb5-284" aria-hidden="true" tabindex="-1"></a>W=\operatorname{span}<span class="sc">\{</span>\vec e_1,\cos\alpha\,\vec e_2+\sin\alpha\,\vec e_3<span class="sc">\}</span>.</span>
+<span id="cb5-285"><a href="#cb5-285" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-286"><a href="#cb5-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-287"><a href="#cb5-287" aria-hidden="true" tabindex="-1"></a>The subspaces share the direction $\vec e_1$, so $\theta_1=0$. The second direction is rotated by angle $\alpha$, so $\theta_2=\alpha$.</span>
+<span id="cb5-288"><a href="#cb5-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-289"><a href="#cb5-289" aria-hidden="true" tabindex="-1"></a>Matrix computation confirms this:</span>
+<span id="cb5-290"><a href="#cb5-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-291"><a href="#cb5-291" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-292"><a href="#cb5-292" aria-hidden="true" tabindex="-1"></a>Q_U=\begin{bmatrix}1&amp;0<span class="sc">\\</span>0&amp;1<span class="sc">\\</span>0&amp;0\end{bmatrix},</span>
+<span id="cb5-293"><a href="#cb5-293" aria-hidden="true" tabindex="-1"></a>\qquad</span>
+<span id="cb5-294"><a href="#cb5-294" aria-hidden="true" tabindex="-1"></a>Q_W=\begin{bmatrix}1&amp;0<span class="sc">\\</span>0&amp;\cos\alpha<span class="sc">\\</span>0&amp;\sin\alpha\end{bmatrix}.</span>
+<span id="cb5-295"><a href="#cb5-295" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-296"><a href="#cb5-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-297"><a href="#cb5-297" aria-hidden="true" tabindex="-1"></a>Then</span>
+<span id="cb5-298"><a href="#cb5-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-299"><a href="#cb5-299" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-300"><a href="#cb5-300" aria-hidden="true" tabindex="-1"></a>Q_U^TQ_W=\begin{bmatrix}1&amp;0<span class="sc">\\</span>0&amp;\cos\alpha\end{bmatrix},</span>
+<span id="cb5-301"><a href="#cb5-301" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-302"><a href="#cb5-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-303"><a href="#cb5-303" aria-hidden="true" tabindex="-1"></a>whose singular values are $1$ and $\cos\alpha$.</span>
+<span id="cb5-304"><a href="#cb5-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-305"><a href="#cb5-305" aria-hidden="true" tabindex="-1"></a><span class="fu"># Distances on the Grassmannian</span></span>
+<span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-307"><a href="#cb5-307" aria-hidden="true" tabindex="-1"></a>Once the principal angles are known, several distances can be defined.</span>
+<span id="cb5-308"><a href="#cb5-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-309"><a href="#cb5-309" aria-hidden="true" tabindex="-1"></a>::: {.callout-definition}</span>
+<span id="cb5-310"><a href="#cb5-310" aria-hidden="true" tabindex="-1"></a><span class="fu">## Definition 17.10: Grassmann geodesic distance</span></span>
+<span id="cb5-311"><a href="#cb5-311" aria-hidden="true" tabindex="-1"></a>For $U,W\in \operatorname{Gr}(k,n)$ with principal angles $\theta_1,\ldots,\theta_k$, the **Grassmann geodesic distance** is</span>
+<span id="cb5-312"><a href="#cb5-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-313"><a href="#cb5-313" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-314"><a href="#cb5-314" aria-hidden="true" tabindex="-1"></a>d_{\operatorname{Gr}}(U,W)=\left(\sum_{i=1}^k \theta_i^2\right)^{1/2}.</span>
+<span id="cb5-315"><a href="#cb5-315" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-316"><a href="#cb5-316" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-317"><a href="#cb5-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-318"><a href="#cb5-318" aria-hidden="true" tabindex="-1"></a>::: {.callout-definition}</span>
+<span id="cb5-319"><a href="#cb5-319" aria-hidden="true" tabindex="-1"></a><span class="fu">## Definition 17.11: Common Grassmannian distances</span></span>
+<span id="cb5-320"><a href="#cb5-320" aria-hidden="true" tabindex="-1"></a>Let $\theta_1,\ldots,\theta_k$ be the principal angles between $U$ and $W$.</span>
+<span id="cb5-321"><a href="#cb5-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-322"><a href="#cb5-322" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-323"><a href="#cb5-323" aria-hidden="true" tabindex="-1"></a>d_{\mathrm{Asimov}}(U,W)=\theta_k.</span>
+<span id="cb5-324"><a href="#cb5-324" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-325"><a href="#cb5-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-326"><a href="#cb5-326" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-327"><a href="#cb5-327" aria-hidden="true" tabindex="-1"></a>d_{\mathrm{chordal}}(U,W)=\left(\sum_{i=1}^k \sin^2\theta_i\right)^{1/2}.</span>
+<span id="cb5-328"><a href="#cb5-328" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-329"><a href="#cb5-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-330"><a href="#cb5-330" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-331"><a href="#cb5-331" aria-hidden="true" tabindex="-1"></a>d_{\mathrm{Fubini\text{-}Study}}(U,W)=\cos^{-1}\left(\prod_{i=1}^k\cos\theta_i\right).</span>
+<span id="cb5-332"><a href="#cb5-332" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-333"><a href="#cb5-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-334"><a href="#cb5-334" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-335"><a href="#cb5-335" aria-hidden="true" tabindex="-1"></a>d_{\mathrm{projection}}(U,W)=\sin\theta_k.</span>
+<span id="cb5-336"><a href="#cb5-336" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-337"><a href="#cb5-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-338"><a href="#cb5-338" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-339"><a href="#cb5-339" aria-hidden="true" tabindex="-1"></a>d_{\mathrm{Procrustes}}(U,W)=2\left(\sum_{i=1}^k \sin^2(\theta_i/2)\right)^{1/2}.</span>
+<span id="cb5-340"><a href="#cb5-340" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-341"><a href="#cb5-341" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-342"><a href="#cb5-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-343"><a href="#cb5-343" aria-hidden="true" tabindex="-1"></a>For nearby subspaces, $\sin\theta_i\approx \theta_i$, so the chordal distance and geodesic distance are close.</span>
+<span id="cb5-344"><a href="#cb5-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-345"><a href="#cb5-345" aria-hidden="true" tabindex="-1"></a><span class="fu"># Projection matrices and chordal distance</span></span>
+<span id="cb5-346"><a href="#cb5-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-347"><a href="#cb5-347" aria-hidden="true" tabindex="-1"></a>A subspace $U\in \operatorname{Gr}(k,n)$ can be represented by its orthogonal projection matrix.</span>
+<span id="cb5-348"><a href="#cb5-348" aria-hidden="true" tabindex="-1"></a>If $Q_U$ has orthonormal columns spanning $U$, then</span>
+<span id="cb5-349"><a href="#cb5-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-350"><a href="#cb5-350" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-351"><a href="#cb5-351" aria-hidden="true" tabindex="-1"></a>P_U=Q_UQ_U^T.</span>
+<span id="cb5-352"><a href="#cb5-352" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-353"><a href="#cb5-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-354"><a href="#cb5-354" aria-hidden="true" tabindex="-1"></a>::: {.callout-theorem}</span>
+<span id="cb5-355"><a href="#cb5-355" aria-hidden="true" tabindex="-1"></a><span class="fu">## Proposition 17.12: Projection representation is basis-independent</span></span>
+<span id="cb5-356"><a href="#cb5-356" aria-hidden="true" tabindex="-1"></a>If $Q_U$ and $\widetilde Q_U$ are two orthonormal basis matrices for the same subspace $U$, then</span>
+<span id="cb5-357"><a href="#cb5-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-358"><a href="#cb5-358" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-359"><a href="#cb5-359" aria-hidden="true" tabindex="-1"></a>Q_UQ_U^T=\widetilde Q_U\widetilde Q_U^T.</span>
+<span id="cb5-360"><a href="#cb5-360" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-361"><a href="#cb5-361" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-362"><a href="#cb5-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-363"><a href="#cb5-363" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-364"><a href="#cb5-364" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">summary</span><span class="dt">&gt;&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>Proof<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
+<span id="cb5-365"><a href="#cb5-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-366"><a href="#cb5-366" aria-hidden="true" tabindex="-1"></a>Since $Q_U$ and $\widetilde Q_U$ have the same column space, there exists $R\in O(k)$ such that $\widetilde Q_U=Q_UR$. Therefore</span>
+<span id="cb5-367"><a href="#cb5-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-368"><a href="#cb5-368" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-369"><a href="#cb5-369" aria-hidden="true" tabindex="-1"></a>\widetilde Q_U\widetilde Q_U^T</span>
+<span id="cb5-370"><a href="#cb5-370" aria-hidden="true" tabindex="-1"></a>=Q_URR^TQ_U^T</span>
+<span id="cb5-371"><a href="#cb5-371" aria-hidden="true" tabindex="-1"></a>=Q_UIQ_U^T</span>
+<span id="cb5-372"><a href="#cb5-372" aria-hidden="true" tabindex="-1"></a>=Q_UQ_U^T.</span>
+<span id="cb5-373"><a href="#cb5-373" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-374"><a href="#cb5-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-375"><a href="#cb5-375" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-376"><a href="#cb5-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-377"><a href="#cb5-377" aria-hidden="true" tabindex="-1"></a>::: {.callout-theorem}</span>
+<span id="cb5-378"><a href="#cb5-378" aria-hidden="true" tabindex="-1"></a><span class="fu">## Theorem 17.13: Chordal distance from projection matrices</span></span>
+<span id="cb5-379"><a href="#cb5-379" aria-hidden="true" tabindex="-1"></a>Let $U,W\in \operatorname{Gr}(k,n)$, and let $P_U,P_W$ be their orthogonal projection matrices. Then</span>
+<span id="cb5-380"><a href="#cb5-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-381"><a href="#cb5-381" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-382"><a href="#cb5-382" aria-hidden="true" tabindex="-1"></a>\frac{1}{\sqrt 2}<span class="sc">\|</span>P_U-P_W<span class="sc">\|</span>_F</span>
+<span id="cb5-383"><a href="#cb5-383" aria-hidden="true" tabindex="-1"></a>=\left(\sum_{i=1}^k\sin^2\theta_i\right)^{1/2}.</span>
+<span id="cb5-384"><a href="#cb5-384" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-385"><a href="#cb5-385" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-386"><a href="#cb5-386" aria-hidden="true" tabindex="-1"></a>Thus</span>
+<span id="cb5-387"><a href="#cb5-387" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-388"><a href="#cb5-388" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-389"><a href="#cb5-389" aria-hidden="true" tabindex="-1"></a>d_{\mathrm{chordal}}(U,W)=\frac{1}{\sqrt 2}<span class="sc">\|</span>P_U-P_W<span class="sc">\|</span>_F.</span>
+<span id="cb5-390"><a href="#cb5-390" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-391"><a href="#cb5-391" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-392"><a href="#cb5-392" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-393"><a href="#cb5-393" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-394"><a href="#cb5-394" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">summary</span><span class="dt">&gt;&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>Proof<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
+<span id="cb5-395"><a href="#cb5-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-396"><a href="#cb5-396" aria-hidden="true" tabindex="-1"></a>Let $P_U=Q_UQ_U^T$ and $P_W=Q_WQ_W^T$. Since projection matrices are symmetric and idempotent,</span>
+<span id="cb5-397"><a href="#cb5-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-398"><a href="#cb5-398" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-399"><a href="#cb5-399" aria-hidden="true" tabindex="-1"></a><span class="sc">\|</span>P_U-P_W<span class="sc">\|</span>_F^2</span>
+<span id="cb5-400"><a href="#cb5-400" aria-hidden="true" tabindex="-1"></a>=\operatorname{tr}((P_U-P_W)^T(P_U-P_W)).</span>
+<span id="cb5-401"><a href="#cb5-401" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-402"><a href="#cb5-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-403"><a href="#cb5-403" aria-hidden="true" tabindex="-1"></a>Thus</span>
+<span id="cb5-404"><a href="#cb5-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-405"><a href="#cb5-405" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-406"><a href="#cb5-406" aria-hidden="true" tabindex="-1"></a><span class="sc">\|</span>P_U-P_W<span class="sc">\|</span>_F^2</span>
+<span id="cb5-407"><a href="#cb5-407" aria-hidden="true" tabindex="-1"></a>=\operatorname{tr}(P_U)+\operatorname{tr}(P_W)-2\operatorname{tr}(P_UP_W).</span>
+<span id="cb5-408"><a href="#cb5-408" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-409"><a href="#cb5-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-410"><a href="#cb5-410" aria-hidden="true" tabindex="-1"></a>Because $P_U$ and $P_W$ project onto $k$-dimensional subspaces,</span>
+<span id="cb5-411"><a href="#cb5-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-412"><a href="#cb5-412" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-413"><a href="#cb5-413" aria-hidden="true" tabindex="-1"></a>\operatorname{tr}(P_U)=\operatorname{tr}(P_W)=k.</span>
+<span id="cb5-414"><a href="#cb5-414" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-415"><a href="#cb5-415" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-416"><a href="#cb5-416" aria-hidden="true" tabindex="-1"></a>Also,</span>
+<span id="cb5-417"><a href="#cb5-417" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-418"><a href="#cb5-418" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-419"><a href="#cb5-419" aria-hidden="true" tabindex="-1"></a>\operatorname{tr}(P_UP_W)</span>
+<span id="cb5-420"><a href="#cb5-420" aria-hidden="true" tabindex="-1"></a>=\operatorname{tr}(Q_UQ_U^TQ_WQ_W^T)</span>
+<span id="cb5-421"><a href="#cb5-421" aria-hidden="true" tabindex="-1"></a>=\operatorname{tr}(Q_U^TQ_WQ_W^TQ_U)</span>
+<span id="cb5-422"><a href="#cb5-422" aria-hidden="true" tabindex="-1"></a>=<span class="sc">\|</span>Q_U^TQ_W<span class="sc">\|</span>_F^2.</span>
+<span id="cb5-423"><a href="#cb5-423" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-424"><a href="#cb5-424" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-425"><a href="#cb5-425" aria-hidden="true" tabindex="-1"></a>The singular values of $Q_U^TQ_W$ are $\cos\theta_1,\ldots,\cos\theta_k$. Hence</span>
+<span id="cb5-426"><a href="#cb5-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-427"><a href="#cb5-427" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-428"><a href="#cb5-428" aria-hidden="true" tabindex="-1"></a>\operatorname{tr}(P_UP_W)=\sum_{i=1}^k\cos^2\theta_i.</span>
+<span id="cb5-429"><a href="#cb5-429" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-430"><a href="#cb5-430" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-431"><a href="#cb5-431" aria-hidden="true" tabindex="-1"></a>Therefore</span>
+<span id="cb5-432"><a href="#cb5-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-433"><a href="#cb5-433" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-434"><a href="#cb5-434" aria-hidden="true" tabindex="-1"></a><span class="sc">\|</span>P_U-P_W<span class="sc">\|</span>_F^2</span>
+<span id="cb5-435"><a href="#cb5-435" aria-hidden="true" tabindex="-1"></a>=2k-2\sum_{i=1}^k\cos^2\theta_i</span>
+<span id="cb5-436"><a href="#cb5-436" aria-hidden="true" tabindex="-1"></a>=2\sum_{i=1}^k\sin^2\theta_i.</span>
+<span id="cb5-437"><a href="#cb5-437" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-438"><a href="#cb5-438" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-439"><a href="#cb5-439" aria-hidden="true" tabindex="-1"></a>Taking square roots gives the result.</span>
+<span id="cb5-440"><a href="#cb5-440" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-441"><a href="#cb5-441" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-442"><a href="#cb5-442" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-443"><a href="#cb5-443" aria-hidden="true" tabindex="-1"></a><span class="fu"># Python computation</span></span>
+<span id="cb5-444"><a href="#cb5-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-447"><a href="#cb5-447" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-448"><a href="#cb5-448" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb5-449"><a href="#cb5-449" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-450"><a href="#cb5-450" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-451"><a href="#cb5-451" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> orthonormal_basis(A, tol<span class="op">=</span><span class="fl">1e-12</span>):</span>
+<span id="cb5-452"><a href="#cb5-452" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return an orthonormal basis for the column space of A."""</span></span>
+<span id="cb5-453"><a href="#cb5-453" aria-hidden="true" tabindex="-1"></a>    Q, R <span class="op">=</span> np.linalg.qr(A)</span>
+<span id="cb5-454"><a href="#cb5-454" aria-hidden="true" tabindex="-1"></a>    diag <span class="op">=</span> np.<span class="bu">abs</span>(np.diag(R))</span>
+<span id="cb5-455"><a href="#cb5-455" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> <span class="bu">int</span>(np.<span class="bu">sum</span>(diag <span class="op">&gt;</span> tol))</span>
+<span id="cb5-456"><a href="#cb5-456" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Q[:, :r]</span>
+<span id="cb5-457"><a href="#cb5-457" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-458"><a href="#cb5-458" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-459"><a href="#cb5-459" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> principal_angles(A, B):</span>
+<span id="cb5-460"><a href="#cb5-460" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Principal angles between column spaces of A and B."""</span></span>
+<span id="cb5-461"><a href="#cb5-461" aria-hidden="true" tabindex="-1"></a>    QA <span class="op">=</span> orthonormal_basis(A)</span>
+<span id="cb5-462"><a href="#cb5-462" aria-hidden="true" tabindex="-1"></a>    QB <span class="op">=</span> orthonormal_basis(B)</span>
+<span id="cb5-463"><a href="#cb5-463" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> QA.shape[<span class="dv">1</span>] <span class="op">!=</span> QB.shape[<span class="dv">1</span>]:</span>
+<span id="cb5-464"><a href="#cb5-464" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"This function assumes equal-dimensional subspaces."</span>)</span>
+<span id="cb5-465"><a href="#cb5-465" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> np.linalg.svd(QA.T <span class="op">@</span> QB, compute_uv<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-466"><a href="#cb5-466" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> np.clip(s, <span class="fl">0.0</span>, <span class="fl">1.0</span>)</span>
+<span id="cb5-467"><a href="#cb5-467" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.arccos(s)</span>
+<span id="cb5-468"><a href="#cb5-468" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-469"><a href="#cb5-469" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-470"><a href="#cb5-470" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> distances_from_angles(theta):</span>
+<span id="cb5-471"><a href="#cb5-471" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb5-472"><a href="#cb5-472" aria-hidden="true" tabindex="-1"></a>        <span class="st">"geodesic"</span>: np.linalg.norm(theta),</span>
+<span id="cb5-473"><a href="#cb5-473" aria-hidden="true" tabindex="-1"></a>        <span class="st">"chordal"</span>: np.linalg.norm(np.sin(theta)),</span>
+<span id="cb5-474"><a href="#cb5-474" aria-hidden="true" tabindex="-1"></a>        <span class="st">"projection"</span>: np.sin(np.<span class="bu">max</span>(theta)),</span>
+<span id="cb5-475"><a href="#cb5-475" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Asimov"</span>: np.<span class="bu">max</span>(theta),</span>
+<span id="cb5-476"><a href="#cb5-476" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Procrustes"</span>: <span class="dv">2</span><span class="op">*</span>np.linalg.norm(np.sin(theta<span class="op">/</span><span class="dv">2</span>)),</span>
+<span id="cb5-477"><a href="#cb5-477" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Fubini-Study"</span>: np.arccos(np.prod(np.cos(theta)))</span>
+<span id="cb5-478"><a href="#cb5-478" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-479"><a href="#cb5-479" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-480"><a href="#cb5-480" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> np.pi<span class="op">/</span><span class="dv">6</span></span>
+<span id="cb5-481"><a href="#cb5-481" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="dv">1</span>,<span class="dv">0</span>],[<span class="dv">0</span>,<span class="dv">1</span>],[<span class="dv">0</span>,<span class="dv">0</span>]], dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb5-482"><a href="#cb5-482" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> np.array([[<span class="dv">1</span>,<span class="dv">0</span>],[<span class="dv">0</span>,np.cos(alpha)],[<span class="dv">0</span>,np.sin(alpha)]], dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb5-483"><a href="#cb5-483" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-484"><a href="#cb5-484" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> principal_angles(A, B)</span>
+<span id="cb5-485"><a href="#cb5-485" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Principal angles in radians:"</span>, theta)</span>
+<span id="cb5-486"><a href="#cb5-486" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Principal angles in degrees:"</span>, theta<span class="op">*</span><span class="dv">180</span><span class="op">/</span>np.pi)</span>
+<span id="cb5-487"><a href="#cb5-487" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(distances_from_angles(theta))</span>
+<span id="cb5-488"><a href="#cb5-488" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-489"><a href="#cb5-489" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-490"><a href="#cb5-490" aria-hidden="true" tabindex="-1"></a><span class="fu">## Comparing PCA subspaces</span></span>
+<span id="cb5-491"><a href="#cb5-491" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-494"><a href="#cb5-494" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-495"><a href="#cb5-495" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">7</span>)</span>
+<span id="cb5-496"><a href="#cb5-496" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-497"><a href="#cb5-497" aria-hidden="true" tabindex="-1"></a><span class="co"># Two synthetic data clouds in R^5 with dominant 2D structure.</span></span>
+<span id="cb5-498"><a href="#cb5-498" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb5-499"><a href="#cb5-499" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="dv">200</span></span>
+<span id="cb5-500"><a href="#cb5-500" aria-hidden="true" tabindex="-1"></a>U_true <span class="op">=</span> orthonormal_basis(np.random.randn(n, <span class="dv">2</span>))</span>
+<span id="cb5-501"><a href="#cb5-501" aria-hidden="true" tabindex="-1"></a>noise <span class="op">=</span> <span class="fl">0.15</span><span class="op">*</span>np.random.randn(n, m)</span>
+<span id="cb5-502"><a href="#cb5-502" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> U_true <span class="op">@</span> np.random.randn(<span class="dv">2</span>, m) <span class="op">+</span> noise</span>
+<span id="cb5-503"><a href="#cb5-503" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-504"><a href="#cb5-504" aria-hidden="true" tabindex="-1"></a><span class="co"># Rotate the true subspace slightly to create a second data set.</span></span>
+<span id="cb5-505"><a href="#cb5-505" aria-hidden="true" tabindex="-1"></a>R <span class="op">=</span> np.eye(n)</span>
+<span id="cb5-506"><a href="#cb5-506" aria-hidden="true" tabindex="-1"></a>R[<span class="dv">1</span>,<span class="dv">1</span>] <span class="op">=</span> np.cos(<span class="fl">0.35</span>)</span>
+<span id="cb5-507"><a href="#cb5-507" aria-hidden="true" tabindex="-1"></a>R[<span class="dv">1</span>,<span class="dv">2</span>] <span class="op">=</span> <span class="op">-</span>np.sin(<span class="fl">0.35</span>)</span>
+<span id="cb5-508"><a href="#cb5-508" aria-hidden="true" tabindex="-1"></a>R[<span class="dv">2</span>,<span class="dv">1</span>] <span class="op">=</span> np.sin(<span class="fl">0.35</span>)</span>
+<span id="cb5-509"><a href="#cb5-509" aria-hidden="true" tabindex="-1"></a>R[<span class="dv">2</span>,<span class="dv">2</span>] <span class="op">=</span> np.cos(<span class="fl">0.35</span>)</span>
+<span id="cb5-510"><a href="#cb5-510" aria-hidden="true" tabindex="-1"></a>V_true <span class="op">=</span> R <span class="op">@</span> U_true</span>
+<span id="cb5-511"><a href="#cb5-511" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> V_true <span class="op">@</span> np.random.randn(<span class="dv">2</span>, m) <span class="op">+</span> <span class="fl">0.15</span><span class="op">*</span>np.random.randn(n, m)</span>
+<span id="cb5-512"><a href="#cb5-512" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-513"><a href="#cb5-513" aria-hidden="true" tabindex="-1"></a><span class="co"># PCA by SVD of centered data.</span></span>
+<span id="cb5-514"><a href="#cb5-514" aria-hidden="true" tabindex="-1"></a>Xc <span class="op">=</span> X <span class="op">-</span> X.mean(axis<span class="op">=</span><span class="dv">1</span>, keepdims<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-515"><a href="#cb5-515" aria-hidden="true" tabindex="-1"></a>Yc <span class="op">=</span> Y <span class="op">-</span> Y.mean(axis<span class="op">=</span><span class="dv">1</span>, keepdims<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-516"><a href="#cb5-516" aria-hidden="true" tabindex="-1"></a>Ux, sx, _ <span class="op">=</span> np.linalg.svd(Xc, full_matrices<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-517"><a href="#cb5-517" aria-hidden="true" tabindex="-1"></a>Uy, sy, _ <span class="op">=</span> np.linalg.svd(Yc, full_matrices<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-518"><a href="#cb5-518" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-519"><a href="#cb5-519" aria-hidden="true" tabindex="-1"></a>PX <span class="op">=</span> Ux[:, :<span class="dv">2</span>]</span>
+<span id="cb5-520"><a href="#cb5-520" aria-hidden="true" tabindex="-1"></a>PY <span class="op">=</span> Uy[:, :<span class="dv">2</span>]</span>
+<span id="cb5-521"><a href="#cb5-521" aria-hidden="true" tabindex="-1"></a>theta_pca <span class="op">=</span> principal_angles(PX, PY)</span>
+<span id="cb5-522"><a href="#cb5-522" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"PCA subspace angles in degrees:"</span>, theta_pca<span class="op">*</span><span class="dv">180</span><span class="op">/</span>np.pi)</span>
+<span id="cb5-523"><a href="#cb5-523" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Grassmann distance:"</span>, np.linalg.norm(theta_pca))</span>
+<span id="cb5-524"><a href="#cb5-524" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-525"><a href="#cb5-525" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-526"><a href="#cb5-526" aria-hidden="true" tabindex="-1"></a><span class="fu"># Classical challenge questions</span></span>
+<span id="cb5-527"><a href="#cb5-527" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-528"><a href="#cb5-528" aria-hidden="true" tabindex="-1"></a><span class="fu">## Challenge 17.1: Why point-to-point distance fails</span></span>
+<span id="cb5-529"><a href="#cb5-529" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-530"><a href="#cb5-530" aria-hidden="true" tabindex="-1"></a>Let $U,W\subseteq \mathbb R^n$ be two linear subspaces. Explain why</span>
+<span id="cb5-531"><a href="#cb5-531" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-532"><a href="#cb5-532" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-533"><a href="#cb5-533" aria-hidden="true" tabindex="-1"></a>\min_{\vec u\in U,\ \vec w\in W}<span class="sc">\|</span>\vec u-\vec w<span class="sc">\|</span></span>
+<span id="cb5-534"><a href="#cb5-534" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-535"><a href="#cb5-535" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-536"><a href="#cb5-536" aria-hidden="true" tabindex="-1"></a>is not a useful distance between linear subspaces.</span>
+<span id="cb5-537"><a href="#cb5-537" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-538"><a href="#cb5-538" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-539"><a href="#cb5-539" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">summary</span><span class="dt">&gt;&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>Solution<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
+<span id="cb5-540"><a href="#cb5-540" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-541"><a href="#cb5-541" aria-hidden="true" tabindex="-1"></a>Since $U$ and $W$ are linear subspaces, both contain the zero vector. Choosing $\vec u=\vec 0$ and $\vec w=\vec 0$ gives</span>
+<span id="cb5-542"><a href="#cb5-542" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-543"><a href="#cb5-543" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-544"><a href="#cb5-544" aria-hidden="true" tabindex="-1"></a><span class="sc">\|</span>\vec u-\vec w<span class="sc">\|</span>=0.</span>
+<span id="cb5-545"><a href="#cb5-545" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-546"><a href="#cb5-546" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-547"><a href="#cb5-547" aria-hidden="true" tabindex="-1"></a>Therefore the minimum is always $0$, no matter how different the two subspaces are. A useful subspace distance must compare directions.</span>
+<span id="cb5-548"><a href="#cb5-548" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-549"><a href="#cb5-549" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-550"><a href="#cb5-550" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-551"><a href="#cb5-551" aria-hidden="true" tabindex="-1"></a><span class="fu">## Challenge 17.2: Two planes sharing a line</span></span>
+<span id="cb5-552"><a href="#cb5-552" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-553"><a href="#cb5-553" aria-hidden="true" tabindex="-1"></a>Let</span>
+<span id="cb5-554"><a href="#cb5-554" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-555"><a href="#cb5-555" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-556"><a href="#cb5-556" aria-hidden="true" tabindex="-1"></a>U=\operatorname{span}<span class="sc">\{</span>\vec e_1,\vec e_2<span class="sc">\}</span>,</span>
+<span id="cb5-557"><a href="#cb5-557" aria-hidden="true" tabindex="-1"></a>\qquad</span>
+<span id="cb5-558"><a href="#cb5-558" aria-hidden="true" tabindex="-1"></a>W=\operatorname{span}<span class="sc">\{</span>\vec e_1,\cos\alpha\,\vec e_2+\sin\alpha\,\vec e_3<span class="sc">\}</span>.</span>
+<span id="cb5-559"><a href="#cb5-559" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-560"><a href="#cb5-560" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-561"><a href="#cb5-561" aria-hidden="true" tabindex="-1"></a>Find the principal angles and the Grassmann geodesic distance.</span>
+<span id="cb5-562"><a href="#cb5-562" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-563"><a href="#cb5-563" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-564"><a href="#cb5-564" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">summary</span><span class="dt">&gt;&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>Solution<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
+<span id="cb5-565"><a href="#cb5-565" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-566"><a href="#cb5-566" aria-hidden="true" tabindex="-1"></a>The subspaces share the direction $\vec e_1$, so $\theta_1=0$. The remaining direction is rotated by angle $\alpha$, so $\theta_2=\alpha$. Therefore</span>
+<span id="cb5-567"><a href="#cb5-567" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-568"><a href="#cb5-568" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-569"><a href="#cb5-569" aria-hidden="true" tabindex="-1"></a>(\theta_1,\theta_2)=(0,\alpha)</span>
+<span id="cb5-570"><a href="#cb5-570" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-571"><a href="#cb5-571" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-572"><a href="#cb5-572" aria-hidden="true" tabindex="-1"></a>and</span>
+<span id="cb5-573"><a href="#cb5-573" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-574"><a href="#cb5-574" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-575"><a href="#cb5-575" aria-hidden="true" tabindex="-1"></a>d_{\operatorname{Gr}}(U,W)=\sqrt{0^2+\alpha^2}=\alpha.</span>
+<span id="cb5-576"><a href="#cb5-576" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-577"><a href="#cb5-577" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-578"><a href="#cb5-578" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-579"><a href="#cb5-579" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-580"><a href="#cb5-580" aria-hidden="true" tabindex="-1"></a><span class="fu">## Challenge 17.3: Projection matrix representation</span></span>
+<span id="cb5-581"><a href="#cb5-581" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-582"><a href="#cb5-582" aria-hidden="true" tabindex="-1"></a>Let $Q\in \mathbb R^{n\times k}$ have orthonormal columns. Show that $P=QQ^T$ is the orthogonal projection matrix onto $\operatorname{im}(Q)$.</span>
+<span id="cb5-583"><a href="#cb5-583" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-584"><a href="#cb5-584" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-585"><a href="#cb5-585" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">summary</span><span class="dt">&gt;&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>Solution<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
+<span id="cb5-586"><a href="#cb5-586" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-587"><a href="#cb5-587" aria-hidden="true" tabindex="-1"></a>First, $P^T=(QQ^T)^T=QQ^T=P$, so $P$ is symmetric. Second,</span>
+<span id="cb5-588"><a href="#cb5-588" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-589"><a href="#cb5-589" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-590"><a href="#cb5-590" aria-hidden="true" tabindex="-1"></a>P^2=QQ^TQQ^T=Q(Q^TQ)Q^T=QIQ^T=QQ^T=P.</span>
+<span id="cb5-591"><a href="#cb5-591" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-592"><a href="#cb5-592" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-593"><a href="#cb5-593" aria-hidden="true" tabindex="-1"></a>For any $\vec x$, $P\vec x=QQ^T\vec x\in \operatorname{im}(Q)$. Also,</span>
+<span id="cb5-594"><a href="#cb5-594" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-595"><a href="#cb5-595" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-596"><a href="#cb5-596" aria-hidden="true" tabindex="-1"></a>Q^T(\vec x-P\vec x)=Q^T\vec x-Q^TQQ^T\vec x=0.</span>
+<span id="cb5-597"><a href="#cb5-597" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-598"><a href="#cb5-598" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-599"><a href="#cb5-599" aria-hidden="true" tabindex="-1"></a>Thus the error $\vec x-P\vec x$ is orthogonal to $\operatorname{im}(Q)$. Hence $P\vec x$ is the orthogonal projection of $\vec x$ onto $\operatorname{im}(Q)$.</span>
+<span id="cb5-600"><a href="#cb5-600" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-601"><a href="#cb5-601" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-602"><a href="#cb5-602" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-603"><a href="#cb5-603" aria-hidden="true" tabindex="-1"></a><span class="fu">## Challenge 17.4: Chordal distance from projections</span></span>
+<span id="cb5-604"><a href="#cb5-604" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-605"><a href="#cb5-605" aria-hidden="true" tabindex="-1"></a>Prove that</span>
+<span id="cb5-606"><a href="#cb5-606" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-607"><a href="#cb5-607" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-608"><a href="#cb5-608" aria-hidden="true" tabindex="-1"></a>d_{\mathrm{chordal}}(U,W)=\frac{1}{\sqrt 2}<span class="sc">\|</span>P_U-P_W<span class="sc">\|</span>_F.</span>
+<span id="cb5-609"><a href="#cb5-609" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-610"><a href="#cb5-610" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-611"><a href="#cb5-611" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-612"><a href="#cb5-612" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">summary</span><span class="dt">&gt;&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>Solution<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
+<span id="cb5-613"><a href="#cb5-613" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-614"><a href="#cb5-614" aria-hidden="true" tabindex="-1"></a>The proof follows from the trace computation:</span>
+<span id="cb5-615"><a href="#cb5-615" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-616"><a href="#cb5-616" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-617"><a href="#cb5-617" aria-hidden="true" tabindex="-1"></a><span class="sc">\|</span>P_U-P_W<span class="sc">\|</span>_F^2=2k-2\operatorname{tr}(P_UP_W).</span>
+<span id="cb5-618"><a href="#cb5-618" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-619"><a href="#cb5-619" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-620"><a href="#cb5-620" aria-hidden="true" tabindex="-1"></a>Using orthonormal bases $Q_U,Q_W$,</span>
+<span id="cb5-621"><a href="#cb5-621" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-622"><a href="#cb5-622" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-623"><a href="#cb5-623" aria-hidden="true" tabindex="-1"></a>\operatorname{tr}(P_UP_W)=<span class="sc">\|</span>Q_U^TQ_W<span class="sc">\|</span>_F^2.</span>
+<span id="cb5-624"><a href="#cb5-624" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-625"><a href="#cb5-625" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-626"><a href="#cb5-626" aria-hidden="true" tabindex="-1"></a>The singular values of $Q_U^TQ_W$ are $\cos\theta_1,\ldots,\cos\theta_k$, so</span>
+<span id="cb5-627"><a href="#cb5-627" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-628"><a href="#cb5-628" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-629"><a href="#cb5-629" aria-hidden="true" tabindex="-1"></a>\operatorname{tr}(P_UP_W)=\sum_{i=1}^k\cos^2\theta_i.</span>
+<span id="cb5-630"><a href="#cb5-630" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-631"><a href="#cb5-631" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-632"><a href="#cb5-632" aria-hidden="true" tabindex="-1"></a>Therefore</span>
+<span id="cb5-633"><a href="#cb5-633" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-634"><a href="#cb5-634" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-635"><a href="#cb5-635" aria-hidden="true" tabindex="-1"></a><span class="sc">\|</span>P_U-P_W<span class="sc">\|</span>_F^2=2\sum_{i=1}^k\sin^2\theta_i.</span>
+<span id="cb5-636"><a href="#cb5-636" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-637"><a href="#cb5-637" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-638"><a href="#cb5-638" aria-hidden="true" tabindex="-1"></a>Taking square roots gives the result.</span>
+<span id="cb5-639"><a href="#cb5-639" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-640"><a href="#cb5-640" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-641"><a href="#cb5-641" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-642"><a href="#cb5-642" aria-hidden="true" tabindex="-1"></a><span class="fu"># Practice problems</span></span>
+<span id="cb5-643"><a href="#cb5-643" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-644"><a href="#cb5-644" aria-hidden="true" tabindex="-1"></a><span class="fu">## Problem 17.1</span></span>
+<span id="cb5-645"><a href="#cb5-645" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-646"><a href="#cb5-646" aria-hidden="true" tabindex="-1"></a>Let $U=\operatorname{span}<span class="sc">\{</span>(1,0)<span class="sc">\}</span>$ and $W=\operatorname{span}<span class="sc">\{</span>(1,1)<span class="sc">\}</span>$. Find the principal angle between $U$ and $W$.</span>
+<span id="cb5-647"><a href="#cb5-647" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-648"><a href="#cb5-648" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-649"><a href="#cb5-649" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">summary</span><span class="dt">&gt;&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>Solution<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
+<span id="cb5-650"><a href="#cb5-650" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-651"><a href="#cb5-651" aria-hidden="true" tabindex="-1"></a>Normalize the vector $(1,1)$:</span>
+<span id="cb5-652"><a href="#cb5-652" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-653"><a href="#cb5-653" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-654"><a href="#cb5-654" aria-hidden="true" tabindex="-1"></a>\vec w=\frac{1}{\sqrt2}(1,1).</span>
+<span id="cb5-655"><a href="#cb5-655" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-656"><a href="#cb5-656" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-657"><a href="#cb5-657" aria-hidden="true" tabindex="-1"></a>Then</span>
+<span id="cb5-658"><a href="#cb5-658" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-659"><a href="#cb5-659" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-660"><a href="#cb5-660" aria-hidden="true" tabindex="-1"></a>\cos\theta=(1,0)\cdot \frac{1}{\sqrt2}(1,1)=\frac{1}{\sqrt2}.</span>
+<span id="cb5-661"><a href="#cb5-661" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-662"><a href="#cb5-662" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-663"><a href="#cb5-663" aria-hidden="true" tabindex="-1"></a>Thus $\theta=\pi/4$.</span>
+<span id="cb5-664"><a href="#cb5-664" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-665"><a href="#cb5-665" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-666"><a href="#cb5-666" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-667"><a href="#cb5-667" aria-hidden="true" tabindex="-1"></a><span class="fu">## Problem 17.2</span></span>
+<span id="cb5-668"><a href="#cb5-668" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-669"><a href="#cb5-669" aria-hidden="true" tabindex="-1"></a>Let $U=\operatorname{span}<span class="sc">\{</span>\vec e_1,\vec e_2<span class="sc">\}</span>$ and $W=\operatorname{span}<span class="sc">\{</span>\vec e_2,\vec e_3<span class="sc">\}</span>$ in $\mathbb R^3$. Find the principal angles.</span>
+<span id="cb5-670"><a href="#cb5-670" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-671"><a href="#cb5-671" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-672"><a href="#cb5-672" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">summary</span><span class="dt">&gt;&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>Solution<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
+<span id="cb5-673"><a href="#cb5-673" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-674"><a href="#cb5-674" aria-hidden="true" tabindex="-1"></a>The two planes share the direction $\vec e_2$, so $\theta_1=0$. The remaining directions are $\vec e_1$ and $\vec e_3$, which are orthogonal, so $\theta_2=\pi/2$. Therefore</span>
+<span id="cb5-675"><a href="#cb5-675" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-676"><a href="#cb5-676" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-677"><a href="#cb5-677" aria-hidden="true" tabindex="-1"></a>(\theta_1,\theta_2)=(0,\pi/2).</span>
+<span id="cb5-678"><a href="#cb5-678" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-679"><a href="#cb5-679" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-680"><a href="#cb5-680" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-681"><a href="#cb5-681" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-682"><a href="#cb5-682" aria-hidden="true" tabindex="-1"></a><span class="fu">## Problem 17.3</span></span>
+<span id="cb5-683"><a href="#cb5-683" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-684"><a href="#cb5-684" aria-hidden="true" tabindex="-1"></a>If two two-dimensional subspaces have principal angles $\theta_1=0.2$ and $\theta_2=0.6$, compute the Grassmann geodesic distance and chordal distance.</span>
+<span id="cb5-685"><a href="#cb5-685" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-686"><a href="#cb5-686" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-687"><a href="#cb5-687" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">summary</span><span class="dt">&gt;&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>Solution<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
+<span id="cb5-688"><a href="#cb5-688" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-689"><a href="#cb5-689" aria-hidden="true" tabindex="-1"></a>The geodesic distance is</span>
+<span id="cb5-690"><a href="#cb5-690" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-691"><a href="#cb5-691" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-692"><a href="#cb5-692" aria-hidden="true" tabindex="-1"></a>d_{\operatorname{Gr}}=\sqrt{0.2^2+0.6^2}=\sqrt{0.40}\approx 0.6325.</span>
+<span id="cb5-693"><a href="#cb5-693" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-694"><a href="#cb5-694" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-695"><a href="#cb5-695" aria-hidden="true" tabindex="-1"></a>The chordal distance is</span>
+<span id="cb5-696"><a href="#cb5-696" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-697"><a href="#cb5-697" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-698"><a href="#cb5-698" aria-hidden="true" tabindex="-1"></a>d_{\mathrm{chordal}}=\sqrt{\sin^2(0.2)+\sin^2(0.6)}\approx 0.5985.</span>
+<span id="cb5-699"><a href="#cb5-699" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-700"><a href="#cb5-700" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-701"><a href="#cb5-701" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb5-702"><a href="#cb5-702" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-703"><a href="#cb5-703" aria-hidden="true" tabindex="-1"></a><span class="fu"># AI companion activities</span></span>
+<span id="cb5-704"><a href="#cb5-704" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-705"><a href="#cb5-705" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb5-706"><a href="#cb5-706" aria-hidden="true" tabindex="-1"></a><span class="fu">## Activity 17.A: Explain the geometry</span></span>
+<span id="cb5-707"><a href="#cb5-707" aria-hidden="true" tabindex="-1"></a>Ask an AI tool:</span>
+<span id="cb5-708"><a href="#cb5-708" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-709"><a href="#cb5-709" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Explain why comparing two subspaces requires comparing directions rather than comparing closest points.</span></span>
+<span id="cb5-710"><a href="#cb5-710" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-711"><a href="#cb5-711" aria-hidden="true" tabindex="-1"></a>Then improve the response by requiring it to include the zero-vector argument.</span>
+<span id="cb5-712"><a href="#cb5-712" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-713"><a href="#cb5-713" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-714"><a href="#cb5-714" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb5-715"><a href="#cb5-715" aria-hidden="true" tabindex="-1"></a><span class="fu">## Activity 17.B: Check a computation</span></span>
+<span id="cb5-716"><a href="#cb5-716" aria-hidden="true" tabindex="-1"></a>Use Python to compute principal angles for two subspaces. Then ask an AI tool:</span>
+<span id="cb5-717"><a href="#cb5-717" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-718"><a href="#cb5-718" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Here are my matrices $Q_U$ and $Q_W$. Explain why the singular values of $Q_U^TQ_W$ give the cosines of the principal angles.</span></span>
+<span id="cb5-719"><a href="#cb5-719" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-720"><a href="#cb5-720" aria-hidden="true" tabindex="-1"></a>Check whether the explanation correctly uses orthonormal bases.</span>
+<span id="cb5-721"><a href="#cb5-721" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-722"><a href="#cb5-722" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-723"><a href="#cb5-723" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb5-724"><a href="#cb5-724" aria-hidden="true" tabindex="-1"></a><span class="fu">## Activity 17.C: Applications search prompt</span></span>
+<span id="cb5-725"><a href="#cb5-725" aria-hidden="true" tabindex="-1"></a>Ask:</span>
+<span id="cb5-726"><a href="#cb5-726" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-727"><a href="#cb5-727" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Give three applications where Grassmannian distances are useful in data science, computer vision, or signal processing. For each one, explain what the subspaces represent.</span></span>
+<span id="cb5-728"><a href="#cb5-728" aria-hidden="true" tabindex="-1"></a><span class="at">:::</span></span>
+<span id="cb5-729"><a href="#cb5-729" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-730"><a href="#cb5-730" aria-hidden="true" tabindex="-1"></a><span class="fu"># Summary</span></span>
+<span id="cb5-731"><a href="#cb5-731" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-732"><a href="#cb5-732" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The Grassmannian $\operatorname{Gr}(k,n)$ is the set of all $k$-dimensional subspaces of $\mathbb R^n$.</span>
+<span id="cb5-733"><a href="#cb5-733" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The Stiefel manifold $\operatorname{St}(k,n)$ is the set of orthonormal $k$-frames.</span>
+<span id="cb5-734"><a href="#cb5-734" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A subspace can be represented by many orthonormal bases, so $\operatorname{Gr}(k,n)=\operatorname{St}(k,n)/O(k)$.</span>
+<span id="cb5-735"><a href="#cb5-735" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Principal angles measure how two subspaces are positioned relative to each other.</span>
+<span id="cb5-736"><a href="#cb5-736" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Principal angles are computed from the singular values of $Q_U^TQ_W$.</span>
+<span id="cb5-737"><a href="#cb5-737" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Grassmannian distances are built from principal angles.</span>
+<span id="cb5-738"><a href="#cb5-738" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Projection matrices give a basis-independent representation of subspaces.</span>
+<span id="cb5-739"><a href="#cb5-739" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Grassmannian geometry appears in PCA, computer vision, signal processing, subspace clustering, and machine learning.</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>MATH 5110 Applied Linear Algebra and Matrix Analysis<br>
+Department of Mathematics, Northeastern University</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/wanghemath/MATH5110/edit/main/chapters/chapter-17-grassmannians-subspace-distances.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/wanghemath/MATH5110/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>Built with <a href="https://quarto.org/">Quarto</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

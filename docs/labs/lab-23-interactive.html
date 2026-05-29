@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 23 Interactive: Spectral Graph Theory</title>
+<script>
+window.MathJax = {tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]}, svg: {fontCache: 'global'}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--bg:#fff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);}header{padding:28px;border-bottom:1px solid var(--line);background:#fafafa;}header h1{margin:0 0 8px;font-size:1.8rem;}header p{margin:0;color:var(--muted);max-width:1100px;line-height:1.55;}main{max-width:1260px;margin:0 auto;padding:24px}.grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px}h2{font-size:1.25rem;margin:0 0 12px}h3{font-size:1.05rem;margin:18px 0 8px}p{line-height:1.55}.small{font-size:.92rem;color:var(--muted)}button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0}button.secondary{background:#fff;color:#111827}select,input[type=number]{padding:6px;border:1px solid var(--line);border-radius:8px;background:#fff}canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto}.result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto}.eq{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto}table{border-collapse:collapse;background:#fff;margin:8px 0}td,th{border:1px solid var(--line);padding:6px 9px;text-align:right}.ok{color:var(--green);font-weight:700}.bad{color:var(--red);font-weight:700}.warn{color:var(--amber);font-weight:700}.task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0}textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}@media(max-width:920px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<h1>Lab 23 Interactive: Spectral Graph Theory</h1>
+<p>Build a graph, compute $A$, $D$, and $L=D-A$, inspect eigenvalues, count walks with $A^k$, and use the Fiedler vector for graph partitioning.</p>
+</header>
+<main>
+<section class="grid">
+<div class="card">
+<h2>1. Choose a graph</h2>
+<p class="small">Vertices are labeled $1,2,\ldots,n$. Click two vertices in the drawing to toggle an edge.</p>
+<div class="row"><label>Graph:</label><select id="preset" onchange="loadPreset(this.value)"><option value="path">Path $P_6$</option><option value="cycle">Cycle $C_6$</option><option value="twoTriangles">Two triangles + bridge</option><option value="disconnected">Disconnected graph</option><option value="complete">Complete graph $K_5$</option></select></div>
+<div class="row"><label>Walk length $k$:</label><input type="number" id="walkK" value="2" min="1" max="6" step="1" onchange="update()"></div>
+<button onclick="clearGraph()">Clear edges</button><button class="secondary" onclick="randomGraph()">Random graph</button>
+<div class="result" id="summary"></div>
+</div>
+<div class="card">
+<h2>2. Graph drawing</h2>
+<canvas id="graphCanvas" width="720" height="520"></canvas>
+<p class="small">Node color shows the Fiedler vector when the graph is connected. Negative and positive signs suggest a two-way spectral partition.</p>
+</div>
+</section>
+
+<section class="grid">
+<div class="card"><h2>3. Graph matrices</h2><div class="result" id="matrices"></div></div>
+<div class="card"><h2>4. Spectrum and connected components</h2><div class="result" id="spectrum"></div></div>
+</section>
+
+<section class="card"><h2>5. Walk counting</h2><p>The theorem says that $(A^k)_{ij}$ counts walks of length $k$ from vertex $i$ to vertex $j$.</p><div class="result" id="walks"></div></section>
+
+<section class="card"><h2>6. Laplacian energy</h2><p>Use the signal $x_i=i$ on vertices. The tool compares $x^TLx$ with $\sum_{\{i,j\}\in E}(x_i-x_j)^2$.</p><div class="result" id="energy"></div></section>
+
+<section class="card"><h2>7. Independent-study tasks with answers</h2>
+<div class="task"><strong>Task A.</strong> Select the disconnected graph. How many zero Laplacian eigenvalues do you see?<br><strong>Answer:</strong> The number of zero eigenvalues equals the number of connected components.</div>
+<div class="task"><strong>Task B.</strong> Select two triangles + bridge. What partition is suggested by the Fiedler vector?<br><strong>Answer:</strong> The two triangles should be separated into two clusters.</div>
+<div class="task"><strong>Task C.</strong> Select $P_6$. What does $(A^2)_{1,3}$ count?<br><strong>Answer:</strong> The number of length-2 walks from vertex 1 to vertex 3.</div>
+<div class="task"><strong>Similar practice.</strong> Add or remove one bridge edge. How does the Fiedler value $\lambda_2$ change?<br><strong>Answer:</strong> Stronger or more numerous connections between two parts usually increase $\lambda_2$.</div>
+</section>
+
+<section class="card"><h2>8. Workspace</h2><textarea placeholder="Write your observations here..."></textarea></section>
+</main>
+<script>
+let n=6; let edges=[]; let selected=null; const eps=1e-8;
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-9)return '0'; if(Math.abs(x-Math.round(x))<1e-9)return String(Math.round(x)); return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(r=>`<tr>${r.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function edgeKey(i,j){return i<j?`${i},${j}`:`${j},${i}`}
+function hasEdge(i,j){let k=edgeKey(i,j);return edges.some(e=>edgeKey(e[0],e[1])===k)}
+function toggleEdge(i,j){if(i===j)return; let k=edgeKey(i,j); let idx=edges.findIndex(e=>edgeKey(e[0],e[1])===k); if(idx>=0)edges.splice(idx,1); else edges.push(i<j?[i,j]:[j,i]); update();}
+function loadPreset(t){selected=null;if(t==='path'){n=6;edges=[[0,1],[1,2],[2,3],[3,4],[4,5]];} if(t==='cycle'){n=6;edges=[[0,1],[1,2],[2,3],[3,4],[4,5],[5,0]];} if(t==='twoTriangles'){n=6;edges=[[0,1],[1,2],[2,0],[3,4],[4,5],[5,3],[2,3]];} if(t==='disconnected'){n=6;edges=[[0,1],[1,2],[3,4],[4,5]];} if(t==='complete'){n=5;edges=[];for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)edges.push([i,j]);} update();}
+function clearGraph(){edges=[];selected=null;update();}
+function randomGraph(){edges=[];for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)if(Math.random()<0.35)edges.push([i,j]);selected=null;update();}
+function adjacency(){let A=Array.from({length:n},()=>Array(n).fill(0));for(const [i,j] of edges){A[i][j]=1;A[j][i]=1;}return A;}
+function matmul(A,B){let r=A.length,c=B[0].length,m=B.length;let C=Array.from({length:r},()=>Array(c).fill(0));for(let i=0;i<r;i++)for(let j=0;j<c;j++)for(let k=0;k<m;k++)C[i][j]+=A[i][k]*B[k][j];return C;}
+function matpow(A,k){let R=Array.from({length:A.length},(_,i)=>Array.from({length:A.length},(_,j)=>i===j?1:0));let B=A;for(let p=0;p<k;p++)R=matmul(R,A);return R;}
+function degree(A){return A.map(r=>r.reduce((a,b)=>a+b,0));}
+function laplacian(A){let d=degree(A);return A.map((r,i)=>r.map((v,j)=>i===j?d[i]:-v));}
+function jacobiSym(A){let n=A.length;let a=A.map(r=>r.slice());let V=Array.from({length:n},(_,i)=>Array.from({length:n},(_,j)=>i===j?1:0));for(let iter=0;iter<100;iter++){let p=0,q=1,max=0;for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){if(Math.abs(a[i][j])>max){max=Math.abs(a[i][j]);p=i;q=j;}}if(max<1e-10)break;let phi=0.5*Math.atan2(2*a[p][q],a[q][q]-a[p][p]);let c=Math.cos(phi),s=Math.sin(phi);for(let k=0;k<n;k++){let apk=a[p][k],aqk=a[q][k];a[p][k]=c*apk-s*aqk;a[q][k]=s*apk+c*aqk;}for(let k=0;k<n;k++){let akp=a[k][p],akq=a[k][q];a[k][p]=c*akp-s*akq;a[k][q]=s*akp+c*akq;}for(let k=0;k<n;k++){let vkp=V[k][p],vkq=V[k][q];V[k][p]=c*vkp-s*vkq;V[k][q]=s*vkp+c*vkq;}}
+let vals=a.map((r,i)=>r[i]);let idx=vals.map((v,i)=>[v,i]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);return {values:idx.map(i=>vals[i]),vectors:idx.map(i=>V.map(r=>r[i]))};}
+function components(){let seen=Array(n).fill(false), comps=[];let adj=Array.from({length:n},()=>[]);for(const [i,j] of edges){adj[i].push(j);adj[j].push(i);}for(let s=0;s<n;s++)if(!seen[s]){let stack=[s],comp=[];seen[s]=true;while(stack.length){let u=stack.pop();comp.push(u);for(const v of adj[u])if(!seen[v]){seen[v]=true;stack.push(v);}}comps.push(comp);}return comps;}
+function positions(){let cx=360,cy=260,R=185;return Array.from({length:n},(_,i)=>[cx+R*Math.cos(2*Math.PI*i/n-Math.PI/2),cy+R*Math.sin(2*Math.PI*i/n-Math.PI/2)]);}
+function draw(fiedler){let canvas=document.getElementById('graphCanvas'),ctx=canvas.getContext('2d'),pos=positions();ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.lineWidth=3;ctx.strokeStyle='#9ca3af';for(const [i,j] of edges){ctx.beginPath();ctx.moveTo(pos[i][0],pos[i][1]);ctx.lineTo(pos[j][0],pos[j][1]);ctx.stroke();}for(let i=0;i<n;i++){let val=fiedler?fiedler[i]:0;let color=fiedler?(val<0?'#2563eb':'#f97316'):'#e5e7eb';ctx.fillStyle=color;ctx.strokeStyle=selected===i?'#111827':'#374151';ctx.lineWidth=selected===i?5:2;ctx.beginPath();ctx.arc(pos[i][0],pos[i][1],24,0,2*Math.PI);ctx.fill();ctx.stroke();ctx.fillStyle='#111827';ctx.font='bold 16px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(i+1),pos[i][0],pos[i][1]);}ctx.textAlign='left';ctx.textBaseline='alphabetic';}
+function update(){let A=adjacency(),d=degree(A),D=A.map((_,i)=>A.map((_,j)=>i===j?d[i]:0)),L=laplacian(A),eig=jacobiSym(L),vals=eig.values,comps=components();let connected=comps.length===1;let fiedler=connected&&n>1?eig.vectors[1]:null;draw(fiedler);document.getElementById('summary').innerHTML=`Vertices: ${n}<br>Edges: ${edges.length}<br>Connected components: ${comps.map(c=>'{'+c.map(i=>i+1).join(', ')+'}').join(' ')}`;document.getElementById('matrices').innerHTML=`<strong>Adjacency matrix A</strong>${matHTML(A)}<strong>Degree matrix D</strong>${matHTML(D)}<strong>Laplacian L = D - A</strong>${matHTML(L)}`;let zeros=vals.filter(v=>Math.abs(v)<1e-7).length;let fiedlerVal=n>1?vals[1]:0;let part=fiedler?`<br>Fiedler value λ₂ = ${fmt(fiedlerVal)}<br>Fiedler vector: [${fiedler.map(fmt).join(', ')}]<br>Suggested clusters by sign: {${fiedler.map((v,i)=>v<0?i+1:null).filter(x=>x).join(', ')}} and {${fiedler.map((v,i)=>v>=0?i+1:null).filter(x=>x).join(', ')}}`:"<br><span class='warn'>Graph is disconnected, so a unique Fiedler partition is not shown.</span>";document.getElementById('spectrum').innerHTML=`Laplacian eigenvalues:<br>[${vals.map(fmt).join(', ')}]<br>Number of zero eigenvalues: <span class='ok'>${zeros}</span>${part}`;let k=Math.max(1,Math.min(6,Number(document.getElementById('walkK').value)||2));document.getElementById('walkK').value=k;let Ak=matpow(A,k);document.getElementById('walks').innerHTML=`A^${k} = ${matHTML(Ak)}For example, the top-left entry counts walks of length ${k} from vertex 1 to vertex 1.`;let x=Array.from({length:n},(_,i)=>i+1);let Lx=L.map(r=>r.reduce((s,v,j)=>s+v*x[j],0));let e1=x.reduce((s,xi,i)=>s+xi*Lx[i],0);let e2=edges.reduce((s,[i,j])=>s+(x[i]-x[j])**2,0);document.getElementById('energy').innerHTML=`For x = [${x.join(', ')}],<br>xᵀLx = ${fmt(e1)}<br>Σ_edges (x_i-x_j)^2 = ${fmt(e2)}<br>`+(Math.abs(e1-e2)<1e-8?`<span class='ok'>They agree.</span>`:`<span class='bad'>Something is wrong.</span>`);if(window.MathJax) MathJax.typesetPromise();}
+document.getElementById('graphCanvas').addEventListener('click',function(ev){let rect=this.getBoundingClientRect(),x=(ev.clientX-rect.left)*(this.width/rect.width),y=(ev.clientY-rect.top)*(this.height/rect.height),pos=positions();let hit=null;for(let i=0;i<n;i++){let dx=x-pos[i][0],dy=y-pos[i][1];if(dx*dx+dy*dy<30*30)hit=i;}if(hit===null)return;if(selected===null){selected=hit;draw(components().length===1?jacobiSym(laplacian(adjacency())).vectors[1]:null);}else{toggleEdge(selected,hit);selected=null;}});
+loadPreset('path');
+</script>
+</body>
+</html>

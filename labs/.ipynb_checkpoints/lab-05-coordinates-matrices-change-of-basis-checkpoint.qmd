@@ -1,0 +1,346 @@
+# Lab 5. Coordinates, Matrices of Linear Transformations, and Change of Basis: Independent Study {.unnumbered}
+
+This lab accompanies **Chapter 5: Coordinates, Matrices, and Change of Basis**.
+
+The goal is to make the central story of Chapter 5 computational:
+
+1. A **basis** is a coordinate system.
+2. A vector has different coordinate columns in different bases.
+3. A linear transformation has different matrix representations in different input/output bases.
+4. A change of basis is a translation between coordinate languages.
+5. Similar matrices represent the same linear map written in different bases.
+
+This is an **independent-study lab**. Each main question includes a worked solution and a similar practice question so that students can check their work as they go.
+
+
+## Python practice notebook
+
+You may also use the Jupyter notebook version for longer Python practice:
+
+- [Download Lab 5 independent-study notebook](lab-05-coordinates-matrices-change-of-basis-independent-study.ipynb)
+- [Open Lab 5 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-05-coordinates-matrices-change-of-basis-independent-study.ipynb)
+
+## Interactive lab
+
+```{=html}
+<iframe
+  src="lab-05-interactive.html"
+  width="100%"
+  height="3600"
+  style="border:1px solid #ddd; border-radius:12px;">
+</iframe>
+```
+
+
+## Study guide and worked questions
+
+### Question 1. Coordinates in a nonstandard basis
+
+Let
+
+$$
+b_1=\begin{bmatrix}1\\1\end{bmatrix},\qquad
+b_2=\begin{bmatrix}-1\\2\end{bmatrix},\qquad
+\mathcal B=(b_1,b_2),
+$$
+
+and let
+
+$$
+x=\begin{bmatrix}2\\8\end{bmatrix}.
+$$
+
+Find $[x]_{\mathcal B}$.
+
+#### Solution
+
+Place the basis vectors into the columns of the basis matrix
+
+$$
+P_{\mathcal B}=\begin{bmatrix}1&-1\\1&2\end{bmatrix}.
+$$
+
+The coordinate vector $[x]_{\mathcal B}$ is the solution of
+
+$$
+P_{\mathcal B}[x]_{\mathcal B}=x.
+$$
+
+Thus
+
+$$
+c_1\begin{bmatrix}1\\1\end{bmatrix}
++c_2\begin{bmatrix}-1\\2\end{bmatrix}
+=\begin{bmatrix}2\\8\end{bmatrix}.
+$$
+
+This gives
+
+$$
+c_1-c_2=2,\qquad c_1+2c_2=8.
+$$
+
+Solving gives $c_1=4$ and $c_2=2$. Hence
+
+$$
+[x]_{\mathcal B}=\begin{bmatrix}4\\2\end{bmatrix}.
+$$
+
+#### Similar practice
+
+For the same basis, find $[y]_{\mathcal B}$ for
+
+$$
+y=\begin{bmatrix}5\\7\end{bmatrix}.
+$$
+
+**Answer:** Solve $c_1-c_2=5$ and $c_1+2c_2=7$. Then $c_2=\frac{2}{3}$ and $c_1=\frac{17}{3}$, so
+
+$$
+[y]_{\mathcal B}=\begin{bmatrix}17/3\\2/3\end{bmatrix}.
+$$
+
+### Question 2. A coordinate vector is not the vector itself
+
+Using the basis from Question 1, compute the standard vector whose $\mathcal B$-coordinates are
+
+$$
+[v]_{\mathcal B}=\begin{bmatrix}3\\-1\end{bmatrix}.
+$$
+
+#### Solution
+
+To reconstruct the actual vector $v$, multiply by the basis matrix:
+
+$$
+v=P_{\mathcal B}[v]_{\mathcal B}
+=\begin{bmatrix}1&-1\\1&2\end{bmatrix}
+\begin{bmatrix}3\\-1\end{bmatrix}
+=\begin{bmatrix}4\\1\end{bmatrix}.
+$$
+
+Thus the coordinate column $\begin{bmatrix}3\\-1\end{bmatrix}$ is not the same thing as the vector $\begin{bmatrix}4\\1\end{bmatrix}$. It is a description of that vector in the basis $\mathcal B$.
+
+#### Similar practice
+
+Using the same basis, reconstruct the vector with coordinates
+
+$$
+[w]_{\mathcal B}=\begin{bmatrix}2\\5\end{bmatrix}.
+$$
+
+**Answer:**
+
+$$
+w=2b_1+5b_2
+=2\begin{bmatrix}1\\1\end{bmatrix}
++5\begin{bmatrix}-1\\2\end{bmatrix}
+=\begin{bmatrix}-3\\12\end{bmatrix}.
+$$
+
+### Question 3. Matrix of a linear transformation in chosen bases
+
+Let $T:\mathbb R^2\to\mathbb R^2$ be defined in standard coordinates by
+
+$$
+A=\begin{bmatrix}2&1\\0&3\end{bmatrix}.
+$$
+
+Let
+
+$$
+\mathcal B=\left(
+\begin{bmatrix}1\\1\end{bmatrix},
+\begin{bmatrix}-1\\2\end{bmatrix}
+\right),
+\qquad
+\mathcal C=\left(
+\begin{bmatrix}1\\0\end{bmatrix},
+\begin{bmatrix}0\\1\end{bmatrix}
+\right).
+$$
+
+Find $[T]_{\mathcal C\leftarrow\mathcal B}$.
+
+#### Solution
+
+The matrix $[T]_{\mathcal C\leftarrow\mathcal B}$ takes $\mathcal B$-coordinates as input and returns $\mathcal C$-coordinates as output. The formula is
+
+$$
+[T]_{\mathcal C\leftarrow\mathcal B}=P_{\mathcal C}^{-1}AP_{\mathcal B}.
+$$
+
+Since $\mathcal C$ is the standard basis, $P_{\mathcal C}=I$. Therefore
+
+$$
+[T]_{\mathcal C\leftarrow\mathcal B}=AP_{\mathcal B}
+=\begin{bmatrix}2&1\\0&3\end{bmatrix}
+\begin{bmatrix}1&-1\\1&2\end{bmatrix}
+=\begin{bmatrix}3&0\\3&6\end{bmatrix}.
+$$
+
+The columns have a direct meaning:
+
+$$
+T(b_1)=\begin{bmatrix}3\\3\end{bmatrix},\qquad
+T(b_2)=\begin{bmatrix}0\\6\end{bmatrix}.
+$$
+
+#### Similar practice
+
+For the same $A$ and $\mathcal B$, let
+
+$$
+\mathcal C=\left(
+\begin{bmatrix}1\\1\end{bmatrix},
+\begin{bmatrix}1\\-1\end{bmatrix}
+\right).
+$$
+
+Compute $[T]_{\mathcal C\leftarrow\mathcal B}$.
+
+**Answer:**
+
+$$
+P_{\mathcal C}=\begin{bmatrix}1&1\\1&-1\end{bmatrix},\qquad
+[T]_{\mathcal C\leftarrow\mathcal B}=P_{\mathcal C}^{-1}AP_{\mathcal B}
+=\begin{bmatrix}3&3\\0&-3\end{bmatrix}.
+$$
+
+### Question 4. Change of coordinates from one basis to another
+
+Let
+
+$$
+\mathcal B=\left(
+\begin{bmatrix}1\\1\end{bmatrix},
+\begin{bmatrix}-1\\2\end{bmatrix}
+\right),
+\qquad
+\mathcal C=\left(
+\begin{bmatrix}1\\1\end{bmatrix},
+\begin{bmatrix}1\\-1\end{bmatrix}
+\right).
+$$
+
+Suppose
+
+$$
+[v]_{\mathcal B}=\begin{bmatrix}4\\2\end{bmatrix}.
+$$
+
+Find $[v]_{\mathcal C}$.
+
+#### Solution
+
+First reconstruct the standard vector:
+
+$$
+v=P_{\mathcal B}[v]_{\mathcal B}
+=\begin{bmatrix}1&-1\\1&2\end{bmatrix}
+\begin{bmatrix}4\\2\end{bmatrix}
+=\begin{bmatrix}2\\8\end{bmatrix}.
+$$
+
+Then solve
+
+$$
+P_{\mathcal C}[v]_{\mathcal C}=v.
+$$
+
+Equivalently,
+
+$$
+[v]_{\mathcal C}=P_{\mathcal C}^{-1}P_{\mathcal B}[v]_{\mathcal B}.
+$$
+
+A direct computation gives
+
+$$
+[v]_{\mathcal C}=\begin{bmatrix}5\\-3\end{bmatrix}.
+$$
+
+#### Similar practice
+
+With the same bases, convert
+
+$$
+[w]_{\mathcal B}=\begin{bmatrix}1\\3\end{bmatrix}
+$$
+
+to $\mathcal C$-coordinates.
+
+**Answer:** First $w=P_{\mathcal B}[w]_{\mathcal B}=(-2,7)^T$. Solving $P_{\mathcal C}[w]_{\mathcal C}=w$ gives
+
+$$
+[w]_{\mathcal C}=\begin{bmatrix}5/2\\-9/2\end{bmatrix}.
+$$
+
+### Question 5. Similarity and same transformation in a new basis
+
+Let
+
+$$
+A=\begin{bmatrix}2&1\\0&3\end{bmatrix},
+\qquad
+P=\begin{bmatrix}1&1\\0&1\end{bmatrix}.
+$$
+
+Compute the matrix of the same transformation in the basis whose basis matrix is $P$.
+
+#### Solution
+
+For a linear map $T:\mathbb R^2\to\mathbb R^2$ with the same basis used in the domain and codomain, the new matrix is
+
+$$
+A_{\mathcal B}=P^{-1}AP.
+$$
+
+Here
+
+$$
+P^{-1}=\begin{bmatrix}1&-1\\0&1\end{bmatrix}.
+$$
+
+Thus
+
+$$
+A_{\mathcal B}
+=P^{-1}AP
+=\begin{bmatrix}2&0\\0&3\end{bmatrix}.
+$$
+
+This tells us that the chosen basis is an eigenbasis. In that basis, the transformation only scales coordinates.
+
+#### Similar practice
+
+Let
+
+$$
+A=\begin{bmatrix}4&2\\1&3\end{bmatrix},
+\qquad
+P=\begin{bmatrix}2&1\\1&-1\end{bmatrix}.
+$$
+
+Compute $P^{-1}AP$.
+
+**Answer:**
+
+$$
+P^{-1}AP=\begin{bmatrix}5&0\\0&2\end{bmatrix}.
+$$
+
+### Question 6. AI companion activity
+
+Ask an AI assistant:
+
+> Explain the difference between a vector, its coordinate vector, and the matrix of a linear transformation. Give an example where the same vector has two different coordinate columns.
+
+Then check its answer using these criteria:
+
+1. Does it distinguish the vector from its coordinates?
+2. Does it specify which basis is being used?
+3. Does it use the formula $v=P_{\mathcal B}[v]_{\mathcal B}$ correctly?
+4. Does it distinguish $[T]_{\mathcal C\leftarrow\mathcal B}$ from $[v]_{\mathcal B}$?
+
+A good answer should explicitly say: coordinates depend on the basis, but the underlying vector or linear transformation does not.

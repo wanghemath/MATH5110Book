@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 6 Interactive: Determinants</title>
+<script>
+window.MathJax = {tex: {inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']]}, svg: {fontCache: 'global'}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--bg:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);} header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;} header h1{margin:0 0 8px;font-size:1.8rem;} header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;} main{max-width:1240px;margin:0 auto;padding:24px;} .grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;} .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;} h2{font-size:1.25rem;margin:0 0 12px;} h3{font-size:1.05rem;margin:18px 0 8px;} p{line-height:1.55;} label{display:block;margin:8px 0 4px;font-weight:600;} input[type=number]{width:62px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;} .matrix{display:grid;gap:6px;margin:8px 0 12px;align-items:center;} .m2{grid-template-columns:repeat(2,70px);} .m3{grid-template-columns:repeat(3,70px);} .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;} button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;} button.secondary{background:#fff;color:#111827;} select{padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff;} canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;} .result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;} .eq{background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto;} .small{font-size:.92rem;color:var(--muted);} table{border-collapse:collapse;background:#fff;margin:8px 0;} th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;} .ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .warn{color:var(--amber);font-weight:700;} .task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;} textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;} code{background:#f3f4f6;padding:1px 4px;border-radius:4px;} @media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+<h1>Lab 6 Interactive: Determinants</h1>
+<p>Explore determinant as signed area scaling, orientation, invertibility, elimination, eigenvalue products, singular-value products, condition number, and covariance volume.</p>
+</header>
+<main>
+<section class="grid">
+<div class="card">
+<h2>1. A $2\times2$ matrix as an area machine</h2>
+<p class="small">Enter a matrix $A=\begin{bmatrix}a&b\\c&d\end{bmatrix}$. The columns determine the image of the unit square.</p>
+<div class="matrix m2" id="A2Inputs"></div>
+<button onclick="preset2('area')">Area factor 6</button><button onclick="preset2('shear')">Shear</button><button onclick="preset2('reflection')">Reflection</button><button onclick="preset2('singular')">Singular</button><button class="secondary" onclick="random2()">Random</button>
+<div class="result" id="A2Result"></div>
+</div>
+<div class="card">
+<h2>2. Geometry of $A$</h2>
+<canvas id="geom" width="720" height="540"></canvas>
+<p class="small">Blue: original unit square. Orange: transformed parallelogram. The orange area is $|\det(A)|$.</p>
+</div>
+</section>
+
+<section class="grid">
+<div class="card">
+<h2>3. Compute a $3\times3$ determinant</h2>
+<p class="small">Use this to compare direct determinant computation with elimination ideas.</p>
+<div class="matrix m3" id="A3Inputs"></div>
+<button onclick="preset3('lecture')">Lecture example</button><button onclick="preset3('triangular')">Triangular</button><button onclick="preset3('dependent')">Dependent columns</button><button class="secondary" onclick="random3()">Random 3×3</button>
+<div class="result" id="A3Result"></div>
+</div>
+<div class="card">
+<h2>4. Row-operation interpretation</h2>
+<div class="result" id="elimResult"></div>
+<p class="small">Row replacement does not change determinant. Row swaps change sign. Row scaling multiplies determinant.</p>
+</div>
+</section>
+
+<section class="grid">
+<div class="card">
+<h2>5. Eigenvalues and determinant</h2>
+<p class="small">For triangular matrices, eigenvalues are the diagonal entries, so the determinant is their product.</p>
+<div class="row"><label>$\lambda_1$</label><input id="lam1" type="number" value="2" step="1"><label>$\lambda_2$</label><input id="lam2" type="number" value="-1" step="1"><label>$\lambda_3$</label><input id="lam3" type="number" value="3" step="1"></div>
+<div class="result" id="eigResult"></div>
+</div>
+<div class="card">
+<h2>6. Singular values and condition number</h2>
+<p class="small">For singular values $\sigma_1\ge\sigma_2>0$, $|\det(A)|=\sigma_1\sigma_2$ and $\kappa_2(A)=\sigma_1/\sigma_2$.</p>
+<div class="row"><label>$\sigma_1$</label><input id="sig1" type="number" value="1000" step="1"><label>$\sigma_2$</label><input id="sig2" type="number" value="0.001" step="0.001"></div>
+<div class="result" id="svResult"></div>
+</div>
+</section>
+
+<section class="grid">
+<div class="card">
+<h2>7. Covariance volume</h2>
+<p class="small">For a covariance matrix $\Sigma$, $\det(\Sigma)$ is generalized variance and $\sqrt{\det(\Sigma)}$ is proportional to ellipse volume.</p>
+<div class="row"><label>$v_1$</label><input id="cov1" type="number" value="4" step="0.5"><label>$v_2$</label><input id="cov2" type="number" value="1" step="0.5"><label>$\rho$</label><input id="rho" type="number" value="0" min="-0.95" max="0.95" step="0.05"></div>
+<div class="result" id="covResult"></div>
+</div>
+<div class="card">
+<h2>8. Log determinant</h2>
+<p class="small">For positive definite matrices, log determinant is more stable than determinant.</p>
+<div class="result" id="logResult"></div>
+</div>
+</section>
+
+<section class="card">
+<h2>9. Independent-study practice tasks with answers</h2>
+<div class="task"><strong>Task A.</strong> Compute $\det\begin{bmatrix}2&1\\0&3\end{bmatrix}$. <br><strong>Answer:</strong> $6$. The map scales area by $6$ and preserves orientation.</div>
+<div class="task"><strong>Task B.</strong> Compute $\det\begin{bmatrix}1&0\\0&-1\end{bmatrix}$. <br><strong>Answer:</strong> $-1$. The map preserves area but reverses orientation.</div>
+<div class="task"><strong>Task C.</strong> Decide whether $\begin{bmatrix}1&2\\2&4\end{bmatrix}$ is invertible. <br><strong>Answer:</strong> No. Its determinant is $0$ and its columns are dependent.</div>
+<div class="task"><strong>Task D.</strong> If a $4\times4$ matrix has eigenvalues $2,-1,3,5$, find its determinant. <br><strong>Answer:</strong> $2(-1)(3)(5)=-30$.</div>
+<div class="task"><strong>Similar practice.</strong> If the singular values are $10,1,0.01$, find $|\det(A)|$ and $\kappa_2(A)$. <br><strong>Answer:</strong> $|\det(A)|=0.1$ and $\kappa_2(A)=1000$.</div>
+</section>
+
+<section class="card"><h2>10. Workspace</h2><textarea placeholder="Write observations here. Copy final answers to your notebook or assignment."></textarea></section>
+</main>
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(5).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(row=>`<tr>${row.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function createInputs(containerId,prefix,vals,n){const el=document.getElementById(containerId);el.innerHTML=''; for(let i=0;i<n;i++){for(let j=0;j<n;j++){const input=document.createElement('input');input.type='number';input.step='1';input.value=vals[i][j];input.id=`${prefix}${i}${j}`;input.addEventListener('input',update);el.appendChild(input);}}}
+function getMat(prefix,n){let M=[];for(let i=0;i<n;i++){let r=[];for(let j=0;j<n;j++)r.push(Number(document.getElementById(`${prefix}${i}${j}`).value)||0);M.push(r);}return M;}
+function setMat(prefix,M){for(let i=0;i<M.length;i++)for(let j=0;j<M[0].length;j++)document.getElementById(`${prefix}${i}${j}`).value=M[i][j];}
+function det2(A){return A[0][0]*A[1][1]-A[0][1]*A[1][0];}
+function det3(A){return A[0][0]*(A[1][1]*A[2][2]-A[1][2]*A[2][1])-A[0][1]*(A[1][0]*A[2][2]-A[1][2]*A[2][0])+A[0][2]*(A[1][0]*A[2][1]-A[1][1]*A[2][0]);}
+function rank2(A){if(Math.abs(det2(A))>1e-10)return 2; if(A.flat().some(x=>Math.abs(x)>1e-10))return 1; return 0;}
+function update2(){let A=getMat('A',2), d=det2(A), rank=rank2(A), orient=d>1e-10?'preserves orientation':(d<-1e-10?'reverses orientation':'collapses area'); let inv=Math.abs(d)>1e-10; A2Result.innerHTML=`A=${matHTML(A)} $\det(A)=${fmt(d)}$<br>$|\det(A)|=${fmt(Math.abs(d))}$ is the area-scaling factor.<br>`+(inv?`<span class='ok'>A is invertible</span> and ${orient}.`:`<span class='bad'>A is singular.</span> It collapses the plane to lower dimension.`); drawGeom();}
+function preset2(t){if(t==='area')setMat('A',[[2,1],[0,3]]); if(t==='shear')setMat('A',[[1,4],[0,1]]); if(t==='reflection')setMat('A',[[1,0],[0,-1]]); if(t==='singular')setMat('A',[[1,2],[2,4]]); update();}
+function random2(){const r=()=>Math.floor(Math.random()*7)-3; setMat('A',[[r(),r()],[r(),r()]]); update();}
+function drawGeom(){let A=getMat('A',2), canvas=geom,ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height,sc=55;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);function pt(x,y){return [W/2+x*sc,H/2-y*sc];}ctx.strokeStyle='#eef2f7';ctx.lineWidth=1;for(let x=-6;x<=6;x++){let p=pt(x,0)[0];ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,H);ctx.stroke();}for(let y=-5;y<=5;y++){let p=pt(0,y)[1];ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(W,p);ctx.stroke();}let ox=pt(0,0)[0],oy=pt(0,0)[1];ctx.strokeStyle='#9ca3af';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(W,oy);ctx.stroke();ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();function apply(p){return [A[0][0]*p[0]+A[0][1]*p[1],A[1][0]*p[0]+A[1][1]*p[1]];}function poly(pts,color){ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=3;ctx.beginPath();pts.forEach((p,i)=>{let q=pt(p[0],p[1]); if(i===0)ctx.moveTo(q[0],q[1]);else ctx.lineTo(q[0],q[1]);});ctx.closePath();ctx.globalAlpha=.12;ctx.fill();ctx.globalAlpha=1;ctx.stroke();}function vec(v,color,label){let o=pt(0,0),q=pt(v[0],v[1]);ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(o[0],o[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();ctx.beginPath();ctx.arc(q[0],q[1],5,0,2*Math.PI);ctx.fill();ctx.font='14px system-ui';ctx.fillText(label,q[0]+8,q[1]-8);}let square=[[0,0],[1,0],[1,1],[0,1]], tsq=square.map(apply);poly(square,'#2563eb');poly(tsq,'#f97316');vec([1,0],'#2563eb','e₁');vec([0,1],'#2563eb','e₂');vec(apply([1,0]),'#f97316','Ae₁');vec(apply([0,1]),'#f97316','Ae₂');ctx.fillStyle='#111827';ctx.font='15px system-ui';ctx.fillText(`det(A) = ${fmt(det2(A))}`,18,24);}
+function rref(A){let M=A.map(r=>r.slice().map(Number));let rows=M.length,cols=M[0].length,pivots=[],r=0,swaps=0;for(let c=0;c<cols&&r<rows;c++){let piv=r;for(let i=r;i<rows;i++)if(Math.abs(M[i][c])>Math.abs(M[piv][c]))piv=i;if(Math.abs(M[piv][c])<1e-10)continue;if(piv!==r){[M[r],M[piv]]=[M[piv],M[r]];swaps++;}let val=M[r][c];for(let j=c;j<cols;j++)M[r][j]/=val;for(let i=0;i<rows;i++){if(i!==r){let f=M[i][c];for(let j=c;j<cols;j++)M[i][j]-=f*M[r][j];}}pivots.push(c);r++;}return {M,pivots,swaps};}
+function upperElim(A){let M=A.map(r=>r.slice().map(Number));let n=3,swaps=0,scale=1,ok=true;for(let k=0;k<n;k++){let piv=k;for(let i=k;i<n;i++)if(Math.abs(M[i][k])>Math.abs(M[piv][k]))piv=i;if(Math.abs(M[piv][k])<1e-10){ok=false;continue;}if(piv!==k){[M[k],M[piv]]=[M[piv],M[k]];swaps++;}for(let i=k+1;i<n;i++){let mult=M[i][k]/M[k][k];for(let j=k;j<n;j++)M[i][j]-=mult*M[k][j];}}return {M,swaps,ok};}
+function update3(){let A=getMat('B',3),d=det3(A),rr=rref(A),el=upperElim(A),diag=el.M[0][0]*el.M[1][1]*el.M[2][2],fromU=Math.pow(-1,el.swaps)*diag;A3Result.innerHTML=`A=${matHTML(A)} $\det(A)=${fmt(d)}$<br>rank(A) = ${rr.pivots.length}<br>`+(Math.abs(d)>1e-10?`<span class='ok'>A is invertible.</span>`:`<span class='bad'>A is singular.</span>`);elimResult.innerHTML=`One upper triangular form using row swaps/replacements:${matHTML(el.M)}Row swaps: ${el.swaps}<br>Product of diagonal entries of U: ${fmt(diag)}<br>$(-1)^s\prod u_{ii}=${fmt(fromU)}$`;}
+function preset3(t){if(t==='lecture')setMat('B',[[1,2,3],[2,5,7],[1,1,0]]); if(t==='triangular')setMat('B',[[2,1,3],[0,4,-1],[0,0,5]]); if(t==='dependent')setMat('B',[[1,2,3],[2,4,6],[1,1,0]]); update();}
+function random3(){const r=()=>Math.floor(Math.random()*7)-3; setMat('B',[[r(),r(),r()],[r(),r(),r()],[r(),r(),r()]]); update();}
+function updateEig(){let a=Number(lam1.value)||0,b=Number(lam2.value)||0,c=Number(lam3.value)||0,prod=a*b*c;eigResult.innerHTML=`Triangular model: $T=\operatorname{diag}(${fmt(a)},${fmt(b)},${fmt(c)})$.<br>$\det(T)=\lambda_1\lambda_2\lambda_3=${fmt(prod)}$.<br>`+(Math.abs(prod)>1e-10?`<span class='ok'>No zero eigenvalue, so invertible.</span>`:`<span class='bad'>A zero eigenvalue means singular.</span>`);}
+function updateSV(){let s1=Math.abs(Number(sig1.value)||0),s2=Math.abs(Number(sig2.value)||0);let det=s1*s2,cond=s2>1e-12?s1/s2:Infinity;svResult.innerHTML=`$|\det(A)|=\sigma_1\sigma_2=${fmt(det)}$.<br>$\kappa_2(A)=\sigma_1/\sigma_2=${fmt(cond)}$.<br>`+(cond>100?`<span class='warn'>Warning:</span> determinant alone hides strong stretching/compression.`:`<span class='ok'>The singular values are not extremely separated.</span>`);}
+function updateCov(){let v1=Math.max(Number(cov1.value)||0,0),v2=Math.max(Number(cov2.value)||0,0),r=Math.max(-0.99,Math.min(0.99,Number(rho.value)||0));let cov=r*Math.sqrt(v1*v2),det=v1*v2-cov*cov;covResult.innerHTML=`$\Sigma=\begin{bmatrix}${fmt(v1)}&${fmt(cov)}\\${fmt(cov)}&${fmt(v2)}\end{bmatrix}$<br>$\det(\Sigma)=${fmt(det)}$ is the generalized variance.<br>$\sqrt{\det(\Sigma)}=${fmt(Math.sqrt(Math.max(det,0)))}$ is proportional to ellipse area.`;logResult.innerHTML=det>0?`$\log\det(\Sigma)=${fmt(Math.log(det))}$.<br>In Gaussian models, this measures uncertainty volume and appears in normalization constants.`:`<span class='bad'>The covariance matrix is singular or invalid, so log determinant is not defined.</span>`;}
+function update(){update2();update3();updateEig();updateSV();updateCov(); if(window.MathJax){MathJax.typesetPromise();}}
+createInputs('A2Inputs','A',[[2,1],[0,3]],2);createInputs('A3Inputs','B',[[1,2,3],[2,5,7],[1,1,0]],3);['lam1','lam2','lam3','sig1','sig2','cov1','cov2','rho'].forEach(id=>document.getElementById(id).addEventListener('input',update));update();
+</script>
+</body>
+</html>

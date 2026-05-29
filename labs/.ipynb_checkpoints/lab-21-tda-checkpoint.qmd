@@ -1,0 +1,263 @@
+# Lab TDA: Topological Data Analysis from Linear Algebra {.unnumbered}
+
+# Lab goals
+
+In this lab you will practice computing simple topological invariants using linear algebra. The goal is to see that homology is not mysterious when the complex is small: it is a computation with boundary matrices, ranks, kernels, images, and quotient spaces.
+
+You will practice:
+
+- building boundary matrices $\partial_1$ and $\partial_2$;
+- computing Betti numbers from the formula
+
+$$
+\beta_p=\dim C_p-\operatorname{rank}(\partial_p)-\operatorname{rank}(\partial_{p+1});
+$$
+
+- comparing an open triangle and a filled triangle;
+- building Vietoris--Rips graphs from point clouds;
+- interpreting connected components and loops as topological features.
+
+# Python practice notebook
+
+The Jupyter notebook version contains guided computations, worked solutions, and similar practice questions.
+
+[Download Lab TDA notebook](lab-tda-linear-algebra-independent-study.ipynb)
+
+If your book is hosted on GitHub, you can also add a Colab link:
+
+[Open in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/labs/lab-tda-linear-algebra-independent-study.ipynb)
+
+
+# Interactive lab
+
+Use the interactive HTML page to experiment with small complexes and point-cloud scales.
+
+[Open Lab TDA Interactive](lab-tda-interactive.html)
+
+# Background formulas
+
+For a finite simplicial complex, choose ordered bases for the chain spaces $C_p$. The boundary maps become matrices
+
+$$
+\partial_p:C_p\to C_{p-1}.
+$$
+
+The $p$-cycles are
+
+$$
+Z_p=\ker(\partial_p),
+$$
+
+and the $p$-boundaries are
+
+$$
+B_p=\operatorname{im}(\partial_{p+1}).
+$$
+
+The $p$-th homology space is
+
+$$
+H_p=Z_p/B_p,
+$$
+
+and the $p$-th Betti number is
+
+$$
+\beta_p=\dim H_p.
+$$
+
+The rank formula is
+
+$$
+\boxed{\beta_p=\dim C_p-\operatorname{rank}(\partial_p)-\operatorname{rank}(\partial_{p+1}).}
+$$
+
+# Independent-study tasks
+
+## Task 1: One edge and one isolated vertex
+
+Let
+
+$$
+K=\{[1],[2],[3],[1,2]\}.
+$$
+
+1. Write the matrix $\partial_1:C_1\to C_0$.
+2. Compute $\beta_0$ and $\beta_1$.
+
+::: {.callout-tip collapse="true"}
+## Solution
+Use bases $C_1:([1,2])$ and $C_0:([1],[2],[3])$. Then
+
+$$
+[\partial_1]=\begin{bmatrix}-1\\1\\0\end{bmatrix}.
+$$
+
+The rank is $1$. Since $\partial_0=0$ and $\partial_2=0$,
+
+$$
+\beta_0=3-0-1=2,
+$$
+
+and
+
+$$
+\beta_1=1-1-0=0.
+$$
+:::
+
+## Task 2: Triangle boundary
+
+Let $K$ be the triangle boundary with vertices $1,2,3$ but no filled face.
+
+1. Write $\partial_1$.
+2. Compute $\beta_0$ and $\beta_1$.
+
+::: {.callout-tip collapse="true"}
+## Solution
+With bases $C_1:([1,2],[1,3],[2,3])$ and $C_0:([1],[2],[3])$,
+
+$$
+[\partial_1]
+=
+\begin{bmatrix}
+-1&-1&0\\
+1&0&-1\\
+0&1&1
+\end{bmatrix}.
+$$
+
+The graph is connected, so $\operatorname{rank}(\partial_1)=2$. Since $C_2=0$,
+
+$$
+\beta_0=3-0-2=1,
+$$
+
+and
+
+$$
+\beta_1=3-2-0=1.
+$$
+:::
+
+## Task 3: Filled triangle
+
+Now add the filled face $[1,2,3]$. Compute $\beta_0$, $\beta_1$, and $\beta_2$.
+
+::: {.callout-tip collapse="true"}
+## Solution
+The matrix $\partial_1$ is the same as in Task 2. The new matrix is
+
+$$
+[\partial_2]=\begin{bmatrix}1\\-1\\1\end{bmatrix}.
+$$
+
+Thus $\operatorname{rank}(\partial_1)=2$ and $\operatorname{rank}(\partial_2)=1$. Therefore
+
+$$
+\beta_0=3-0-2=1,
+$$
+
+$$
+\beta_1=3-2-1=0,
+$$
+
+and
+
+$$
+\beta_2=1-1-0=0.
+$$
+:::
+
+## Task 4: Two triangles, one filled
+
+Consider vertices $1,2,3,4$, edges
+
+$$
+[1,2],[1,3],[2,3],[2,4],[3,4],
+$$
+
+and one filled face $[2,3,4]$.
+
+Compute $\beta_0$, $\beta_1$, and $\beta_2$.
+
+::: {.callout-tip collapse="true"}
+## Solution
+There are four vertices, five edges, and one face. The complex is connected, so $\operatorname{rank}(\partial_1)=3$. Also $\operatorname{rank}(\partial_2)=1$. Therefore
+
+$$
+\beta_0=4-0-3=1,
+$$
+
+$$
+\beta_1=5-3-1=1,
+$$
+
+and
+
+$$
+\beta_2=1-1-0=0.
+$$
+
+The one remaining loop is the unfilled triangle $[1,2,3]$.
+:::
+
+## Task 5: Similar practice question
+
+Consider vertices $1,2,3,4$, edges
+
+$$
+[1,2],[2,3],[3,4],[4,1],
+$$
+
+and no filled faces. Compute $\beta_0$ and $\beta_1$.
+
+::: {.callout-tip collapse="true"}
+## Solution
+This is a square cycle. It is connected, so $\beta_0=1$. There are $4$ vertices and $4$ edges. For a connected graph, $\operatorname{rank}(\partial_1)=\#V-1=3$. Since there are no filled faces,
+
+$$
+\beta_1=\dim C_1-\operatorname{rank}(\partial_1)=4-3=1.
+$$
+:::
+
+# Python practice in this page
+
+```{python}
+import numpy as np
+
+
+def rank(A, tol=1e-10):
+    A = np.array(A, dtype=float)
+    if A.size == 0:
+        return 0
+    return np.linalg.matrix_rank(A, tol=tol)
+
+
+def betti(dim_Cp, boundary_p, boundary_p_plus_1):
+    return dim_Cp - rank(boundary_p) - rank(boundary_p_plus_1)
+
+# Triangle boundary
+D1 = np.array([[-1,-1,0],[1,0,-1],[0,1,1]], dtype=float)
+D2_empty = np.zeros((3,0))
+D0 = np.zeros((0,3))
+
+print("beta0 =", betti(3, D0, D1))
+print("beta1 =", betti(3, D1, D2_empty))
+```
+
+# Reflection questions
+
+1. Why does adding a filled triangle change $\beta_1$?
+2. Why is $H_p$ a quotient space rather than just a kernel?
+3. What does a long bar in a persistence barcode suggest?
+4. Why are boundary matrices useful for data analysis?
+
+# Submission suggestion
+
+For independent study, students should submit:
+
+1. answers to Tasks 1--5;
+2. a screenshot or short description from the interactive lab;
+3. the completed notebook computations;
+4. a short paragraph explaining how TDA uses linear algebra.

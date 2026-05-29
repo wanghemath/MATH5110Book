@@ -1,0 +1,302 @@
+ 
+
+# Lab 15: Haar Bases and Wavelet Transforms {.unnumbered}
+
+This independent-study lab accompanies Chapter 15. It focuses on Haar coefficients, fast averaging/differencing, compression, and two-dimensional transforms for image-like matrices.
+
+## Learning goals
+
+By the end of this lab, you should be able to:
+
+1. compute Haar coefficients for short signals;
+2. reconstruct a signal from Haar coefficients;
+3. explain average, coarse detail, and fine detail coefficients;
+4. perform simple coefficient thresholding for compression;
+5. apply a two-dimensional Haar transform to a small matrix.
+
+## Python practice notebook
+
+Use the Jupyter notebook version for longer Python practice:
+
+- [Download Lab 15 notebook](lab-15-haar-bases-wavelet-transforms-independent-study.ipynb)
+- [Open Lab 15 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-15-haar-bases-wavelet-transforms-independent-study.ipynb)
+
+If your book is hosted on GitHub, you can also add a Colab link:
+
+```markdown
+[Open in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/labs/lab-15-haar-bases-wavelet-transforms-independent-study.ipynb)
+```
+
+## Interactive lab
+
+Open the interactive HTML page:
+
+[Open Lab 15 interactive page](lab-15-interactive.html)
+
+The interactive page lets you edit a length-8 signal, view its Haar coefficients, threshold small details, reconstruct the signal, and explore a $2\times2$ image block.
+
+## Key formulas
+
+For a length-4 signal $\vec v=(v_1,v_2,v_3,v_4)^T$, the non-normalized Haar coefficients are
+
+$$
+c_1=\frac{v_1+v_2+v_3+v_4}{4},
+\qquad
+c_2=\frac{v_1+v_2-v_3-v_4}{4},
+$$
+
+$$
+c_3=\frac{v_1-v_2}{2},
+\qquad
+c_4=\frac{v_3-v_4}{2}.
+$$
+
+For a $2\times2$ block
+
+$$
+A=\begin{bmatrix}a&b\\c&d\end{bmatrix},
+$$
+
+the first-level Haar quantities are
+
+$$
+\frac{a+b+c+d}{4},
+\qquad
+\frac{a+b-c-d}{4},
+\qquad
+\frac{a-b+c-d}{4},
+\qquad
+\frac{a-b-c+d}{4}.
+$$
+
+They represent average, vertical contrast, horizontal contrast, and diagonal contrast.
+
+## Part 1: Fast Haar transform
+
+```{python}
+import numpy as np
+
+def haar_transform(x):
+    x = np.asarray(x, dtype=float).copy()
+    coeffs = x.copy()
+    length = len(coeffs)
+    while length > 1:
+        avg = (coeffs[:length:2] + coeffs[1:length:2]) / 2
+        diff = (coeffs[:length:2] - coeffs[1:length:2]) / 2
+        coeffs[:length//2] = avg
+        coeffs[length//2:length] = diff
+        length //= 2
+    return coeffs
+
+def inverse_haar_transform(c):
+    c = np.asarray(c, dtype=float).copy()
+    x = c.copy()
+    length = 1
+    n = len(x)
+    while length < n:
+        avg = x[:length].copy()
+        diff = x[length:2*length].copy()
+        x[:2*length:2] = avg + diff
+        x[1:2*length:2] = avg - diff
+        length *= 2
+    return x
+
+u = np.array([31, 29, 23, 17, -6, -8, -2, -4])
+c = haar_transform(u)
+print(c)
+print(inverse_haar_transform(c))
+```
+
+### Practice 1
+
+Compute the Haar transform of
+
+$$
+\vec u=(8,6,4,2,1,1,0,0).
+$$
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+```{python}
+u = np.array([8,6,4,2,1,1,0,0], dtype=float)
+c = haar_transform(u)
+print(c)
+print(inverse_haar_transform(c))
+```
+
+The first coefficient is the global average. The next coefficients describe coarse and fine differences.
+
+</details>
+
+### Similar practice
+
+Try
+
+$$
+\vec u=(10,10,8,8,2,2,0,0).
+$$
+
+Predict which coefficients should be zero before running the code.
+
+<details>
+<summary><strong>Show answer</strong></summary>
+
+Within each adjacent pair, the values are equal, so the finest pair-detail coefficients should be zero.
+
+</details>
+
+## Part 2: Compression by thresholding
+
+```{python}
+u = np.array([2.4, 2.2, 2.15, 2.05, 6.8, 2.8, -1.1, -1.3])
+c = haar_transform(u)
+threshold = 0.2
+chat = c.copy()
+chat[np.abs(chat) <= threshold] = 0
+uhat = inverse_haar_transform(chat)
+print("coefficients:", np.round(c, 3))
+print("compressed coefficients:", np.round(chat, 3))
+print("reconstruction:", np.round(uhat, 3))
+print("error norm:", np.linalg.norm(u-uhat))
+```
+
+### Practice 2
+
+Repeat the compression with thresholds $0.1$, $0.5$, and $1.0$. What happens to the number of nonzero coefficients and the reconstruction error?
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+```{python}
+for threshold in [0.1, 0.5, 1.0]:
+    chat = c.copy()
+    chat[np.abs(chat) <= threshold] = 0
+    uhat = inverse_haar_transform(chat)
+    print("threshold =", threshold)
+    print("nonzero coefficients =", np.count_nonzero(chat))
+    print("error norm =", np.linalg.norm(u-uhat))
+    print(np.round(uhat, 3))
+```
+
+As the threshold increases, more coefficients are set to zero. The representation becomes more compressed, but the reconstruction error usually increases.
+
+</details>
+
+## Part 3: Two-dimensional Haar transform
+
+```{python}
+def haar2(A):
+    A = np.asarray(A, dtype=float)
+    C = np.apply_along_axis(haar_transform, 1, A)
+    C = np.apply_along_axis(haar_transform, 0, C)
+    return C
+
+def inverse_haar2(C):
+    A = np.apply_along_axis(inverse_haar_transform, 0, C)
+    A = np.apply_along_axis(inverse_haar_transform, 1, A)
+    return A
+
+A = np.array([[70,56,61,49],
+              [52,46,39,43],
+              [63,45,46,54],
+              [53,39,40,44]], dtype=float)
+C = haar2(A)
+print(np.round(C, 2))
+print(np.round(inverse_haar2(C), 2))
+```
+
+### Practice 3
+
+Threshold the 2D coefficients with threshold $3$ and reconstruct the image matrix.
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+```{python}
+C2 = C.copy()
+C2[np.abs(C2) < 3] = 0
+Ahat = inverse_haar2(C2)
+print(np.round(C2, 2))
+print(np.round(Ahat, 2))
+print("error norm =", np.linalg.norm(A-Ahat))
+```
+
+</details>
+
+## Part 4: Independent-study questions
+
+### Question 1
+
+For $\vec v=(8,4,2,2)^T$, compute the length-4 Haar coefficients.
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+$$
+c_1=\frac{8+4+2+2}{4}=4,
+$$
+
+$$
+c_2=\frac{8+4-2-2}{4}=2,
+$$
+
+$$
+c_3=\frac{8-4}{2}=2,
+\qquad
+c_4=\frac{2-2}{2}=0.
+$$
+
+Thus $\vec c=(4,2,2,0)^T$.
+
+</details>
+
+### Question 2
+
+Explain why the Haar transform is fast.
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+At each stage, it only averages and differences adjacent pairs. The number of entries processed is
+
+$$
+N+\frac N2+\frac N4+\cdots+1<2N.
+$$
+
+Therefore the transform takes $O(N)$ operations.
+
+</details>
+
+### Question 3
+
+For
+
+$$
+A=\begin{bmatrix}10&8\\4&2\end{bmatrix},
+$$
+
+compute the average, vertical, horizontal, and diagonal Haar quantities.
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+They are
+
+$$
+6,\quad 3,\quad 1,\quad 0.
+$$
+
+</details>
+
+## AI companion activity
+
+Ask an AI assistant:
+
+> Explain why Haar wavelets are useful for image compression. Compare them with SVD and Fourier methods.
+
+Then improve the answer by adding these three points:
+
+1. Haar wavelets are localized in position and scale.
+2. Small detail coefficients can often be discarded.
+3. SVD is optimal for low-rank matrix approximation, while Haar is designed for multiscale local structure.

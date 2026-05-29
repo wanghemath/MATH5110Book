@@ -1,0 +1,272 @@
+# Lab 25: Linear Algebra and Optimization {.unnumbered}
+
+## Python practice notebook
+
+This lab accompanies **Chapter 25: Linear Algebra and Optimization**. It is designed for independent study. The notebook version contains guided computations, worked answers, and similar practice questions.
+
+Download the notebook:
+
+[Download Lab 25 Python notebook](lab-25-linear-algebra-optimization-independent-study.ipynb)
+
+If your book is hosted on GitHub, you may also add a Colab link:
+ 
+[Open in Google Colab](https://colab.research.google.com/github/YOUR-USER/YOUR-REPO/blob/main/labs/lab-25-linear-algebra-optimization-independent-study.ipynb)
+ 
+
+## Interactive lab
+
+The interactive lab lets students explore quadratic optimization, gradient descent, least squares, ridge regression, and KKT systems.
+
+[Open Lab 25 Interactive HTML](lab-25-interactive.html)
+
+## Learning goals
+
+By the end of this lab, you should be able to:
+
+1. compute the minimizer of a positive definite quadratic function;
+2. explain the relationship between eigenvalues and gradient descent convergence;
+3. solve least squares and ridge regression problems;
+4. form and solve KKT systems for equality-constrained optimization;
+5. interpret optimization as geometry in vector spaces.
+
+## Mathematical background
+
+A quadratic optimization problem has the form
+$$
+\min_x f(x)=\frac12 x^TQx-b^Tx.
+$$
+If $Q=Q^T\succ 0$, the unique minimizer satisfies
+$$
+Qx_*=b.
+$$
+
+For least squares,
+$$
+\min_x \|Ax-b\|_2^2,
+$$
+the normal equations are
+$$
+A^TAx=A^Tb.
+$$
+
+For ridge regression,
+$$
+\min_x \left(\|Ax-b\|_2^2+\lambda\|x\|_2^2\right),
+$$
+the solution satisfies
+$$
+(A^TA+\lambda I)x=A^Tb.
+$$
+
+For equality-constrained quadratic optimization,
+$$
+\min_x \frac12x^TQx-b^Tx
+\quad\text{subject to}\quad Cx=d,
+$$
+the KKT system is
+$$
+\begin{bmatrix}
+Q & C^T\\
+C & 0
+\end{bmatrix}
+\begin{bmatrix}
+x\\
+\lambda
+\end{bmatrix}
+=
+\begin{bmatrix}
+b\\
+d
+\end{bmatrix}.
+$$
+
+## Independent-study tasks
+
+### Task A: Quadratic minimization
+
+Let
+$$
+Q=\begin{bmatrix}4&1\\1&3\end{bmatrix},
+\qquad
+b=\begin{bmatrix}1\\2\end{bmatrix}.
+$$
+Find the minimizer of
+$$
+f(x)=\frac12x^TQx-b^Tx.
+$$
+
+<details>
+<summary>Solution</summary>
+
+The minimizer satisfies
+$$
+Qx=b.
+$$
+Thus
+$$
+x=Q^{-1}b
+=
+\begin{bmatrix}
+1/11\\
+7/11
+\end{bmatrix}.
+$$
+</details>
+
+### Similar practice A
+
+Let
+$$
+Q=\begin{bmatrix}3&1\\1&2\end{bmatrix},
+\qquad
+b=\begin{bmatrix}1\\4\end{bmatrix}.
+$$
+Find the minimizer.
+
+<details>
+<summary>Solution</summary>
+
+Solve $Qx=b$:
+$$
+3x_1+x_2=1,\qquad x_1+2x_2=4.
+$$
+The solution is
+$$
+x_1=-\frac25,\qquad x_2=\frac{11}{5}.
+$$
+</details>
+
+### Task B: Least squares
+
+Let
+$$
+A=\begin{bmatrix}
+1&0\\
+1&1\\
+1&2
+\end{bmatrix},
+\qquad
+b=\begin{bmatrix}1\\2\\2\end{bmatrix}.
+$$
+Form the normal equations.
+
+<details>
+<summary>Solution</summary>
+
+$$
+A^TA=
+\begin{bmatrix}
+3&3\\
+3&5
+\end{bmatrix},
+\qquad
+A^Tb=
+\begin{bmatrix}
+5\\
+6
+\end{bmatrix}.
+$$
+So the normal equations are
+$$
+\begin{bmatrix}
+3&3\\
+3&5
+\end{bmatrix}x=
+\begin{bmatrix}
+5\\
+6
+\end{bmatrix}.
+$$
+</details>
+
+### Task C: Ridge regression
+
+Explain why $A^TA+\lambda I$ is invertible when $\lambda>0$.
+
+<details>
+<summary>Solution</summary>
+
+For any nonzero vector $x$,
+$$
+x^T(A^TA+\lambda I)x
+=
+\|Ax\|_2^2+\lambda\|x\|_2^2>0.
+$$
+Therefore $A^TA+\lambda I$ is positive definite and invertible.
+</details>
+
+### Task D: KKT system
+
+Derive the KKT system for
+$$
+\min_x \frac12x^Tx-y^Tx
+\quad\text{subject to}\quad Cx=d.
+$$
+
+<details>
+<summary>Solution</summary>
+
+The Lagrangian is
+$$
+\mathcal L(x,\lambda)=\frac12x^Tx-y^Tx+\lambda^T(Cx-d).
+$$
+The stationarity condition is
+$$
+x-y+C^T\lambda=0.
+$$
+The constraint is $Cx=d$. Thus
+$$
+\begin{bmatrix}
+I&C^T\\
+C&0
+\end{bmatrix}
+\begin{bmatrix}
+x\\
+\lambda
+\end{bmatrix}
+=
+\begin{bmatrix}
+y\\
+d
+\end{bmatrix}.
+$$
+</details>
+
+### Task E: Gradient descent
+
+For a positive definite matrix $Q$, explain why the step size condition
+$$
+0<\alpha<\frac{2}{\lambda_{\max}(Q)}
+$$
+is natural.
+
+<details>
+<summary>Solution</summary>
+
+For the quadratic objective,
+$$
+e_{k+1}=(I-\alpha Q)e_k.
+$$
+The eigenvalues of $I-\alpha Q$ are
+$$
+1-\alpha\lambda_i.
+$$
+Convergence requires
+$$
+|1-\alpha\lambda_i|<1
+$$
+for every eigenvalue $\lambda_i$. This gives
+$$
+0<\alpha<\frac{2}{\lambda_{\max}(Q)}.
+$$
+</details>
+
+## AI companion prompts
+
+Use these prompts after you complete the lab.
+
+1. “Explain why least squares is a projection problem.”
+2. “Explain the KKT system using block matrices.”
+3. “Give a geometric explanation of ridge regression.”
+4. “Why do eigenvalues control gradient descent?”
+5. “Create a new 2D quadratic optimization example and solve it by hand.”

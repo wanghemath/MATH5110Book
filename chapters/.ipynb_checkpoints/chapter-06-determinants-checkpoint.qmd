@@ -1,0 +1,901 @@
+---
+title: "Chapter 6. Determinants"
+subtitle: "Signed volume, invertibility, and the geometry of matrix transformations"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: show
+    code-tools: true
+    html-math-method: mathjax
+  pdf:
+    toc: true
+    number-sections: true
+jupyter: python3
+---
+
+> **Guiding question.**  
+> When a matrix transforms space, how much area, volume, or higher-dimensional volume does it create, destroy, preserve, or reverse?
+
+The determinant is often introduced as a formula. For a $2\times 2$ matrix,
+
+$$
+\det\begin{bmatrix}a&b\\ c&d\end{bmatrix}=ad-bc.
+$$
+
+But this formula is only the beginning. The main idea is geometric:
+
+$$
+\boxed{\det(A)=\text{signed volume-scaling factor of }x\mapsto Ax.}
+$$
+
+If $A$ maps the unit square to a parallelogram, then $|\det(A)|$ is the area of that parallelogram. If $A$ maps the unit cube to a parallelepiped, then $|\det(A)|$ is its volume. If $\det(A)=0$, the transformation collapses space into a lower-dimensional set.
+
+In applied linear algebra, determinants connect many themes:
+
+- invertibility and rank;
+- orientation and geometry;
+- row operations and efficient computation;
+- eigenvalues and singular values;
+- covariance volumes and Gaussian densities;
+- log-determinants in optimization and machine learning.
+
+::: {.callout-note title="How to read this chapter"}
+The determinant should not be memorized only as a formula. Read every formula together with this question:
+
+> What does this say about how a linear transformation changes volume?
+:::
+
+::: {.callout-tip title="AI and coding companion"}
+Use Python or an AI assistant as a checking partner. Ask it to compute determinants by several methods: formula, row reduction, eigenvalues, singular values, and numerical libraries. Then ask which method is conceptual and which method is efficient.
+:::
+
+```{python}
+#| label: setup
+#| message: false
+import sympy as sp
+import numpy as np
+sp.init_printing()
+```
+
+## 6.1 The determinant as signed area in two dimensions
+
+Start with two vectors in the plane,
+
+$$
+v_1=\begin{bmatrix}a\\c\end{bmatrix},\qquad
+v_2=\begin{bmatrix}b\\d\end{bmatrix}.
+$$
+
+Place them as columns of a matrix:
+
+$$
+A=\begin{bmatrix}a&b\\c&d\end{bmatrix}.
+$$
+
+The parallelogram spanned by $v_1$ and $v_2$ has signed area
+
+$$
+\det(A)=ad-bc.
+$$
+
+The absolute value $|\det(A)|$ is area. The sign records orientation.
+
+::: {.callout-important title="Definition 6.1: Determinant of a 2 by 2 matrix"}
+For
+
+$$
+A=\begin{bmatrix}a&b\\c&d\end{bmatrix},
+$$
+
+the determinant is
+
+$$
+\det(A)=ad-bc.
+$$
+:::
+
+### Example 6.1: A matrix that multiplies area by six
+
+Let
+
+$$
+A=\begin{bmatrix}2&1\\0&3\end{bmatrix}.
+$$
+
+Then
+
+$$
+\det(A)=2\cdot 3-1\cdot 0=6.
+$$
+
+So the transformation $x\mapsto Ax$ changes every area by a factor of $6$.
+
+```{python}
+A = sp.Matrix([[2, 1], [0, 3]])
+A.det()
+```
+
+### Example 6.2: A shear preserves area
+
+Let
+
+$$
+S_k=\begin{bmatrix}1&k\\0&1\end{bmatrix}.
+$$
+
+Then
+
+$$
+\det(S_k)=1.
+$$
+
+A shear changes shapes, lengths, and angles, but it preserves area.
+
+```{python}
+k = sp.symbols('k')
+S = sp.Matrix([[1, k], [0, 1]])
+sp.factor(S.det())
+```
+
+### Example 6.3: Reflection reverses orientation
+
+The reflection across the $x$-axis is
+
+$$
+R=\begin{bmatrix}1&0\\0&-1\end{bmatrix}.
+$$
+
+It has determinant $-1$. It preserves area but reverses orientation.
+
+## 6.2 Determinants in three dimensions
+
+In $\mathbb R^3$, the determinant measures signed volume.
+
+If the columns of $A$ are $u,v,w\in\mathbb R^3$, then
+
+$$
+\det(A)=u\cdot(v\times w).
+$$
+
+Thus $|\det(A)|$ is the volume of the parallelepiped spanned by the three columns.
+
+::: {.callout-important title="Definition 6.2: Determinant of a 3 by 3 matrix"}
+For
+
+$$
+A=\begin{bmatrix}
+a_{11}&a_{12}&a_{13}\\
+a_{21}&a_{22}&a_{23}\\
+a_{31}&a_{32}&a_{33}
+\end{bmatrix},
+$$
+
+$$
+\det(A)=
+a_{11}(a_{22}a_{33}-a_{23}a_{32})
+-a_{12}(a_{21}a_{33}-a_{23}a_{31})
++a_{13}(a_{21}a_{32}-a_{22}a_{31}).
+$$
+:::
+
+### Python check
+
+```{python}
+A = sp.Matrix([[1,2,3],[2,5,7],[1,1,0]])
+A.det()
+```
+
+The determinant is $-2$, so the transformation reverses orientation and scales volume by $2$.
+
+## 6.3 The axiomatic definition
+
+The determinant in dimension $n$ is the unique function of the columns that behaves like signed volume.
+
+::: {.callout-important title="Theorem 6.1: Characterization of the determinant"}
+There is a unique function
+
+$$
+D:(\mathbb F^n)^n\to \mathbb F
+$$
+
+assigning a scalar to an ordered list of $n$ column vectors such that:
+
+1. $D$ is multilinear in the columns;
+2. $D$ is alternating: if two columns are equal, then $D=0$;
+3. $D(e_1,\ldots,e_n)=1$.
+
+This function is the determinant.
+:::
+
+The three properties are the algebraic fingerprints of volume:
+
+- stretching one edge by $c$ stretches volume by $c$;
+- if two edges point in the same direction, the object collapses;
+- the standard unit cube has volume $1$.
+
+## 6.4 The permutation formula
+
+Let $S_n$ be the set of all permutations of $\{1,\ldots,n\}$. For $\sigma\in S_n$, let $\operatorname{sgn}(\sigma)$ be $1$ for even permutations and $-1$ for odd permutations.
+
+::: {.callout-important title="Theorem 6.2: Permutation formula"}
+For $A=(a_{ij})\in\mathbb F^{n\times n}$,
+
+$$
+\det(A)=\sum_{\sigma\in S_n}\operatorname{sgn}(\sigma)
+a_{1,\sigma(1)}a_{2,\sigma(2)}\cdots a_{n,\sigma(n)}.
+$$
+:::
+
+This formula is conceptually important but computationally expensive: it has $n!$ terms.
+
+```{python}
+import math
+for n in range(2, 9):
+    print(n, math.factorial(n))
+```
+
+## 6.5 Cofactor expansion
+
+For $A\in\mathbb F^{n\times n}$, let $A_{ij}$ be the matrix obtained by deleting row $i$ and column $j$. The cofactor of $a_{ij}$ is
+
+$$
+C_{ij}=(-1)^{i+j}\det(A_{ij}).
+$$
+
+::: {.callout-important title="Theorem 6.3: Cofactor expansion"}
+For any fixed row $i$,
+
+$$
+\det(A)=\sum_{j=1}^n a_{ij}C_{ij}.
+$$
+
+For any fixed column $j$,
+
+$$
+\det(A)=\sum_{i=1}^n a_{ij}C_{ij}.
+$$
+:::
+
+Cofactor expansion is excellent for proofs and small symbolic examples. It is not the preferred method for large numerical matrices.
+
+## 6.6 Row operations and efficient computation
+
+The practical way to compute determinants is elimination.
+
+::: {.callout-important title="Proposition 6.4: Row operations and determinants"}
+Let $A$ be a square matrix.
+
+1. Swapping two rows changes the sign of the determinant.
+2. Multiplying one row by $c$ multiplies the determinant by $c$.
+3. Adding a multiple of one row to another row does not change the determinant.
+:::
+
+::: {.callout-important title="Proposition 6.5: Triangular matrices"}
+If $U$ is upper triangular, then
+
+$$
+\det(U)=u_{11}u_{22}\cdots u_{nn}.
+$$
+
+The same result holds for lower triangular matrices.
+:::
+
+Therefore, if Gaussian elimination transforms $A$ into an upper triangular matrix $U$ using row replacement operations and $s$ row swaps, then
+
+$$
+\det(A)=(-1)^s\prod_{i=1}^n u_{ii}.
+$$
+
+### Example 6.4: Compute a determinant by elimination
+
+Let
+
+$$
+A=\begin{bmatrix}
+1&2&3\\
+2&5&7\\
+1&1&0
+\end{bmatrix}.
+$$
+
+Using row replacement operations only,
+
+$$
+A\sim
+\begin{bmatrix}
+1&2&3\\
+0&1&1\\
+0&-1&-3
+\end{bmatrix}
+\sim
+\begin{bmatrix}
+1&2&3\\
+0&1&1\\
+0&0&-2
+\end{bmatrix}.
+$$
+
+No row swaps or row scalings were used, so
+
+$$
+\det(A)=1\cdot 1\cdot (-2)=-2.
+$$
+
+```{python}
+A = sp.Matrix([[1,2,3],[2,5,7],[1,1,0]])
+A.det(), A.rref()[0]
+```
+
+## 6.7 Fundamental determinant identities
+
+::: {.callout-important title="Theorem 6.6: Basic determinant identities"}
+For square matrices $A,B\in\mathbb F^{n\times n}$ and scalar $c\in\mathbb F$:
+
+1. $\det(AB)=\det(A)\det(B)$.
+2. $\det(A^T)=\det(A)$.
+3. If $A$ is invertible, then $\det(A^{-1})=1/\det(A)$.
+4. $\det(A^k)=\det(A)^k$ for integers $k\ge 1$.
+5. $\det(cA)=c^n\det(A)$.
+:::
+
+The product rule is natural from the volume viewpoint. If $B$ scales volume by $\det(B)$ and $A$ scales volume by $\det(A)$, then $AB$ scales volume by the product.
+
+```{python}
+A = sp.Matrix([[2,1],[0,3]])
+B = sp.Matrix([[1,4],[2,5]])
+A.det(), B.det(), (A*B).det(), A.det()*B.det()
+```
+
+## 6.8 Determinants and invertibility
+
+The determinant detects whether a square matrix loses dimension.
+
+::: {.callout-important title="Theorem 6.7: Invertible matrix theorem, determinant version"}
+For $A\in\mathbb F^{n\times n}$, the following are equivalent:
+
+1. $\det(A)\ne 0$.
+2. $A$ is invertible.
+3. $\operatorname{rank}(A)=n$.
+4. $\operatorname{nullity}(A)=0$.
+5. The columns of $A$ form a basis of $\mathbb F^n$.
+6. $Ax=0$ has only the trivial solution.
+7. $Ax=b$ has a unique solution for every $b\in\mathbb F^n$.
+8. $0$ is not an eigenvalue of $A$.
+:::
+
+### Example 6.5: A collapsed transformation
+
+Let
+
+$$
+A=\begin{bmatrix}1&2\\2&4\end{bmatrix}.
+$$
+
+Then
+
+$$
+\det(A)=1\cdot4-2\cdot2=0.
+$$
+
+The second column is twice the first column. The image of $\mathbb R^2$ is a line, not the whole plane.
+
+## 6.9 Eigenvalues, characteristic polynomials, and determinant
+
+::: {.callout-important title="Theorem 6.8: Determinant as product of eigenvalues"}
+Let $A\in\mathbb C^{n\times n}$ have eigenvalues $\lambda_1,\ldots,\lambda_n$, counted with algebraic multiplicity. Then
+
+$$
+\det(A)=\lambda_1\lambda_2\cdots\lambda_n.
+$$
+:::
+
+For a $2\times2$ matrix
+
+$$
+A=\begin{bmatrix}a&b\\c&d\end{bmatrix},
+$$
+
+the characteristic polynomial is
+
+$$
+p_A(\lambda)=\lambda^2-\operatorname{tr}(A)\lambda+\det(A).
+$$
+
+Trace and determinant are the two basic spectral invariants in dimension two.
+
+```{python}
+A = sp.Matrix([[3, 1], [0, 5]])
+A.det(), A.trace(), A.charpoly().as_expr()
+```
+
+## 6.10 Singular values and conditioning
+
+Eigenvalues describe invariant directions when they exist. Singular values describe orthogonal stretching directions.
+
+::: {.callout-important title="Theorem 6.9: Determinant and singular values"}
+Let $A\in\mathbb R^{n\times n}$ have singular values $\sigma_1,\ldots,\sigma_n$. Then
+
+$$
+|\det(A)|=\sigma_1\sigma_2\cdots\sigma_n.
+$$
+:::
+
+The determinant gives the product of stretches, but it does not show the individual stretches.
+
+### Example 6.6: Determinant one but ill-conditioned
+
+Let
+
+$$
+A=\begin{bmatrix}1000&0\\0&0.001\end{bmatrix}.
+$$
+
+Then $\det(A)=1$, but its singular values are $1000$ and $0.001$, so
+
+$$
+\kappa_2(A)=\frac{1000}{0.001}=10^6.
+$$
+
+The matrix preserves area but strongly stretches one direction and strongly compresses another.
+
+```{python}
+A = np.array([[1000.0, 0.0], [0.0, 0.001]])
+np.linalg.det(A), np.linalg.svd(A, compute_uv=False), np.linalg.cond(A)
+```
+
+::: {.callout-warning title="Numerical warning"}
+A small determinant is not the best numerical test for near-singularity. Use singular values or condition number. A matrix can have determinant $1$ and still be ill-conditioned.
+:::
+
+## 6.11 LU, QR, Cholesky, and log determinants
+
+Determinants are often computed from factorizations.
+
+### LU factorization
+
+If
+
+$$
+PA=LU,
+$$
+
+where $P$ is a permutation matrix, $L$ is unit lower triangular, and $U$ is upper triangular, then
+
+$$
+\det(A)=\det(P)\prod_{i=1}^n u_{ii}.
+$$
+
+### QR factorization
+
+If
+
+$$
+A=QR,
+$$
+
+where $Q$ is orthogonal and $R$ is upper triangular, then
+
+$$
+|\det(A)|=\left|\prod_{i=1}^n r_{ii}\right|.
+$$
+
+### Cholesky factorization
+
+If $A$ is symmetric positive definite and
+
+$$
+A=LL^T,
+$$
+
+then
+
+$$
+\det(A)=\det(L)^2=\left(\prod_{i=1}^n L_{ii}\right)^2,
+$$
+
+and
+
+$$
+\log\det(A)=2\sum_{i=1}^n\log L_{ii}.
+$$
+
+This is one of the most stable ways to compute log determinants of positive definite matrices.
+
+```{python}
+Sigma = np.array([[4.0, 1.2], [1.2, 2.0]])
+L = np.linalg.cholesky(Sigma)
+logdet_chol = 2*np.sum(np.log(np.diag(L)))
+np.linalg.det(Sigma), np.linalg.slogdet(Sigma), logdet_chol
+```
+
+## 6.12 Gram determinants and volumes beyond square matrices
+
+Let $v_1,\ldots,v_k\in\mathbb R^n$, where $k\le n$. The Gram matrix is
+
+$$
+G=(v_i\cdot v_j)_{i,j=1}^k.
+$$
+
+::: {.callout-important title="Theorem 6.10: Gram determinant formula"}
+The square of the $k$-dimensional volume of the parallelepiped spanned by $v_1,\ldots,v_k$ is
+
+$$
+\det(G).
+$$
+
+Therefore
+
+$$
+\operatorname{Vol}_k(v_1,\ldots,v_k)=\sqrt{\det(G)}.
+$$
+:::
+
+If $V$ is the $n\times k$ matrix whose columns are $v_1,\ldots,v_k$, then
+
+$$
+G=V^TV.
+$$
+
+This is very important in least squares and data analysis.
+
+```{python}
+V = sp.Matrix([[1,0],[0,1],[2,-1]])
+G = V.T*V
+G, sp.sqrt(G.det())
+```
+
+## 6.13 Determinants in statistics and data science
+
+### Covariance matrices
+
+If $\Sigma$ is a positive definite covariance matrix, then $\det(\Sigma)>0$. The determinant is called the **generalized variance**. It measures the volume of the covariance ellipsoid.
+
+### Multivariate Gaussian density
+
+If
+
+$$
+x\sim N(\mu,\Sigma),
+$$
+
+then
+
+$$
+f(x)=\frac{1}{(2\pi)^{n/2}\det(\Sigma)^{1/2}}
+\exp\left(-\frac12(x-\mu)^T\Sigma^{-1}(x-\mu)\right).
+$$
+
+The factor $\det(\Sigma)^{-1/2}$ normalizes the volume.
+
+### Entropy
+
+The differential entropy of $N(\mu,\Sigma)$ is
+
+$$
+h(x)=\frac12\log\left((2\pi e)^n\det(\Sigma)\right).
+$$
+
+Thus $\log\det(\Sigma)$ measures uncertainty volume.
+
+## 6.14 Useful advanced identities
+
+::: {.callout-important title="Theorem 6.11: Matrix determinant lemma"}
+Let $A\in\mathbb R^{n\times n}$ be invertible and let $u,v\in\mathbb R^n$. Then
+
+$$
+\det(A+uv^T)=\det(A)(1+v^TA^{-1}u).
+$$
+
+More generally, if $U,V\in\mathbb R^{n\times k}$, then
+
+$$
+\det(A+UV^T)=\det(A)\det(I_k+V^TA^{-1}U).
+$$
+:::
+
+::: {.callout-important title="Theorem 6.12: Sylvester determinant identity"}
+If $A\in\mathbb R^{m\times n}$ and $B\in\mathbb R^{n\times m}$, then
+
+$$
+\det(I_m+AB)=\det(I_n+BA).
+$$
+:::
+
+::: {.callout-important title="Theorem 6.13: Schur complement determinant formula"}
+Let
+
+$$
+M=\begin{bmatrix}A&B\\C&D\end{bmatrix},
+$$
+
+where $A$ is invertible. Then
+
+$$
+\det(M)=\det(A)\det(D-CA^{-1}B).
+$$
+:::
+
+## 6.15 Derivatives of determinant and log determinant
+
+::: {.callout-important title="Theorem 6.14: Derivative of determinant"}
+If $A$ is invertible, then
+
+$$
+d(\det A)=\det(A)\operatorname{tr}(A^{-1}dA).
+$$
+
+Equivalently,
+
+$$
+\nabla_A\det(A)=\det(A)A^{-T}.
+$$
+:::
+
+::: {.callout-important title="Corollary 6.15: Derivative of log determinant"}
+If $A$ is invertible and $\det(A)>0$, then
+
+$$
+d(\log\det A)=\operatorname{tr}(A^{-1}dA),
+$$
+
+and
+
+$$
+\nabla_A\log\det(A)=A^{-T}.
+$$
+
+If $A$ is symmetric positive definite, then the gradient becomes $A^{-1}$.
+:::
+
+The log determinant appears in Gaussian maximum likelihood, covariance estimation, interior-point methods, graphical lasso, and optimal experimental design.
+
+## 6.16 Graph Laplacians and the Matrix-Tree Theorem
+
+Let $G$ be a graph with adjacency matrix $A$ and degree matrix $D$. The graph Laplacian is
+
+$$
+L=D-A.
+$$
+
+Since $L\mathbf 1=0$, we always have $\det(L)=0$ for a graph with at least one vertex. However, the cofactors of $L$ contain important combinatorial information.
+
+::: {.callout-important title="Theorem 6.16: Matrix-Tree Theorem"}
+If $G$ is a connected graph and $L$ is its Laplacian, then every cofactor of $L$ equals the number of spanning trees of $G$.
+
+If $L^{(i)}$ is obtained by deleting row $i$ and column $i$, then
+
+$$
+\tau(G)=\det(L^{(i)}),
+$$
+
+where $\tau(G)$ is the number of spanning trees of $G$.
+:::
+
+## 6.17 Practice problems
+
+### Problem 1
+
+Let
+
+$$
+A=\begin{bmatrix}2&3\\1&4\end{bmatrix}.
+$$
+
+Compute $\det(A)$, interpret it geometrically, and determine whether $A$ preserves or reverses orientation.
+
+### Problem 2
+
+Compute the determinant of
+
+$$
+A=\begin{bmatrix}
+1&2&3\\
+2&5&7\\
+1&1&0
+\end{bmatrix}
+$$
+
+using row operations, not cofactor expansion.
+
+### Problem 3
+
+Suppose $A\in\mathbb R^{4\times4}$ has eigenvalues
+
+$$
+2,\quad -1,\quad 3,\quad 5.
+$$
+
+Find $\det(A)$ and decide whether $A$ is invertible.
+
+### Problem 4
+
+Suppose $A\in\mathbb R^{3\times3}$ has singular values
+
+$$
+10,\quad 1,
+\quad 0.01.
+$$
+
+Find $|\det(A)|$, estimate the condition number, and explain why the matrix may be numerically unstable.
+
+### Problem 5
+
+Let
+
+$$
+\Sigma=\begin{bmatrix}4&0\\0&1\end{bmatrix}.
+$$
+
+Compute $\det(\Sigma)$ and interpret it as generalized variance.
+
+## 6.18 Solutions
+
+### Solution 1
+
+$$
+\det(A)=2\cdot4-3\cdot1=5.
+$$
+
+The transformation scales area by $5$ and preserves orientation because the determinant is positive.
+
+### Solution 2
+
+Using row replacements only,
+
+$$
+\begin{bmatrix}
+1&2&3\\
+2&5&7\\
+1&1&0
+\end{bmatrix}
+\sim
+\begin{bmatrix}
+1&2&3\\
+0&1&1\\
+0&-1&-3
+\end{bmatrix}
+\sim
+\begin{bmatrix}
+1&2&3\\
+0&1&1\\
+0&0&-2
+\end{bmatrix}.
+$$
+
+Thus $\det(A)=1\cdot1\cdot(-2)=-2$.
+
+### Solution 3
+
+The determinant is the product of the eigenvalues:
+
+$$
+\det(A)=2(-1)(3)(5)=-30.
+$$
+
+Since $\det(A)\ne0$, $A$ is invertible.
+
+### Solution 4
+
+$$
+|\det(A)|=10\cdot1\cdot0.01=0.1.
+$$
+
+The condition number is
+
+$$
+\kappa_2(A)=\frac{10}{0.01}=1000.
+$$
+
+The matrix is numerically unstable because one direction is much more compressed than another.
+
+### Solution 5
+
+$$
+\det(\Sigma)=4.
+$$
+
+The covariance ellipse has area proportional to $\sqrt{\det(\Sigma)}=2$. The generalized variance is $4$.
+
+## 6.19 Challenge questions
+
+### Challenge 1: Determinant and singular values
+
+Prove that if $A\in\mathbb R^{n\times n}$ has singular values $\sigma_1,\ldots,\sigma_n$, then
+
+$$
+|\det(A)|=\prod_{i=1}^n\sigma_i.
+$$
+
+**Solution.** Use the singular value decomposition $A=U\Sigma V^T$. Then
+
+$$
+\det(A)=\det(U)\det(\Sigma)\det(V^T).
+$$
+
+Since $U$ and $V$ are orthogonal, $|\det(U)|=|\det(V^T)|=1$. Hence
+
+$$
+|\det(A)|=|\det(\Sigma)|=\prod_{i=1}^n\sigma_i.
+$$
+
+### Challenge 2: Gram determinant
+
+Let $A\in\mathbb R^{m\times n}$ with $m\ge n$. Explain why $\det(A^TA)$ measures the squared volume spanned by the columns of $A$.
+
+**Solution.** The matrix $A^TA$ is the Gram matrix of the columns of $A$. The Gram determinant equals the square of the $n$-dimensional volume of the parallelepiped spanned by those columns.
+
+### Challenge 3: Schur complement
+
+Let
+
+$$
+M=\begin{bmatrix}A&B\\C&D\end{bmatrix},
+$$
+
+where $A$ is invertible. Prove that
+
+$$
+\det(M)=\det(A)\det(D-CA^{-1}B).
+$$
+
+**Solution.** Use block elimination:
+
+$$
+\begin{bmatrix}I&0\\-CA^{-1}&I\end{bmatrix}
+\begin{bmatrix}A&B\\C&D\end{bmatrix}
+=
+\begin{bmatrix}A&B\\0&D-CA^{-1}B\end{bmatrix}.
+$$
+
+The left multiplier has determinant $1$, and the matrix on the right is block upper triangular. Therefore
+
+$$
+\det(M)=\det(A)\det(D-CA^{-1}B).
+$$
+
+## 6.20 AI companion activities
+
+### Activity 1: Check a determinant three ways
+
+Ask an AI assistant:
+
+> Compute the determinant of $A=\begin{bmatrix}1&2&3\\2&5&7\\1&1&0\end{bmatrix}$ by cofactor expansion, row reduction, and Python. Compare the methods.
+
+Then verify the answer yourself.
+
+### Activity 2: Explain geometry
+
+Ask:
+
+> Explain why a matrix with determinant zero collapses volume. Give one example in $\mathbb R^2$ and one example in $\mathbb R^3$.
+
+Check whether the explanation mentions linear dependence of columns.
+
+### Activity 3: Numerical warning
+
+Ask:
+
+> Give an example of a matrix with determinant one but large condition number. Explain why determinant alone is not a good numerical stability test.
+
+Confirm by computing singular values in Python.
+
+### Activity 4: Application reflection
+
+Ask:
+
+> Why does $\log\det(\Sigma)$ appear in multivariate Gaussian models and covariance estimation?
+
+Then summarize the answer in your own words using the phrase **uncertainty volume**.
+
+## 6.21 Chapter summary
+
+The determinant is a unifying concept:
+
+- Geometrically, it is signed volume scaling.
+- Algebraically, it detects invertibility.
+- Computationally, it is efficiently found using elimination or factorizations.
+- Spectrally, it is the product of eigenvalues.
+- Numerically, its absolute value is the product of singular values, but it does not replace the full singular-value spectrum.
+- In applications, it appears in covariance volumes, Gaussian densities, log-det optimization, graph Laplacians, dynamical systems, and machine learning.

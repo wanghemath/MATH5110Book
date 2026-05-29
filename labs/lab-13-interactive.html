@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 13 Interactive: Symmetric and Hermitian Matrices</title>
+<script>
+window.MathJax = {tex: {inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']]}, svg: {fontCache: 'global'}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root{--bg:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+  body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);} 
+  header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;} header h1{margin:0 0 8px;font-size:1.8rem;} header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;} 
+  main{max-width:1240px;margin:0 auto;padding:24px;} .grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;} 
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;} 
+  h2{font-size:1.25rem;margin:0 0 12px;} h3{font-size:1.05rem;margin:18px 0 8px;} p{line-height:1.55;} label{display:block;margin:8px 0 4px;font-weight:600;} 
+  input[type=number]{width:62px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;} .matrix{display:grid;gap:6px;margin:8px 0 12px;align-items:center;} .m2{grid-template-columns:repeat(2,70px);} .m3{grid-template-columns:repeat(3,70px);} .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;} 
+  button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;} button.secondary{background:#fff;color:#111827;} select{padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff;} 
+  canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;} .result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;} 
+  .eq{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto;} .small{font-size:.92rem;color:var(--muted);} 
+  table{border-collapse:collapse;background:#fff;margin:8px 0;} th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;} .ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .warn{color:var(--amber);font-weight:700;} .task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;} textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;} code{background:#f3f4f6;padding:1px 4px;border-radius:4px;} @media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Lab 13 Interactive: Symmetric and Hermitian Matrices</h1>
+  <p>Explore symmetric decomposition, spectral decomposition, quadratic forms, positive definiteness, Gram matrices, and Cholesky factorization. The goal is to connect algebraic tests with geometric energy.</p>
+</header>
+<main>
+  <section class="grid">
+    <div class="card">
+      <h2>1. Symmetric/skew-symmetric decomposition</h2>
+      <p class="small">For any real square matrix $M$, compute $S=(M+M^T)/2$ and $K=(M-M^T)/2$.</p>
+      <h3>Matrix $M$</h3><div class="matrix m2" id="M2inputs"></div>
+      <button onclick="presetM('basic')">Basic example</button><button onclick="presetM('rotation')">Rotation-like</button><button class="secondary" onclick="randomM()">Random</button>
+      <div class="result" id="decompResult"></div>
+    </div>
+    <div class="card">
+      <h2>2. Quadratic form geometry</h2>
+      <p class="small">For a symmetric $2\times2$ matrix $A$, the level curve $x^TAx=1$ is shown when possible. Positive definite matrices give ellipses.</p>
+      <h3>Symmetric matrix $A=\begin{bmatrix}a&b\\b&d\end{bmatrix}$</h3>
+      <div class="row"><label>a</label><input id="qa" type="number" value="3" step="1"><label>b</label><input id="qb" type="number" value="1" step="1"><label>d</label><input id="qd" type="number" value="3" step="1"></div>
+      <button onclick="presetQ('pd')">Positive definite</button><button onclick="presetQ('psd')">Semidefinite</button><button onclick="presetQ('indef')">Indefinite</button>
+      <canvas id="quadCanvas" width="720" height="520"></canvas>
+      <div class="result" id="quadResult"></div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>3. Hermitian check</h2>
+      <p class="small">A $2\times2$ complex matrix $H$ is Hermitian if $H^*=H$.</p>
+      <p>Use $H=\begin{bmatrix}a&r+si\\u+vi&d\end{bmatrix}$.</p>
+      <div class="row"><label>a</label><input id="ha" type="number" value="2"><label>d</label><input id="hd" type="number" value="4"></div>
+      <div class="row"><label>r</label><input id="hr" type="number" value="1"><label>s</label><input id="hs" type="number" value="1"></div>
+      <div class="row"><label>u</label><input id="hu" type="number" value="1"><label>v</label><input id="hv" type="number" value="-1"></div>
+      <button onclick="presetH('herm')">Hermitian</button><button onclick="presetH('not')">Not Hermitian</button>
+      <div class="result" id="hermResult"></div>
+    </div>
+    <div class="card">
+      <h2>4. Spectral theorem for a symmetric matrix</h2>
+      <p class="small">Use a real symmetric $2\times2$ matrix. The tool computes eigenvalues and orthonormal eigenvectors.</p>
+      <div class="result" id="spectralResult"></div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>5. Gram matrix and $A^TA$</h2>
+      <p class="small">Enter two vectors in $\mathbb R^3$. The Gram matrix records dot products.</p>
+      <h3>$v_1$</h3><div class="matrix m3" id="v1Inputs"></div>
+      <h3>$v_2$</h3><div class="matrix m3" id="v2Inputs"></div>
+      <button onclick="presetGram('independent')">Independent</button><button onclick="presetGram('dependent')">Dependent</button>
+      <div class="result" id="gramResult"></div>
+    </div>
+    <div class="card">
+      <h2>6. Cholesky factorization</h2>
+      <p class="small">For a positive definite symmetric matrix, $A=LL^T$.</p>
+      <div class="result" id="cholResult"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>7. Independent-study practice tasks with answers</h2>
+    <div class="task"><strong>Task A.</strong> Find the symmetric and skew-symmetric parts of $M=\begin{bmatrix}1&4\\2&3\end{bmatrix}$.<br><strong>Answer:</strong> $S=\begin{bmatrix}1&3\\3&3\end{bmatrix}$ and $K=\begin{bmatrix}0&1\\-1&0\end{bmatrix}$.</div>
+    <div class="task"><strong>Task B.</strong> Is $H=\begin{bmatrix}2&1+i\\1-i&4\end{bmatrix}$ Hermitian?<br><strong>Answer:</strong> Yes, because the diagonal entries are real and the off-diagonal entries are conjugates.</div>
+    <div class="task"><strong>Task C.</strong> Classify $A=\begin{bmatrix}3&1\\1&3\end{bmatrix}$.<br><strong>Answer:</strong> Its eigenvalues are $4$ and $2$, so it is positive definite.</div>
+    <div class="task"><strong>Task D.</strong> Why is $A^TA$ positive semidefinite?<br><strong>Answer:</strong> $x^TA^TAx=\|Ax\|^2\ge0$.</div>
+    <div class="task"><strong>Similar practice.</strong> Test $B=\begin{bmatrix}1&2\\2&1\end{bmatrix}$.<br><strong>Answer:</strong> Eigenvalues are $3$ and $-1$, so $B$ is indefinite.</div>
+  </section>
+
+  <section class="card"><h2>8. Workspace</h2><textarea placeholder="Write observations here. Copy final answers to your notebook or assignment."></textarea></section>
+</main>
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(row=>`<tr>${row.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function createInputs(containerId,prefix,vals,cols){const el=document.getElementById(containerId);el.innerHTML=''; for(let i=0;i<vals.length;i++){for(let j=0;j<cols;j++){const input=document.createElement('input');input.type='number';input.step='1';input.value=vals[i][j] ?? vals[i];input.id=`${prefix}${i}${j}`;input.addEventListener('input',update);el.appendChild(input);}}}
+function getMat(prefix,rows,cols){let M=[];for(let i=0;i<rows;i++){let r=[];for(let j=0;j<cols;j++)r.push(Number(document.getElementById(`${prefix}${i}${j}`).value)||0);M.push(r);}return M;}
+function setMat(prefix,M){for(let i=0;i<M.length;i++)for(let j=0;j<M[0].length;j++)document.getElementById(`${prefix}${i}${j}`).value=M[i][j];}
+function tr(A){return [[A[0][0],A[1][0]],[A[0][1],A[1][1]]];}
+function add(A,B,s=1){return A.map((r,i)=>r.map((x,j)=>x+s*B[i][j]));}
+function scale(A,c){return A.map(r=>r.map(x=>c*x));}
+function det2(A){return A[0][0]*A[1][1]-A[0][1]*A[1][0];}
+function eig2sym(a,b,d){let tr=a+d, disc=Math.sqrt((a-d)*(a-d)+4*b*b);let l1=(tr+disc)/2,l2=(tr-disc)/2;function ev(l){let x=b, y=l-a;if(Math.abs(x)<1e-10 && Math.abs(y)<1e-10){x=l-d;y=b;}let n=Math.sqrt(x*x+y*y); if(n<1e-10)return [1,0]; return [x/n,y/n];} return {vals:[l1,l2], vecs:[ev(l1),ev(l2)]};}
+function updateDecomp(){let M=getMat('M',2,2), MT=tr(M), S=scale(add(M,MT),0.5), K=scale(add(M,MT,-1),0.5);decompResult.innerHTML=`$M=$ ${matHTML(M)} $S=(M+M^T)/2=$ ${matHTML(S)} $K=(M-M^T)/2=$ ${matHTML(K)} $S+K=M$.`;}
+function presetM(t){if(t==='basic')setMat('M',[[1,4],[2,3]]); if(t==='rotation')setMat('M',[[0,-2],[2,0]]); update();}
+function randomM(){let r=()=>Math.floor(Math.random()*9)-4;setMat('M',[[r(),r()],[r(),r()]]);update();}
+function updateQuad(){let a=Number(qa.value)||0,b=Number(qb.value)||0,d=Number(qd.value)||0;let e=eig2sym(a,b,d), vals=e.vals;let cls= vals[0]>1e-10&&vals[1]>1e-10 ? 'positive definite' : vals[0]>=-1e-10&&vals[1]>=-1e-10 ? 'positive semidefinite' : vals[0]<-1e-10&&vals[1]<-1e-10 ? 'negative definite' : 'indefinite';let c=cls==='positive definite'?'ok':cls==='positive semidefinite'?'warn':'bad';quadResult.innerHTML=`$A=\begin{bmatrix}${fmt(a)}&${fmt(b)}\\${fmt(b)}&${fmt(d)}\end{bmatrix}$<br>Eigenvalues: ${fmt(vals[0])}, ${fmt(vals[1])}<br><span class='${c}'>Classification: ${cls}</span><br>$q(x,y)=${fmt(a)}x^2+${fmt(2*b)}xy+${fmt(d)}y^2$.`;drawQuad(a,b,d,vals,e.vecs);}
+function drawQuad(a,b,d,vals,vecs){let canv=quadCanvas,ctx=canv.getContext('2d'),W=canv.width,H=canv.height,sc=70;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);function pt(x,y){return [W/2+x*sc,H/2-y*sc];}ctx.strokeStyle='#eef2f7';ctx.lineWidth=1;for(let x=-5;x<=5;x++){let p=pt(x,0)[0];ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,H);ctx.stroke();}for(let y=-3;y<=3;y++){let p=pt(0,y)[1];ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(W,p);ctx.stroke();}let ox=W/2,oy=H/2;ctx.strokeStyle='#9ca3af';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(W,oy);ctx.stroke();ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();
+ if(vals[0]>0&&vals[1]>0){ctx.strokeStyle='#2563eb';ctx.lineWidth=4;ctx.beginPath();for(let k=0;k<=360;k++){let t=2*Math.PI*k/360;let y1=Math.cos(t)/Math.sqrt(vals[0]),y2=Math.sin(t)/Math.sqrt(vals[1]);let x=vecs[0][0]*y1+vecs[1][0]*y2;let y=vecs[0][1]*y1+vecs[1][1]*y2;let p=pt(x,y);if(k===0)ctx.moveTo(p[0],p[1]);else ctx.lineTo(p[0],p[1]);}ctx.stroke();}
+ else {ctx.fillStyle='#991b1b';ctx.font='16px system-ui';ctx.fillText('Level curve x^T A x = 1 is not an ellipse for this classification.',20,30);} }
+function presetQ(t){if(t==='pd'){qa.value=3;qb.value=1;qd.value=3;} if(t==='psd'){qa.value=1;qb.value=1;qd.value=1;} if(t==='indef'){qa.value=1;qb.value=2;qd.value=1;} update();}
+function updateHerm(){let a=Number(ha.value)||0,d=Number(hd.value)||0,r=Number(hr.value)||0,s=Number(hs.value)||0,u=Number(hu.value)||0,v=Number(hv.value)||0;let ok=Math.abs(r-u)<1e-10 && Math.abs(s+v)<1e-10;hermResult.innerHTML=`$H=\begin{bmatrix}${fmt(a)}&${fmt(r)}+${fmt(s)}i\\${fmt(u)}+${fmt(v)}i&${fmt(d)}\end{bmatrix}$<br>`+(ok?`<span class='ok'>Hermitian: $H^*=H$.</span>`:`<span class='bad'>Not Hermitian.</span> Need lower-left entry to be the conjugate of upper-right.`);}
+function presetH(t){if(t==='herm'){ha.value=2;hd.value=4;hr.value=1;hs.value=1;hu.value=1;hv.value=-1;} if(t==='not'){ha.value=1;hd.value=3;hr.value=2;hs.value=1;hu.value=2;hv.value=1;} update();}
+function updateSpectral(){let a=Number(qa.value)||0,b=Number(qb.value)||0,d=Number(qd.value)||0;let e=eig2sym(a,b,d);let Q=[[e.vecs[0][0],e.vecs[1][0]],[e.vecs[0][1],e.vecs[1][1]]];spectralResult.innerHTML=`For the current symmetric matrix in Section 2:<br>$A=$ ${matHTML([[a,b],[b,d]])}<br>Eigenvalues: $\lambda_1=${fmt(e.vals[0])}$, $\lambda_2=${fmt(e.vals[1])}$.<br>Orthonormal eigenvector matrix $Q\approx$ ${matHTML(Q)}<br>Thus $A=QDQ^T$ with $D=\operatorname{diag}(${fmt(e.vals[0])},${fmt(e.vals[1])})$.`;}
+function dot(x,y){return x.reduce((s,a,i)=>s+a*y[i],0);} function updateGram(){let v1=getMat('v1',3,1).map(r=>r[0]),v2=getMat('v2',3,1).map(r=>r[0]);let G=[[dot(v1,v1),dot(v1,v2)],[dot(v2,v1),dot(v2,v2)]],disc=Math.sqrt((G[0][0]-G[1][1])**2+4*G[0][1]**2),l1=(G[0][0]+G[1][1]+disc)/2,l2=(G[0][0]+G[1][1]-disc)/2;gramResult.innerHTML=`$G=\begin{bmatrix}\langle v_1,v_1\rangle&\langle v_1,v_2\rangle\\\langle v_2,v_1\rangle&\langle v_2,v_2\rangle\end{bmatrix}=$ ${matHTML(G)} Eigenvalues: ${fmt(l1)}, ${fmt(l2)}.<br>`+(l2>1e-10?`<span class='ok'>The Gram matrix is positive definite; the vectors are independent.</span>`:`<span class='warn'>The Gram matrix is positive semidefinite but singular; the vectors are dependent.</span>`);}
+function presetGram(t){if(t==='independent'){setMat('v1',[[1],[2],[0]]);setMat('v2',[[0],[1],[3]]);} if(t==='dependent'){setMat('v1',[[1],[2],[3]]);setMat('v2',[[2],[4],[6]]);} update();}
+function updateChol(){let a=Number(qa.value)||0,b=Number(qb.value)||0,d=Number(qd.value)||0;let l11=Math.sqrt(a); if(a<=0){cholResult.innerHTML=`<span class='bad'>Cholesky fails because the first pivot is not positive.</span>`;return;}let l21=b/l11;let rem=d-l21*l21;if(rem<=1e-10){cholResult.innerHTML=`<span class='bad'>Cholesky fails or is singular because the second pivot is not positive.</span>`;return;}let l22=Math.sqrt(rem);cholResult.innerHTML=`For $A=\begin{bmatrix}${fmt(a)}&${fmt(b)}\\${fmt(b)}&${fmt(d)}\end{bmatrix}$, the Cholesky factor is approximately<br>$L=$ ${matHTML([[l11,0],[l21,l22]])}<br>so $A=LL^T$.`;}
+function update(){updateDecomp();updateQuad();updateHerm();updateSpectral();updateGram();updateChol(); if(window.MathJax){MathJax.typesetPromise();}}
+createInputs('M2inputs','M',[[1,4],[2,3]],2);createInputs('v1Inputs','v1',[[1],[2],[0]],1);createInputs('v2Inputs','v2',[[0],[1],[3]],1);['qa','qb','qd','ha','hd','hr','hs','hu','hv'].forEach(id=>document.getElementById(id).addEventListener('input',update));update();
+</script>
+</body>
+</html>

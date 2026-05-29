@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 2 Interactive: Matrix Algebra</title>
+<style>
+  :root{
+    --bg:#ffffff; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+    --card:#f9fafb; --accent:#111827; --blue:#2563eb; --orange:#f97316;
+    --green:#065f46; --red:#991b1b; --amber:#92400e;
+  }
+  body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);}
+  header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;}
+  header h1{margin:0 0 8px;font-size:1.8rem;}
+  header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;}
+  main{max-width:1240px;margin:0 auto;padding:24px;}
+  .grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;}
+  h2{font-size:1.25rem;margin:0 0 12px;}
+  h3{font-size:1.05rem;margin:18px 0 8px;}
+  p{line-height:1.55;}
+  label{display:block;margin:8px 0 4px;font-weight:600;}
+  input[type=number]{width:62px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;}
+  .matrix{display:grid;gap:6px;margin:8px 0 12px;align-items:center;}
+  .m2{grid-template-columns:repeat(2,70px);}
+  .m3{grid-template-columns:repeat(3,70px);}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;}
+  button.secondary{background:#fff;color:#111827;}
+  button.small{padding:6px 9px;font-size:.9rem;}
+  select{padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff;}
+  canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;}
+  .result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;}
+  .eq{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto;}
+  .small{font-size:.92rem;color:var(--muted);}
+  table{border-collapse:collapse;background:#fff;margin:8px 0;}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;}
+  .ok{color:var(--green);font-weight:700;}
+  .bad{color:var(--red);font-weight:700;}
+  .warn{color:var(--amber);font-weight:700;}
+  .task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;}
+  textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;}
+  code{background:#f3f4f6;padding:1px 4px;border-radius:4px;}
+  @media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Lab 2 Interactive: Matrix Algebra</h1>
+  <p>
+    Explore matrix products, noncommutativity, inverses, rank, transposes, and LU factorization.
+    The goal is to connect algebraic rules with geometry and computation.
+  </p>
+</header>
+
+<main>
+  <section class="grid">
+    <div class="card">
+      <h2>1. Choose two matrices</h2>
+      <p class="small">Use \(2\times2\) matrices so that products, inverses, rank, and geometry can be seen at the same time.</p>
+
+      <h3>Matrix A</h3>
+      <div class="matrix m2" id="Ainputs"></div>
+
+      <h3>Matrix B</h3>
+      <div class="matrix m2" id="Binputs"></div>
+
+      <button onclick="preset('noncommute')">Noncommuting example</button>
+      <button onclick="preset('rotation')">Rotation + shear</button>
+      <button onclick="preset('singular')">Singular A</button>
+      <button onclick="preset('inverse')">Invertible A</button>
+      <button class="secondary" onclick="randomMatrices()">Random</button>
+
+      <h3>Computation</h3>
+      <div class="row">
+        <select id="operation" onchange="update()">
+          <option value="AB">AB</option>
+          <option value="BA">BA</option>
+          <option value="AplusB">A + B</option>
+          <option value="AminusB">A - B</option>
+          <option value="A2">A²</option>
+          <option value="Ainv">A inverse</option>
+          <option value="AT">A transpose</option>
+        </select>
+      </div>
+
+      <div class="result" id="summary"></div>
+    </div>
+
+    <div class="card">
+      <h2>2. Matrix as a geometric machine</h2>
+      <p class="small">
+        The plot shows how the selected matrix transforms the unit square and the standard basis vectors.
+        Blue: original. Orange: transformed.
+      </p>
+      <div class="row">
+        <label for="geomMatrix">Show geometry of:</label>
+        <select id="geomMatrix" onchange="update()">
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="AB">AB</option>
+          <option value="BA">BA</option>
+        </select>
+      </div>
+      <canvas id="geom" width="720" height="560"></canvas>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3. Matrix products and noncommutativity</h2>
+    <div class="eq" id="products"></div>
+    <div class="result" id="commuteResult"></div>
+    <p class="small">
+      Matrix multiplication represents composition of transformations. Usually \(AB\neq BA\), because doing transformation \(B\) first and then \(A\) is not the same as doing \(A\) first and then \(B\).
+    </p>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>4. Rank, determinant, and inverse</h2>
+      <div class="result" id="rankInverse"></div>
+      <p class="small">
+        For a \(2\times2\) matrix \(A=\begin{bmatrix}a&b\\c&d\end{bmatrix}\),
+        \(A\) is invertible exactly when \(ad-bc\neq0\).
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>5. Transpose and Gram matrix</h2>
+      <div class="result" id="transposeGram"></div>
+      <p class="small">
+        The Gram matrix \(A^T A\) records dot products among the columns of \(A\). It is always symmetric.
+      </p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>6. LU factorization practice</h2>
+    <p>
+      Enter a \(3\times3\) matrix. The tool performs LU factorization without pivoting when possible.
+      This illustrates how elimination is recorded as \(A=LU\).
+    </p>
+    <div class="row">
+      <button onclick="luPreset('good')">Use Chapter 2 example</button>
+      <button onclick="luPreset('pivot')">Needs pivoting</button>
+      <button class="secondary" onclick="luRandom()">Random 3×3</button>
+    </div>
+    <div class="matrix m3" id="LUinputs"></div>
+    <div class="result" id="luResult"></div>
+  </section>
+
+  <section class="card">
+    <h2>7. Student practice tasks</h2>
+    <div class="task">
+      <strong>Task A.</strong> Find matrices \(A\) and \(B\) such that \(AB\neq BA\). Record \(AB\), \(BA\), and explain why the order matters geometrically.
+    </div>
+    <div class="task">
+      <strong>Task B.</strong> Create an invertible matrix \(A\). Record \(\det(A)\), \(\operatorname{rank}(A)\), and \(A^{-1}\). Verify \(AA^{-1}=I\).
+    </div>
+    <div class="task">
+      <strong>Task C.</strong> Create a singular matrix \(A\). Explain what information is lost geometrically. What happens to the unit square?
+    </div>
+    <div class="task">
+      <strong>Task D.</strong> Compute \(A^TA\). Explain why it is symmetric and what geometric information it contains.
+    </div>
+    <div class="task">
+      <strong>Task E.</strong> Use the LU tool on the Chapter 2 example. Record \(L\) and \(U\), and verify \(A=LU\).
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>8. Short-answer workspace</h2>
+    <textarea placeholder="Write your observations here. Copy your final answers to your submitted notebook or assignment."></textarea>
+  </section>
+</main>
+
+<script>
+function matHTML(M){
+  return `<table><tbody>${M.map(row=>`<tr>${row.map(x=>`<td>${fmt(x)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+}
+function fmt(x){
+  if(!isFinite(x)) return "undefined";
+  if(Math.abs(x)<1e-10) return "0";
+  if(Math.abs(x-Math.round(x))<1e-10) return String(Math.round(x));
+  return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');
+}
+function mmul(A,B){
+  return [
+    [A[0][0]*B[0][0]+A[0][1]*B[1][0], A[0][0]*B[0][1]+A[0][1]*B[1][1]],
+    [A[1][0]*B[0][0]+A[1][1]*B[1][0], A[1][0]*B[0][1]+A[1][1]*B[1][1]]
+  ];
+}
+function madd(A,B,s=1){return [[A[0][0]+s*B[0][0],A[0][1]+s*B[0][1]],[A[1][0]+s*B[1][0],A[1][1]+s*B[1][1]]];}
+function trans(A){return [[A[0][0],A[1][0]],[A[0][1],A[1][1]]];}
+function det2(A){return A[0][0]*A[1][1]-A[0][1]*A[1][0];}
+function rank2(A){
+  if(Math.abs(det2(A))>1e-10) return 2;
+  if(A.flat().some(x=>Math.abs(x)>1e-10)) return 1;
+  return 0;
+}
+function inv2(A){
+  const d=det2(A);
+  if(Math.abs(d)<1e-10) return null;
+  return [[A[1][1]/d, -A[0][1]/d],[-A[1][0]/d, A[0][0]/d]];
+}
+function eqMat(A,B){return A.flat().every((x,i)=>Math.abs(x-B.flat()[i])<1e-10);}
+function createInputs(containerId,prefix,vals,n=2){
+  const el=document.getElementById(containerId);
+  el.innerHTML="";
+  for(let i=0;i<n;i++){
+    for(let j=0;j<n;j++){
+      const input=document.createElement("input");
+      input.type="number"; input.step="1"; input.value=vals[i][j];
+      input.id=`${prefix}${i}${j}`;
+      input.addEventListener("input",update);
+      el.appendChild(input);
+    }
+  }
+}
+function getMat(prefix,n=2){
+  let M=[];
+  for(let i=0;i<n;i++){
+    let row=[];
+    for(let j=0;j<n;j++) row.push(Number(document.getElementById(`${prefix}${i}${j}`).value)||0);
+    M.push(row);
+  }
+  return M;
+}
+function setMat(prefix,M){
+  for(let i=0;i<M.length;i++) for(let j=0;j<M[0].length;j++) document.getElementById(`${prefix}${i}${j}`).value=M[i][j];
+}
+function selectedResult(A,B){
+  const op=document.getElementById("operation").value;
+  if(op==="AB") return mmul(A,B);
+  if(op==="BA") return mmul(B,A);
+  if(op==="AplusB") return madd(A,B,1);
+  if(op==="AminusB") return madd(A,B,-1);
+  if(op==="A2") return mmul(A,A);
+  if(op==="Ainv") return inv2(A);
+  if(op==="AT") return trans(A);
+}
+function update(){
+  const A=getMat("A"), B=getMat("B");
+  const R=selectedResult(A,B);
+  document.getElementById("summary").innerHTML = R ? `Selected result:${matHTML(R)}` : `<span class="bad">A is singular, so A inverse is undefined.</span>`;
+
+  const AB=mmul(A,B), BA=mmul(B,A);
+  document.getElementById("products").innerHTML =
+    `A = ${matHTML(A)} B = ${matHTML(B)} AB = ${matHTML(AB)} BA = ${matHTML(BA)}`;
+  document.getElementById("commuteResult").innerHTML =
+    eqMat(AB,BA) ? `<span class="ok">For this example, AB = BA.</span>` : `<span class="bad">For this example, AB ≠ BA.</span>`;
+
+  const dA=det2(A), rA=rank2(A), invA=inv2(A);
+  document.getElementById("rankInverse").innerHTML =
+    `det(A) = ${fmt(dA)}<br>rank(A) = ${rA}<br>` +
+    (invA ? `<span class="ok">A is invertible.</span> A⁻¹ = ${matHTML(invA)} AA⁻¹ = ${matHTML(mmul(A,invA))}` :
+            `<span class="bad">A is not invertible.</span> The transformation loses dimension/information.`);
+
+  const AT=trans(A), Gram=mmul(AT,A);
+  document.getElementById("transposeGram").innerHTML =
+    `Aᵀ = ${matHTML(AT)} AᵀA = ${matHTML(Gram)} ` +
+    (eqMat(Gram,trans(Gram)) ? `<span class="ok">AᵀA is symmetric.</span>` : `<span class="bad">Something went wrong.</span>`);
+
+  updateLU();
+  drawGeom();
+}
+function preset(type){
+  if(type==="noncommute"){setMat("A",[[1,2],[3,4]]); setMat("B",[[1,1],[0,1]]);}
+  if(type==="rotation"){setMat("A",[[0,-1],[1,0]]); setMat("B",[[1,1],[0,1]]);}
+  if(type==="singular"){setMat("A",[[1,2],[2,4]]); setMat("B",[[2,-1],[1,1]]);}
+  if(type==="inverse"){setMat("A",[[4,7],[2,6]]); setMat("B",[[1,1],[0,1]]);}
+  update();
+}
+function randomMatrices(){
+  const rand=()=>Math.floor(Math.random()*7)-3;
+  setMat("A",[[rand(),rand()],[rand(),rand()]]);
+  setMat("B",[[rand(),rand()],[rand(),rand()]]);
+  update();
+}
+function toCanvas(x,y,W,H,scale){return [W/2+x*scale,H/2-y*scale];}
+function apply(M,p){return [M[0][0]*p[0]+M[0][1]*p[1], M[1][0]*p[0]+M[1][1]*p[1]];}
+function drawPoly(ctx,pts,color,W,H,scale,fill=false){
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=3; ctx.beginPath();
+  pts.forEach((p,i)=>{const q=toCanvas(p[0],p[1],W,H,scale); if(i===0)ctx.moveTo(q[0],q[1]); else ctx.lineTo(q[0],q[1]);});
+  ctx.closePath(); if(fill){ctx.globalAlpha=.12;ctx.fill();ctx.globalAlpha=1;} ctx.stroke();
+}
+function drawVec(ctx,v,color,W,H,scale,label){
+  const o=toCanvas(0,0,W,H,scale), q=toCanvas(v[0],v[1],W,H,scale);
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=4;
+  ctx.beginPath(); ctx.moveTo(o[0],o[1]); ctx.lineTo(q[0],q[1]); ctx.stroke();
+  ctx.beginPath(); ctx.arc(q[0],q[1],5,0,2*Math.PI); ctx.fill();
+  ctx.font="14px system-ui"; ctx.fillText(label,q[0]+8,q[1]-8);
+}
+function drawGeom(){
+  const A=getMat("A"), B=getMat("B");
+  let M=A, choice=document.getElementById("geomMatrix").value;
+  if(choice==="B") M=B;
+  if(choice==="AB") M=mmul(A,B);
+  if(choice==="BA") M=mmul(B,A);
+  const canvas=document.getElementById("geom"), ctx=canvas.getContext("2d"), W=canvas.width,H=canvas.height,scale=55;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle="#fff"; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle="#eef2f7"; ctx.lineWidth=1;
+  for(let x=-6;x<=6;x++){let p=toCanvas(x,0,W,H,scale)[0]; ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,H);ctx.stroke();}
+  for(let y=-5;y<=5;y++){let p=toCanvas(0,y,W,H,scale)[1]; ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(W,p);ctx.stroke();}
+  const ox=toCanvas(0,0,W,H,scale)[0], oy=toCanvas(0,0,W,H,scale)[1];
+  ctx.strokeStyle="#9ca3af"; ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(W,oy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();
+
+  const square=[[0,0],[1,0],[1,1],[0,1]];
+  const tsq=square.map(p=>apply(M,p));
+  drawPoly(ctx,square,"#2563eb",W,H,scale,true);
+  drawPoly(ctx,tsq,"#f97316",W,H,scale,true);
+  drawVec(ctx,[1,0],"#2563eb",W,H,scale,"e₁");
+  drawVec(ctx,[0,1],"#2563eb",W,H,scale,"e₂");
+  drawVec(ctx,apply(M,[1,0]),"#f97316",W,H,scale,"M e₁");
+  drawVec(ctx,apply(M,[0,1]),"#f97316",W,H,scale,"M e₂");
+  ctx.fillStyle="#111827";ctx.font="15px system-ui";ctx.fillText(`M = ${choice}`,18,24);
+}
+function luDecomp(M){
+  const n=3;
+  let U=M.map(r=>r.slice().map(Number));
+  let L=[[1,0,0],[0,1,0],[0,0,1]];
+  for(let k=0;k<n;k++){
+    if(Math.abs(U[k][k])<1e-10) return {ok:false,msg:`Pivot ${k+1} is zero. This matrix needs row pivoting for LU without division by zero.`};
+    for(let i=k+1;i<n;i++){
+      const mult=U[i][k]/U[k][k];
+      L[i][k]=mult;
+      for(let j=k;j<n;j++) U[i][j]-=mult*U[k][j];
+    }
+  }
+  return {ok:true,L,U};
+}
+function mat3mul(A,B){
+  let C=Array.from({length:3},()=>Array(3).fill(0));
+  for(let i=0;i<3;i++) for(let j=0;j<3;j++) for(let k=0;k<3;k++) C[i][j]+=A[i][k]*B[k][j];
+  return C;
+}
+function updateLU(){
+  if(!document.getElementById("L00")) return;
+  const M=getMat("L",3);
+  const out=luDecomp(M);
+  if(!out.ok){document.getElementById("luResult").innerHTML=`<span class="bad">${out.msg}</span>`; return;}
+  document.getElementById("luResult").innerHTML =
+    `<span class="ok">LU factorization without pivoting succeeded.</span><br>` +
+    `L = ${matHTML(out.L)} U = ${matHTML(out.U)} LU = ${matHTML(mat3mul(out.L,out.U))}`;
+}
+function luPreset(type){
+  if(type==="good") setMat("L",[[2,1,1],[4,-6,0],[-2,7,2]]);
+  if(type==="pivot") setMat("L",[[0,1,2],[1,3,4],[2,1,1]]);
+  update();
+}
+function luRandom(){
+  const rand=()=>Math.floor(Math.random()*7)-3;
+  setMat("L",[[rand()||1,rand(),rand()],[rand(),rand()||1,rand()],[rand(),rand(),rand()||1]]);
+  update();
+}
+createInputs("Ainputs","A",[[1,2],[3,4]],2);
+createInputs("Binputs","B",[[1,1],[0,1]],2);
+createInputs("LUinputs","L",[[2,1,1],[4,-6,0],[-2,7,2]],3);
+update();
+</script>
+</body>
+</html>

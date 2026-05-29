@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 9 Interactive: Dynamical Systems and Markov Chains</title>
+<script>
+window.MathJax = {tex: {inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']]}, svg: {fontCache: 'global'}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--bg:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);} header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;} header h1{margin:0 0 8px;font-size:1.8rem;} header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;} main{max-width:1240px;margin:0 auto;padding:24px;} .grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;} .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;} h2{font-size:1.25rem;margin:0 0 12px;} h3{font-size:1.05rem;margin:18px 0 8px;} p{line-height:1.55;} label{display:block;margin:8px 0 4px;font-weight:600;} input[type=number]{width:72px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;} input[type=range]{width:180px;} .matrix{display:grid;gap:6px;margin:8px 0 12px;align-items:center;} .m2{grid-template-columns:repeat(2,80px);} .m3{grid-template-columns:repeat(3,80px);} .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;} button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;} button.secondary{background:#fff;color:#111827;} canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;} .result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;} .small{font-size:.92rem;color:var(--muted);} table{border-collapse:collapse;background:#fff;margin:8px 0;} th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;} .ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .warn{color:var(--amber);font-weight:700;} .task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;} textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;} @media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+<h1>Lab 9 Interactive: Dynamical Systems, Markov Chains, and Perron--Frobenius Theory</h1>
+<p>Explore repeated multiplication $x_{k+1}=Ax_k$, stationary distributions, convergence, damping, and population growth.</p>
+</header>
+<main>
+<section class="grid">
+<div class="card">
+<h2>1. Two-state Markov chain</h2>
+<p class="small">Use a column-stochastic matrix $A=\begin{bmatrix}a&b\\1-a&1-b\end{bmatrix}$.</p>
+<div class="row"><label>$a$</label><input id="a" type="number" min="0" max="1" step="0.05" value="0.9"><label>$b$</label><input id="b" type="number" min="0" max="1" step="0.05" value="0.2"></div>
+<div class="row"><label>$x_0$ first entry</label><input id="xfirst" type="range" min="0" max="1" step="0.01" value="0.5"><span id="xfirstLabel"></span></div>
+<div class="row"><label>steps</label><input id="steps" type="number" min="1" max="80" step="1" value="20"></div>
+<button onclick="preset2('regular')">Regular example</button><button onclick="preset2('periodic')">Periodic example</button><button onclick="preset2('absorbing')">Absorbing example</button>
+<div class="result" id="markovResult"></div>
+</div>
+<div class="card">
+<h2>2. Iteration plot</h2>
+<canvas id="plot" width="720" height="440"></canvas>
+<p class="small">The plot shows the first component of $x_k$ over time. Convergence appears as flattening.</p>
+</div>
+</section>
+
+<section class="grid">
+<div class="card">
+<h2>3. PageRank damping</h2>
+<p class="small">For a three-page web, form $G=\alpha P+(1-\alpha)\frac{1}{3}\mathbf 1\mathbf 1^T$.</p>
+<div class="row"><label>$\alpha$</label><input id="alpha" type="range" min="0" max="1" step="0.01" value="0.85"><span id="alphaLabel"></span></div>
+<button onclick="pagerankPreset('chain')">Chain web</button><button onclick="pagerankPreset('cycle')">Cycle web</button><button class="secondary" onclick="pagerankPreset('star')">Star web</button>
+<div class="result" id="pagerankResult"></div>
+</div>
+<div class="card">
+<h2>4. Web graph picture</h2>
+<canvas id="web" width="720" height="440"></canvas>
+</div>
+</section>
+
+<section class="grid">
+<div class="card">
+<h2>5. Leslie population model</h2>
+<p class="small">Use $L=\begin{bmatrix}f_1&f_2\\s_1&0\end{bmatrix}$.</p>
+<div class="row"><label>$f_1$</label><input id="f1" type="number" step="0.1" value="0.2"><label>$f_2$</label><input id="f2" type="number" step="0.1" value="1.4"><label>$s_1$</label><input id="s1" type="number" step="0.1" value="0.6"></div>
+<div class="row"><label>initial young</label><input id="young" type="number" value="100"><label>initial adult</label><input id="adult" type="number" value="40"></div>
+<div class="result" id="leslieResult"></div>
+</div>
+<div class="card">
+<h2>6. Population plot</h2>
+<canvas id="pop" width="720" height="440"></canvas>
+</div>
+</section>
+
+<section class="card">
+<h2>7. Independent-study tasks with answers</h2>
+<div class="task"><strong>Task A.</strong> Use $A=\begin{bmatrix}0.9&0.2\\0.1&0.8\end{bmatrix}$. Find the stationary distribution.<br><strong>Answer:</strong> $\pi=(2/3,1/3)^T$.</div>
+<div class="task"><strong>Task B.</strong> Use $A=\begin{bmatrix}0&1\\1&0\end{bmatrix}$. Explain the long-term behavior.<br><strong>Answer:</strong> The state alternates, so it does not converge from $x_0=(1,0)^T$.</div>
+<div class="task"><strong>Task C.</strong> Increase the PageRank damping teleportation term by lowering $\alpha$. What happens?<br><strong>Answer:</strong> The ranking becomes closer to uniform because random jumps become more important.</div>
+<div class="task"><strong>Task D.</strong> In the Leslie model, what does the dominant eigenvalue represent?<br><strong>Answer:</strong> The asymptotic growth factor per time step.</div>
+</section>
+<section class="card"><h2>8. Workspace</h2><textarea placeholder="Write observations here..."></textarea></section>
+</main>
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(row=>`<tr>${row.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function clamp01(x){return Math.min(1,Math.max(0,Number(x)||0));}
+function mmul(A,B){let C=Array.from({length:A.length},()=>Array(B[0].length).fill(0));for(let i=0;i<A.length;i++)for(let j=0;j<B[0].length;j++)for(let k=0;k<B.length;k++)C[i][j]+=A[i][k]*B[k][j];return C;}
+function mv(A,x){return A.map(r=>r.reduce((s,a,i)=>s+a*x[i],0));}
+function normalize(x){let s=x.reduce((a,b)=>a+b,0);return x.map(v=>v/s);}
+function stationary2(A){let b=A[0][1], c=A[1][0]; if(Math.abs(b+c)<1e-12)return [0.5,0.5]; return [b/(b+c), c/(b+c)];}
+function updateMarkov(){let av=clamp01(a.value), bv=clamp01(b.value);a.value=av;b.value=bv;let A=[[av,bv],[1-av,1-bv]];let x=[Number(xfirst.value),1-Number(xfirst.value)];xfirstLabel.textContent=fmt(x[0]);let n=Number(steps.value)||20;let hist=[x.slice()];for(let k=0;k<n;k++){x=mv(A,x);hist.push(x.slice());}let pi=stationary2(A);let regular=(av>0 && av<1 && bv>0 && bv<1);markovResult.innerHTML=`A = ${matHTML(A)} stationary distribution ≈ ${matHTML([[pi[0]],[pi[1]]])}<br>final iterate x_${n} ≈ ${matHTML([[x[0]],[x[1]]])}<br>`+(regular?`<span class='ok'>This two-state chain is regular.</span>`:`<span class='warn'>This chain may fail regularity or may be absorbing/periodic.</span>`);drawSeries(plot,hist.map(v=>v[0]),'first component of x_k');}
+function preset2(t){if(t==='regular'){a.value=0.9;b.value=0.2;xfirst.value=0.5;}if(t==='periodic'){a.value=0;b.value=1;xfirst.value=1;}if(t==='absorbing'){a.value=1;b.value=0.25;xfirst.value=0.2;}update();}
+function drawSeries(canvas,ys,label){let ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);let L=55,R=20,T=25,B=45;ctx.strokeStyle='#e5e7eb';ctx.lineWidth=1;for(let i=0;i<=5;i++){let y=T+(H-T-B)*i/5;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(W-R,y);ctx.stroke();}ctx.strokeStyle='#9ca3af';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(L,T);ctx.lineTo(L,H-B);ctx.lineTo(W-R,H-B);ctx.stroke();ctx.strokeStyle='#2563eb';ctx.lineWidth=3;ctx.beginPath();ys.forEach((v,i)=>{let x=L+(W-L-R)*i/(ys.length-1), y=H-B-(H-T-B)*v; if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();ctx.fillStyle='#111827';ctx.font='15px system-ui';ctx.fillText(label,L,T-6);ctx.fillText('0',25,H-B+4);ctx.fillText('1',25,T+4);}
+let webType='chain';
+function pagerankMatrix(){let P;if(webType==='chain')P=[[0,0,1],[1,0,0],[0,1,0]]; if(webType==='cycle')P=[[0,0,1],[1,0,0],[0,1,0]]; if(webType==='star')P=[[0,1,1],[0.5,0,0],[0.5,0,0]];let al=Number(alpha.value);let G=P.map(row=>row.map(x=>al*x+(1-al)/3));return {P,G,al};}
+function updatePagerank(){alphaLabel.textContent=fmt(Number(alpha.value));let {G,al}=pagerankMatrix();let x=[1/3,1/3,1/3];for(let k=0;k<80;k++)x=mv(G,x);pagerankResult.innerHTML=`\(\alpha=${fmt(al)}\)<br>G = ${matHTML(G)} PageRank vector ≈ ${matHTML([[x[0]],[x[1]],[x[2]]])}<br><span class='ok'>Because the damping term is positive when α&lt;1, G is primitive.</span>`;if(window.MathJax) MathJax.typesetPromise([pagerankResult]);drawWeb();}
+function pagerankPreset(t){webType=t;update();}
+function drawWeb(){let c=web,ctx=c.getContext('2d'),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);let pts=[[W/2,80],[170,310],[550,310]];ctx.strokeStyle='#9ca3af';ctx.lineWidth=2;function arrow(i,j){let [x1,y1]=pts[i], [x2,y2]=pts[j];ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();let ang=Math.atan2(y2-y1,x2-x1);ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-12*Math.cos(ang-.4),y2-12*Math.sin(ang-.4));ctx.lineTo(x2-12*Math.cos(ang+.4),y2-12*Math.sin(ang+.4));ctx.closePath();ctx.fillStyle='#9ca3af';ctx.fill();}
+if(webType==='star'){arrow(0,1);arrow(0,2);arrow(1,0);arrow(2,0);}else{arrow(0,1);arrow(1,2);arrow(2,0);}pts.forEach((p,i)=>{ctx.fillStyle='#2563eb';ctx.beginPath();ctx.arc(p[0],p[1],28,0,2*Math.PI);ctx.fill();ctx.fillStyle='#fff';ctx.font='20px system-ui';ctx.textAlign='center';ctx.fillText(String(i+1),p[0],p[1]+7);});ctx.textAlign='left';ctx.fillStyle='#111827';ctx.font='15px system-ui';ctx.fillText('web type: '+webType,18,24);}
+function eigen2(A){let tr=A[0][0]+A[1][1], det=A[0][0]*A[1][1]-A[0][1]*A[1][0], disc=Math.sqrt(Math.max(0,tr*tr-4*det));return [(tr+disc)/2,(tr-disc)/2];}
+function updateLeslie(){let L=[[Number(f1.value)||0,Number(f2.value)||0],[Number(s1.value)||0,0]];let x=[Number(young.value)||0,Number(adult.value)||0];let totals=[],props=[];for(let k=0;k<25;k++){totals.push(x[0]+x[1]);props.push(normalize(x)[0]);x=mv(L,x);}let ev=eigen2(L).sort((a,b)=>Math.abs(b)-Math.abs(a));leslieResult.innerHTML=`L = ${matHTML(L)} dominant eigenvalue ≈ <strong>${fmt(ev[0])}</strong><br>final total after 24 steps ≈ ${fmt(totals[24])}<br>The dominant eigenvalue is the long-term growth factor.`;drawSeries(pop,props,'young proportion over time');}
+function update(){updateMarkov();updatePagerank();updateLeslie();}
+['a','b','xfirst','steps','alpha','f1','f2','s1','young','adult'].forEach(id=>document.getElementById(id).addEventListener('input',update));update();
+</script>
+</body>
+</html>

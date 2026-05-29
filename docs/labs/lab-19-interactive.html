@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 19 Interactive: Applications of Multilinear Algebra</title>
+<script>
+window.MathJax = {tex: {inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']]}, svg: {fontCache: 'global'}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root{--bg:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+  body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);} header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;} header h1{margin:0 0 8px;font-size:1.8rem;} header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;} main{max-width:1240px;margin:0 auto;padding:24px;} .grid{display:grid;grid-template-columns:430px 1fr;gap:24px;align-items:start;} .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;} h2{font-size:1.25rem;margin:0 0 12px;} h3{font-size:1.05rem;margin:18px 0 8px;} p{line-height:1.55;} label{font-weight:600;} input[type=number]{width:62px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;} .matrix{display:grid;gap:6px;margin:8px 0 12px;align-items:center;} .m2{grid-template-columns:repeat(2,70px);} .m3{grid-template-columns:repeat(3,70px);} .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;} button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;} button.secondary{background:#fff;color:#111827;} select{padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff;} canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;} .result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;} .small{font-size:.92rem;color:var(--muted);} table{border-collapse:collapse;background:#fff;margin:8px 0;} th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;} .ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .warn{color:var(--amber);font-weight:700;} .task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;} textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;} code{background:#f3f4f6;padding:1px 4px;border-radius:4px;} @media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Lab 19 Interactive: Applications of Multilinear Algebra</h1>
+  <p>Explore outer products, Kronecker products, vectorization, wedge products, tensor rank, and two-qubit separability.</p>
+</header>
+<main>
+  <section class="grid">
+    <div class="card">
+      <h2>1. Outer product as a simple tensor</h2>
+      <p class="small">For vectors $u\in\mathbb R^3$ and $v\in\mathbb R^2$, the simple tensor $u\otimes v$ corresponds to the matrix $uv^T$.</p>
+      <h3>$u$</h3><div class="matrix m3" id="uInputs"></div>
+      <h3>$v$</h3><div class="matrix m2" id="vInputs"></div>
+      <button onclick="outerPreset('basic')">Basic example</button><button onclick="outerPreset('sign')">Sign example</button>
+      <div class="result" id="outerResult"></div>
+    </div>
+    <div class="card">
+      <h2>2. Wedge product and signed area</h2>
+      <p class="small">For $a=(a_1,a_2)$ and $b=(b_1,b_2)$, $a\wedge b=(a_1b_2-a_2b_1)e_1\wedge e_2$.</p>
+      <div class="row"><label>$a_1$</label><input id="a1" type="number" value="2"><label>$a_2$</label><input id="a2" type="number" value="1"><label>$b_1$</label><input id="b1" type="number" value="1"><label>$b_2$</label><input id="b2" type="number" value="3"></div>
+      <button onclick="wedgePreset('positive')">Positive area</button><button onclick="wedgePreset('negative')">Negative area</button><button class="secondary" onclick="wedgePreset('zero')">Dependent vectors</button>
+      <canvas id="wedgeCanvas" width="720" height="480"></canvas>
+      <div class="result" id="wedgeResult"></div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>3. Kronecker product</h2>
+      <p class="small">The Kronecker product is the block matrix $A\otimes B=[a_{ij}B]$.</p>
+      <h3>$A$</h3><div class="matrix m2" id="AInputs"></div>
+      <h3>$B$</h3><div class="matrix m2" id="BInputs"></div>
+      <button onclick="kronPreset('basic')">Basic example</button><button onclick="kronPreset('diagonal')">Diagonal/sign example</button>
+      <div class="result" id="kronResult"></div>
+    </div>
+    <div class="card">
+      <h2>4. Vectorization identity</h2>
+      <p class="small">Check $\operatorname{vec}(AXB)=(B^T\otimes A)\operatorname{vec}(X)$ using column stacking.</p>
+      <button onclick="vecPreset('lecture')">Use example</button><button class="secondary" onclick="vecPreset('random')">Small random</button>
+      <div class="result" id="vecResult"></div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>5. Two-qubit separability test</h2>
+      <p class="small">A two-qubit state $\alpha|00\rangle+\beta|01\rangle+\gamma|10\rangle+\delta|11\rangle$ is separable exactly when $\alpha\delta-\beta\gamma=0$.</p>
+      <div class="row"><label>$\alpha$</label><input id="qa" type="number" value="1" step="0.1"><label>$\beta$</label><input id="qb" type="number" value="0" step="0.1"><label>$\gamma$</label><input id="qc" type="number" value="0" step="0.1"><label>$\delta$</label><input id="qd" type="number" value="1" step="0.1"></div>
+      <button onclick="quantumPreset('bell')">Bell state coefficients</button><button onclick="quantumPreset('sep')">Separable state</button><button class="secondary" onclick="quantumPreset('custom')">Custom update</button>
+      <div class="result" id="quantumResult"></div>
+    </div>
+    <div class="card">
+      <h2>6. Tensor rank-one construction</h2>
+      <p class="small">An order-3 rank-one tensor has entries $T_{ijk}=a_i b_j c_k$.</p>
+      <div class="row"><label>$a=(1,2)$, $b=(3,4,5)$, $c=(6,7)$</label></div>
+      <button onclick="tensor3()">Build tensor slices</button>
+      <div class="result" id="tensorResult"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>7. Independent-study practice tasks with answers</h2>
+    <div class="task"><strong>Task A.</strong> Compute $u\otimes v$ for $u=(1,2,3)^T$ and $v=(4,5)^T$.<br><strong>Answer:</strong> $uv^T=\begin{bmatrix}4&5\\8&10\\12&15\end{bmatrix}$.</div>
+    <div class="task"><strong>Task B.</strong> Compute the signed area of $u=(2,1)$ and $v=(1,3)$.<br><strong>Answer:</strong> $\det\begin{bmatrix}2&1\\1&3\end{bmatrix}=5$.</div>
+    <div class="task"><strong>Task C.</strong> Why is $I_2=e_1\otimes e_1+e_2\otimes e_2$ not simple?<br><strong>Answer:</strong> It corresponds to the identity matrix, which has rank $2$, while a simple tensor corresponds to a rank-one outer product.</div>
+    <div class="task"><strong>Task D.</strong> Decide whether $\frac{1}{\sqrt2}(|00\rangle+|11\rangle)$ is separable.<br><strong>Answer:</strong> No. Its coefficient matrix has rank $2$.</div>
+  </section>
+
+  <section class="card"><h2>8. Workspace</h2><textarea placeholder="Write observations here. Copy final answers to your notebook or assignment."></textarea></section>
+</main>
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(row=>`<tr>${row.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function createInputs(containerId,prefix,vals,cols){const el=document.getElementById(containerId);el.innerHTML=''; for(let i=0;i<vals.length;i++){for(let j=0;j<cols;j++){const input=document.createElement('input');input.type='number';input.step='1';input.value=vals[i][j] ?? vals[i];input.id=`${prefix}${i}${j}`;input.addEventListener('input',update);el.appendChild(input);}}}
+function getMat(prefix,rows,cols){let M=[];for(let i=0;i<rows;i++){let r=[];for(let j=0;j<cols;j++)r.push(Number(document.getElementById(`${prefix}${i}${j}`).value)||0);M.push(r);}return M;}
+function setMat(prefix,M){for(let i=0;i<M.length;i++)for(let j=0;j<M[0].length;j++)document.getElementById(`${prefix}${i}${j}`).value=M[i][j];}
+function getVec(prefix,n){let v=[];for(let i=0;i<n;i++)v.push(Number(document.getElementById(`${prefix}${i}0`).value)||0);return v;}
+function setVec(prefix,v){for(let i=0;i<v.length;i++)document.getElementById(`${prefix}${i}0`).value=v[i];}
+function outer(u,v){return u.map(x=>v.map(y=>x*y));}
+function mmul(A,B){let C=Array.from({length:A.length},()=>Array(B[0].length).fill(0));for(let i=0;i<A.length;i++)for(let j=0;j<B[0].length;j++)for(let k=0;k<B.length;k++)C[i][j]+=A[i][k]*B[k][j];return C;}
+function trans(A){return A[0].map((_,j)=>A.map(r=>r[j]));}
+function kron(A,B){let C=[];for(let i=0;i<A.length;i++){for(let r=0;r<B.length;r++){let row=[];for(let j=0;j<A[0].length;j++){for(let s=0;s<B[0].length;s++)row.push(A[i][j]*B[r][s]);}C.push(row);}}return C;}
+function vec(M){let out=[];for(let j=0;j<M[0].length;j++)for(let i=0;i<M.length;i++)out.push(M[i][j]);return out.map(x=>[x]);}
+function updateOuter(){let u=getVec('u',3),v=getVec('v',2);outerResult.innerHTML=`$u\otimes v$ corresponds to $uv^T$:${matHTML(outer(u,v))}<span class='ok'>This matrix has rank at most 1.</span>`;}
+function outerPreset(t){if(t==='basic'){setVec('u',[1,2,3]);setVec('v',[4,5]);} if(t==='sign'){setVec('u',[2,-1,3]);setVec('v',[3,0]);} update();}
+function updateWedge(){let a=[Number(a1.value)||0,Number(a2.value)||0],b=[Number(b1.value)||0,Number(b2.value)||0];let area=a[0]*b[1]-a[1]*b[0];wedgeResult.innerHTML=`$a\wedge b=(${fmt(a[0])}\cdot${fmt(b[1])}-${fmt(a[1])}\cdot${fmt(b[0])})e_1\wedge e_2=${fmt(area)}e_1\wedge e_2$.<br>Signed area: <strong>${fmt(area)}</strong>. Ordinary area: <strong>${fmt(Math.abs(area))}</strong>.`;drawWedge(a,b,area);}
+function wedgePreset(t){if(t==='positive'){a1.value=2;a2.value=1;b1.value=1;b2.value=3;} if(t==='negative'){a1.value=1;a2.value=4;b1.value=3;b2.value=2;} if(t==='zero'){a1.value=1;a2.value=2;b1.value=2;b2.value=4;} update();}
+function drawWedge(a,b,area){let c=wedgeCanvas,ctx=c.getContext('2d'),W=c.width,H=c.height,sc=55;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);function pt(x,y){return [W/2+x*sc,H/2-y*sc];}ctx.strokeStyle='#eef2f7';ctx.lineWidth=1;for(let x=-6;x<=6;x++){let p=pt(x,0)[0];ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,H);ctx.stroke();}for(let y=-4;y<=4;y++){let p=pt(0,y)[1];ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(W,p);ctx.stroke();}let ox=pt(0,0)[0],oy=pt(0,0)[1];ctx.strokeStyle='#9ca3af';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(W,oy);ctx.stroke();ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();let P=[pt(0,0),pt(a[0],a[1]),pt(a[0]+b[0],a[1]+b[1]),pt(b[0],b[1])];ctx.fillStyle=area>=0?'rgba(37,99,235,.15)':'rgba(249,115,22,.15)';ctx.strokeStyle=area>=0?'#2563eb':'#f97316';ctx.lineWidth=3;ctx.beginPath();P.forEach((p,i)=>{if(i===0)ctx.moveTo(p[0],p[1]);else ctx.lineTo(p[0],p[1]);});ctx.closePath();ctx.fill();ctx.stroke();function arrow(v,color,label){let q=pt(v[0],v[1]);ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(q[0],q[1]);ctx.stroke();ctx.beginPath();ctx.arc(q[0],q[1],5,0,2*Math.PI);ctx.fill();ctx.font='15px system-ui';ctx.fillText(label,q[0]+8,q[1]-8);}arrow(a,'#2563eb','a');arrow(b,'#f97316','b');}
+function updateKron(){let A=getMat('A',2,2),B=getMat('B',2,2);kronResult.innerHTML=`$A\otimes B=$ ${matHTML(kron(A,B))}`;}
+function kronPreset(t){if(t==='basic'){setMat('A',[[1,2],[3,4]]);setMat('B',[[0,5],[6,7]]);} if(t==='diagonal'){setMat('A',[[1,0],[0,-1]]);setMat('B',[[2,1],[1,2]]);} update();}
+let VA=[[1,2],[0,1]],VX=[[1,3],[2,4]],VB=[[2,0],[1,1]];
+function updateVec(){let left=vec(mmul(mmul(VA,VX),VB));let right=mmul(kron(trans(VB),VA),vec(VX));let ok=JSON.stringify(left.map(r=>fmt(r[0])))===JSON.stringify(right.map(r=>fmt(r[0])));vecResult.innerHTML=`$A=${matHTML(VA)}X=${matHTML(VX)}B=${matHTML(VB)}$<br>$\operatorname{vec}(AXB)=$ ${matHTML(left)}$(B^T\otimes A)\operatorname{vec}(X)=$ ${matHTML(right)}<br>`+(ok?`<span class='ok'>The identity is verified.</span>`:`<span class='bad'>Check failed.</span>`);}
+function vecPreset(t){if(t==='lecture'){VA=[[1,2],[0,1]];VX=[[1,3],[2,4]];VB=[[2,0],[1,1]];} if(t==='random'){VA=[[2,1],[1,0]];VX=[[1,2],[3,1]];VB=[[0,1],[2,1]];} update();}
+function updateQuantum(){let a=Number(qa.value)||0,b=Number(qb.value)||0,c=Number(qc.value)||0,d=Number(qd.value)||0;let det=a*d-b*c;quantumResult.innerHTML=`Coefficient matrix $M=$ ${matHTML([[a,b],[c,d]])}$\det(M)=\alpha\delta-\beta\gamma=${fmt(det)}$.<br>`+(Math.abs(det)<1e-10?`<span class='ok'>Separable: the coefficient matrix has rank at most 1.</span>`:`<span class='bad'>Entangled: the coefficient matrix has rank 2.</span>`);}
+function quantumPreset(t){if(t==='bell'){qa.value=1;qb.value=0;qc.value=0;qd.value=1;} if(t==='sep'){qa.value=.5;qb.value=.5;qc.value=.5;qd.value=.5;} update();}
+function tensor3(){let a=[1,2],b=[3,4,5],c=[6,7];let slice0=outer(a,b).map(row=>row.map(x=>x*c[0]));let slice1=outer(a,b).map(row=>row.map(x=>x*c[1]));tensorResult.innerHTML=`Slice $k=1$:${matHTML(slice0)}Slice $k=2$:${matHTML(slice1)}<span class='ok'>This tensor is rank one because $T_{ijk}=a_i b_j c_k$.</span>`;}
+function update(){updateOuter();updateWedge();updateKron();updateVec();updateQuantum();tensor3(); if(window.MathJax){MathJax.typesetPromise();}}
+createInputs('uInputs','u',[[1],[2],[3]],1);createInputs('vInputs','v',[[4],[5]],1);createInputs('AInputs','A',[[1,2],[3,4]],2);createInputs('BInputs','B',[[0,5],[6,7]],2);['a1','a2','b1','b2','qa','qb','qc','qd'].forEach(id=>document.getElementById(id).addEventListener('input',update));update();
+</script>
+</body>
+</html>

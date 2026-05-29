@@ -1,0 +1,262 @@
+# Lab 22: Duality and Cohomology {.unnumbered}
+
+# Lab goals
+
+This lab helps you practice the computational side of Chapter 22.
+
+You will learn to:
+
+- compute dual basis functionals from an inverse matrix;
+- interpret rows of a matrix as linear measurements;
+- compute annihilators using null spaces of transposes;
+- build boundary and coboundary matrices;
+- compare homology and cohomology for hollow and filled triangles.
+
+# Python practice notebook
+
+Download and complete the independent-study notebook:
+
+- [Download Lab 22 Python notebook](lab-22-duality-cohomology-independent-study.ipynb)
+- [Open Lab 14 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-22-duality-cohomology-independent-study.ipynb)
+
+The notebook includes worked solutions and similar practice questions.
+
+# Interactive lab
+
+Open the interactive page:
+
+[Open Lab 22 interactive HTML](lab-22-interactive.html)
+
+The interactive lab lets you experiment with:
+
+- dual basis extraction;
+- annihilators and fundamental subspaces;
+- hollow versus filled triangle cohomology.
+
+# Quick review
+
+## Dual basis
+
+If
+
+$$
+P=[v_1\ \cdots\ v_n],
+$$
+
+then the rows of $P^{-1}$ are the dual basis functionals.
+
+## Dual map
+
+If $T$ has matrix $A$, then the dual map $T^*$ is represented by
+
+$$
+A^T.
+$$
+
+## Annihilator
+
+For a subspace $U\le V$,
+
+$$
+U^\circ=\{\ell\in V^*:\ell(u)=0\text{ for all }u\in U\}.
+$$
+
+If $V$ is finite-dimensional, then
+
+$$
+\dim U^\circ=\dim V-\dim U.
+$$
+
+## Cohomology
+
+If $D_p$ is the matrix of $\partial_p$, then the corresponding coboundary matrix is
+
+$$
+D_p^T.
+$$
+
+For finite-dimensional complexes over a field,
+
+$$
+\dim H^p=\dim H_p.
+$$
+
+# Independent-study questions with solutions
+
+## Question 1
+
+Let
+
+$$
+v_1=(1,1),\qquad v_2=(1,2).
+$$
+
+Find the dual basis.
+
+<details>
+<summary>Show solution</summary>
+
+Form
+
+$$
+P=\begin{bmatrix}1&1\\1&2\end{bmatrix}.
+$$
+
+Then
+
+$$
+P^{-1}=\begin{bmatrix}2&-1\\-1&1\end{bmatrix}.
+$$
+
+Thus
+
+$$
+\varphi^1(x,y)=2x-y,
+\qquad
+\varphi^2(x,y)=-x+y.
+$$
+
+</details>
+
+## Similar practice 1
+
+Let
+
+$$
+v_1=(1,2),\qquad v_2=(3,5).
+$$
+
+Find the dual basis.
+
+<details>
+<summary>Show solution</summary>
+
+Here
+
+$$
+P=\begin{bmatrix}1&3\\2&5\end{bmatrix},
+\qquad
+P^{-1}=
+\begin{bmatrix}
+-5&3\\
+2&-1
+\end{bmatrix}.
+$$
+
+So
+
+$$
+\varphi^1(x,y)=-5x+3y,
+\qquad
+\varphi^2(x,y)=2x-y.
+$$
+
+</details>
+
+## Question 2
+
+Let
+
+$$
+U=\operatorname{span}\{(1,1,0),(0,1,1)\}\subseteq\mathbb R^3.
+$$
+
+Find one nonzero element of $U^\circ$.
+
+<details>
+<summary>Show solution</summary>
+
+Let $\ell(x,y,z)=ax+by+cz$. We need
+
+$$
+\ell(1,1,0)=a+b=0,
+\qquad
+\ell(0,1,1)=b+c=0.
+$$
+
+Choose $b=1$. Then $a=-1$ and $c=-1$. Hence
+
+$$
+\ell(x,y,z)=-x+y-z.
+$$
+
+</details>
+
+## Similar practice 2
+
+Let
+
+$$
+U=\operatorname{span}\{(1,0,1),(1,1,0)\}\subseteq\mathbb R^3.
+$$
+
+Find one nonzero element of $U^\circ$.
+
+<details>
+<summary>Show solution</summary>
+
+Let $\ell(x,y,z)=ax+by+cz$. We need
+
+$$
+a+c=0,\qquad a+b=0.
+$$
+
+Choose $a=1$. Then $b=-1$ and $c=-1$. Hence
+
+$$
+\ell(x,y,z)=x-y-z.
+$$
+
+</details>
+
+## Question 3
+
+For the hollow triangle with three vertices and three edges, compute $\beta_0$ and $\beta_1$.
+
+<details>
+<summary>Show solution</summary>
+
+The boundary matrix $D_1$ has rank $2$. Since there are no $2$-simplices, $D_2$ has rank $0$.
+
+Thus
+
+$$
+\beta_0=n_0-\operatorname{rank}D_1=3-2=1,
+$$
+
+and
+
+$$
+\beta_1=n_1-\operatorname{rank}D_1-\operatorname{rank}D_2=3-2-0=1.
+$$
+
+</details>
+
+## Similar practice 3
+
+For the filled triangle, compute $\beta_0$ and $\beta_1$.
+
+<details>
+<summary>Show solution</summary>
+
+Now $\operatorname{rank}D_1=2$ and $\operatorname{rank}D_2=1$. Therefore
+
+$$
+\beta_0=3-2=1,
+$$
+
+and
+
+$$
+\beta_1=3-2-1=0.
+$$
+
+</details>
+
+# Reflection questions
+
+1. Why are rows naturally interpreted as linear functionals?
+2. Why does the dual map reverse the direction of a linear map?
+3. Why do coboundary matrices appear as transposes of boundary matrices?
+4. Why does adding a filled triangle kill the one-dimensional first cohomology class?
+5. In what sense is a cohomology class a measurement of a hole?

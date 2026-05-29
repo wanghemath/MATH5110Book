@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 25 Interactive: Linear Algebra and Optimization</title>
+<script>
+window.MathJax = {
+  tex: {inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']]},
+  svg: {fontCache: 'global'}
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--bg:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);}
+header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;}
+header h1{margin:0 0 8px;font-size:1.8rem;}
+header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;}
+main{max-width:1240px;margin:0 auto;padding:24px;}
+.grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;}
+h2{font-size:1.25rem;margin:0 0 12px;} h3{font-size:1.05rem;margin:18px 0 8px;} p{line-height:1.55;}
+label{display:block;margin:8px 0 4px;font-weight:600;}
+input[type=number]{width:70px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;}
+.matrix{display:grid;gap:6px;margin:8px 0 12px;align-items:center;}
+.m2{grid-template-columns:repeat(2,78px);} .v2{grid-template-columns:repeat(1,78px);} .m3{grid-template-columns:repeat(3,78px);}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;}
+button.secondary{background:#fff;color:#111827;}
+select{padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff;}
+canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;}
+.result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;}
+.eq{background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto;}
+.small{font-size:.92rem;color:var(--muted);}
+table{border-collapse:collapse;background:#fff;margin:8px 0;} th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;}
+.ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .warn{color:var(--amber);font-weight:700;}
+.task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;}
+textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;}
+code{background:#f3f4f6;padding:1px 4px;border-radius:4px;}
+@media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+<h1>Lab 25 Interactive: Linear Algebra and Optimization</h1>
+<p>
+Explore quadratic optimization, gradient descent, least squares, ridge regression, and equality constraints.
+The goal is to see optimization as matrix computation and geometry.
+</p>
+</header>
+
+<main>
+<section class="grid">
+<div class="card">
+<h2>1. Quadratic objective</h2>
+<p class="small">Study $f(x)=\frac12x^TQx-b^Tx$ with a symmetric $2\times2$ matrix $Q$.</p>
+<h3>Matrix $Q$</h3>
+<div class="matrix m2" id="Qinputs"></div>
+<h3>Vector $b$</h3>
+<div class="matrix v2" id="binputs"></div>
+<div class="row"><label>Step size $\alpha$</label><input id="alpha" type="number" step="0.01" value="0.15"></div>
+<div class="row"><label>Iterations</label><input id="iters" type="number" step="1" value="20"></div>
+<button onclick="presetQuad('good')">Positive definite</button>
+<button onclick="presetQuad('ill')">Ill-conditioned</button>
+<button onclick="presetQuad('badstep')">Too-large step</button>
+<button class="secondary" onclick="runGD()">Run gradient descent</button>
+<div class="result" id="quadResult"></div>
+</div>
+<div class="card">
+<h2>2. Gradient descent path</h2>
+<canvas id="gdCanvas" width="720" height="520"></canvas>
+<p class="small">Contours show the quadratic objective. Dots show gradient descent iterates.</p>
+</div>
+</section>
+
+<section class="grid">
+<div class="card">
+<h2>3. Least squares and ridge regression</h2>
+<p class="small">Fit a line $y=\beta_0+\beta_1t$ to three data points.</p>
+<div class="row"><label>$y_0$</label><input id="y0" type="number" step="0.1" value="1"></div>
+<div class="row"><label>$y_1$</label><input id="y1" type="number" step="0.1" value="2"></div>
+<div class="row"><label>$y_2$</label><input id="y2" type="number" step="0.1" value="2"></div>
+<div class="row"><label>Ridge $\lambda$</label><input id="ridge" type="number" step="0.01" value="0.1"></div>
+<button onclick="presetLS('simple')">Simple data</button>
+<button onclick="presetLS('noisy')">Noisy data</button>
+<button onclick="presetLS('flat')">Nearly flat</button>
+<div class="result" id="lsResult"></div>
+</div>
+<div class="card">
+<h2>4. Line fit visualization</h2>
+<canvas id="lsCanvas" width="720" height="430"></canvas>
+</div>
+</section>
+
+<section class="grid">
+<div class="card">
+<h2>5. Equality constrained quadratic problem</h2>
+<p class="small">Minimize $\frac12\|x-y\|^2$ subject to $x_1+x_2=d$. This is projection onto a line.</p>
+<div class="row"><label>$y_1$</label><input id="py1" type="number" step="0.1" value="2"></div>
+<div class="row"><label>$y_2$</label><input id="py2" type="number" step="0.1" value="-1"></div>
+<div class="row"><label>$d$</label><input id="pd" type="number" step="0.1" value="1"></div>
+<div class="result" id="kktResult"></div>
+</div>
+<div class="card">
+<h2>6. Projection geometry</h2>
+<canvas id="projCanvas" width="720" height="430"></canvas>
+</div>
+</section>
+
+<section class="card">
+<h2>7. Independent-study practice tasks with answers</h2>
+<div class="task"><strong>Task A.</strong> For $Q=\begin{bmatrix}4&1\\1&3\end{bmatrix}$ and $b=(1,2)^T$, find the minimizer of $\frac12x^TQx-b^Tx$.<br><strong>Answer:</strong> Solve $Qx=b$. The solution is $x=(1/11,7/11)^T$.</div>
+<div class="task"><strong>Task B.</strong> Why does $\lambda>0$ make ridge regression stable?<br><strong>Answer:</strong> Because $A^TA+\lambda I$ is positive definite: $x^T(A^TA+\lambda I)x=\|Ax\|^2+\lambda\|x\|^2>0$ for $x\neq0$.</div>
+<div class="task"><strong>Task C.</strong> What condition on $\alpha$ makes gradient descent converge for a positive definite quadratic?<br><strong>Answer:</strong> $0<\alpha<2/\lambda_{\max}(Q)$.</div>
+<div class="task"><strong>Task D.</strong> Write the KKT system for minimizing $\frac12\|x-y\|^2$ subject to $Cx=d$.<br><strong>Answer:</strong> $\begin{bmatrix}I&C^T\\C&0\end{bmatrix}\begin{bmatrix}x\\\lambda\end{bmatrix}=\begin{bmatrix}y\\d\end{bmatrix}$.</div>
+</section>
+
+<section class="card">
+<h2>8. Workspace</h2>
+<textarea placeholder="Write observations here. Copy final answers to your notebook or assignment."></textarea>
+</section>
+</main>
+
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(row=>`<tr>${row.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function createInputs(containerId,prefix,vals,cols){const el=document.getElementById(containerId);el.innerHTML=''; for(let i=0;i<vals.length;i++){for(let j=0;j<cols;j++){const input=document.createElement('input');input.type='number';input.step='0.1';input.value=vals[i][j] ?? vals[i];input.id=`${prefix}${i}${j}`;input.addEventListener('input',updateAll);el.appendChild(input);}}}
+function getMat(prefix,rows,cols){let M=[];for(let i=0;i<rows;i++){let r=[];for(let j=0;j<cols;j++)r.push(Number(document.getElementById(`${prefix}${i}${j}`).value)||0);M.push(r);}return M;}
+function setMat(prefix,M){for(let i=0;i<M.length;i++)for(let j=0;j<M[0].length;j++)document.getElementById(`${prefix}${i}${j}`).value=M[i][j];}
+function getVec(prefix,n){let v=[];for(let i=0;i<n;i++)v.push(Number(document.getElementById(`${prefix}${i}0`).value)||0);return v;}
+function setVec(prefix,v){for(let i=0;i<v.length;i++)document.getElementById(`${prefix}${i}0`).value=v[i];}
+function det2(A){return A[0][0]*A[1][1]-A[0][1]*A[1][0];}
+function inv2(A){let d=det2(A); if(Math.abs(d)<1e-12)return null; return [[A[1][1]/d,-A[0][1]/d],[-A[1][0]/d,A[0][0]/d]];}
+function mv(A,x){return A.map(r=>r.reduce((s,a,i)=>s+a*x[i],0));}
+function dot(a,b){return a.reduce((s,x,i)=>s+x*b[i],0);}
+function sub(a,b){return a.map((x,i)=>x-b[i]);}
+function add(a,b){return a.map((x,i)=>x+b[i]);}
+function scale(c,a){return a.map(x=>c*x);}
+function eig2sym(A){let a=A[0][0], b=A[0][1], d=A[1][1]; let tr=a+d, disc=Math.sqrt((a-d)*(a-d)+4*b*b); return [(tr-disc)/2,(tr+disc)/2];}
+let gdHist=[];
+function runGD(){let Q=getMat('Q',2,2), b=getVec('b',2), alpha=Number(document.getElementById('alpha').value)||0.1, iters=Number(document.getElementById('iters').value)||20; let x=[3,-2]; gdHist=[x.slice()]; for(let k=0;k<iters;k++){let grad=sub(mv(Q,x),b); x=sub(x,scale(alpha,grad)); gdHist.push(x.slice());} updateAll();}
+function updateQuad(){let Q=getMat('Q',2,2), b=getVec('b',2), eig=eig2sym(Q), inv=inv2(Q); let pd=eig[0]>1e-10; let xstar=inv?mv(inv,b):null; let alpha=Number(alphaEl().value)||0; let okStep=pd && alpha>0 && alpha<2/eig[1]; let msg=`Eigenvalues of Q: ${fmt(eig[0])}, ${fmt(eig[1])}<br>`; msg += pd?`<span class="ok">Q is positive definite.</span><br>`:`<span class="bad">Q is not positive definite, so the quadratic may not have a unique minimizer.</span><br>`; if(xstar) msg += `Stationary point from Qx=b: ${matHTML([[xstar[0]],[xstar[1]]])}`; msg += okStep?`<span class="ok">Step size satisfies 0 < α < 2/λmax.</span>`:`<span class="warn">Step size may be unstable or Q is not positive definite.</span>`; quadResult.innerHTML=msg; drawGD();}
+function alphaEl(){return document.getElementById('alpha');}
+function fval(Q,b,x){return 0.5*dot(x,mv(Q,x))-dot(b,x);}
+function drawGD(){let canvas=gdCanvas,ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height,sc=65;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);function pt(x,y){return [W/2+x*sc,H/2-y*sc];}ctx.strokeStyle='#eef2f7';ctx.lineWidth=1;for(let x=-5;x<=5;x++){let p=pt(x,0)[0];ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,H);ctx.stroke();}for(let y=-4;y<=4;y++){let p=pt(0,y)[1];ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(W,p);ctx.stroke();}let ox=pt(0,0)[0],oy=pt(0,0)[1];ctx.strokeStyle='#9ca3af';ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(W,oy);ctx.stroke();ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();
+let Q=getMat('Q',2,2), b=getVec('b',2), inv=inv2(Q); if(inv){let xs=mv(inv,b); let p=pt(xs[0],xs[1]); ctx.fillStyle='#065f46';ctx.beginPath();ctx.arc(p[0],p[1],7,0,2*Math.PI);ctx.fill();ctx.fillText('minimizer',p[0]+8,p[1]-8);}
+ctx.strokeStyle='#f97316';ctx.lineWidth=2; if(gdHist.length>1){ctx.beginPath();gdHist.forEach((x,i)=>{let p=pt(x[0],x[1]); if(i==0)ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[0],p[1]);});ctx.stroke();gdHist.forEach((x,i)=>{let p=pt(x[0],x[1]);ctx.fillStyle=i==0?'#991b1b':'#2563eb';ctx.beginPath();ctx.arc(p[0],p[1],4,0,2*Math.PI);ctx.fill();});}
+}
+function presetQuad(t){if(t==='good'){setMat('Q',[[4,1],[1,3]]);setVec('b',[1,2]);alpha.value=0.15;iters.value=20;} if(t==='ill'){setMat('Q',[[10,0],[0,0.5]]);setVec('b',[1,1]);alpha.value=0.12;iters.value=35;} if(t==='badstep'){setMat('Q',[[4,1],[1,3]]);setVec('b',[1,2]);alpha.value=0.7;iters.value=12;} runGD();}
+function lsSolve(lambda){let y=[Number(y0.value)||0,Number(y1.value)||0,Number(y2.value)||0]; let A=[[1,0],[1,1],[1,2]]; let AtA=[[3,3],[3,5]]; let Atb=[y[0]+y[1]+y[2], y[1]+2*y[2]]; let M=[[AtA[0][0]+lambda,AtA[0][1]],[AtA[1][0],AtA[1][1]+lambda]]; return mv(inv2(M),Atb);}
+function updateLS(){let lam=Number(ridge.value)||0; let xls=lsSolve(0), xr=lsSolve(lam); lsResult.innerHTML=`Least squares coefficients $\\beta=(\\beta_0,\\beta_1)^T$: ${matHTML([[xls[0]],[xls[1]]])} Ridge coefficients with $\\lambda=${fmt(lam)}$: ${matHTML([[xr[0]],[xr[1]]])}`; drawLS();}
+function drawLS(){let canvas=lsCanvas,ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);let y=[Number(y0.value)||0,Number(y1.value)||0,Number(y2.value)||0];let xs=[0,1,2];let xmin=-0.2,xmax=2.2,ymin=Math.min(...y)-1,ymax=Math.max(...y)+1;function pt(x,yv){return [40+(x-xmin)/(xmax-xmin)*(W-70),H-35-(yv-ymin)/(ymax-ymin)*(H-70)];}ctx.strokeStyle='#9ca3af';ctx.lineWidth=1.5;let p0=pt(xmin,0),p1=pt(xmax,0);ctx.beginPath();ctx.moveTo(p0[0],p0[1]);ctx.lineTo(p1[0],p1[1]);ctx.stroke();xs.forEach((x,i)=>{let p=pt(x,y[i]);ctx.fillStyle='#111827';ctx.beginPath();ctx.arc(p[0],p[1],6,0,2*Math.PI);ctx.fill();ctx.fillText(`(${x},${fmt(y[i])})`,p[0]+8,p[1]-8);});function line(beta,color,label){ctx.strokeStyle=color;ctx.lineWidth=3;let a=pt(xmin,beta[0]+beta[1]*xmin),b=pt(xmax,beta[0]+beta[1]*xmax);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();ctx.fillStyle=color;ctx.fillText(label,b[0]-120,b[1]-10);}line(lsSolve(0),'#2563eb','least squares');line(lsSolve(Number(ridge.value)||0),'#f97316','ridge');}
+function presetLS(t){if(t==='simple'){y0.value=1;y1.value=2;y2.value=2;ridge.value=0.1;} if(t==='noisy'){y0.value=1.2;y1.value=4.4;y2.value=3.1;ridge.value=0.5;} if(t==='flat'){y0.value=2;y1.value=2.1;y2.value=1.9;ridge.value=1;} updateAll();}
+function updateKKT(){let y=[Number(py1.value)||0,Number(py2.value)||0], d=Number(pd.value)||0; let s=(y[0]+y[1]-d)/2; let x=[y[0]-s,y[1]-s]; kktResult.innerHTML=`Projection of $y=(${fmt(y[0])},${fmt(y[1])})$ onto $x_1+x_2=${fmt(d)}$ is ${matHTML([[x[0]],[x[1]]])} Lagrange multiplier $\\lambda=${fmt(s)}$.`; drawProj();}
+function drawProj(){let canvas=projCanvas,ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height,sc=70;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);function pt(x,y){return [W/2+x*sc,H/2-y*sc];}ctx.strokeStyle='#eef2f7';for(let x=-5;x<=5;x++){let p=pt(x,0)[0];ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,H);ctx.stroke();}for(let y=-3;y<=3;y++){let p=pt(0,y)[1];ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(W,p);ctx.stroke();}let d=Number(pd.value)||0, y=[Number(py1.value)||0,Number(py2.value)||0], s=(y[0]+y[1]-d)/2, x=[y[0]-s,y[1]-s];ctx.strokeStyle='#2563eb';ctx.lineWidth=3;let a=pt(-4,d+4),b=pt(4,d-4);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();let py=pt(y[0],y[1]),px=pt(x[0],x[1]);ctx.strokeStyle='#f97316';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(py[0],py[1]);ctx.lineTo(px[0],px[1]);ctx.stroke();ctx.fillStyle='#991b1b';ctx.beginPath();ctx.arc(py[0],py[1],6,0,2*Math.PI);ctx.fill();ctx.fillText('y',py[0]+8,py[1]-8);ctx.fillStyle='#065f46';ctx.beginPath();ctx.arc(px[0],px[1],6,0,2*Math.PI);ctx.fill();ctx.fillText('projection',px[0]+8,px[1]-8);}
+function updateAll(){updateQuad();updateLS();updateKKT(); if(window.MathJax){MathJax.typesetPromise();}}
+createInputs('Qinputs','Q',[[4,1],[1,3]],2);createInputs('binputs','b',[[1],[2]],1);
+['alpha','iters','y0','y1','y2','ridge','py1','py2','pd'].forEach(id=>document.getElementById(id).addEventListener('input',updateAll));
+runGD();
+</script>
+</body>
+</html>

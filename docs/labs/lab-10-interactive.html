@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 10 Interactive: Inner Products, Projection, QR, and Adjoints</title>
+<script>
+window.MathJax = {tex: {inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']]}, svg: {fontCache: 'global'}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--bg:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);}header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;}header h1{margin:0 0 8px;font-size:1.8rem;}header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;}main{max-width:1240px;margin:0 auto;padding:24px}.grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px}h2{font-size:1.25rem;margin:0 0 12px}h3{font-size:1.05rem;margin:18px 0 8px}p{line-height:1.55}label{display:block;margin:8px 0 4px;font-weight:600}input[type=number]{width:66px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff}.matrix{display:grid;gap:6px;margin:8px 0 12px;align-items:center}.m2{grid-template-columns:repeat(2,76px)}.m3{grid-template-columns:repeat(3,76px)}.m32{grid-template-columns:repeat(2,76px)}.m42{grid-template-columns:repeat(2,76px)}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0}button.secondary{background:#fff;color:#111827}select{padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff}canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto}.result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto}.eq{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto}.small{font-size:.92rem;color:var(--muted)}table{border-collapse:collapse;background:#fff;margin:8px 0}th,td{border:1px solid var(--line);padding:7px 10px;text-align:right}.ok{color:var(--green);font-weight:700}.bad{color:var(--red);font-weight:700}.warn{color:var(--amber);font-weight:700}.task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0}textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit}code{background:#f3f4f6;padding:1px 4px;border-radius:4px}@media(max-width:920px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<h1>Lab 10 Interactive: Inner Products, Projection, QR, and Adjoints</h1>
+<p>Explore how an inner product creates geometry: length, angle, orthogonality, projection, QR factorization, least squares, and adjoints.</p>
+</header>
+<main>
+<section class="grid">
+<div class="card">
+<h2>1. Inner product and angle in $\mathbb R^3$</h2>
+<p class="small">Enter two vectors. The tool computes $x\cdot y$, norms, and the angle.</p>
+<h3>$x$</h3><div class="matrix m3" id="xInputs"></div>
+<h3>$y$</h3><div class="matrix m3" id="yInputs"></div>
+<button onclick="vecPreset('orthogonal')">Orthogonal example</button><button onclick="vecPreset('acute')">Acute angle</button><button onclick="vecPreset('obtuse')">Obtuse angle</button>
+<div class="result" id="innerResult"></div>
+</div>
+<div class="card">
+<h2>2. Projection onto a line in the plane</h2>
+<p class="small">Orange is $y$. Blue is the line $L=\operatorname{span}\{w\}$. Black is $\operatorname{proj}_L(y)$. Red is the residual.</p>
+<div class="row"><label>$y=(y_1,y_2)$</label><input id="py1" type="number" value="3"><input id="py2" type="number" value="2"></div>
+<div class="row"><label>$w=(w_1,w_2)$</label><input id="pw1" type="number" value="2"><input id="pw2" type="number" value="1"></div>
+<button onclick="projPreset('basic')">Basic example</button><button onclick="projPreset('orth')">Orthogonal residual</button><button class="secondary" onclick="projPreset('vertical')">Vertical line</button>
+<canvas id="projCanvas" width="720" height="520"></canvas>
+<div class="result" id="projResult"></div>
+</div>
+</section>
+
+<section class="grid">
+<div class="card">
+<h2>3. Gram--Schmidt and QR</h2>
+<p class="small">Enter a $3\times2$ matrix $A=[b_1\ b_2]$. The tool computes an orthonormal basis and $A=QR$.</p>
+<div class="matrix m32" id="A32Inputs"></div>
+<button onclick="qrPreset('lecture')">Lecture-style example</button><button onclick="qrPreset('practice')">Practice example</button><button class="secondary" onclick="qrPreset('dependent')">Dependent columns</button>
+<div class="result" id="qrResult"></div>
+</div>
+<div class="card">
+<h2>4. Least squares by QR</h2>
+<p class="small">Fit $b\approx c_0+c_1t$ using four data points. This is projection onto the column space of $A=[1\ t]$.</p>
+<div class="row"><label>$b$ values</label><input id="b0" type="number" value="1.1" step="0.1"><input id="b1" type="number" value="1.9" step="0.1"><input id="b2" type="number" value="3.2" step="0.1"><input id="b3" type="number" value="3.9" step="0.1"></div>
+<button onclick="lsPreset('line')">Near line</button><button onclick="lsPreset('noisy')">Noisy data</button>
+<div class="result" id="lsResult"></div>
+<canvas id="lsCanvas" width="720" height="430"></canvas>
+</div>
+</section>
+
+<section class="grid">
+<div class="card">
+<h2>5. Orthogonal matrix test</h2>
+<p class="small">A matrix is orthogonal when $U^TU=I$. Orthogonal matrices preserve lengths and angles.</p>
+<div class="matrix m2" id="UInputs"></div>
+<button onclick="orthPreset('rotation')">Rotation</button><button onclick="orthPreset('reflection')">Reflection</button><button class="secondary" onclick="orthPreset('not')">Not orthogonal</button>
+<div class="result" id="orthResult"></div>
+</div>
+<div class="card">
+<h2>6. Complex adjoint</h2>
+<p class="small">For complex matrices, the adjoint is $A^*=\overline A^T$, not just $A^T$.</p>
+<p>Use entries $a+bi$.</p>
+<div class="matrix m2" id="CInputs"></div>
+<button onclick="adjPreset('basic')">Basic complex example</button><button onclick="adjPreset('real')">Real matrix</button>
+<div class="result" id="adjResult"></div>
+</div>
+</section>
+
+<section class="card">
+<h2>7. Independent-study practice tasks with answers</h2>
+<div class="task"><strong>Task A.</strong> For $x=(1,2,-1)$ and $y=(3,0,4)$, compute the angle. <br><strong>Answer:</strong> $x\cdot y=-1$, $\|x\|=\sqrt6$, $\|y\|=5$, so $\cos\theta=-1/(5\sqrt6)$.</div>
+<div class="task"><strong>Task B.</strong> Project $y=(4,1,2)$ onto $\operatorname{span}\{(1,2,0)\}$. <br><strong>Answer:</strong> The projection is $(6/5,12/5,0)$ and the residual is $(14/5,-7/5,2)$.</div>
+<div class="task"><strong>Task C.</strong> Apply Gram--Schmidt to $(1,1,1)$ and $(1,0,1)$. <br><strong>Answer:</strong> An orthonormal basis is $(1,1,1)/\sqrt3$ and $(1,-2,1)/\sqrt6$.</div>
+<div class="task"><strong>Task D.</strong> Why is QR preferred for least squares? <br><strong>Answer:</strong> QR avoids explicitly forming $A^TA$, which squares the condition number and can magnify numerical errors.</div>
+<div class="task"><strong>Task E.</strong> Compute $A^*$ for $A=\begin{bmatrix}1&i\\2&1-i\end{bmatrix}$. <br><strong>Answer:</strong> $A^*=\begin{bmatrix}1&2\\-i&1+i\end{bmatrix}$.</div>
+</section>
+<section class="card"><h2>8. Workspace</h2><textarea placeholder="Write observations here. Copy final answers to your notebook or assignment."></textarea></section>
+</main>
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(row=>`<tr>${row.map(x=>`<td>${typeof x==='string'?x:fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function createInputs(containerId,prefix,vals,cols){const el=document.getElementById(containerId);el.innerHTML=''; for(let i=0;i<vals.length;i++){for(let j=0;j<cols;j++){const input=document.createElement('input');input.type='number';input.step='0.1';input.value=vals[i][j] ?? vals[i];input.id=`${prefix}${i}${j}`;input.addEventListener('input',update);el.appendChild(input);}}}
+function createTextInputs(containerId,prefix,vals,cols){const el=document.getElementById(containerId);el.innerHTML=''; for(let i=0;i<vals.length;i++){for(let j=0;j<cols;j++){const input=document.createElement('input');input.type='text';input.value=vals[i][j];input.id=`${prefix}${i}${j}`;input.addEventListener('input',update);el.appendChild(input);}}}
+function getMat(prefix,rows,cols){let M=[];for(let i=0;i<rows;i++){let r=[];for(let j=0;j<cols;j++)r.push(Number(document.getElementById(`${prefix}${i}${j}`).value)||0);M.push(r);}return M;}
+function setMat(prefix,M){for(let i=0;i<M.length;i++)for(let j=0;j<M[0].length;j++)document.getElementById(`${prefix}${i}${j}`).value=M[i][j];}
+function dot(a,b){return a.reduce((s,x,i)=>s+x*b[i],0)}function normv(a){return Math.sqrt(dot(a,a))}
+function transpose(A){return A[0].map((_,j)=>A.map(r=>r[j]))}function mmul(A,B){let C=Array.from({length:A.length},()=>Array(B[0].length).fill(0));for(let i=0;i<A.length;i++)for(let j=0;j<B[0].length;j++)for(let k=0;k<B.length;k++)C[i][j]+=A[i][k]*B[k][j];return C}
+function updateInner(){let x=getMat('x',3,1).map(r=>r[0]), y=getMat('y',3,1).map(r=>r[0]);let d=dot(x,y), nx=normv(x), ny=normv(y);let angle=(nx*ny>1e-12)?Math.acos(Math.max(-1,Math.min(1,d/(nx*ny)))):NaN;innerResult.innerHTML=`$x\cdot y=${fmt(d)}$<br>$\|x\|=${fmt(nx)}$, $\|y\|=${fmt(ny)}$<br>Angle $\theta=${fmt(angle)}$ radians = ${fmt(angle*180/Math.PI)} degrees.`;typeset();}
+function vecPreset(t){if(t==='orthogonal'){setMat('x',[[1],[1],[0]]);setMat('y',[[1],[-1],[0]])}if(t==='acute'){setMat('x',[[1],[2],[3]]);setMat('y',[[2],[1],[1]])}if(t==='obtuse'){setMat('x',[[1],[2],[-1]]);setMat('y',[[3],[0],[4]])}update()}
+function pt(x,y,W,H,sc){return [W/2+x*sc,H/2-y*sc]}
+function updateProj(){let y=[Number(py1.value)||0,Number(py2.value)||0], w=[Number(pw1.value)||0,Number(pw2.value)||0];let ww=dot(w,w);let p=[0,0], r=[0,0];if(ww>1e-12){let c=dot(y,w)/ww;p=[c*w[0],c*w[1]];r=[y[0]-p[0],y[1]-p[1]]}projResult.innerHTML=`Projection: $(${fmt(p[0])},${fmt(p[1])})$<br>Residual: $(${fmt(r[0])},${fmt(r[1])})$<br>Check residual dot $w$: ${fmt(dot(r,w))}.`;drawProj(y,w,p,r);typeset();}
+function drawVec(ctx,v,color,label,W,H,sc){let o=pt(0,0,W,H,sc), q=pt(v[0],v[1],W,H,sc);ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(o[0],o[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();ctx.beginPath();ctx.arc(q[0],q[1],5,0,2*Math.PI);ctx.fill();ctx.font='15px system-ui';ctx.fillText(label,q[0]+8,q[1]-8)}
+function drawProj(y,w,p,r){let c=projCanvas,ctx=c.getContext('2d'),W=c.width,H=c.height,sc=55;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);ctx.strokeStyle='#eef2f7';ctx.lineWidth=1;for(let x=-6;x<=6;x++){let xx=pt(x,0,W,H,sc)[0];ctx.beginPath();ctx.moveTo(xx,0);ctx.lineTo(xx,H);ctx.stroke()}for(let yv=-4;yv<=4;yv++){let yy=pt(0,yv,W,H,sc)[1];ctx.beginPath();ctx.moveTo(0,yy);ctx.lineTo(W,yy);ctx.stroke()}let o=pt(0,0,W,H,sc);ctx.strokeStyle='#9ca3af';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,o[1]);ctx.lineTo(W,o[1]);ctx.stroke();ctx.beginPath();ctx.moveTo(o[0],0);ctx.lineTo(o[0],H);ctx.stroke();if(normv(w)>1e-12){let u=[w[0]/normv(w),w[1]/normv(w)];ctx.strokeStyle='#2563eb';ctx.lineWidth=3;let a=pt(-6*u[0],-6*u[1],W,H,sc),b=pt(6*u[0],6*u[1],W,H,sc);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke()}drawVec(ctx,y,'#f97316','y',W,H,sc);drawVec(ctx,p,'#111827','proj',W,H,sc);let pp=pt(p[0],p[1],W,H,sc), yy=pt(y[0],y[1],W,H,sc);ctx.strokeStyle='#991b1b';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(pp[0],pp[1]);ctx.lineTo(yy[0],yy[1]);ctx.stroke();}
+function projPreset(t){if(t==='basic'){py1.value=3;py2.value=2;pw1.value=2;pw2.value=1}if(t==='orth'){py1.value=1;py2.value=3;pw1.value=1;pw2.value=0}if(t==='vertical'){py1.value=3;py2.value=2;pw1.value=0;pw2.value=1}update()}
+function gramSchmidt(A){let m=A.length,n=A[0].length,Q=Array.from({length:m},()=>Array(n).fill(0)),R=Array.from({length:n},()=>Array(n).fill(0));for(let j=0;j<n;j++){let v=A.map(r=>r[j]);for(let i=0;i<j;i++){let qi=Q.map(r=>r[i]);R[i][j]=dot(qi,A.map(r=>r[j]));v=v.map((x,k)=>x-R[i][j]*qi[k])}R[j][j]=normv(v);if(R[j][j]<1e-10)return null;for(let k=0;k<m;k++)Q[k][j]=v[k]/R[j][j]}return {Q,R}}
+function updateQR(){let A=getMat('A',3,2);let out=gramSchmidt(A);if(!out){qrResult.innerHTML='<span class="bad">Columns are dependent or nearly dependent. QR with two independent columns fails.</span>';return}let QTQ=mmul(transpose(out.Q),out.Q);qrResult.innerHTML=`$Q=${matHTML(out.Q)} R=${matHTML(out.R)} Q^TQ=${matHTML(QTQ)} QR=${matHTML(mmul(out.Q,out.R))}`;typeset();}
+function qrPreset(t){if(t==='lecture')setMat('A',[[1,1],[1,0],[0,1]]);if(t==='practice')setMat('A',[[1,1],[1,0],[1,1]]);if(t==='dependent')setMat('A',[[1,2],[2,4],[3,6]]);update()}
+function updateLS(){let A=[[1,1],[1,2],[1,3],[1,4]], b=[Number(b0.value)||0,Number(b1.value)||0,Number(b2.value)||0,Number(b3.value)||0];let out=gramSchmidt(A);let Qtb=mmul(transpose(out.Q),b.map(x=>[x])).map(r=>r[0]);let R=out.R;let x1=Qtb[1]/R[1][1], x0=(Qtb[0]-R[0][1]*x1)/R[0][0];lsResult.innerHTML=`Least-squares line: $\hat b=${fmt(x0)}+${fmt(x1)}t$<br>Coefficients: $c_0=${fmt(x0)}$, $c_1=${fmt(x1)}$.`;drawLS(b,x0,x1);typeset();}
+function drawLS(b,c0,c1){let c=lsCanvas,ctx=c.getContext('2d'),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);let xmin=0,xmax=5,ymin=0,ymax=6;function P(x,y){return [50+(x-xmin)/(xmax-xmin)*(W-90),H-40-(y-ymin)/(ymax-ymin)*(H-80)]}ctx.strokeStyle='#9ca3af';ctx.lineWidth=1.5;let p0=P(0,0),p1=P(5,0),p2=P(0,6);ctx.beginPath();ctx.moveTo(p0[0],p0[1]);ctx.lineTo(p1[0],p1[1]);ctx.moveTo(p0[0],p0[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();ctx.strokeStyle='#2563eb';ctx.lineWidth=3;let a=P(1,c0+c1),d=P(4,c0+4*c1);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(d[0],d[1]);ctx.stroke();ctx.fillStyle='#f97316';for(let i=0;i<4;i++){let p=P(i+1,b[i]);ctx.beginPath();ctx.arc(p[0],p[1],6,0,2*Math.PI);ctx.fill()}ctx.fillStyle='#111827';ctx.font='15px system-ui';ctx.fillText('data and fitted line',20,24)}
+function lsPreset(t){if(t==='line'){b0.value=1.1;b1.value=1.9;b2.value=3.2;b3.value=3.9}if(t==='noisy'){b0.value=2;b1.value=2.9;b2.value=4.1;b3.value=5.2}update()}
+function updateOrth(){let U=getMat('U',2,2);let UTU=mmul(transpose(U),U);let err=Math.sqrt(UTU.flat().reduce((s,x,i)=>s+(x-([1,0,0,1][i]))**2,0));orthResult.innerHTML=`$U^TU=${matHTML(UTU)} `+(err<1e-8?`<span class='ok'>Orthogonal.</span> $U^{-1}=U^T$.`:`<span class='bad'>Not orthogonal.</span>`);typeset();}
+function orthPreset(t){if(t==='rotation')setMat('U',[[0,-1],[1,0]]);if(t==='reflection')setMat('U',[[1,0],[0,-1]]);if(t==='not')setMat('U',[[1,1],[0,1]]);update()}
+function parseC(s){s=String(s).replace(/\s+/g,'').replace('−','-'); if(s==='i')return [0,1]; if(s==='-i')return [0,-1]; let m=s.match(/^([+-]?\d*\.?\d+)?([+-]\d*\.?\d*)i$/); if(m){let re=Number(m[1]||0); let imstr=m[2]; let im=(imstr==='+'?1:imstr==='-'?-1:Number(imstr)); return [re,im]} if(s.endsWith('i')){let t=s.slice(0,-1); return [0, Number(t)|| (t==='-'?-1:1)]} return [Number(s)||0,0]}
+function cstr(z){let [a,b]=z;if(Math.abs(b)<1e-10)return fmt(a); if(Math.abs(a)<1e-10)return (Math.abs(b-1)<1e-10?'i':Math.abs(b+1)<1e-10?'-i':fmt(b)+'i'); return fmt(a)+(b>=0?'+':'')+(Math.abs(b-1)<1e-10?'i':Math.abs(b+1)<1e-10?'-i':fmt(b)+'i')}
+function updateAdj(){let M=[];for(let i=0;i<2;i++){let row=[];for(let j=0;j<2;j++)row.push(parseC(document.getElementById(`C${i}${j}`).value));M.push(row)}let adj=[[ [M[0][0][0],-M[0][0][1]],[M[1][0][0],-M[1][0][1]] ],[[M[0][1][0],-M[0][1][1]],[M[1][1][0],-M[1][1][1]] ]];adjResult.innerHTML=`$A^*=\overline A^T$ = ${matHTML(adj.map(row=>row.map(cstr)))}`;typeset();}
+function adjPreset(t){if(t==='basic'){document.getElementById('C00').value='1';document.getElementById('C01').value='i';document.getElementById('C10').value='2';document.getElementById('C11').value='1-i'}if(t==='real'){document.getElementById('C00').value='1';document.getElementById('C01').value='2';document.getElementById('C10').value='3';document.getElementById('C11').value='4'}update()}
+function typeset(){if(window.MathJax && MathJax.typesetPromise){MathJax.typesetPromise();}}
+function update(){updateInner();updateProj();updateQR();updateLS();updateOrth();updateAdj();}
+createInputs('xInputs','x',[[1],[2],[-1]],1);createInputs('yInputs','y',[[3],[0],[4]],1);createInputs('A32Inputs','A',[[1,1],[1,0],[0,1]],2);createInputs('UInputs','U',[[0,-1],[1,0]],2);createTextInputs('CInputs','C',[['1','i'],['2','1-i']],2);['py1','py2','pw1','pw2','b0','b1','b2','b3'].forEach(id=>document.getElementById(id).addEventListener('input',update));update();
+</script>
+</body>
+</html>

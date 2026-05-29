@@ -1,0 +1,131 @@
+# Lab 26: Linear Algebra and Probability {.unnumbered}
+
+# Lab 26: Linear Algebra and Probability
+
+This independent-study lab accompanies Chapter 26. The goal is to connect random vectors, covariance matrices, Gaussian distributions, PCA directions, whitening, and high-dimensional probability through computation.
+
+## Python practice notebook
+
+Download and work through the notebook first:
+
+- [Download Lab 26 Python notebook](lab-26-linear-algebra-probability-independent-study.ipynb)
+- [Open Lab 26 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-26-linear-algebra-probability-independent-study.ipynb)
+
+The notebook includes worked solutions and similar practice questions. It covers:
+
+- mean vectors and sample covariance;
+- covariance eigenvectors and covariance ellipses;
+- affine transformations of random vectors;
+- whitening and decorrelation;
+- high-dimensional random directions;
+- sample covariance rank limitations;
+- random matrices and random covariance spectra.
+
+## Interactive lab
+
+After completing the Python notebook, use the interactive HTML lab:
+
+[Open Lab 26 Interactive HTML](lab-26-interactive.html)
+
+The interactive lab lets you adjust a $2\times 2$ covariance matrix, visualize its ellipse, observe its eigenvalues and principal directions, simulate Gaussian data, apply a linear transformation, and explore high-dimensional near-orthogonality.
+
+## Main formulas
+
+For a random vector $X\in\mathbb R^d$,
+$$
+\mu=\mathbb E[X],
+\qquad
+\Sigma=\operatorname{Cov}(X)=\mathbb E[(X-\mu)(X-\mu)^T].
+$$
+
+For every direction $a\in\mathbb R^d$,
+$$
+a^T\Sigma a=\operatorname{Var}(a^TX).
+$$
+
+If $Y=AX+b$, then
+$$
+\mathbb E[Y]=A\mu+b,
+\qquad
+\operatorname{Cov}(Y)=A\Sigma A^T.
+$$
+
+If $\Sigma=Q\Lambda Q^T$ is positive definite, a whitening matrix is
+$$
+W=\Lambda^{-1/2}Q^T.
+$$
+
+## Independent-study questions with answers
+
+### Question 1
+Let
+$$
+\Sigma=\begin{bmatrix}4&3\\3&4\end{bmatrix}.
+$$
+Find its eigenvalues and explain the principal directions.
+
+<details>
+<summary>Show answer</summary>
+
+The eigenvectors are proportional to $(1,1)^T$ and $(1,-1)^T$. The corresponding eigenvalues are $7$ and $1$. Therefore the random vector has larger variance along the direction $(1,1)$ and smaller variance along $(1,-1)$.
+
+</details>
+
+### Similar practice 1
+Try
+$$
+\Sigma=\begin{bmatrix}5&2\\2&5\end{bmatrix}.
+$$
+Find the principal directions and eigenvalues.
+
+<details>
+<summary>Show answer</summary>
+
+The eigenvectors are again proportional to $(1,1)^T$ and $(1,-1)^T$. The eigenvalues are $7$ and $3$.
+
+</details>
+
+### Question 2
+Suppose $Y=AX+b$. Why does $b$ not appear in the covariance formula?
+
+<details>
+<summary>Show answer</summary>
+
+Because covariance is computed after subtracting the mean:
+$$
+Y-\mathbb E[Y]=AX+b-(A\mathbb E[X]+b)=A(X-\mathbb E[X]).
+$$
+Thus
+$$
+\operatorname{Cov}(Y)=A\operatorname{Cov}(X)A^T.
+$$
+
+</details>
+
+### Question 3
+If $X_c\in\mathbb R^{500\times 20}$ is centered and
+$$
+S=\frac1{19}X_cX_c^T,
+$$
+what is the largest possible rank of $S$?
+
+<details>
+<summary>Show answer</summary>
+
+The centered columns sum to zero, so $\operatorname{rank}(X_c)\le 19$. Hence
+$$
+\operatorname{rank}(S)\le 19.
+$$
+Therefore $S$ is singular as a $500\times500$ matrix.
+
+</details>
+
+## AI companion prompts
+
+Try the following prompts and verify the outputs by hand or with Python.
+
+1. “Give an intuitive explanation of covariance as a positive semidefinite matrix.”
+2. “Generate Python code to simulate a two-dimensional Gaussian with covariance matrix $\begin{bmatrix}4&3\\3&4\end{bmatrix}$.”
+3. “Explain why random vectors in high dimensions tend to be nearly orthogonal.”
+4. “Create a small example showing whitening by eigenvalue decomposition.”
+5. “Explain why sample covariance is singular when $d>n-1$.”
