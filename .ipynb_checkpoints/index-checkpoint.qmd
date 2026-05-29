@@ -11,7 +11,7 @@ date: "May 29, 2026"
 
 Welcome to **MATH 5110 Applied Linear Algebra and Matrix Analysis**.
 
-This online book is designed for graduate students studying applied linear algebra, matrix analysis, computation, data science, and artificial intelligence. The goal is to present linear algebra not only as a collection of techniques, but also as a language for understanding modern data, algorithms, and mathematical modeling.
+This onbook is an applied, story-driven introduction to **linear algebra and matrix analysis** for graduate students in **[MS Applied Mathematics](https://graduate.northeastern.edu/programs/ms-applied-mathematics/master-of-science-in-applied-mathematics/)** and **[MS Statistics](https://graduate.northeastern.edu/programs/ms-statistics/master-of-science-in-statistics/)** at **Northeastern University**. It is designed for graduate students studying applied linear algebra, matrix analysis, computation, data science, and artificial intelligence. The goal is to present linear algebra not only as a collection of techniques, but also as a language for understanding modern data, algorithms, and mathematical modeling.
 
 
 ## Course Information {.unnumbered}
@@ -26,9 +26,9 @@ This online book is designed for graduate students studying applied linear algeb
 
 ## About the Author {.unnumbered}
 
-**He Wang** is an Associate Teaching Professor in the Department of Mathematics at Northeastern University. He serves as Program Director for several graduate programs, including MS Applied Mathematics, MS Mathematics, MS Statistics, and MS Operations Research.
+**He Wang** is an **Associate Teaching Professor** in the Department of Mathematics at Northeastern University. He serves as **Program Director** for several graduate programs, including **[MS Applied Mathematics](https://graduate.northeastern.edu/programs/ms-applied-mathematics/master-of-science-in-applied-mathematics/)**,  **[MS Statistics](https://graduate.northeastern.edu/programs/ms-statistics/master-of-science-in-statistics/)**, and [MS Mathematics](https://graduate.northeastern.edu/programs/ms-mathematics/master-of-science-in-mathematics/). 
 
-His teaching and academic interests include applied linear algebra, matrix analysis, mathematical foundations of data science and AI, optimization, topology, and computational mathematics.
+His teaching and academic interests include algebraic topology, mathematical foundations of data science and AI, optimization, and computational mathematics.
 
 ## About This Book {.unnumbered}
 
