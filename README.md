@@ -6,13 +6,14 @@
 
 This repository contains the online interactive book for **MATH 5110: Applied Linear Algebra and Matrix Analysis**.
 
-This book is an applied, story-driven introduction to **linear algebra and matrix analysis** for graduate students. It begins with the concrete problem of solving linear equations, then gradually uncovers the deeper structures behind the computations: vector spaces, linear transformations, bases, coordinates, eigenvectors, inner products, projections, factorizations, spectral theory, and modern applications in data science and AI.
+This book is an applied, story-driven introduction to **linear algebra and matrix analysis** for graduate students in **[MS Applied Mathematics](https://graduate.northeastern.edu/programs/ms-applied-mathematics/master-of-science-in-applied-mathematics/)** and **[MS Statistics](https://graduate.northeastern.edu/programs/ms-statistics/master-of-science-in-statistics/)** at **Northeastern University**. It begins with the concrete problem of solving linear equations, then gradually uncovers the deeper structures behind the computations: vector spaces, linear transformations, bases, coordinates, eigenvectors, inner products, projections, factorizations, spectral theory, and modern applications in data science and AI.
 
 The guiding idea is:
 
 > Linear algebra is the language of structure, computation, geometry, data, and modern intelligent systems.
 
 ---
+
 
 ## What makes this book different
 
@@ -319,13 +320,10 @@ For each chapter:
 
 ## Interactive labs
 
-Current labs include:
+  labs include:
 
-- **Lab 1. Linear Systems:** interactive systems, rank, row reduction, and geometry.
-- **Lab 2. Matrix Algebra:** matrix products, inverses, rank, transpose, Gram matrices, and LU factorization.
-
-Planned and developing labs include:
-
+- Linear Systems:interactive systems, rank, row reduction, and geometry.
+- Matrix Algebra: matrix products, inverses, rank, transpose, Gram matrices, and LU factorization.
 - vector spaces and subspaces;
 - bases and coordinates;
 - determinants;
