@@ -178,5 +178,8 @@
   },
   "math-5110-book-overview.qmd": {
     "math-5110-book-overview.html": "f693a7f5"
+  },
+  "chapters/chapter-history-linear-algebra-timeline.qmd": {
+    "chapter-history-linear-algebra-timeline.html": "dc6f298a"
   }
 }

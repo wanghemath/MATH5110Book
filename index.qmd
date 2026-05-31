@@ -97,6 +97,18 @@ flowchart TD
   D --> V[Random Variables]
 ```
 
+# History of Linear Algebra: 
+
+Timeline page: [Timeline.html](chapters/Timeline.html)
+
+```{=html}
+<iframe
+  src="chapters/Timeline.html"
+  width="100%"
+  height="3600"
+  style="border:1px solid #ddd; border-radius:12px;">
+</iframe>
+```
 
 # Course learning arc
 

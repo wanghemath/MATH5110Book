@@ -27,6 +27,7 @@ book:
     - index.qmd
     - preface.qmd
     - math-5110-book-overview.qmd
+    - chapters/chapter-history-linear-algebra-timeline.qmd
     - chapters/chapter-01-linear-systems.qmd
     - labs/lab-01-linear-systems.qmd
     - chapters/chapter-02-matrix-algebra.qmd
@@ -81,6 +82,7 @@ book:
     - labs/lab-26-linear-algebra-probability.qmd
     - chapters/chapter-27-matrix-calculus.qmd
     - labs/lab-27-matrix-calculus.qmd
+
     
 format:
   html:

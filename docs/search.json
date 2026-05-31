@@ -290,6 +290,756 @@
     ]
   },
   {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "",
+    "text": "1. How to Read This Chapter\nLinear algebra did not begin as an abstract theory of vector spaces. It began with a practical problem:\nOver more than two thousand years, this practical question became a language for geometry, mechanics, computation, statistics, optimization, signal processing, machine learning, and artificial intelligence.\nThis chapter gives a historical timeline of the major ideas in linear algebra. The goal is not to memorize dates, but to see how the subject grew from equations to transformations, from coordinates to spaces, from matrices to algorithms, and finally from finite-dimensional vectors to modern data and AI.\nThis chapter is organized in three layers.\nThe main storyline is:\n\\[\n\\text{Equations}\n\\rightarrow\n\\text{Determinants}\n\\rightarrow\n\\text{Matrices}\n\\rightarrow\n\\text{Vector Spaces}\n\\rightarrow\n\\text{Transformations}\n\\rightarrow\n\\text{Spectral Theory}\n\\rightarrow\n\\text{Algorithms}\n\\rightarrow\n\\text{Data and AI}.\n\\]",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#the-nine-chapters-and-elimination",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#the-nine-chapters-and-elimination",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "3.1 The Nine Chapters and Elimination",
+    "text": "3.1 The Nine Chapters and Elimination\nThe Chinese text The Nine Chapters on the Mathematical Art contains procedures that are very close to what we now call Gaussian elimination.\nModern row operations are:\n\nswap two rows;\nmultiply a row by a nonzero scalar;\nadd a multiple of one row to another row.\n\nThese operations do not change the solution set.\nIn matrix form:\n\\[\n\\left[\n\\begin{array}{ccc|c}\n2 & 3 & -1 & 5\\\\\n1 & -1 & 4 & 2\\\\\n3 & 2 & 1 & 7\n\\end{array}\n\\right]\n\\quad \\longrightarrow \\quad\n\\text{row echelon form}.\n\\]\n\n\n\n\n\n\nNoteHistorical lesson\n\n\n\nLinear algebra began as an algorithm. The earliest form of linear algebra was not a theorem about vector spaces, but a procedure for reducing equations.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#mathematicians-and-years",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#mathematicians-and-years",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "4.1 Mathematicians and Years",
+    "text": "4.1 Mathematicians and Years\n\n\n\nYear\nMathematician\nContribution\n\n\n\n\n1545\nCardano\nDeterminant-like expressions for small systems\n\n\n1683\nSeki Takakazu\nIndependent determinant theory in Japan\n\n\n1693\nLeibniz\nDeterminant-like symbolic formulas in Europe\n\n\n1750\nCramer\nCramer’s rule\n\n\n1771\nVandermonde\nDeterminants as functions\n\n\n1772–1773\nLaplace, Lagrange\nExpansion formulas and elimination\n\n\n1812\nCauchy\nSystematic determinant theory",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#algebraic-meaning",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#algebraic-meaning",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "4.2 Algebraic Meaning",
+    "text": "4.2 Algebraic Meaning\nA square matrix \\(A\\) is invertible if and only if\n\\[\n\\det(A)\\ne 0.\n\\]\nThus, determinants determine whether the linear system\n\\[\nAx=b\n\\]\nhas a unique solution for every \\(b\\).",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#geometric-meaning",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#geometric-meaning",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "4.3 Geometric Meaning",
+    "text": "4.3 Geometric Meaning\nThe absolute value \\(|\\det(A)|\\) measures volume scaling:\n\\[\n\\text{volume of }A(S)=|\\det(A)|\\cdot \\text{volume of }S.\n\\]\nSo determinants connect algebra and geometry.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#multilinear-meaning",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#multilinear-meaning",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "4.4 Multilinear Meaning",
+    "text": "4.4 Multilinear Meaning\nThe determinant is an alternating multilinear function of the columns of \\(A\\). If two columns are equal, then\n\\[\n\\det(A)=0.\n\\]\nThis is the historical bridge from determinants to exterior algebra.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#historical-interpretation",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#historical-interpretation",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "5.1 Historical Interpretation",
+    "text": "5.1 Historical Interpretation\nThis is a turning point:\n\n\n\nEarlier Problem\nGauss’s Broader Problem\n\n\n\n\nSolve exactly \\(Ax=b\\)\nSolve approximately when data are noisy\n\n\nAlgebraic equations\nMeasurement and error\n\n\nExact answer\nBest approximation\n\n\n\nLeast squares introduces one of the most important ideas in applied linear algebra:\n\nWhen exact solution is impossible, find the best projection.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#linear-algebra-meaning",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#linear-algebra-meaning",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "6.1 Linear Algebra Meaning",
+    "text": "6.1 Linear Algebra Meaning\nThe functions\n\\[\n1,\\cos x,\\sin x,\\cos 2x,\\sin 2x,\\ldots\n\\]\nact like an orthogonal basis.\nThe Fourier coefficient is a coordinate:\n\\[\na_k=\\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\cos(kx)\\,dx.\n\\]\nThus Fourier analysis is infinite-dimensional linear algebra.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#why-this-was-revolutionary",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#why-this-was-revolutionary",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "6.2 Why This Was Revolutionary",
+    "text": "6.2 Why This Was Revolutionary\nFourier’s idea connected:\n\nheat equation,\ndifferential equations,\northogonality,\nprojections,\nbasis expansions,\nsignal processing,\nHilbert spaces.\n\nThe modern Fourier transform extends this idea to nonperiodic functions.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#hamilton-and-quaternions",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#hamilton-and-quaternions",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "7.1 Hamilton and Quaternions",
+    "text": "7.1 Hamilton and Quaternions\nIn 1843, William Rowan Hamilton discovered quaternions. Quaternions were invented to describe rotations in space.\nA quaternion has the form\n\\[\na+bi+cj+dk.\n\\]\nQuaternions are not ordinary vector spaces alone; they also have a multiplication rule. But they helped mathematicians think beyond ordinary real numbers.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#grassmann-and-extension-theory",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#grassmann-and-extension-theory",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "7.2 Grassmann and Extension Theory",
+    "text": "7.2 Grassmann and Extension Theory\nIn 1844, Hermann Grassmann published Ausdehnungslehre, or “Theory of Extension.”\nGrassmann’s work anticipated:\n\nvector spaces,\nsubspaces,\nlinear independence,\nexterior products,\noriented area and volume.\n\nThe wedge product\n\\[\nu\\wedge v\n\\]\nrepresents an oriented area element.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#historical-importance",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#historical-importance",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "7.3 Historical Importance",
+    "text": "7.3 Historical Importance\nGrassmann’s ideas were too abstract for many readers of his time. But later they became central to modern linear algebra, differential geometry, topology, and physics.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#matrix-multiplication",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#matrix-multiplication",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "8.1 Matrix Multiplication",
+    "text": "8.1 Matrix Multiplication\nIf\n\\[\nA\\in \\mathbb{R}^{m\\times n},\\qquad B\\in \\mathbb{R}^{n\\times p},\n\\]\nthen\n\\[\nAB\\in \\mathbb{R}^{m\\times p}.\n\\]\nMatrix multiplication represents composition of linear maps:\n\\[\nA(Bx)=(AB)x.\n\\]",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#historical-shift",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#historical-shift",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "8.2 Historical Shift",
+    "text": "8.2 Historical Shift\nBefore Cayley:\n\\[\n\\text{matrices were coefficient tables.}\n\\]\nAfter Cayley:\n\\[\n\\text{matrices became algebraic objects and transformations.}\n\\]\nThis is one of the central conceptual shifts in the subject.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#basis-and-dimension",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#basis-and-dimension",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "9.1 Basis and Dimension",
+    "text": "9.1 Basis and Dimension\nA basis \\(\\mathcal{B}=\\{v_1,\\ldots,v_n\\}\\) allows every vector \\(v\\in V\\) to be written uniquely as\n\\[\nv=c_1v_1+\\cdots+c_nv_n.\n\\]\nThe number of basis vectors is the dimension.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#a-basis-is-a-language",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#a-basis-is-a-language",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "9.2 A Basis Is a Language",
+    "text": "9.2 A Basis Is a Language\nDifferent bases describe the same object in different languages.\n\n\n\nBasis\nHistorical / Modern Use\n\n\n\n\nStandard basis\nCoordinates\n\n\nEigenbasis\nDynamics and diagonalization\n\n\nOrthogonal basis\nProjection and least squares\n\n\nFourier basis\nFrequency decomposition\n\n\nHaar basis\nMultiscale decomposition\n\n\nSingular vectors\nLow-rank data representation",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#important-mathematicians",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#important-mathematicians",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "10.1 Important Mathematicians",
+    "text": "10.1 Important Mathematicians\n\n\n\nMathematician\nYears\nContribution\n\n\n\n\nAugustin-Louis Cauchy\n1789–1857\nDeterminants, symmetric forms, early spectral ideas\n\n\nCamille Jordan\n1838–1922\nJordan canonical form\n\n\nFerdinand Georg Frobenius\n1849–1917\nMatrix theory, Perron–Frobenius theory\n\n\nOskar Perron\n1880–1975\nPositive matrices\n\n\nIssai Schur\n1875–1941\nSchur decomposition",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#jordan-form",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#jordan-form",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "10.2 Jordan Form",
+    "text": "10.2 Jordan Form\nThe Jordan form says that, over the complex numbers, every square matrix can be put into a nearly diagonal form:\n\\[\nA=PJP^{-1}.\n\\]\nThis is powerful in theory but often unstable numerically.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#perronfrobenius-theory",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#perronfrobenius-theory",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "10.3 Perron–Frobenius Theory",
+    "text": "10.3 Perron–Frobenius Theory\nFor matrices with positive entries, the Perron–Frobenius theorem gives a dominant positive eigenvalue and positive eigenvector.\nThis appears in:\n\nMarkov chains,\npopulation models,\nnetwork centrality,\nPageRank.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#historical-meaning",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#historical-meaning",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "11.1 Historical Meaning",
+    "text": "11.1 Historical Meaning\nSymmetric matrices arise naturally from:\n\nquadratic forms,\nmechanics,\nenergy,\ncovariance matrices,\noptimization,\ngeometry.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#quadratic-forms",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#quadratic-forms",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "11.2 Quadratic Forms",
+    "text": "11.2 Quadratic Forms\nA symmetric matrix defines\n\\[\nq(x)=x^TAx.\n\\]\nUsing the spectral theorem,\n\\[\nq(x)=\\lambda_1y_1^2+\\cdots+\\lambda_ny_n^2.\n\\]\nThus eigenvalues classify the shape:\n\n\n\nEigenvalues\nShape\n\n\n\n\nall positive\npositive definite bowl\n\n\nall nonnegative\npositive semidefinite surface\n\n\nmixed signs\nsaddle\n\n\nall negative\nnegative definite bowl",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#why-schur-decomposition-matters",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#why-schur-decomposition-matters",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "12.1 Why Schur Decomposition Matters",
+    "text": "12.1 Why Schur Decomposition Matters\nThe Jordan form is elegant but unstable for computation. Schur decomposition is stable and works well numerically.\nIt supports:\n\neigenvalue algorithms,\nmatrix functions,\nstability analysis,\nnumerical spectral theory.\n\nA useful slogan is:\n\nAnything the Jordan form can do theoretically, the Schur form can often do better numerically.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#definition",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#definition",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "13.1 Definition",
+    "text": "13.1 Definition\nA Hilbert space \\(\\mathcal{H}\\) has an inner product\n\\[\n\\langle f,g\\rangle\n\\]\nand every Cauchy sequence converges inside the space.\nExamples include:\n\\[\n\\mathbb{R}^n,\n\\qquad\n\\ell^2,\n\\qquad\nL^2[a,b].\n\\]",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#orthogonal-projection-theorem",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#orthogonal-projection-theorem",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "13.2 Orthogonal Projection Theorem",
+    "text": "13.2 Orthogonal Projection Theorem\nIf \\(M\\) is a closed subspace of a Hilbert space and \\(y\\in \\mathcal{H}\\), then there exists a unique projection\n\\[\n\\operatorname{Proj}_M(y)\\in M\n\\]\nsuch that\n\\[\ny-\\operatorname{Proj}_M(y)\n\\]\nis orthogonal to \\(M\\).\nThis is the infinite-dimensional version of least squares.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#applications",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#applications",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "13.3 Applications",
+    "text": "13.3 Applications\nHilbert spaces are central in:\n\nFourier analysis,\nPDEs,\nquantum mechanics,\nprobability,\nsignal processing,\nkernel methods in machine learning.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#modern-meaning",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#modern-meaning",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "15.1 Modern Meaning",
+    "text": "15.1 Modern Meaning\nPCA is used for:\n\ndimension reduction,\ndata visualization,\nnoise reduction,\nfeature extraction,\nexploratory data analysis.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#historical-milestones",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#historical-milestones",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "16.1 Historical Milestones",
+    "text": "16.1 Historical Milestones\n\n\n\nYear\nPeople\nContribution\n\n\n\n\n1870s–1900s\nBeltrami, Jordan, Sylvester, Schmidt\nEarly singular value ideas\n\n\n1936\nCarl Eckart, Gale Young\nBest low-rank approximation\n\n\n1960s–1970s\nGene Golub, William Kahan, Christian Reinsch\nStable numerical algorithms for SVD",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#rank-one-expansion",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#rank-one-expansion",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "16.2 Rank-One Expansion",
+    "text": "16.2 Rank-One Expansion\n\\[\nX=\\sigma_1u_1v_1^T+\\cdots+\\sigma_ru_rv_r^T.\n\\]\nThe best rank-\\(k\\) approximation is\n\\[\nX_k=\\sigma_1u_1v_1^T+\\cdots+\\sigma_ku_kv_k^T.\n\\]",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#applications-1",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#applications-1",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "16.3 Applications",
+    "text": "16.3 Applications\nSVD is used in:\n\nimage compression,\npseudoinverse,\nleast squares,\nPCA,\nrecommendation systems,\nlow-rank approximation,\nlatent semantic analysis,\nnumerical rank detection.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#meaning-of-haar-coefficients",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#meaning-of-haar-coefficients",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "17.1 Meaning of Haar Coefficients",
+    "text": "17.1 Meaning of Haar Coefficients\nFor a signal \\(v=(v_1,v_2,v_3,v_4)^T\\),\n\\[\nc_1=\\frac{v_1+v_2+v_3+v_4}{4}\n\\]\ncaptures the average.\nOther coefficients capture coarse and fine differences.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#modern-wavelet-theory",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#modern-wavelet-theory",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "17.2 Modern Wavelet Theory",
+    "text": "17.2 Modern Wavelet Theory\nLater mathematicians, including Yves Meyer, Stéphane Mallat, and Ingrid Daubechies, developed modern wavelet theory.\nWavelets are used in:\n\nimage compression,\ndenoising,\nedge detection,\nnumerical PDEs,\nsignal processing.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#important-names",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#important-names",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "18.1 Important Names",
+    "text": "18.1 Important Names\n\n\n\nPerson\nRole\n\n\n\n\nCarl Friedrich Gauss\nEarly related ideas in interpolation and computation\n\n\nJames Cooley\nCooley–Tukey FFT algorithm\n\n\nJohn Tukey\nCooley–Tukey FFT algorithm",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#why-fft-matters",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#why-fft-matters",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "18.2 Why FFT Matters",
+    "text": "18.2 Why FFT Matters\nFFT made Fourier analysis practical at scale.\nApplications include:\n\naudio processing,\nimage processing,\nsolving PDEs,\nconvolution,\nfiltering,\nradar,\nmedical imaging.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#qr-algorithm",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#qr-algorithm",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "19.1 QR Algorithm",
+    "text": "19.1 QR Algorithm\nThe QR algorithm was developed independently by John G. F. Francis and Vera Kublanovskaya.\nGiven\n\\[\nA_k=Q_kR_k,\n\\]\ndefine\n\\[\nA_{k+1}=R_kQ_k.\n\\]\nRepeated iteration reveals eigenvalue information and leads toward Schur form.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#householder-and-givens-transformations",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#householder-and-givens-transformations",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "19.2 Householder and Givens Transformations",
+    "text": "19.2 Householder and Givens Transformations\nHouseholder reflections and Givens rotations are stable orthogonal transformations used to compute QR decompositions.\nThey preserve length:\n\\[\n\\|Qx\\|=\\|x\\|.\n\\]\nThis is why orthogonal transformations are numerically safe.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#sparse-matrix-idea",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#sparse-matrix-idea",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "20.1 Sparse Matrix Idea",
+    "text": "20.1 Sparse Matrix Idea\nIf most entries are zero, we should store only nonzero entries.\nThis is essential for:\n\ngraph algorithms,\nfinite element methods,\nPDE solvers,\nrecommender systems,\nweb search,\nlarge neural networks.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#a-historical-shift",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#a-historical-shift",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "20.2 A Historical Shift",
+    "text": "20.2 A Historical Shift\nClassical mathematics asked:\n\nWhat is the formula?\n\nNumerical linear algebra asks:\n\nWhat is the stable and efficient algorithm?",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#principal-angles",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#principal-angles",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "21.1 Principal Angles",
+    "text": "21.1 Principal Angles\nGiven two subspaces \\(U\\) and \\(W\\), their principal angles\n\\[\n\\theta_1,\\ldots,\\theta_k\n\\]\nmeasure how far the subspaces are from each other.\nThey can be computed using QR and SVD.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#applications-2",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#applications-2",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "21.2 Applications",
+    "text": "21.2 Applications\nGrassmannian geometry appears in:\n\ncomputer vision,\nsubspace clustering,\nreduced-order modeling,\nsignal processing,\nmachine learning on subspaces.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#tensor-products",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#tensor-products",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "22.1 Tensor Products",
+    "text": "22.1 Tensor Products\nFor vector spaces \\(V\\) and \\(W\\), the tensor product is\n\\[\nV\\otimes W.\n\\]\nIf\n\\[\nv\\in \\mathbb{R}^m,\\qquad w\\in \\mathbb{R}^n,\n\\]\nthen\n\\[\nv\\otimes w\n\\]\ncan be represented as an \\(m\\times n\\) matrix.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#exterior-products",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#exterior-products",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "22.2 Exterior Products",
+    "text": "22.2 Exterior Products\nThe exterior product\n\\[\nv_1\\wedge v_2\\wedge \\cdots \\wedge v_k\n\\]\nrepresents oriented \\(k\\)-dimensional volume.\nThis connects linear algebra to:\n\ndeterminants,\ndifferential forms,\ngeometry,\ntopology,\nphysics.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#tensors-in-ai",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#tensors-in-ai",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "22.3 Tensors in AI",
+    "text": "22.3 Tensors in AI\nModern AI uses tensors as multidimensional arrays:\n\\[\n\\text{image} \\sim \\text{height}\\times \\text{width}\\times \\text{channels},\n\\]\n\\[\n\\text{video} \\sim \\text{time}\\times \\text{height}\\times \\text{width}\\times \\text{channels}.\n\\]\nThus tensor algebra is not only abstract. It is a practical language for modern data.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#historical-meaning-1",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#historical-meaning-1",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "23.1 Historical Meaning",
+    "text": "23.1 Historical Meaning\nThis is a modern example of an old idea:\n\\[\n\\text{eigenvectors}\n\\quad \\longrightarrow \\quad\n\\text{importance in a network}.\n\\]\nEigenvectors are not only hidden directions in geometry; they can also measure centrality in graphs.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#eigenvalues-and-conditioning",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#eigenvalues-and-conditioning",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "24.1 Eigenvalues and Conditioning",
+    "text": "24.1 Eigenvalues and Conditioning\nThe condition number\n\\[\n\\kappa(A)=\\frac{\\lambda_{\\max}(A)}{\\lambda_{\\min}(A)}\n\\]\ncontrols how difficult the optimization problem is.\nLarge condition number means slow convergence for many algorithms.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#ancient-to-1700-equations-before-matrices",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#ancient-to-1700-equations-before-matrices",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "27.1 Ancient to 1700: Equations Before Matrices",
+    "text": "27.1 Ancient to 1700: Equations Before Matrices\nLinear algebra begins with practical arithmetic. People needed to solve problems involving unknown quantities. The idea of eliminating unknowns existed long before matrices were formally defined.\nImportant ideas:\n\\[\n\\text{unknowns},\\quad\n\\text{systems},\\quad\n\\text{tables},\\quad\n\\text{elimination}.\n\\]",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#determinants-and-exact-solutions",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#determinants-and-exact-solutions",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "27.2 1700–1800: Determinants and Exact Solutions",
+    "text": "27.2 1700–1800: Determinants and Exact Solutions\nThe determinant became the first major invariant of linear systems.\nImportant names:\n\nSeki,\nLeibniz,\nCramer,\nVandermonde,\nLaplace,\nLagrange.\n\nThe central question was:\n\nWhen does a system have a unique solution?",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#approximation-fourier-and-abstract-directions",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#approximation-fourier-and-abstract-directions",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "27.3 1800–1850: Approximation, Fourier, and Abstract Directions",
+    "text": "27.3 1800–1850: Approximation, Fourier, and Abstract Directions\nGauss pushed linear algebra toward approximation and computation. Fourier pushed it toward functions and infinite series. Hamilton and Grassmann pushed it toward abstract algebra and geometry.\nThis period created three major future directions:\n\\[\n\\text{computation},\\quad\n\\text{function spaces},\\quad\n\\text{abstract vector spaces}.\n\\]",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#matrices-become-algebra",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#matrices-become-algebra",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "27.4 1850–1900: Matrices Become Algebra",
+    "text": "27.4 1850–1900: Matrices Become Algebra\nSylvester named matrices. Cayley developed matrix algebra. Jordan and Frobenius studied canonical forms.\nThe matrix became a mathematical object.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#spectral-theory-and-hilbert-space",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#spectral-theory-and-hilbert-space",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "27.5 1900–1950: Spectral Theory and Hilbert Space",
+    "text": "27.5 1900–1950: Spectral Theory and Hilbert Space\nHilbert spaces, functional analysis, quantum mechanics, and PCA all developed during this period.\nLinear algebra expanded from finite-dimensional spaces to infinite-dimensional spaces.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#numerical-linear-algebra",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#numerical-linear-algebra",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "27.6 1950–1980: Numerical Linear Algebra",
+    "text": "27.6 1950–1980: Numerical Linear Algebra\nComputers made large matrix problems central.\nNew questions appeared:\n\nIs the algorithm stable?\nHow many operations does it take?\nHow much memory does it need?\nCan it exploit sparsity?\nCan it work for ill-conditioned matrices?",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#present-data-networks-and-ai",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#present-data-networks-and-ai",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "27.7 1980–Present: Data, Networks, and AI",
+    "text": "27.7 1980–Present: Data, Networks, and AI\nLinear algebra became the core language of data science.\nThe main objects are:\n\\[\n\\text{vectors},\\quad\n\\text{matrices},\\quad\n\\text{tensors},\\quad\n\\text{subspaces},\\quad\n\\text{graphs}.\n\\]",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#seki-takakazu",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#seki-takakazu",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "28.1 Seki Takakazu",
+    "text": "28.1 Seki Takakazu\nSeki Takakazu was a Japanese mathematician of the Edo period. He developed determinant ideas independently of European mathematicians.\nHis work shows that determinant theory did not belong to only one mathematical tradition.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#gottfried-wilhelm-leibniz",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#gottfried-wilhelm-leibniz",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "28.2 Gottfried Wilhelm Leibniz",
+    "text": "28.2 Gottfried Wilhelm Leibniz\nLeibniz developed symbolic methods that anticipated determinant formulas. He is also famous for calculus and symbolic notation.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#gabriel-cramer",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#gabriel-cramer",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "28.3 Gabriel Cramer",
+    "text": "28.3 Gabriel Cramer\nGabriel Cramer is remembered for Cramer’s rule, which expresses solutions of linear systems using determinants.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#carl-friedrich-gauss",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#carl-friedrich-gauss",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "28.4 Carl Friedrich Gauss",
+    "text": "28.4 Carl Friedrich Gauss\nGauss contributed to elimination, least squares, number theory, geometry, statistics, and astronomy.\nIn linear algebra, his influence appears through:\n\nGaussian elimination,\nleast squares,\nnumerical computation,\nquadratic forms.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#joseph-fourier",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#joseph-fourier",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "28.5 Joseph Fourier",
+    "text": "28.5 Joseph Fourier\nFourier showed that functions could be decomposed into trigonometric waves.\nThis idea later became central to:\n\nsignal processing,\nPDEs,\nHilbert spaces,\nFFT.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#hermann-grassmann",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#hermann-grassmann",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "28.6 Hermann Grassmann",
+    "text": "28.6 Hermann Grassmann\nGrassmann developed a highly abstract theory of extension, including ideas close to vector spaces and exterior algebra.\nHis work was ahead of its time.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#james-joseph-sylvester",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#james-joseph-sylvester",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "28.7 James Joseph Sylvester",
+    "text": "28.7 James Joseph Sylvester\nSylvester introduced the word “matrix” and contributed to invariant theory and algebra.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#arthur-cayley",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#arthur-cayley",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "28.8 Arthur Cayley",
+    "text": "28.8 Arthur Cayley\nCayley developed matrix algebra and treated matrices as mathematical objects.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#camille-jordan",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#camille-jordan",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "28.9 Camille Jordan",
+    "text": "28.9 Camille Jordan\nJordan developed canonical forms that describe the structure of linear transformations.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#ferdinand-georg-frobenius",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#ferdinand-georg-frobenius",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "28.10 Ferdinand Georg Frobenius",
+    "text": "28.10 Ferdinand Georg Frobenius\nFrobenius contributed deeply to matrix theory, group theory, and representation theory.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#david-hilbert",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#david-hilbert",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "28.11 David Hilbert",
+    "text": "28.11 David Hilbert\nHilbert helped shape functional analysis and infinite-dimensional geometry.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#issai-schur",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#issai-schur",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "28.12 Issai Schur",
+    "text": "28.12 Issai Schur\nSchur introduced Schur decomposition, a central tool in matrix analysis.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#alfréd-haar",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#alfréd-haar",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "28.13 Alfréd Haar",
+    "text": "28.13 Alfréd Haar\nHaar introduced the Haar system, one of the earliest wavelet bases.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#john-von-neumann",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#john-von-neumann",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "28.14 John von Neumann",
+    "text": "28.14 John von Neumann\nVon Neumann helped formulate quantum mechanics using Hilbert spaces and operators.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#gene-golub",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#gene-golub",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "28.15 Gene Golub",
+    "text": "28.15 Gene Golub\nGene Golub was one of the founders of modern numerical linear algebra.\nHis work helped make matrix computations reliable and practical.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#question-1",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#question-1",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "Question 1",
+    "text": "Question 1\nWhy did determinants appear historically before matrices became formal objects?\n\n\n\n\n\n\nTipSolution\n\n\n\n\n\nDeterminants were useful for solving systems of equations. Matrices were originally just coefficient tables. Only later did mathematicians such as Sylvester and Cayley treat matrices as objects with their own algebra.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#question-2",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#question-2",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "Question 2",
+    "text": "Question 2\nExplain why Fourier analysis can be viewed as linear algebra.\n\n\n\n\n\n\nTipSolution\n\n\n\n\n\nFourier analysis represents functions as sums of basis functions. Fourier coefficients are coordinates. Orthogonality and projection are the same ideas used in finite-dimensional inner product spaces.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#question-3",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#question-3",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "Question 3",
+    "text": "Question 3\nWhy is Schur decomposition more useful than Jordan form in numerical computation?\n\n\n\n\n\n\nTipSolution\n\n\n\n\n\nJordan form is very sensitive to perturbations and is often numerically unstable. Schur decomposition uses unitary transformations, which preserve length and are stable in floating-point computation.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#question-4",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#question-4",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "Question 4",
+    "text": "Question 4\nWhy is SVD especially important for data science?\n\n\n\n\n\n\nTipSolution\n\n\n\n\n\nSVD applies to every matrix, including rectangular data matrices. It gives low-rank approximations, principal directions, compression, denoising, pseudoinverses, and PCA.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#question-5",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#question-5",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "Question 5",
+    "text": "Question 5\nWhat is the difference between Fourier and Haar bases?\n\n\n\n\n\n\nTipSolution\n\n\n\n\n\nFourier bases are global waves and are excellent for frequency information. Haar bases are localized and multiscale, making them useful for detecting local changes and compressing signals with sharp features.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#activity-1-historical-concept-map",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#activity-1-historical-concept-map",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "Activity 1: Historical Concept Map",
+    "text": "Activity 1: Historical Concept Map\nAsk an AI tool:\n\nCreate a concept map connecting determinants, matrices, vector spaces, eigenvalues, Fourier analysis, Hilbert spaces, SVD, QR algorithm, FFT, PCA, and AI.\n\nThen compare the answer with this chapter.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#activity-2-mathematician-biography",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#activity-2-mathematician-biography",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "Activity 2: Mathematician Biography",
+    "text": "Activity 2: Mathematician Biography\nChoose one mathematician from this chapter and ask:\n\nExplain this mathematician’s contribution to linear algebra in three levels: high school, undergraduate, and graduate.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#activity-3-timeline-reconstruction",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#activity-3-timeline-reconstruction",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "Activity 3: Timeline Reconstruction",
+    "text": "Activity 3: Timeline Reconstruction\nAsk:\n\nMake a timeline of linear algebra from ancient elimination to deep learning, including years and mathematicians.\n\nThen check whether it includes:\n\nSeki,\nLeibniz,\nCramer,\nGauss,\nFourier,\nGrassmann,\nSylvester,\nCayley,\nJordan,\nFrobenius,\nHilbert,\nSchur,\nHaar,\nGolub.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter-history-linear-algebra-timeline.html#activity-4-historical-reflection",
+    "href": "chapters/chapter-history-linear-algebra-timeline.html#activity-4-historical-reflection",
+    "title": "The Historical Story of Linear Algebra",
+    "section": "Activity 4: Historical Reflection",
+    "text": "Activity 4: Historical Reflection\nAsk:\n\nWhy did numerical linear algebra become so important after computers were invented?\n\nThen write a short answer connecting stability, complexity, and large data matrices.",
+    "crumbs": [
+      "The Historical Story of Linear Algebra"
+    ]
+  },
+  {
     "objectID": "chapters/chapter-01-linear-systems.html",
     "href": "chapters/chapter-01-linear-systems.html",
     "title": "1  Chapter 1. The First Language: Systems, Sets, and Structure",
