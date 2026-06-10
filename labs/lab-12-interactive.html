@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 12 Interactive: Least Squares and Data Fitting</title>
+<script>
+window.MathJax = {tex: {inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\\[','\\]']]}, svg: {fontCache: 'global'}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--bg:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);} header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;} header h1{margin:0 0 8px;font-size:1.8rem;} header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;} main{max-width:1240px;margin:0 auto;padding:24px;} .grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;} .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;} h2{font-size:1.25rem;margin:0 0 12px;} h3{font-size:1.05rem;margin:18px 0 8px;} p{line-height:1.55;} label{display:block;margin:8px 0 4px;font-weight:600;} input[type=number]{width:72px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;} .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;} button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;} button.secondary{background:#fff;color:#111827;} select{padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff;} canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;} .result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;} .eq{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto;} .small{font-size:.92rem;color:var(--muted);} table{border-collapse:collapse;background:#fff;margin:8px 0;} th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;} .ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .warn{color:var(--amber);font-weight:700;} .task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;} textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;} code{background:#f3f4f6;padding:1px 4px;border-radius:4px;} @media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+<h1>Lab 12 Interactive: Least Squares and Data Fitting</h1>
+<p>Explore least squares as projection, normal equations, residual orthogonality, polynomial fitting, weighted data fitting, and function approximation.</p>
+</header>
+<main>
+<section class="grid">
+<div class="card">
+<h2>1. Choose data points</h2>
+<p class="small">Fit a polynomial $p(t)=c_0+c_1t+\cdots+c_dt^d$ to the points using least squares.</p>
+<div id="pointInputs"></div>
+<div class="row"><label>Degree</label><select id="degree" onchange="update()"><option value="0">0</option><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option></select><label>Use weights?</label><select id="weightsOn" onchange="update()"><option value="no">No</option><option value="yes">Yes</option></select></div>
+<button onclick="preset('chapter')">Chapter data</button><button onclick="preset('linear')">Nearly linear</button><button onclick="preset('outlier')">Outlier data</button><button class="secondary" onclick="randomData()">Random</button>
+<div class="result" id="fitResult"></div>
+</div>
+<div class="card">
+<h2>2. Least squares fit</h2>
+<canvas id="plot" width="760" height="520"></canvas>
+<p class="small">Blue points are data. Orange curve is the least squares fit. Gray vertical segments show residuals.</p>
+</div>
+</section>
+<section class="grid">
+<div class="card">
+<h2>3. Normal equations</h2>
+<div class="result" id="normalResult"></div>
+<p class="small">The normal equations are $A^T A\vec{c}=A^T\vec{b}$, or in weighted form $A^TWA\vec{c}=A^TW\vec{b}$.</p>
+</div>
+<div class="card">
+<h2>4. Residual orthogonality</h2>
+<div class="result" id="orthResult"></div>
+<p class="small">For ordinary least squares, the residual satisfies $A^T\vec{r}=0$. For weighted least squares, it satisfies $A^TW\vec{r}=0$.</p>
+</div>
+</section>
+<section class="grid">
+<div class="card">
+<h2>5. Projection example</h2>
+<p>Use the lecture matrix</p>
+<p>$$A=\begin{bmatrix}-1&4\\1&8\\-1&4\end{bmatrix},\quad \vec b=\begin{bmatrix}14\\-4\\0\end{bmatrix}.$$</p>
+<button onclick="projectionExample()">Compute projection</button>
+<div class="result" id="projResult"></div>
+</div>
+<div class="card">
+<h2>6. Best linear approximation to $e^x$</h2>
+<p>The best $p(x)=c_0+c_1x$ on $[0,1]$ satisfies</p>
+<p>$$\begin{bmatrix}1&1/2\\1/2&1/3\end{bmatrix}\begin{bmatrix}c_0\\c_1\end{bmatrix}=\begin{bmatrix}e-1\\1\end{bmatrix}.$$</p>
+<button onclick="functionApprox()">Compute coefficients</button>
+<div class="result" id="funcResult"></div>
+</div>
+</section>
+<section class="card">
+<h2>7. Independent-study practice tasks with answers</h2>
+<div class="task"><strong>Task A.</strong> Fit a line to the Chapter data and record the residual norm.<br><strong>Answer:</strong> Select degree 1. The coefficients should be approximately $c_0=37/6$ and $c_1=-61/18$.</div>
+<div class="task"><strong>Task B.</strong> Fit a quadratic to the Chapter data.<br><strong>Answer:</strong> Select degree 2. The coefficients should be $c_0=29/5$, $c_1=-16/5$, $c_2=3/5$.</div>
+<div class="task"><strong>Task C.</strong> Fit a cubic to the Chapter data. What happens?<br><strong>Answer:</strong> The cubic interpolates the four points exactly and the residual norm is $0$ up to rounding error.</div>
+<div class="task"><strong>Task D.</strong> Turn on weights and make one data point have a large weight. What happens?<br><strong>Answer:</strong> The fitted curve moves closer to the heavily weighted observation.</div>
+<div class="task"><strong>Task E.</strong> In the projection example, verify that $A^T\vec r=0$.<br><strong>Answer:</strong> The residual is $(7,0,-7)^T$, and multiplying by $A^T$ gives the zero vector.</div>
+</section>
+<section class="card"><h2>8. Workspace</h2><textarea placeholder="Write observations here. Copy final answers to your notebook or assignment."></textarea></section>
+</main>
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(5).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(r=>`<tr>${r.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function createPointInputs(){let div=document.getElementById('pointInputs'); div.innerHTML=''; for(let i=0;i<5;i++){let row=document.createElement('div');row.className='row';row.innerHTML=`<label>Point ${i+1}</label><span>t</span><input id="t${i}" type="number" step="0.1"><span>y</span><input id="y${i}" type="number" step="0.1"><span>w</span><input id="w${i}" type="number" min="0" step="0.1" value="1">`; div.appendChild(row);} ['t','y','w'].forEach(p=>{for(let i=0;i<5;i++)setTimeout(()=>document.getElementById(p+i).addEventListener('input',update),0);});}
+function getData(){let t=[],y=[],w=[]; for(let i=0;i<5;i++){let ti=Number(document.getElementById('t'+i).value), yi=Number(document.getElementById('y'+i).value), wi=Number(document.getElementById('w'+i).value); if(isFinite(ti)&&isFinite(yi)&&document.getElementById('t'+i).value!==''&&document.getElementById('y'+i).value!==''){t.push(ti);y.push(yi);w.push(isFinite(wi)&&wi>0?wi:1);}} return {t,y,w};}
+function setData(T,Y,W){for(let i=0;i<5;i++){document.getElementById('t'+i).value=T[i]??'';document.getElementById('y'+i).value=Y[i]??'';document.getElementById('w'+i).value=W?W[i]:1;} update();}
+function vand(t,d){return t.map(x=>Array.from({length:d+1},(_,j)=>x**j));}
+function transpose(A){return A[0].map((_,j)=>A.map(r=>r[j]));}
+function mmul(A,B){let C=Array.from({length:A.length},()=>Array(B[0].length).fill(0)); for(let i=0;i<A.length;i++)for(let j=0;j<B[0].length;j++)for(let k=0;k<B.length;k++)C[i][j]+=A[i][k]*B[k][j]; return C;}
+function mvec(A,x){return A.map(r=>r.reduce((s,a,i)=>s+a*x[i],0));}
+function dot(a,b){return a.reduce((s,x,i)=>s+x*b[i],0);} function norm(a){return Math.sqrt(dot(a,a));}
+function solve(A,b){let n=A.length,M=A.map((r,i)=>r.slice().concat([b[i]])); for(let c=0;c<n;c++){let piv=c; for(let i=c;i<n;i++)if(Math.abs(M[i][c])>Math.abs(M[piv][c]))piv=i; if(Math.abs(M[piv][c])<1e-10)return null; [M[c],M[piv]]=[M[piv],M[c]]; let val=M[c][c]; for(let j=c;j<=n;j++)M[c][j]/=val; for(let i=0;i<n;i++){if(i!==c){let f=M[i][c]; for(let j=c;j<=n;j++)M[i][j]-=f*M[c][j];}}} return M.map(r=>r[n]);}
+function fit(){let {t,y,w}=getData(), d=Number(document.getElementById('degree').value); if(t.length<d+1)return null; let A=vand(t,d), AT=transpose(A), WOn=document.getElementById('weightsOn').value==='yes'; let Aw=A.map((r,i)=>r.map(x=>x*(WOn?w[i]:1))); let yw=y.map((v,i)=>v*(WOn?w[i]:1)); let N=mmul(AT,Aw), rhs=mvec(AT,yw); let c=solve(N,rhs); if(!c)return null; let fitv=mvec(A,c), res=y.map((v,i)=>v-fitv[i]); let ort=mvec(AT,WOn?res.map((r,i)=>w[i]*r):res); return {t,y,w,d,A,N,rhs,c,fitv,res,ort,WOn};}
+function poly(c,x){return c.reduce((s,a,j)=>s+a*x**j,0);} 
+function update(){let F=fit(); if(!F){fitResult.innerHTML='<span class="bad">Enter enough data points for this degree.</span>'; normalResult.innerHTML=''; orthResult.innerHTML=''; draw(null); return;} fitResult.innerHTML=`<strong>Polynomial coefficients</strong> $[c_0,c_1,\ldots]$:<br>${matHTML([F.c])}<br>Residual norm $\|b-Ac\|$ = ${fmt(norm(F.res))}<br>Weighted residual score = ${fmt(F.res.reduce((s,r,i)=>s+(F.WOn?F.w[i]:1)*r*r,0))}`; normalResult.innerHTML=`<strong>Design matrix A</strong>${matHTML(F.A)}<strong>Normal matrix</strong>${matHTML(F.N)}<strong>Right-hand side</strong>${matHTML(F.rhs.map(x=>[x]))}`; orthResult.innerHTML=`Residual vector $r=b-Ac$:${matHTML(F.res.map(x=>[x]))}Orthogonality check ${F.WOn?'$A^TWr$':'$A^Tr$'}:${matHTML(F.ort.map(x=>[x]))}`; draw(F); if(window.MathJax)MathJax.typesetPromise();}
+function draw(F){let canvas=document.getElementById('plot'),ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);let xmin=-2,xmax=3,ymin=-2,ymax=15;if(F&&F.t.length){xmin=Math.min(...F.t)-1;xmax=Math.max(...F.t)+1;ymin=Math.min(...F.y)-2;ymax=Math.max(...F.y)+2;}function pt(x,y){return [55+(x-xmin)/(xmax-xmin)*(W-90),H-45-(y-ymin)/(ymax-ymin)*(H-80)];}ctx.strokeStyle='#eef2f7';ctx.lineWidth=1;for(let k=0;k<=10;k++){let x=55+k*(W-90)/10;ctx.beginPath();ctx.moveTo(x,20);ctx.lineTo(x,H-45);ctx.stroke();let y=20+k*(H-80)/10;ctx.beginPath();ctx.moveTo(55,y);ctx.lineTo(W-35,y);ctx.stroke();}ctx.strokeStyle='#9ca3af';ctx.lineWidth=1.5;let py0=pt(0,0)[1],px0=pt(0,0)[0];ctx.beginPath();ctx.moveTo(55,py0);ctx.lineTo(W-35,py0);ctx.stroke();ctx.beginPath();ctx.moveTo(px0,20);ctx.lineTo(px0,H-45);ctx.stroke(); if(!F)return;ctx.strokeStyle='#f97316';ctx.lineWidth=3;ctx.beginPath();for(let i=0;i<=300;i++){let x=xmin+(xmax-xmin)*i/300,y=poly(F.c,x),p=pt(x,y); if(i===0)ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[0],p[1]);}ctx.stroke();for(let i=0;i<F.t.length;i++){let p=pt(F.t[i],F.y[i]), q=pt(F.t[i],F.fitv[i]);ctx.strokeStyle='#cbd5e1';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();ctx.fillStyle='#2563eb';ctx.beginPath();ctx.arc(p[0],p[1],F.WOn?3+2*Math.sqrt(F.w[i]):5,0,2*Math.PI);ctx.fill();}ctx.fillStyle='#111827';ctx.font='15px system-ui';ctx.fillText('least squares polynomial fit',65,30);}
+function preset(t){if(t==='chapter')setData([0,1,-1,2,''],[5,3,13,1,''],[1,1,1,1,1]); if(t==='linear')setData([0,1,2,3,4],[1,2.1,2.9,4.2,5.1],[1,1,1,1,1]); if(t==='outlier')setData([0,1,2,3,4],[1,2,3,20,5],[1,1,1,1,1]);}
+function randomData(){let T=[0,1,2,3,4],Y=T.map(x=>1+1.5*x+(Math.random()*2-1));setData(T,Y,[1,1,1,1,1]);}
+function projectionExample(){let A=[[-1,4],[1,8],[-1,4]],b=[14,-4,0],AT=transpose(A),N=mmul(AT,A),rhs=mvec(AT,b),x=solve(N,rhs),fitv=mvec(A,x),r=b.map((v,i)=>v-fitv[i]),ort=mvec(AT,r);projResult.innerHTML=`$x^*=$ ${matHTML([x])}Fitted vector $Ax^*$:${matHTML(fitv.map(x=>[x]))}Residual $r=b-Ax^*$:${matHTML(r.map(x=>[x]))}$A^Tr=$ ${matHTML(ort.map(x=>[x]))}`; if(window.MathJax)MathJax.typesetPromise();}
+function functionApprox(){let e=Math.E,c0=4*e-10,c1=18-6*e;funcResult.innerHTML=`$c_0=4e-10\approx ${fmt(c0)}$<br>$c_1=18-6e\approx ${fmt(c1)}$<br>Best linear approximation:<br>$p(x)=(${fmt(c0)})+(${fmt(c1)})x$`; if(window.MathJax)MathJax.typesetPromise();}
+createPointInputs(); preset('chapter'); projectionExample(); functionApprox();
+</script>
+</body>
+</html>

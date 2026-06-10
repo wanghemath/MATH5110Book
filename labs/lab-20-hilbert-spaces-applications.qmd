@@ -1,0 +1,430 @@
+# Lab 20: Hilbert Spaces and Applications {.unnumbered}
+
+# Lab goals
+
+In this independent-study lab, you will use Python and an interactive HTML page to explore Hilbert spaces through concrete computations.
+
+You will practice:
+
+1. computing projections using Gram matrices;
+2. approximating functions in $L^2[0,1]$ by polynomials;
+3. interpreting Fourier coefficients as coordinates;
+4. checking $\ell^2$ membership numerically;
+5. building positive semidefinite kernel Gram matrices.
+
+# Python practice notebook
+
+The notebook version includes complete explanations, worked solutions, and similar practice questions.
+
+- [Download Lab 20 Python notebook](lab-20-hilbert-spaces-applications-independent-study.ipynb)
+- [Open Lab 20 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-20-hilbert-spaces-applications-independent-study.ipynb)
+
+
+The notebook is designed for independent study. It includes:
+
+- short conceptual reviews;
+- Python examples;
+- guided exercises;
+- full solutions;
+- similar practice questions.
+
+# Interactive lab
+
+Use the interactive HTML page to visualize:
+
+- projection onto a line in $\mathbb{R}^2$;
+- best constant/linear/quadratic polynomial approximation to $e^x$ on $[0,1]$;
+- Fourier partial sums of a square wave;
+- kernel Gram matrices and positive semidefiniteness.
+
+[Open Lab 20 Interactive HTML](lab-20-interactive.html)
+
+# Mathematical background
+
+## Hilbert space
+
+A **Hilbert space** is a complete inner product space.
+
+The main examples in this lab are:
+
+$$
+\mathbb{R}^n,\qquad
+\ell^2,\qquad
+L^2[0,1].
+$$
+
+## Projection principle
+
+If $\mathcal{M}$ is a closed subspace of a Hilbert space $\mathcal{H}$, then for every $y\in \mathcal{H}$ there is a unique point $p\in\mathcal{M}$ such that
+
+$$
+\|y-p\|=\min_{w\in\mathcal{M}}\|y-w\|.
+$$
+
+The closest point is characterized by
+
+$$
+y-p\perp \mathcal{M}.
+$$
+
+## Projection onto a finite-dimensional span
+
+If
+
+$$
+\mathcal{M}=\operatorname{span}\{u_1,\ldots,u_m\},
+$$
+
+and
+
+$$
+p=c_1u_1+\cdots+c_mu_m,
+$$
+
+then
+
+$$
+\langle y-p,u_i\rangle=0,\qquad i=1,\ldots,m.
+$$
+
+This gives the Gram system
+
+$$
+G\mathbf{c}=\mathbf{b},
+$$
+
+where
+
+$$
+G_{ij}=\langle u_j,u_i\rangle,
+\qquad
+b_i=\langle y,u_i\rangle.
+$$
+
+# Practice task A: projection in $\mathbb{R}^3$
+
+Let
+
+$$
+u_1=(1,1,0),\qquad u_2=(1,0,1),\qquad y=(2,1,3).
+$$
+
+Find the projection of $y$ onto
+
+$$
+\mathcal{M}=\operatorname{span}\{u_1,u_2\}.
+$$
+
+::: {.callout-note collapse="true"}
+## Solution
+
+Let
+
+$$
+A=[u_1\ u_2]
+=
+\begin{bmatrix}
+1&1\\
+1&0\\
+0&1
+\end{bmatrix}.
+$$
+
+The projection is
+
+$$
+p=A(A^TA)^{-1}A^Ty.
+$$
+
+Compute
+
+$$
+A^TA=
+\begin{bmatrix}
+2&1\\
+1&2
+\end{bmatrix},
+\qquad
+A^Ty=
+\begin{bmatrix}
+3\\5
+\end{bmatrix}.
+$$
+
+Solving gives
+
+$$
+c_1=\frac13,\qquad c_2=\frac73.
+$$
+
+Therefore
+
+$$
+p=\frac13u_1+\frac73u_2
+=
+\left(\frac83,\frac13,\frac73\right).
+$$
+
+The residual
+
+$$
+r=y-p
+$$
+
+is orthogonal to both $u_1$ and $u_2$.
+:::
+
+## Similar practice
+
+Change $y$ to
+
+$$
+y=(1,4,2).
+$$
+
+Find $\operatorname{Proj}_{\mathcal{M}}y$.
+
+::: {.callout-note collapse="true"}
+## Answer
+
+Using the same matrix $A$,
+
+$$
+A^Ty=
+\begin{bmatrix}
+5\\3
+\end{bmatrix}.
+$$
+
+Solve
+
+$$
+\begin{bmatrix}
+2&1\\
+1&2
+\end{bmatrix}
+\begin{bmatrix}
+c_1\\c_2
+\end{bmatrix}
+=
+\begin{bmatrix}
+5\\3
+\end{bmatrix}.
+$$
+
+This gives
+
+$$
+c_1=\frac73,\qquad c_2=\frac13.
+$$
+
+Thus
+
+$$
+p=\frac73u_1+\frac13u_2
+=
+\left(\frac83,\frac73,\frac13\right).
+$$
+:::
+
+# Practice task B: best polynomial approximation
+
+Find the best linear approximation
+
+$$
+p(x)=c_0+c_1x
+$$
+
+to $e^x$ on $[0,1]$ using the inner product
+
+$$
+\langle f,g\rangle=\int_0^1 f(x)g(x)\,dx.
+$$
+
+::: {.callout-note collapse="true"}
+## Solution
+
+Use the basis $1,x$. The Gram matrix is
+
+$$
+G=
+\begin{bmatrix}
+\langle 1,1\rangle & \langle x,1\rangle\\
+\langle 1,x\rangle & \langle x,x\rangle
+\end{bmatrix}
+=
+\begin{bmatrix}
+1&1/2\\
+1/2&1/3
+\end{bmatrix}.
+$$
+
+The right-hand side is
+
+$$
+b=
+\begin{bmatrix}
+\langle e^x,1\rangle\\
+\langle e^x,x\rangle
+\end{bmatrix}
+=
+\begin{bmatrix}
+e-1\\
+1
+\end{bmatrix}.
+$$
+
+Solving
+
+$$
+G
+\begin{bmatrix}
+c_0\\c_1
+\end{bmatrix}
+=
+b
+$$
+
+gives
+
+$$
+c_0=4e-10,\qquad c_1=18-6e.
+$$
+
+So the best linear approximation is
+
+$$
+p(x)=(4e-10)+(18-6e)x.
+$$
+:::
+
+# Practice task C: $\ell^2$ membership
+
+Determine whether the following sequences belong to $\ell^2$:
+
+$$
+a_n=\frac1n,\qquad
+b_n=\frac1{\sqrt{n}},\qquad
+c_n=\frac1{2^n}.
+$$
+
+::: {.callout-note collapse="true"}
+## Solution
+
+A sequence belongs to $\ell^2$ when
+
+$$
+\sum_{n=1}^{\infty}|x_n|^2<\infty.
+$$
+
+For $a_n=1/n$,
+
+$$
+\sum_{n=1}^{\infty}\frac1{n^2}<\infty,
+$$
+
+so $(a_n)\in\ell^2$.
+
+For $b_n=1/\sqrt n$,
+
+$$
+\sum_{n=1}^{\infty}\frac1n=\infty,
+$$
+
+so $(b_n)\notin\ell^2$.
+
+For $c_n=1/2^n$,
+
+$$
+\sum_{n=1}^{\infty}\frac1{4^n}<\infty,
+$$
+
+so $(c_n)\in\ell^2$.
+:::
+
+# Practice task D: Fourier coordinates
+
+For the square wave
+
+$$
+f(x)=\operatorname{sign}(\sin x),
+$$
+
+the sine Fourier series is
+
+$$
+f(x)\sim \frac4\pi\left(
+\sin x+\frac{\sin 3x}{3}+\frac{\sin 5x}{5}+\cdots
+\right).
+$$
+
+Explain why this is a Hilbert-space coordinate expansion.
+
+::: {.callout-note collapse="true"}
+## Solution
+
+In $L^2[-\pi,\pi]$, sine and cosine functions form an orthogonal system. The coefficients in the Fourier series are obtained by inner products with basis functions. Therefore the Fourier series is an infinite-dimensional coordinate expansion. Truncating the series is orthogonal projection onto a finite-dimensional space of low-frequency functions.
+:::
+
+# Practice task E: positive semidefinite kernels
+
+Let
+
+$$
+K(x,y)=(1+xy)^2
+$$
+
+for $x,y\in\mathbb{R}$. Construct the Gram matrix for $x_1=-1$, $x_2=0$, $x_3=2$. Check whether it is positive semidefinite.
+
+::: {.callout-note collapse="true"}
+## Solution
+
+The Gram matrix has entries
+
+$$
+G_{ij}=K(x_i,x_j)=(1+x_ix_j)^2.
+$$
+
+With $x=(-1,0,2)$,
+
+$$
+G=
+\begin{bmatrix}
+4&1&1\\
+1&1&1\\
+1&1&25
+\end{bmatrix}.
+$$
+
+This is positive semidefinite because the polynomial kernel is a positive semidefinite kernel. Numerically, one can verify that all eigenvalues are nonnegative.
+:::
+
+# Submission checklist
+
+After completing this lab, you should be able to submit:
+
+1. one projection computation with residual check;
+2. one polynomial approximation computation;
+3. one $\ell^2$ membership explanation;
+4. one Fourier-coordinate explanation;
+5. one kernel Gram matrix computation.
+
+# AI companion prompts
+
+Use these prompts after you complete the exercises.
+
+## Prompt 1
+
+> Explain the projection theorem in Hilbert spaces using the analogy of least squares in $\mathbb{R}^n$.
+
+## Prompt 2
+
+> Give an example of a Cauchy sequence in an incomplete inner product space whose limit is missing from the space.
+
+## Prompt 3
+
+> Explain why Fourier coefficients are coordinates in a Hilbert space.
+
+## Prompt 4
+
+> Explain the polynomial kernel $K(x,y)=(1+x^Ty)^r$ as an inner product in a hidden feature space.

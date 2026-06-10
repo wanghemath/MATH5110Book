@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 1 Interactive: Linear Systems</title>
+<style>
+  :root{
+    --bg:#ffffff; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+    --card:#f9fafb; --accent:#111827; --ok:#065f46; --warn:#92400e; --bad:#991b1b;
+  }
+  body{font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin:0; background:var(--bg); color:var(--ink);}
+  header{padding:28px 28px 18px; border-bottom:1px solid var(--line); background:#fafafa;}
+  header h1{margin:0 0 8px; font-size:1.8rem;}
+  header p{margin:0; color:var(--muted); max-width:960px; line-height:1.55;}
+  main{padding:24px; max-width:1200px; margin:0 auto;}
+  .grid{display:grid; grid-template-columns: 390px 1fr; gap:24px; align-items:start;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; box-shadow:0 1px 2px rgba(0,0,0,.04);}
+  h2{font-size:1.25rem; margin:0 0 12px;}
+  h3{font-size:1.05rem; margin:18px 0 8px;}
+  label{display:block; margin:10px 0 4px; font-weight:600;}
+  .row{display:grid; grid-template-columns:72px 1fr 54px; gap:8px; align-items:center;}
+  input[type=range]{width:100%;}
+  input[type=number]{width:52px; padding:4px 6px;}
+  .eq{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background:#fff; border:1px solid var(--line); padding:10px; border-radius:10px; margin:8px 0;}
+  canvas{background:#fff; border:1px solid var(--line); border-radius:16px; width:100%; height:auto;}
+  .result{background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px; margin-top:12px; line-height:1.55;}
+  .ok{color:var(--ok); font-weight:700;}
+  .warn{color:var(--warn); font-weight:700;}
+  .bad{color:var(--bad); font-weight:700;}
+  .small{font-size:.92rem; color:var(--muted);}
+  table{border-collapse:collapse; width:100%; margin-top:8px; background:#fff;}
+  th,td{border:1px solid var(--line); padding:8px; text-align:left;}
+  code{background:#f3f4f6; padding:1px 4px; border-radius:4px;}
+  button{border:1px solid #111827; background:#111827; color:#fff; border-radius:10px; padding:8px 12px; cursor:pointer; margin:6px 6px 6px 0;}
+  button.secondary{background:#fff; color:#111827;}
+  textarea{width:100%; min-height:90px; border:1px solid var(--line); border-radius:12px; padding:10px; font-family:inherit;}
+  .task{background:#fff; border:1px dashed #cbd5e1; border-radius:12px; padding:12px; margin:10px 0;}
+  @media (max-width: 900px){.grid{grid-template-columns:1fr;}}
+</style>
+
+<script>
+
+function renderMath(){
+  if (window.MathJax && window.MathJax.typesetPromise) {
+    window.MathJax.typesetPromise();
+  }
+}
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)'], ['$', '$']],
+    displayMath: [['\\[', '\\]'], ['$$', '$$']],
+    processEscapes: true,
+    packages: {'[+]': ['ams']}
+  },
+  svg: {fontCache: 'global'}
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+<header>
+  <h1>Lab 1 Interactive: Linear Systems</h1>
+  <p>
+    Practice the geometry and algebra of two linear equations in two unknowns.
+    Change the coefficients, watch the lines move, classify the system, and connect the result with
+    the ranks of the coefficient matrix and augmented matrix.
+  </p>
+</header>
+
+<main>
+  <section class="grid">
+    <div class="card">
+      <h2>1. Build a system</h2>
+      <p class="small">The system is
+        <br>\(a_1x+b_1y=c_1\)
+        <br>\(a_2x+b_2y=c_2\).
+      </p>
+
+      <h3>Equation 1</h3>
+      <div class="row"><span>a₁</span><input id="a1" type="range" min="-8" max="8" step="1" value="1"><input id="a1n" type="number" min="-8" max="8" step="1" value="1"></div>
+      <div class="row"><span>b₁</span><input id="b1" type="range" min="-8" max="8" step="1" value="1"><input id="b1n" type="number" min="-8" max="8" step="1" value="1"></div>
+      <div class="row"><span>c₁</span><input id="c1" type="range" min="-12" max="12" step="1" value="4"><input id="c1n" type="number" min="-12" max="12" step="1" value="4"></div>
+
+      <h3>Equation 2</h3>
+      <div class="row"><span>a₂</span><input id="a2" type="range" min="-8" max="8" step="1" value="2"><input id="a2n" type="number" min="-8" max="8" step="1" value="2"></div>
+      <div class="row"><span>b₂</span><input id="b2" type="range" min="-8" max="8" step="1" value="-1"><input id="b2n" type="number" min="-8" max="8" step="1" value="-1"></div>
+      <div class="row"><span>c₂</span><input id="c2" type="range" min="-12" max="12" step="1" value="1"><input id="c2n" type="number" min="-12" max="12" step="1" value="1"></div>
+
+      <div class="eq" id="equations"></div>
+      <button onclick="preset('unique')">Unique solution</button>
+      <button onclick="preset('parallel')">No solution</button>
+      <button onclick="preset('same')">Infinitely many</button>
+      <button class="secondary" onclick="randomSystem()">Random</button>
+
+      <div class="result" id="classification"></div>
+    </div>
+
+    <div class="card">
+      <h2>2. Geometry</h2>
+      <canvas id="plot" width="720" height="520"></canvas>
+      <p class="small">
+        Blue and orange lines represent the two equations. The black point appears when there is a unique solution.
+      </p>
+    </div>
+  </section>
+
+  <section class="card" style="margin-top:24px;">
+    <h2>3. Rank test and RREF</h2>
+    <p>
+      The coefficient matrix and augmented matrix are
+    </p>
+    <div class="eq" id="matrices"></div>
+    <div class="result" id="rref"></div>
+    <p class="small">
+      For a system \(Ax=b\), the system is consistent exactly when
+      \(\operatorname{rank}(A)=\operatorname{rank}([A\mid b])\). For two variables, a unique solution occurs when this common rank is \(2\).
+    </p>
+  </section>
+
+  <section class="card" style="margin-top:24px;">
+    <h2>4. Student practice tasks</h2>
+    <div class="task">
+      <strong>Task A.</strong> Use the sliders to create a system with exactly one solution.
+      Record \(A\), \(b\), \(\operatorname{rank}(A)\), \(\operatorname{rank}([A\mid b])\), and the solution.
+    </div>
+    <div class="task">
+      <strong>Task B.</strong> Use the sliders to create a system with no solution.
+      Explain the geometry and the rank test.
+    </div>
+    <div class="task">
+      <strong>Task C.</strong> Use the sliders to create a system with infinitely many solutions.
+      Explain why the two equations define the same line.
+    </div>
+    <div class="task">
+      <strong>Task D.</strong> Change only $c_2$. What changes geometrically? What changes algebraically?
+    </div>
+  </section>
+
+  <section class="card" style="margin-top:24px;">
+    <h2>5. Short-answer workspace</h2>
+    <p class="small">This space is for practice only. Students should copy their final answers into the course submission form or notebook.</p>
+    <textarea placeholder="Write your observations here..."></textarea>
+  </section>
+</main>
+
+<script>
+const ids = ["a1","b1","c1","a2","b2","c2"];
+for (const id of ids){
+  const r = document.getElementById(id);
+  const n = document.getElementById(id+"n");
+  r.addEventListener("input",()=>{n.value=r.value; update();});
+  n.addEventListener("input",()=>{r.value=n.value; update();});
+}
+
+function val(id){return Number(document.getElementById(id).value);}
+function fmt(n){
+  if (Math.abs(n) < 1e-10) return "0";
+  if (Math.abs(n - Math.round(n)) < 1e-10) return String(Math.round(n));
+  return n.toFixed(3);
+}
+function equation(a,b,c){
+  return `${fmt(a)}x ${b>=0?"+":"-"} ${fmt(Math.abs(b))}y = ${fmt(c)}`;
+}
+function rank2x2(a,b,d,e){
+  const det = a*e-b*d;
+  if (Math.abs(det)>1e-10) return 2;
+  if (Math.abs(a)>1e-10 || Math.abs(b)>1e-10 || Math.abs(d)>1e-10 || Math.abs(e)>1e-10) return 1;
+  return 0;
+}
+function rank2x3(a,b,c,d,e,f){
+  const minors = [a*e-b*d, a*f-c*d, b*f-c*e];
+  if (minors.some(x=>Math.abs(x)>1e-10)) return 2;
+  if ([a,b,c,d,e,f].some(x=>Math.abs(x)>1e-10)) return 1;
+  return 0;
+}
+function rref2x3(M){
+  let A = M.map(row=>row.slice());
+  let lead=0, rows=2, cols=3;
+  for(let r=0;r<rows;r++){
+    if(lead>=cols) return A;
+    let i=r;
+    while(Math.abs(A[i][lead])<1e-10){
+      i++;
+      if(i===rows){
+        i=r; lead++;
+        if(lead===cols) return A;
+      }
+    }
+    [A[i],A[r]]=[A[r],A[i]];
+    let lv=A[r][lead];
+    A[r]=A[r].map(x=>x/lv);
+    for(let i2=0;i2<rows;i2++){
+      if(i2!==r){
+        let lv2=A[i2][lead];
+        A[i2]=A[i2].map((x,j)=>x-lv2*A[r][j]);
+      }
+    }
+    lead++;
+  }
+  return A;
+}
+function matrixHTML(A){
+  return `<table><tbody>${A.map(row=>`<tr>${row.map(x=>`<td>${fmt(x)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+}
+
+function update(){
+  const a1=val("a1"), b1=val("b1"), c1=val("c1"), a2=val("a2"), b2=val("b2"), c2=val("c2");
+  document.getElementById("equations").innerHTML = `${equation(a1,b1,c1)}<br>${equation(a2,b2,c2)}`;
+  const det = a1*b2-b1*a2;
+  const rA = rank2x2(a1,b1,a2,b2);
+  const rAug = rank2x3(a1,b1,c1,a2,b2,c2);
+  let cls, detail, clsClass;
+  if (rA === rAug && rA === 2){
+    const x = (c1*b2-b1*c2)/det;
+    const y = (a1*c2-c1*a2)/det;
+    cls = "Unique solution";
+    clsClass = "ok";
+    detail = `The determinant is ${fmt(det)}, so the two lines meet at one point: (x,y)=(${fmt(x)}, ${fmt(y)}).`;
+  } else if (rA === rAug && rA < 2){
+    cls = "Infinitely many solutions";
+    clsClass = "warn";
+    detail = "The two equations describe the same line, or both equations are degenerate but consistent.";
+  } else {
+    cls = "No solution";
+    clsClass = "bad";
+    detail = "The two equations are inconsistent. Geometrically, the lines are parallel and distinct, or a degenerate equation contradicts the other.";
+  }
+  document.getElementById("classification").innerHTML =
+    `<span class="${clsClass}">${cls}</span><br>
+     determinant = ${fmt(det)}<br>
+     rank(A) = ${rA}, rank([A | b]) = ${rAug}<br>${detail}`;
+  document.getElementById("matrices").innerHTML =
+    `A = ${matrixHTML([[a1,b1],[a2,b2]])}<br>[A | b] = ${matrixHTML([[a1,b1,c1],[a2,b2,c2]])}`;
+  const R = rref2x3([[a1,b1,c1],[a2,b2,c2]]);
+  document.getElementById("rref").innerHTML = `<strong>RREF of [A | b]</strong>${matrixHTML(R)}`;
+  draw(a1,b1,c1,a2,b2,c2);
+  renderMath();
+}
+
+function toCanvas(x,y,W,H,scale){
+  return [W/2 + x*scale, H/2 - y*scale];
+}
+function drawLine(ctx,a,b,c,color,W,H,scale){
+  ctx.strokeStyle=color; ctx.lineWidth=3;
+  ctx.beginPath();
+  if (Math.abs(b)>1e-10){
+    const x1=-W/(2*scale), y1=(c-a*x1)/b;
+    const x2=W/(2*scale), y2=(c-a*x2)/b;
+    const p1=toCanvas(x1,y1,W,H,scale), p2=toCanvas(x2,y2,W,H,scale);
+    ctx.moveTo(p1[0],p1[1]); ctx.lineTo(p2[0],p2[1]);
+  } else if (Math.abs(a)>1e-10){
+    const x=c/a;
+    const p1=toCanvas(x,-H/(2*scale),W,H,scale), p2=toCanvas(x,H/(2*scale),W,H,scale);
+    ctx.moveTo(p1[0],p1[1]); ctx.lineTo(p2[0],p2[1]);
+  }
+  ctx.stroke();
+}
+function draw(a1,b1,c1,a2,b2,c2){
+  const canvas=document.getElementById("plot");
+  const ctx=canvas.getContext("2d");
+  const W=canvas.width, H=canvas.height, scale=32;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle="#fff"; ctx.fillRect(0,0,W,H);
+
+  // grid
+  ctx.strokeStyle="#eef2f7"; ctx.lineWidth=1;
+  for(let x=-Math.floor(W/(2*scale)); x<=Math.floor(W/(2*scale)); x++){
+    let p=toCanvas(x,0,W,H,scale)[0];
+    ctx.beginPath(); ctx.moveTo(p,0); ctx.lineTo(p,H); ctx.stroke();
+  }
+  for(let y=-Math.floor(H/(2*scale)); y<=Math.floor(H/(2*scale)); y++){
+    let p=toCanvas(0,y,W,H,scale)[1];
+    ctx.beginPath(); ctx.moveTo(0,p); ctx.lineTo(W,p); ctx.stroke();
+  }
+  // axes
+  ctx.strokeStyle="#9ca3af"; ctx.lineWidth=1.5;
+  let ox=toCanvas(0,0,W,H,scale)[0], oy=toCanvas(0,0,W,H,scale)[1];
+  ctx.beginPath(); ctx.moveTo(0,oy); ctx.lineTo(W,oy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ox,0); ctx.lineTo(ox,H); ctx.stroke();
+
+  drawLine(ctx,a1,b1,c1,"#2563eb",W,H,scale);
+  drawLine(ctx,a2,b2,c2,"#f97316",W,H,scale);
+
+  const det=a1*b2-b1*a2;
+  if(Math.abs(det)>1e-10){
+    const x=(c1*b2-b1*c2)/det, y=(a1*c2-c1*a2)/det;
+    const p=toCanvas(x,y,W,H,scale);
+    ctx.fillStyle="#111827";
+    ctx.beginPath(); ctx.arc(p[0],p[1],6,0,2*Math.PI); ctx.fill();
+    ctx.font="14px system-ui"; ctx.fillText(`(${fmt(x)}, ${fmt(y)})`, p[0]+10, p[1]-10);
+  }
+
+  ctx.fillStyle="#2563eb"; ctx.fillRect(16,16,16,4); ctx.fillText("Equation 1",38,22);
+  ctx.fillStyle="#f97316"; ctx.fillRect(16,40,16,4); ctx.fillText("Equation 2",38,46);
+}
+
+function setValues(obj){
+  for(const [k,v] of Object.entries(obj)){
+    document.getElementById(k).value=v;
+    document.getElementById(k+"n").value=v;
+  }
+  update();
+}
+function preset(type){
+  if(type==="unique") setValues({a1:1,b1:1,c1:4,a2:2,b2:-1,c2:1});
+  if(type==="parallel") setValues({a1:1,b1:1,c1:2,a2:2,b2:2,c2:7});
+  if(type==="same") setValues({a1:1,b1:-2,c1:3,a2:2,b2:-4,c2:6});
+}
+function randomSystem(){
+  const rand=(m,n)=>Math.floor(Math.random()*(n-m+1))+m;
+  setValues({a1:rand(-5,5)||1,b1:rand(-5,5)||1,c1:rand(-8,8),a2:rand(-5,5)||2,b2:rand(-5,5)||-1,c2:rand(-8,8)});
+}
+update();
+</script>
+</body>
+</html>

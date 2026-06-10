@@ -1,0 +1,333 @@
+# Lab 6. Determinants: Independent Study {.unnumbered}
+
+This lab accompanies **Chapter 6: Determinants**.
+
+The goal is to connect the story of determinants with computation:
+
+1. **Geometry:** determinant as signed area or volume scaling.
+2. **Invertibility:** nonzero determinant means no dimension is lost.
+3. **Row operations:** compute determinants efficiently by elimination.
+4. **Eigenvalues and singular values:** determinant as a product of spectral quantities.
+5. **Applications:** covariance volume, condition number, and log determinant.
+
+This is an **independent-study lab**. Each main question includes a worked solution and a similar practice question.
+
+## Python practice notebook
+
+You may also use the Jupyter notebook version for longer Python practice:
+
+- [Download Lab 6 independent-study notebook](lab-06-determinants-independent-study.ipynb)
+- [Open Lab 6 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-06-determinants-independent-study.ipynb)
+
+## Interactive lab
+
+```{=html}
+<iframe
+  src="lab-06-interactive.html"
+  width="100%"
+  height="3400"
+  style="border:1px solid #ddd; border-radius:12px;">
+</iframe>
+```
+
+
+
+## Study guide and worked questions
+
+### Question 1. Area scaling in $\mathbb R^2$
+
+Let
+
+$$
+A=\begin{bmatrix}2&1\\0&3\end{bmatrix}.
+$$
+
+Compute $\det(A)$ and interpret the answer geometrically.
+
+#### Solution
+
+$$
+\det(A)=2\cdot3-1\cdot0=6.
+$$
+
+The transformation $x\mapsto Ax$ sends the unit square to a parallelogram of area $6$. Since the determinant is positive, orientation is preserved.
+
+#### Similar practice
+
+Let
+
+$$
+B=\begin{bmatrix}1&4\\0&1\end{bmatrix}.
+$$
+
+Compute $\det(B)$ and explain why this shear preserves area.
+
+#### Answer
+
+$$
+\det(B)=1\cdot1-4\cdot0=1.
+$$
+
+It preserves area but changes the shape of the unit square.
+
+### Question 2. Orientation
+
+Let
+
+$$
+R=\begin{bmatrix}1&0\\0&-1\end{bmatrix}.
+$$
+
+Compute $\det(R)$ and interpret the sign.
+
+#### Solution
+
+$$
+\det(R)=1(-1)-0=-1.
+$$
+
+The transformation reflects across the $x$-axis. It preserves area but reverses orientation.
+
+#### Similar practice
+
+Compute the determinant of
+
+$$
+Q=\begin{bmatrix}0&-1\\1&0\end{bmatrix}.
+$$
+
+#### Answer
+
+$$
+\det(Q)=0\cdot0-(-1)\cdot1=1.
+$$
+
+This rotation preserves area and orientation.
+
+### Question 3. Compute a $3\times3$ determinant by row operations
+
+Let
+
+$$
+A=\begin{bmatrix}
+1&2&3\\
+2&5&7\\
+1&1&0
+\end{bmatrix}.
+$$
+
+Compute $\det(A)$ using elimination.
+
+#### Solution
+
+Use row replacements, which do not change the determinant:
+
+$$
+R_2\leftarrow R_2-2R_1,
+\qquad
+R_3\leftarrow R_3-R_1.
+$$
+
+This gives
+
+$$
+\begin{bmatrix}
+1&2&3\\
+0&1&1\\
+0&-1&-3
+\end{bmatrix}.
+$$
+
+Then use
+
+$$
+R_3\leftarrow R_3+R_2,
+$$
+
+which gives
+
+$$
+\begin{bmatrix}
+1&2&3\\
+0&1&1\\
+0&0&-2
+\end{bmatrix}.
+$$
+
+Therefore
+
+$$
+\det(A)=1\cdot1\cdot(-2)=-2.
+$$
+
+#### Similar practice
+
+Compute the determinant of
+
+$$
+B=\begin{bmatrix}
+2&1&0\\
+1&3&1\\
+0&2&4
+\end{bmatrix}.
+$$
+
+#### Answer
+
+Expanding along the first row or using elimination gives
+
+$$
+\det(B)=2(3\cdot4-1\cdot2)-1(1\cdot4-1\cdot0)=2(10)-4=16.
+$$
+
+### Question 4. Determinant and invertibility
+
+Let
+
+$$
+A=\begin{bmatrix}1&2\\2&4\end{bmatrix}.
+$$
+
+Determine whether $A$ is invertible.
+
+#### Solution
+
+$$
+\det(A)=1\cdot4-2\cdot2=0.
+$$
+
+Therefore $A$ is not invertible. The columns are linearly dependent because the second column is twice the first column.
+
+#### Similar practice
+
+Let
+
+$$
+B=\begin{bmatrix}3&1\\2&5\end{bmatrix}.
+$$
+
+Determine whether $B$ is invertible.
+
+#### Answer
+
+$$
+\det(B)=15-2=13\ne0.
+$$
+
+So $B$ is invertible.
+
+### Question 5. Determinant from eigenvalues and singular values
+
+Suppose a $4\times4$ matrix has eigenvalues
+
+$$
+2,\quad -1,\quad 3,\quad 5.
+$$
+
+Find its determinant.
+
+#### Solution
+
+$$
+\det(A)=2(-1)(3)(5)=-30.
+$$
+
+Since the determinant is nonzero, $A$ is invertible.
+
+#### Similar practice
+
+Suppose a $3\times3$ matrix has singular values
+
+$$
+10,
+\quad 1,
+\quad 0.01.
+$$
+
+Find $|\det(A)|$ and the condition number.
+
+#### Answer
+
+$$
+|\det(A)|=10\cdot1\cdot0.01=0.1.
+$$
+
+The condition number is
+
+$$
+\kappa_2(A)=\frac{10}{0.01}=1000.
+$$
+
+### Question 6. Covariance volume
+
+Let
+
+$$
+\Sigma=\begin{bmatrix}4&0\\0&1\end{bmatrix}.
+$$
+
+Compute $\det(\Sigma)$ and interpret it as generalized variance.
+
+#### Solution
+
+$$
+\det(\Sigma)=4.
+$$
+
+The generalized variance is $4$. The covariance ellipse has area proportional to
+
+$$
+\sqrt{\det(\Sigma)}=2.
+$$
+
+#### Similar practice
+
+Let
+
+$$
+\Sigma=\begin{bmatrix}9&0\\0&4\end{bmatrix}.
+$$
+
+Compute the generalized variance.
+
+#### Answer
+
+$$
+\det(\Sigma)=36.
+$$
+
+The covariance ellipse has area proportional to $6$.
+
+## AI companion activities
+
+### Activity 1. Check one determinant in three ways
+
+Ask an AI assistant:
+
+> Compute $\det\begin{bmatrix}1&2&3\\2&5&7\\1&1&0\end{bmatrix}$ by cofactor expansion, row reduction, and Python. Which method is most efficient?
+
+Then compare the answer with this lab.
+
+### Activity 2. Explain determinant zero
+
+Ask:
+
+> Explain geometrically why $\det(A)=0$ means a square matrix loses dimension.
+
+Check whether the answer mentions linear dependence of columns.
+
+### Activity 3. Condition number warning
+
+Ask:
+
+> Give a matrix with determinant $1$ but very large condition number. Explain why determinant alone is not enough for numerical stability.
+
+Then compute its singular values in Python.
+
+### Activity 4. Gaussian connection
+
+Ask:
+
+> Why does the determinant of a covariance matrix appear in the multivariate Gaussian density?
+
+Summarize the answer using the phrase **volume normalization**.

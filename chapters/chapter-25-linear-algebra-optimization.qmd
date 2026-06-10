@@ -1,0 +1,1092 @@
+---
+title: "Chapter 25: Linear Algebra and Optimization"
+subtitle: "Vectors that choose the best answer"
+author: "He Wang"
+format:
+  html:
+    toc: true
+    number-sections: true
+    code-fold: true
+    code-tools: true
+jupyter: python3
+---
+
+## 25.1 The story: when a vector has to make a decision
+
+In earlier chapters, a vector often represented data, a signal, a state, a polynomial, a probability distribution, or a point in space. In optimization, a vector represents a **choice**.
+
+A delivery route, a portfolio, a regression model, a classifier, a flow on a network, and a solution of a differential equation can all be described by a vector
+$$
+x\in \mathbb R^n.
+$$
+Optimization asks:
+
+> Among all possible vectors $x$, which one is best?
+
+Linear algebra gives the language for the answer.
+
+| Optimization language | Linear algebra language |
+|---|---|
+| decision variables | a vector $x\in\mathbb R^n$ |
+| equality constraints | an affine subspace $Ax=b$ |
+| inequality constraints | half-spaces $Ax\le b$ |
+| quadratic objective | a quadratic form $x^TQx$ |
+| least squares objective | distance to a column space |
+| gradient | vector of first-order change |
+| Hessian | symmetric matrix of second-order change |
+| dual variables | vectors measuring constraint sensitivity |
+
+The main message is:
+
+> Optimization is linear algebra plus the word “best.”
+
+## 25.2 Optimization problems
+
+::: {.callout-note}
+## Definition 25.1: Optimization problem
+
+An **optimization problem** has the form
+$$
+\min_{x\in \mathcal C} f(x)
+$$
+or
+$$
+\max_{x\in \mathcal C} f(x),
+$$
+where $f:\mathbb R^n\to \mathbb R$ is the **objective function** and $\mathcal C\subseteq \mathbb R^n$ is the **feasible set**.
+:::
+
+If $\mathcal C=\mathbb R^n$, the problem is **unconstrained**. If $\mathcal C$ is described by equations or inequalities, the problem is **constrained**.
+
+### Example 25.1: Three basic optimization problems
+
+1. **Least squares**
+$$
+\min_{x\in\mathbb R^n}\|Ax-b\|_2^2.
+$$
+
+2. **Quadratic optimization**
+$$
+\min_{x\in\mathbb R^n}
+\left(\frac12 x^TQx-b^Tx\right),
+$$
+where $Q=Q^T$.
+
+3. **Linear programming**
+$$
+\min_{x\in\mathbb R^n} c^Tx
+\quad\text{subject to}\quad
+Ax\le b.
+$$
+
+Each problem is built from vectors, matrices, inner products, and geometry.
+
+## 25.3 Gradients and Hessians
+
+The derivative of a scalar-valued function $f:\mathbb R^n\to\mathbb R$ is best understood as a linear approximation.
+
+::: {.callout-note}
+## Definition 25.2: Gradient
+
+Let $f:\mathbb R^n\to\mathbb R$ be differentiable. The **gradient** of $f$ at $x$ is
+$$
+\nabla f(x)=
+\begin{bmatrix}
+\frac{\partial f}{\partial x_1}(x)\\
+\vdots\\
+\frac{\partial f}{\partial x_n}(x)
+\end{bmatrix}.
+$$
+For a small vector $h$,
+$$
+f(x+h)\approx f(x)+\nabla f(x)^Th.
+$$
+:::
+
+The gradient points in the direction of steepest increase. Therefore, $-\nabla f(x)$ points in the direction of steepest local decrease.
+
+::: {.callout-note}
+## Definition 25.3: Hessian
+
+If $f:\mathbb R^n\to\mathbb R$ has continuous second partial derivatives, the **Hessian matrix** is
+$$
+\nabla^2 f(x)=
+\begin{bmatrix}
+\frac{\partial^2 f}{\partial x_1\partial x_1} & \cdots & \frac{\partial^2 f}{\partial x_1\partial x_n}\\
+\vdots & \ddots & \vdots\\
+\frac{\partial^2 f}{\partial x_n\partial x_1} & \cdots & \frac{\partial^2 f}{\partial x_n\partial x_n}
+\end{bmatrix}.
+$$
+The second-order approximation is
+$$
+f(x+h)\approx f(x)+\nabla f(x)^Th+\frac12 h^T\nabla^2 f(x)h.
+$$
+:::
+
+### Example 25.2: A quadratic objective
+
+Let
+$$
+f(x)=\frac12x^TQx-b^Tx+c,
+$$
+where $Q=Q^T$. Then
+$$
+\nabla f(x)=Qx-b,
+\qquad
+\nabla^2 f(x)=Q.
+$$
+
+Thus the Hessian of a quadratic function is the matrix defining its quadratic form.
+
+::: {.callout-important}
+## Theorem 25.1: First-order necessary condition
+
+If $f:\mathbb R^n\to\mathbb R$ is differentiable and $x_*$ is a local minimum or local maximum in the interior of the domain, then
+$$
+\nabla f(x_*)=0.
+$$
+:::
+
+<details>
+<summary>Proof</summary>
+
+For any direction $v$, define a one-variable function
+$$
+g(t)=f(x_*+tv).
+$$
+If $x_*$ is a local minimum or local maximum, then $t=0$ is a local minimum or local maximum of $g$. Hence
+$$
+g'(0)=0.
+$$
+By the chain rule,
+$$
+g'(0)=\nabla f(x_*)^Tv.
+$$
+This is true for every direction $v$. Therefore $\nabla f(x_*)$ must be the zero vector.
+</details>
+
+## 25.4 Convexity and positive semidefinite matrices
+
+Convexity is the reason many optimization problems are tractable. The geometric idea is simple: a convex set contains every line segment between any two of its points.
+
+::: {.callout-note}
+## Definition 25.4: Convex set
+
+A set $\mathcal C\subseteq\mathbb R^n$ is **convex** if for all $x,y\in\mathcal C$ and all $0\le t\le 1$,
+$$
+tx+(1-t)y\in\mathcal C.
+$$
+:::
+
+::: {.callout-note}
+## Definition 25.5: Convex function
+
+A function $f:\mathcal C\to\mathbb R$ on a convex set $\mathcal C$ is **convex** if
+$$
+f(tx+(1-t)y)\le tf(x)+(1-t)f(y)
+$$
+for all $x,y\in\mathcal C$ and all $0\le t\le 1$.
+:::
+
+::: {.callout-important}
+## Theorem 25.2: Hessian test for convexity
+
+Let $\mathcal C\subseteq\mathbb R^n$ be open and convex. Suppose $f:\mathcal C\to\mathbb R$ has continuous second partial derivatives. Then $f$ is convex if and only if
+$$
+\nabla^2 f(x)\succeq 0
+$$
+for every $x\in\mathcal C$.
+:::
+
+<details>
+<summary>Proof idea</summary>
+
+Restrict $f$ to every line $x+tv$. Define
+$$
+g(t)=f(x+tv).
+$$
+Then
+$$
+g''(t)=v^T\nabla^2 f(x+tv)v.
+$$
+A twice differentiable one-variable function is convex exactly when its second derivative is nonnegative. Therefore $f$ is convex exactly when $v^T\nabla^2 f(x)v\ge 0$ for every direction $v$, which means $\nabla^2 f(x)\succeq 0$.
+</details>
+
+### Example 25.3: Convex quadratic functions
+
+For
+$$
+f(x)=\frac12x^TQx-b^Tx+c,
+$$
+the Hessian is $Q$. Therefore:
+
+- $f$ is convex if $Q\succeq 0$.
+- $f$ is strictly convex if $Q\succ 0$.
+
+## 25.5 Unconstrained quadratic optimization
+
+Quadratic optimization is one of the clearest examples of linear algebra controlling optimization.
+
+::: {.callout-important}
+## Theorem 25.3: Minimizer of a positive definite quadratic
+
+Let $Q=Q^T\succ 0$. The function
+$$
+f(x)=\frac12x^TQx-b^Tx
+$$
+has a unique minimizer $x_*$, and it satisfies
+$$
+Qx_*=b.
+$$
+Thus
+$$
+x_*=Q^{-1}b.
+$$
+:::
+
+<details>
+<summary>Proof</summary>
+
+We compute
+$$
+\nabla f(x)=Qx-b.
+$$
+At a minimizer, the first-order condition gives
+$$
+Qx-b=0.
+$$
+Since $Q\succ 0$, the matrix $Q$ is invertible, so the solution is unique:
+$$
+x_*=Q^{-1}b.
+$$
+Because the Hessian is $Q\succ 0$, the function is strictly convex, so this stationary point is the global minimizer.
+</details>
+
+### Python computation: solving a quadratic optimization problem
+
+```{python}
+import numpy as np
+
+Q = np.array([[4., 1.],
+              [1., 3.]])
+b = np.array([1., 2.])
+
+x_star = np.linalg.solve(Q, b)
+f_star = 0.5 * x_star @ Q @ x_star - b @ x_star
+
+x_star, f_star
+```
+
+The optimal vector is found by solving a linear system.
+
+## 25.6 Least squares as projection and optimization
+
+Least squares has already appeared as a projection problem. Now we view it as an optimization problem.
+
+::: {.callout-note}
+## Definition 25.6: Least squares problem
+
+Given $A\in\mathbb R^{m\times n}$ and $b\in\mathbb R^m$, the least squares problem is
+$$
+\min_{x\in\mathbb R^n}\|Ax-b\|_2^2.
+$$
+:::
+
+::: {.callout-important}
+## Theorem 25.4: Normal equations
+
+A vector $x_*$ solves
+$$
+\min_x \|Ax-b\|_2^2
+$$
+if and only if
+$$
+A^TAx_*=A^Tb.
+$$
+If the columns of $A$ are linearly independent, then $A^TA$ is positive definite and
+$$
+x_*=(A^TA)^{-1}A^Tb.
+$$
+:::
+
+<details>
+<summary>Proof</summary>
+
+Let
+$$
+f(x)=\|Ax-b\|_2^2=(Ax-b)^T(Ax-b).
+$$
+Expanding gives
+$$
+f(x)=x^TA^TAx-2b^TAx+b^Tb.
+$$
+Therefore
+$$
+\nabla f(x)=2A^T(Ax-b).
+$$
+The first-order condition $\nabla f(x_*)=0$ gives
+$$
+A^T(Ax_*-b)=0,
+$$
+or
+$$
+A^TAx_*=A^Tb.
+$$
+Geometrically, this means the residual $b-Ax_*$ is orthogonal to the column space of $A$.
+</details>
+
+### Python computation: least squares
+
+```{python}
+import numpy as np
+
+A = np.array([[1., 0.],
+              [1., 1.],
+              [1., 2.],
+              [1., 3.]])
+b = np.array([1.0, 2.1, 2.9, 4.2])
+
+x_ls = np.linalg.lstsq(A, b, rcond=None)[0]
+normal_x = np.linalg.solve(A.T @ A, A.T @ b)
+
+x_ls, normal_x
+```
+
+## 25.7 Regularization and ridge regression
+
+Least squares can be unstable when columns of $A$ are nearly dependent. Regularization adds a penalty to discourage overly large coefficients.
+
+::: {.callout-note}
+## Definition 25.7: Ridge regression
+
+For $\lambda>0$, the **ridge regression** problem is
+$$
+\min_x \left(\|Ax-b\|_2^2+\lambda\|x\|_2^2\right).
+$$
+:::
+
+::: {.callout-important}
+## Theorem 25.5: Ridge regression formula
+
+The ridge regression solution satisfies
+$$
+(A^TA+\lambda I)x_\lambda=A^Tb.
+$$
+Hence
+$$
+x_\lambda=(A^TA+\lambda I)^{-1}A^Tb.
+$$
+:::
+
+<details>
+<summary>Proof</summary>
+
+Let
+$$
+f(x)=\|Ax-b\|_2^2+\lambda\|x\|_2^2.
+$$
+Then
+$$
+\nabla f(x)=2A^T(Ax-b)+2\lambda x.
+$$
+Setting the gradient equal to zero gives
+$$
+A^TAx-A^Tb+\lambda x=0,
+$$
+so
+$$
+(A^TA+\lambda I)x=A^Tb.
+$$
+Since $\lambda>0$, the matrix $A^TA+\lambda I$ is positive definite and invertible.
+</details>
+
+### Python computation: ridge stabilizes an ill-conditioned problem
+
+```{python}
+import numpy as np
+
+A = np.array([[1., 1.00],
+              [1., 1.01],
+              [1., 0.99],
+              [1., 1.02]])
+b = np.array([2.0, 2.01, 1.99, 2.02])
+
+for lam in [0, 0.01, 0.1, 1.0]:
+    if lam == 0:
+        x = np.linalg.lstsq(A, b, rcond=None)[0]
+    else:
+        x = np.linalg.solve(A.T @ A + lam*np.eye(2), A.T @ b)
+    print(lam, x)
+```
+
+## 25.8 Equality constraints and KKT systems
+
+Now suppose the vector $x$ must satisfy linear equality constraints:
+$$
+Cx=d.
+$$
+
+A constrained quadratic problem has the form
+$$
+\min_x \frac12x^TQx-b^Tx
+\quad\text{subject to}\quad Cx=d.
+$$
+
+::: {.callout-note}
+## Definition 25.8: Lagrangian
+
+The **Lagrangian** for the equality-constrained problem is
+$$
+\mathcal L(x,\lambda)
+=
+\frac12x^TQx-b^Tx+\lambda^T(Cx-d),
+$$
+where $\lambda$ is the vector of **Lagrange multipliers**.
+:::
+
+::: {.callout-important}
+## Theorem 25.6: KKT system for equality-constrained quadratic optimization
+
+A solution $(x_*,\lambda_*)$ satisfies
+$$
+\begin{bmatrix}
+Q & C^T\\
+C & 0
+\end{bmatrix}
+\begin{bmatrix}
+x_*\\
+\lambda_*
+\end{bmatrix}
+=
+\begin{bmatrix}
+b\\
+d
+\end{bmatrix}.
+$$
+This block linear system is called a **KKT system**.
+:::
+
+<details>
+<summary>Proof</summary>
+
+Differentiate the Lagrangian with respect to $x$:
+$$
+\nabla_x\mathcal L(x,\lambda)=Qx-b+C^T\lambda.
+$$
+Differentiate with respect to $\lambda$:
+$$
+\nabla_\lambda\mathcal L(x,\lambda)=Cx-d.
+$$
+The stationary equations are
+$$
+Qx+C^T\lambda=b,
+\qquad
+Cx=d.
+$$
+Writing these equations in block matrix form gives the KKT system.
+</details>
+
+### Python computation: KKT system
+
+```{python}
+import numpy as np
+
+Q = np.array([[2., 0.],
+              [0., 2.]])
+b = np.array([2., 0.])
+C = np.array([[1., 1.]])
+d = np.array([1.])
+
+KKT = np.block([[Q, C.T],
+                [C, np.zeros((1,1))]])
+rhs = np.concatenate([b, d])
+
+sol = np.linalg.solve(KKT, rhs)
+x_star = sol[:2]
+lambda_star = sol[2:]
+
+x_star, lambda_star
+```
+
+## 25.9 Inequality constraints and linear programming
+
+Linear programming is optimization over a polyhedron.
+
+::: {.callout-note}
+## Definition 25.9: Linear program
+
+A **linear program** is an optimization problem of the form
+$$
+\min_x c^Tx
+\quad\text{subject to}\quad
+Ax\le b.
+$$
+:::
+
+::: {.callout-note}
+## Definition 25.10: Polyhedron
+
+A **polyhedron** is a set that can be written as the intersection of finitely many half-spaces:
+$$
+\mathcal P=\{x\in\mathbb R^n: Ax\le b\}.
+$$
+:::
+
+The feasible set of a linear program is a polyhedron. The objective $c^Tx$ is linear, so its level sets are parallel hyperplanes.
+
+::: {.callout-important}
+## Theorem 25.7: Linear programming geometry
+
+If a linear program has an optimal solution and the feasible polyhedron has vertices, then at least one optimal solution occurs at a vertex.
+:::
+
+<details>
+<summary>Proof idea</summary>
+
+A linear objective has flat level sets. Moving the level set in the improving direction, the first contact with a bounded polygon or polyhedron occurs at a face. If the face has more than one point, at least one of its vertices is also optimal. This is the geometric reason behind the simplex method.
+</details>
+
+## 25.10 Duality in linear programming
+
+Duality is one of the deepest ideas in optimization. It says that every linear program has a companion problem that gives certificates for how good a solution can be.
+
+::: {.callout-note}
+## Definition 25.11: Primal-dual pair
+
+A standard primal linear program is
+$$
+\min_x c^Tx
+\quad\text{subject to}\quad
+Ax=b,\quad x\ge 0.
+$$
+Its dual is
+$$
+\max_y b^Ty
+\quad\text{subject to}\quad
+A^Ty\le c.
+$$
+:::
+
+::: {.callout-important}
+## Theorem 25.8: Weak duality
+
+If $x$ is feasible for the primal and $y$ is feasible for the dual, then
+$$
+b^Ty\le c^Tx.
+$$
+:::
+
+<details>
+<summary>Proof</summary>
+
+Since $Ax=b$,
+$$
+b^Ty=(Ax)^Ty=y^TAx=x^TA^Ty.
+$$
+Since $A^Ty\le c$ and $x\ge 0$,
+$$
+x^TA^Ty\le x^Tc=c^Tx.
+$$
+Therefore
+$$
+b^Ty\le c^Tx.
+$$
+</details>
+
+Weak duality says that every dual feasible point gives a lower bound for every primal feasible point in a minimization problem.
+
+## 25.11 Gradient descent as an iterative linear process
+
+Gradient descent is one of the simplest and most important optimization algorithms.
+
+::: {.callout-note}
+## Definition 25.12: Gradient descent
+
+Given a differentiable function $f$, gradient descent constructs a sequence
+$$
+x_{k+1}=x_k-\alpha \nabla f(x_k),
+$$
+where $\alpha>0$ is called the **step size** or **learning rate**.
+:::
+
+For a quadratic
+$$
+f(x)=\frac12x^TQx-b^Tx,
+$$
+gradient descent becomes
+$$
+x_{k+1}=x_k-\alpha(Qx_k-b)
+=
+(I-\alpha Q)x_k+\alpha b.
+$$
+Thus the convergence of gradient descent is controlled by eigenvalues of $Q$.
+
+::: {.callout-important}
+## Theorem 25.9: Gradient descent on a positive definite quadratic
+
+Let $Q=Q^T\succ 0$, with eigenvalues
+$$
+0<\lambda_{\min}\le \lambda_i\le \lambda_{\max}.
+$$
+For
+$$
+f(x)=\frac12x^TQx-b^Tx,
+$$
+gradient descent converges to the minimizer if
+$$
+0<\alpha<\frac{2}{\lambda_{\max}}.
+$$
+:::
+
+<details>
+<summary>Proof idea</summary>
+
+Let $x_*=Q^{-1}b$ and $e_k=x_k-x_*$. Since $Qx_*=b$,
+$$
+e_{k+1}=x_{k+1}-x_*=(I-\alpha Q)e_k.
+$$
+The iteration converges if every eigenvalue of $I-\alpha Q$ has absolute value less than $1$. These eigenvalues are $1-\alpha\lambda_i$. Therefore we need
+$$
+|1-\alpha\lambda_i|<1
+$$
+for every $i$, which is equivalent to
+$$
+0<\alpha<\frac{2}{\lambda_{\max}}.
+$$
+</details>
+
+### Python computation: gradient descent
+
+```{python}
+import numpy as np
+
+Q = np.array([[5., 1.],
+              [1., 2.]])
+b = np.array([1., 1.])
+alpha = 0.25
+
+x = np.array([3., -2.])
+history = [x.copy()]
+for k in range(25):
+    grad = Q @ x - b
+    x = x - alpha * grad
+    history.append(x.copy())
+
+np.array(history[-5:])
+```
+
+## 25.12 Newton's method and local quadratic models
+
+Gradient descent uses the gradient. Newton's method uses both the gradient and the Hessian.
+
+::: {.callout-note}
+## Definition 25.13: Newton step
+
+For a twice differentiable function $f$, the Newton step $p_k$ at $x_k$ solves
+$$
+\nabla^2 f(x_k)p_k=-\nabla f(x_k).
+$$
+The update is
+$$
+x_{k+1}=x_k+p_k.
+$$
+:::
+
+Newton's method comes from minimizing the local quadratic approximation
+$$
+f(x_k+p)\approx f(x_k)+\nabla f(x_k)^Tp+\frac12p^T\nabla^2 f(x_k)p.
+$$
+
+For a positive definite quadratic function, Newton's method reaches the minimizer in one step.
+
+## 25.13 Projection and proximal maps
+
+Many constrained optimization problems can be solved by repeatedly taking a gradient step and projecting back onto the feasible set.
+
+::: {.callout-note}
+## Definition 25.14: Projection onto a closed convex set
+
+Let $\mathcal C\subseteq\mathbb R^n$ be closed and convex. The projection of $y$ onto $\mathcal C$ is
+$$
+\operatorname{Proj}_{\mathcal C}(y)
+=
+\arg\min_{x\in\mathcal C}\|x-y\|_2.
+$$
+:::
+
+### Example 25.4: Projection onto the nonnegative orthant
+
+For
+$$
+\mathcal C=\mathbb R_{\ge 0}^n,
+$$
+the projection is componentwise:
+$$
+\operatorname{Proj}_{\mathcal C}(y)_i=\max(y_i,0).
+$$
+
+Projected gradient descent takes the form
+$$
+x_{k+1}
+=
+\operatorname{Proj}_{\mathcal C}
+\left(x_k-\alpha\nabla f(x_k)\right).
+$$
+
+## 25.14 Optimization, eigenvalues, and Rayleigh quotients
+
+Eigenvalues appear naturally in optimization through the Rayleigh quotient.
+
+::: {.callout-note}
+## Definition 25.15: Rayleigh quotient
+
+For a symmetric matrix $A$, the Rayleigh quotient is
+$$
+R_A(x)=\frac{x^TAx}{x^Tx},
+\qquad x\ne 0.
+$$
+:::
+
+::: {.callout-important}
+## Theorem 25.10: Rayleigh quotient optimization
+
+If $A=A^T$ has eigenvalues
+$$
+\lambda_1\le \lambda_2\le \cdots\le \lambda_n,
+$$
+then
+$$
+\lambda_1=\min_{x\ne 0} \frac{x^TAx}{x^Tx},
+\qquad
+\lambda_n=\max_{x\ne 0} \frac{x^TAx}{x^Tx}.
+$$
+:::
+
+<details>
+<summary>Proof idea</summary>
+
+By the spectral theorem, write
+$$
+A=Q\Lambda Q^T.
+$$
+Let $y=Q^Tx$. Then $\|y\|=\|x\|$ and
+$$
+\frac{x^TAx}{x^Tx}
+=
+\frac{y^T\Lambda y}{y^Ty}
+=
+\frac{\sum_i \lambda_i y_i^2}{\sum_i y_i^2}.
+$$
+This is a weighted average of the eigenvalues. Therefore it lies between the smallest and largest eigenvalues. Equality is achieved at the corresponding eigenvectors.
+</details>
+
+## 25.15 Applications
+
+### Portfolio optimization
+
+In Markowitz portfolio optimization, one chooses a vector $x$ of asset weights. A covariance matrix $\Sigma$ measures risk:
+$$
+\text{risk}=x^T\Sigma x.
+$$
+A basic problem is
+$$
+\min_x x^T\Sigma x
+\quad\text{subject to}\quad
+\mathbf 1^Tx=1,\quad \mu^Tx=r.
+$$
+This is a quadratic optimization problem with linear equality constraints.
+
+### Support vector machines
+
+A linear classifier uses a hyperplane
+$$
+w^Tx+b=0.
+$$
+The support vector machine chooses a separating hyperplane with large margin. In its simplest form, it leads to a constrained quadratic optimization problem.
+
+### Energy minimization on graphs
+
+For a graph Laplacian $L$,
+$$
+x^TLx=\sum_{(i,j)\in E}w_{ij}(x_i-x_j)^2.
+$$
+Minimizing this energy encourages adjacent vertices to have similar values. This idea appears in graph signal processing, spectral clustering, and semi-supervised learning.
+
+### Machine learning loss functions
+
+Training many models means minimizing a loss:
+$$
+\min_\theta \frac1m\sum_{i=1}^m \ell(f_\theta(x_i),y_i).
+$$
+Linear algebra enters through matrix representations of data, gradients, Hessians, least squares, regularization, eigenvalues, and iterative methods.
+
+## 25.16 Challenge questions
+
+### Challenge 1: Why is ridge regression always solvable?
+
+Show that for every matrix $A$ and every $\lambda>0$, the matrix
+$$
+A^TA+\lambda I
+$$
+is positive definite.
+
+<details>
+<summary>Solution</summary>
+
+For any nonzero vector $x$,
+$$
+x^T(A^TA+\lambda I)x
+=
+x^TA^TAx+\lambda x^Tx
+=
+\|Ax\|_2^2+\lambda\|x\|_2^2.
+$$
+The first term is nonnegative and the second term is strictly positive because $x\ne 0$ and $\lambda>0$. Hence the sum is strictly positive. Therefore $A^TA+\lambda I$ is positive definite.
+</details>
+
+### Challenge 2: Gradient descent and eigenvalues
+
+Let $Q=Q^T\succ 0$. Explain why a large condition number
+$$
+\kappa(Q)=\frac{\lambda_{\max}}{\lambda_{\min}}
+$$
+can make gradient descent slow.
+
+<details>
+<summary>Solution</summary>
+
+For a quadratic function, the error evolves by
+$$
+e_{k+1}=(I-\alpha Q)e_k.
+$$
+In an eigenvector direction with eigenvalue $\lambda_i$, the error is multiplied by $1-\alpha\lambda_i$. A step size small enough to be stable for $\lambda_{\max}$ may be very small relative to $\lambda_{\min}$. Then directions corresponding to small eigenvalues shrink slowly. This creates a long, narrow valley and slow convergence.
+</details>
+
+### Challenge 3: KKT interpretation
+
+For
+$$
+\min_x \frac12\|x-y\|^2
+\quad\text{subject to}\quad Cx=d,
+$$
+derive the KKT system.
+
+<details>
+<summary>Solution</summary>
+
+Here
+$$
+f(x)=\frac12(x-y)^T(x-y).
+$$
+The Lagrangian is
+$$
+\mathcal L(x,\lambda)=\frac12\|x-y\|^2+\lambda^T(Cx-d).
+$$
+The stationarity condition is
+$$
+x-y+C^T\lambda=0,
+$$
+or
+$$
+x+C^T\lambda=y.
+$$
+The constraint is $Cx=d$. Therefore
+$$
+\begin{bmatrix}
+I & C^T\\
+C & 0
+\end{bmatrix}
+\begin{bmatrix}
+x\\
+\lambda
+\end{bmatrix}
+=
+\begin{bmatrix}
+y\\
+d
+\end{bmatrix}.
+$$
+</details>
+
+## 25.17 Practice problems
+
+### Problem 1
+
+Let
+$$
+Q=\begin{bmatrix}3&1\\1&2\end{bmatrix},
+\qquad
+b=\begin{bmatrix}1\\4\end{bmatrix}.
+$$
+Find the minimizer of
+$$
+f(x)=\frac12x^TQx-b^Tx.
+$$
+
+<details>
+<summary>Solution</summary>
+
+The minimizer satisfies
+$$
+Qx=b.
+$$
+Thus
+$$
+\begin{bmatrix}3&1\\1&2\end{bmatrix}
+\begin{bmatrix}x_1\\x_2\end{bmatrix}
+=
+\begin{bmatrix}1\\4\end{bmatrix}.
+$$
+The equations are
+$$
+3x_1+x_2=1,\qquad x_1+2x_2=4.
+$$
+Solving gives
+$$
+x_1=-\frac25,\qquad x_2=\frac{11}{5}.
+$$
+</details>
+
+### Problem 2
+
+Let
+$$
+A=\begin{bmatrix}
+1&0\\
+1&1\\
+1&2
+\end{bmatrix},
+\qquad
+b=\begin{bmatrix}1\\2\\2\end{bmatrix}.
+$$
+Write the normal equations for the least squares problem.
+
+<details>
+<summary>Solution</summary>
+
+Compute
+$$
+A^TA=
+\begin{bmatrix}
+3&3\\
+3&5
+\end{bmatrix},
+\qquad
+A^Tb=
+\begin{bmatrix}
+5\\
+6
+\end{bmatrix}.
+$$
+The normal equations are
+$$
+\begin{bmatrix}
+3&3\\
+3&5
+\end{bmatrix}x
+=
+\begin{bmatrix}
+5\\
+6
+\end{bmatrix}.
+$$
+</details>
+
+### Problem 3
+
+For
+$$
+f(x,y)=x^2+4y^2+2xy-6x,
+$$
+find the gradient and Hessian. Is $f$ convex?
+
+<details>
+<summary>Solution</summary>
+
+The gradient is
+$$
+\nabla f(x,y)=
+\begin{bmatrix}
+2x+2y-6\\
+2x+8y
+\end{bmatrix}.
+$$
+The Hessian is
+$$
+\nabla^2 f=
+\begin{bmatrix}
+2&2\\
+2&8
+\end{bmatrix}.
+$$
+Its leading principal minors are $2>0$ and $16-4=12>0$, so the Hessian is positive definite. Hence $f$ is strictly convex.
+</details>
+
+### Problem 4
+
+Let
+$$
+A=\begin{bmatrix}1&1\\1&1.01\\1&0.99\end{bmatrix}.
+$$
+Explain why ridge regression may be preferable to ordinary least squares.
+
+<details>
+<summary>Solution</summary>
+
+The two columns of $A$ are nearly linearly dependent. Therefore $A^TA$ is close to singular, and the least squares coefficients may be unstable. Ridge regression replaces $A^TA$ by $A^TA+\lambda I$, which is positive definite and better conditioned for $\lambda>0$.
+</details>
+
+### Problem 5
+
+Let
+$$
+A=A^T.
+$$
+Explain why the largest eigenvalue of $A$ solves an optimization problem.
+
+<details>
+<summary>Solution</summary>
+
+By the Rayleigh quotient theorem,
+$$
+\lambda_{\max}(A)=\max_{x\ne 0}\frac{x^TAx}{x^Tx}.
+$$
+Equivalently,
+$$
+\lambda_{\max}(A)=\max_{\|x\|=1}x^TAx.
+$$
+The maximizers are eigenvectors associated with the largest eigenvalue.
+</details>
+
+## 25.18 AI companion activities
+
+Use an AI assistant as a study partner, not as a replacement for your own reasoning.
+
+1. **Concept explanation.** Ask:  
+   “Explain why least squares is both a projection problem and an optimization problem.”
+
+2. **Proof checker.** Write your own proof of the normal equations and ask the AI to find missing assumptions.
+
+3. **Python debugging.** Ask the AI to help debug a gradient descent implementation, then verify every line yourself.
+
+4. **Geometric explanation.** Ask:  
+   “Why does the condition number of a positive definite matrix affect the speed of gradient descent?”
+
+5. **Model comparison.** Ask:  
+   “Compare least squares, ridge regression, and constrained least squares using the language of linear algebra.”
+
+## 25.19 Summary
+
+In this chapter:
+
+- Optimization chooses the best vector from a feasible set.
+- Gradients and Hessians translate calculus into vectors and matrices.
+- Positive semidefinite Hessians characterize convexity.
+- Positive definite quadratic optimization reduces to solving $Qx=b$.
+- Least squares is both projection and optimization.
+- Ridge regression stabilizes ill-conditioned least squares.
+- Equality constraints lead to KKT block systems.
+- Linear programming is optimization over polyhedra.
+- Gradient descent is an eigenvalue-controlled iteration.
+- Newton's method solves local quadratic models.
+- Rayleigh quotients turn eigenvalue problems into optimization problems.

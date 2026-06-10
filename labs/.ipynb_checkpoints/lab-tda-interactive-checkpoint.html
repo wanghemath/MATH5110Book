@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab TDA Interactive: Homology from Linear Algebra</title>
+<script>
+window.MathJax = {tex: {inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\\[','\\]']]}, svg: {fontCache: 'global'}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--bg:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);} header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;} header h1{margin:0 0 8px;font-size:1.8rem;} header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;} main{max-width:1240px;margin:0 auto;padding:24px;} .grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;} .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;} h2{font-size:1.25rem;margin:0 0 12px;} h3{font-size:1.05rem;margin:18px 0 8px;} p{line-height:1.55;} .small{font-size:.92rem;color:var(--muted);} button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;} button.secondary{background:#fff;color:#111827;} select,input[type=number],input[type=range]{padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff;} input[type=range]{width:100%;} canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;} .result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;} .task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;} table{border-collapse:collapse;background:#fff;margin:8px 0;} th,td{border:1px solid var(--line);padding:6px 9px;text-align:right;} .ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .warn{color:var(--amber);font-weight:700;} .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;} textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;} code{background:#f3f4f6;padding:1px 4px;border-radius:4px;} @media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+<h1>Lab TDA Interactive: Homology from Linear Algebra</h1>
+<p>Explore how vertices, edges, and filled triangles become boundary matrices. Compute Betti numbers and see how adding faces kills loops.</p>
+</header>
+<main>
+<section class="grid">
+<div class="card">
+<h2>1. Choose a small complex</h2>
+<p class="small">The app computes Betti numbers using $\beta_p=\dim C_p-\operatorname{rank}(\partial_p)-\operatorname{rank}(\partial_{p+1})$.</p>
+<button onclick="setExample('edge')">One edge + isolated vertex</button>
+<button onclick="setExample('triangle')">Triangle boundary</button>
+<button onclick="setExample('filled')">Filled triangle</button>
+<button onclick="setExample('two')">Two triangles, one filled</button>
+<button onclick="setExample('square')">Square cycle</button>
+<div class="result" id="complexInfo"></div>
+</div>
+<div class="card">
+<h2>2. Geometry</h2>
+<canvas id="complexCanvas" width="720" height="520"></canvas>
+<p class="small">Black dots are vertices, dark edges are $1$-simplices, and shaded regions are filled $2$-simplices.</p>
+</div>
+</section>
+
+<section class="grid">
+<div class="card">
+<h2>3. Boundary matrices</h2>
+<div class="result" id="matrices"></div>
+</div>
+<div class="card">
+<h2>4. Betti numbers</h2>
+<div class="result" id="bettiResult"></div>
+<p class="small">Interpretation: $\beta_0$ counts connected components, $\beta_1$ counts independent loops, and $\beta_2$ counts enclosed voids.</p>
+</div>
+</section>
+
+<section class="grid">
+<div class="card">
+<h2>5. Vietoris--Rips graph from points</h2>
+<p class="small">Change the scale $r$. Edges appear when the distance between two points is at most $r$. For this two-dimensional point set, the displayed graph gives a simple visual approximation of $\beta_0$ and graph loops.</p>
+<div class="row"><label for="scaleR">Scale $r$:</label><input id="scaleR" type="range" min="0.4" max="2.8" value="1.05" step="0.05" oninput="updateRips()"><span id="rValue"></span></div>
+<button onclick="ripsPreset('circle')">Circle point cloud</button><button onclick="ripsPreset('clusters')">Two clusters</button>
+<div class="result" id="ripsInfo"></div>
+</div>
+<div class="card">
+<h2>6. Point-cloud geometry</h2>
+<canvas id="ripsCanvas" width="720" height="520"></canvas>
+</div>
+</section>
+
+<section class="card">
+<h2>7. Independent-study tasks with answers</h2>
+<div class="task"><strong>Task A.</strong> Use the triangle boundary example. Explain why $\beta_1=1$. <br><strong>Answer:</strong> There is one cycle and no filled triangle whose boundary kills it.</div>
+<div class="task"><strong>Task B.</strong> Use the filled triangle example. Explain why $\beta_1=0$. <br><strong>Answer:</strong> The triangular cycle is the boundary of a $2$-simplex, so it is zero in homology.</div>
+<div class="task"><strong>Task C.</strong> Use the two-triangles example. Which loop remains? <br><strong>Answer:</strong> The unfilled triangle remains; the filled triangle does not count as a hole.</div>
+<div class="task"><strong>Similar practice.</strong> Use the square cycle. Predict $\beta_0$ and $\beta_1$, then check. <br><strong>Answer:</strong> The square is connected and has one loop, so $\beta_0=1$ and $\beta_1=1$.</div>
+</section>
+
+<section class="card"><h2>8. Workspace</h2><textarea placeholder="Write observations here. Copy final answers into your notebook or assignment."></textarea></section>
+</main>
+<script>
+const examples={
+ edge:{verts:[[1,140,260],[2,280,260],[3,460,260]], edges:[[1,2]], faces:[], name:'One edge and one isolated vertex'},
+ triangle:{verts:[[1,190,330],[2,360,330],[3,275,170]], edges:[[1,2],[1,3],[2,3]], faces:[], name:'Triangle boundary'},
+ filled:{verts:[[1,190,330],[2,360,330],[3,275,170]], edges:[[1,2],[1,3],[2,3]], faces:[[1,2,3]], name:'Filled triangle'},
+ two:{verts:[[1,130,270],[2,320,160],[3,320,360],[4,520,270]], edges:[[1,2],[1,3],[2,3],[2,4],[3,4]], faces:[[2,3,4]], name:'Two triangles, one filled'},
+ square:{verts:[[1,180,330],[2,180,160],[3,420,160],[4,420,330]], edges:[[1,2],[2,3],[3,4],[1,4]], faces:[], name:'Square cycle'}
+};
+let current=examples.two;
+function fmt(x){if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return x.toFixed(3);} 
+function matHTML(M){if(M.length===0 || M[0].length===0) return '<em>empty matrix</em>'; return `<table><tbody>${M.map(r=>`<tr>${r.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function sortedEdge(e){return e[0]<e[1]?[e[0],e[1]]:[e[1],e[0]];}
+function edgeKey(e){let s=sortedEdge(e);return s[0]+','+s[1];}
+function faceBoundary(face, edges){let [a,b,c]=face; let terms=[[[b,c],1],[[a,c],-1],[[a,b],1]]; let col=Array(edges.length).fill(0); let idx={}; edges.forEach((e,i)=>idx[edgeKey(e)]=i); terms.forEach(([e,sgn])=>{let k=edgeKey(e); if(idx[k]!==undefined) col[idx[k]]=sgn;}); return col;}
+function boundary1(verts,edges){let vIndex={}; verts.forEach((v,i)=>vIndex[v[0]]=i); let M=Array.from({length:verts.length},()=>Array(edges.length).fill(0)); edges.forEach((e,j)=>{let [a,b]=sortedEdge(e); M[vIndex[a]][j]=-1; M[vIndex[b]][j]=1;}); return M;}
+function boundary2(edges,faces){let M=Array.from({length:edges.length},()=>Array(faces.length).fill(0)); faces.forEach((f,j)=>{let col=faceBoundary(f,edges); col.forEach((x,i)=>M[i][j]=x);}); return M;}
+function rank(M){M=M.map(r=>r.slice().map(Number)); let rows=M.length, cols=rows?M[0].length:0; if(rows===0||cols===0)return 0; let r=0; for(let c=0;c<cols && r<rows;c++){let p=r; for(let i=r;i<rows;i++) if(Math.abs(M[i][c])>Math.abs(M[p][c])) p=i; if(Math.abs(M[p][c])<1e-10) continue; [M[r],M[p]]=[M[p],M[r]]; let val=M[r][c]; for(let j=c;j<cols;j++) M[r][j]/=val; for(let i=0;i<rows;i++){ if(i!==r){let f=M[i][c]; for(let j=c;j<cols;j++) M[i][j]-=f*M[r][j];}} r++; } return r;}
+function updateComplex(){let V=current.verts,E=current.edges,F=current.faces,D1=boundary1(V,E),D2=boundary2(E,F); let r1=rank(D1), r2=rank(D2); let beta0=V.length-rank([])-r1; let beta1=E.length-r1-r2; let beta2=F.length-r2; complexInfo.innerHTML=`<strong>${current.name}</strong><br>Vertices: ${V.map(v=>v[0]).join(', ')}<br>Edges: ${E.map(e=>'['+e.join(',')+']').join(' ')}<br>Filled faces: ${F.length?F.map(f=>'['+f.join(',')+']').join(' '):'none'}`; matrices.innerHTML=`<strong>Boundary matrix $\\partial_1:C_1\\to C_0$</strong>${matHTML(D1)}<strong>Boundary matrix $\\partial_2:C_2\\to C_1$</strong>${matHTML(D2)}`; bettiResult.innerHTML=`rank($\\partial_1$) = ${r1}<br>rank($\\partial_2$) = ${r2}<br><br><span class='ok'>$\\beta_0=${beta0}$</span><br><span class='ok'>$\\beta_1=${beta1}$</span><br><span class='ok'>$\\beta_2=${beta2}$</span>`; drawComplex(); if(window.MathJax) MathJax.typesetPromise();}
+function setExample(k){current=examples[k];updateComplex();}
+function drawComplex(){let c=complexCanvas,ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);let pos={};current.verts.forEach(v=>pos[v[0]]=[v[1],v[2]]);current.faces.forEach(f=>{ctx.beginPath();f.forEach((id,i)=>{let p=pos[id]; if(i===0)ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[0],p[1]);});ctx.closePath();ctx.fillStyle='rgba(37,99,235,.16)';ctx.fill();ctx.strokeStyle='#2563eb';ctx.lineWidth=2;ctx.stroke();});current.edges.forEach(e=>{let a=pos[e[0]],b=pos[e[1]];ctx.strokeStyle='#111827';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();});current.verts.forEach(v=>{ctx.fillStyle='#111827';ctx.beginPath();ctx.arc(v[1],v[2],7,0,2*Math.PI);ctx.fill();ctx.font='18px system-ui';ctx.fillText(v[0],v[1]+10,v[2]-10);});}
+let pointMode='circle';
+function makePoints(){if(pointMode==='clusters')return [[160,250],[210,230],[190,300],[250,260],[480,250],[530,230],[510,300],[570,260]]; let pts=[]; let cx=360,cy=260,R=150; for(let i=0;i<12;i++){let t=2*Math.PI*i/12;pts.push([cx+R*Math.cos(t),cy+R*Math.sin(t)]);} return pts;}
+function ripsPreset(m){pointMode=m;updateRips();}
+function updateRips(){let r=Number(scaleR.value);rValue.textContent=r.toFixed(2); let pts=makePoints(); let edges=[]; for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){let dx=pts[i][0]-pts[j][0],dy=pts[i][1]-pts[j][1];let d=Math.sqrt(dx*dx+dy*dy)/100; if(d<=r)edges.push([i,j]);} let comps=countComponents(pts.length,edges); let graphLoops=edges.length-pts.length+comps; ripsInfo.innerHTML=`Number of points: ${pts.length}<br>Edges at scale r: ${edges.length}<br><span class='ok'>Graph components: ${comps}</span><br><span class='warn'>Graph cycle rank: ${graphLoops}</span><br><span class='small'>Note: Vietoris--Rips homology may fill some graph loops by triangles at larger scales.</span>`; drawRips(pts,edges);}
+function countComponents(n,edges){let parent=Array.from({length:n},(_,i)=>i);function find(x){while(parent[x]!==x){parent[x]=parent[parent[x]];x=parent[x];}return x;}function union(a,b){a=find(a);b=find(b);if(a!==b)parent[b]=a;}edges.forEach(e=>union(e[0],e[1]));return new Set(parent.map(find)).size;}
+function drawRips(pts,edges){let c=ripsCanvas,ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);edges.forEach(e=>{let a=pts[e[0]],b=pts[e[1]];ctx.strokeStyle='#2563eb';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();});pts.forEach((p,i)=>{ctx.fillStyle='#111827';ctx.beginPath();ctx.arc(p[0],p[1],6,0,2*Math.PI);ctx.fill();ctx.font='13px system-ui';ctx.fillText(i+1,p[0]+8,p[1]-8);});}
+updateComplex();updateRips();
+</script>
+</body>
+</html>

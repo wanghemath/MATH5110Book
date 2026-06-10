@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 20 Interactive: Hilbert Spaces and Applications</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{
+  --bg:#ffffff; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+  --card:#f9fafb; --blue:#2563eb; --orange:#f97316; --green:#065f46;
+  --red:#991b1b; --amber:#92400e;
+}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);}
+header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;}
+header h1{margin:0 0 8px;font-size:1.8rem;}
+header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;}
+main{max-width:1240px;margin:0 auto;padding:24px;}
+.grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;}
+h2{font-size:1.25rem;margin:0 0 12px;}
+h3{font-size:1.05rem;margin:18px 0 8px;}
+p{line-height:1.55;}
+label{display:block;margin:8px 0 4px;font-weight:600;}
+input[type=number]{width:74px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;}
+input[type=range]{width:220px;}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;}
+button.secondary{background:#fff;color:#111827;}
+select{padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff;}
+canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;}
+.result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;}
+.eq{background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto;}
+.small{font-size:.92rem;color:var(--muted);}
+table{border-collapse:collapse;background:#fff;margin:8px 0;}
+td,th{border:1px solid var(--line);padding:7px 10px;text-align:right;}
+.ok{color:var(--green);font-weight:700;}
+.bad{color:var(--red);font-weight:700;}
+.warn{color:var(--amber);font-weight:700;}
+.task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;}
+textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;}
+code{background:#f3f4f6;padding:1px 4px;border-radius:4px;}
+@media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Lab 20 Interactive: Hilbert Spaces and Applications</h1>
+  <p>
+    Explore orthogonal projection, polynomial approximation in $L^2[0,1]$,
+    Fourier partial sums, and kernel Gram matrices. These are concrete models of Hilbert-space linear algebra.
+  </p>
+</header>
+
+<main>
+  <section class="grid">
+    <div class="card">
+      <h2>1. Projection onto a line in $\mathbb{R}^2$</h2>
+      <p class="small">
+        Choose a vector $y$ and a line direction $u$. The projection is
+        $$\operatorname{Proj}_{\operatorname{span}(u)}y=\frac{\langle y,u\rangle}{\langle u,u\rangle}u.$$
+      </p>
+      <h3>Vector $y=(y_1,y_2)$</h3>
+      <div class="row"><label>$y_1$</label><input id="y1" type="number" value="3" step="0.5"><label>$y_2$</label><input id="y2" type="number" value="2" step="0.5"></div>
+      <h3>Direction $u=(u_1,u_2)$</h3>
+      <div class="row"><label>$u_1$</label><input id="u1" type="number" value="1" step="0.5"><label>$u_2$</label><input id="u2" type="number" value="1" step="0.5"></div>
+      <button onclick="presetProjection('diag')">Diagonal line</button>
+      <button onclick="presetProjection('xaxis')">x-axis</button>
+      <button onclick="presetProjection('steep')">Steep line</button>
+      <div class="result" id="projectionResult"></div>
+    </div>
+    <div class="card">
+      <h2>2. Geometry of projection</h2>
+      <canvas id="projCanvas" width="720" height="520"></canvas>
+      <p class="small">Blue: $y$. Orange: projection $p$. Dashed: residual $y-p$, orthogonal to the line.</p>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>3. Best polynomial approximation to $e^x$</h2>
+      <p class="small">
+        Approximate $e^x$ on $[0,1]$ in the $L^2$ inner product
+        $$\langle f,g\rangle=\int_0^1 f(x)g(x)\,dx.$$
+      </p>
+      <div class="row">
+        <label>Degree</label>
+        <select id="polyDegree" onchange="update()">
+          <option value="0">0: constant</option>
+          <option value="1">1: linear</option>
+          <option value="2" selected>2: quadratic</option>
+          <option value="3">3: cubic</option>
+        </select>
+      </div>
+      <canvas id="polyCanvas" width="720" height="430"></canvas>
+      <div class="result" id="polyResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>4. Fourier partial sums</h2>
+      <p class="small">
+        The square wave has Hilbert-space coordinate expansion
+        $$f(x)\sim \frac4\pi\left(\sin x+\frac{\sin 3x}{3}+\frac{\sin 5x}{5}+\cdots\right).$$
+      </p>
+      <div class="row">
+        <label>Number of odd terms</label>
+        <input id="fourierN" type="range" min="1" max="25" step="1" value="7">
+        <span id="fourierNLabel"></span>
+      </div>
+      <canvas id="fourierCanvas" width="720" height="430"></canvas>
+      <div class="result" id="fourierResult"></div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>5. $\ell^2$ sequence test</h2>
+      <p class="small">
+        A sequence $x=(x_n)$ is in $\ell^2$ if
+        $$\sum_{n=1}^{\infty}|x_n|^2<\infty.$$
+      </p>
+      <div class="row">
+        <label>Sequence</label>
+        <select id="seqType" onchange="update()">
+          <option value="oneover">\(x_n=1/n\)</option>
+          <option value="sqrt">\(x_n=1/\sqrt n\)</option>
+          <option value="geom">\(x_n=1/2^n\)</option>
+        </select>
+      </div>
+      <div class="row">
+        <label>Partial sum $N$</label>
+        <input id="seqN" type="range" min="10" max="500" step="10" value="100">
+        <span id="seqNLabel"></span>
+      </div>
+      <canvas id="seqCanvas" width="720" height="360"></canvas>
+      <div class="result" id="seqResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>6. Kernel Gram matrix</h2>
+      <p class="small">
+        For points $x_1,x_2,x_3$, the polynomial kernel
+        $$K(x,y)=(1+xy)^2$$
+        produces a Gram matrix $G=[K(x_i,x_j)]$.
+      </p>
+      <div class="row"><label>$x_1$</label><input id="kx1" type="number" value="-1" step="0.5"><label>$x_2$</label><input id="kx2" type="number" value="0" step="0.5"><label>$x_3$</label><input id="kx3" type="number" value="2" step="0.5"></div>
+      <button onclick="presetKernel('basic')">Basic</button>
+      <button onclick="presetKernel('close')">Close points</button>
+      <button onclick="presetKernel('wide')">Wide points</button>
+      <div class="result" id="kernelResult"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>7. Independent-study tasks with answers</h2>
+    <div class="task">
+      <strong>Task A.</strong> For $y=(3,2)$ and $u=(1,1)$, compute $\operatorname{Proj}_{\operatorname{span}(u)}y$.
+      <br><strong>Answer.</strong> $\langle y,u\rangle=5$, $\langle u,u\rangle=2$, so $p=\frac52(1,1)=(2.5,2.5)$.
+    </div>
+    <div class="task">
+      <strong>Task B.</strong> Explain why the residual $y-p$ is orthogonal to $u$.
+      <br><strong>Answer.</strong> By construction, $p=\frac{\langle y,u\rangle}{\langle u,u\rangle}u$, so $\langle y-p,u\rangle=\langle y,u\rangle-\frac{\langle y,u\rangle}{\langle u,u\rangle}\langle u,u\rangle=0$.
+    </div>
+    <div class="task">
+      <strong>Task C.</strong> Which sequence is not in $\ell^2$: $1/n$ or $1/\sqrt n$?
+      <br><strong>Answer.</strong> $1/\sqrt n$ is not in $\ell^2$, because its square is $1/n$, and the harmonic series diverges.
+    </div>
+    <div class="task">
+      <strong>Task D.</strong> Why is a Fourier partial sum a projection?
+      <br><strong>Answer.</strong> It is the orthogonal projection of a function onto the finite-dimensional subspace spanned by selected sine and cosine basis functions.
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>8. Workspace</h2>
+    <textarea placeholder="Write observations here. Copy your final answers to your notebook or assignment."></textarea>
+  </section>
+</main>
+
+<script>
+function fmt(x){
+  if(!isFinite(x)) return "undefined";
+  if(Math.abs(x)<1e-10) return "0";
+  if(Math.abs(x-Math.round(x))<1e-10) return String(Math.round(x));
+  return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');
+}
+function matHTML(M){
+  return `<table><tbody>${M.map(row=>`<tr>${row.map(x=>`<td>${fmt(x)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+}
+function dot(a,b){return a.reduce((s,x,i)=>s+x*b[i],0);}
+function norm2(a){return dot(a,a);}
+function val(id){return Number(document.getElementById(id).value)||0;}
+
+function toCanvas(x,y,W,H,scale){return [W/2+x*scale,H/2-y*scale];}
+function drawVec(ctx,v,color,W,H,scale,label){
+  const o=toCanvas(0,0,W,H,scale), q=toCanvas(v[0],v[1],W,H,scale);
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=4;
+  ctx.beginPath(); ctx.moveTo(o[0],o[1]); ctx.lineTo(q[0],q[1]); ctx.stroke();
+  ctx.beginPath(); ctx.arc(q[0],q[1],5,0,2*Math.PI); ctx.fill();
+  ctx.font="15px system-ui"; ctx.fillText(label,q[0]+8,q[1]-8);
+}
+function drawGrid(ctx,W,H,scale){
+  ctx.fillStyle="#fff"; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle="#eef2f7"; ctx.lineWidth=1;
+  for(let x=-Math.floor(W/(2*scale));x<=Math.floor(W/(2*scale));x++){
+    let px=toCanvas(x,0,W,H,scale)[0]; ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,H);ctx.stroke();
+  }
+  for(let y=-Math.floor(H/(2*scale));y<=Math.floor(H/(2*scale));y++){
+    let py=toCanvas(0,y,W,H,scale)[1]; ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(W,py);ctx.stroke();
+  }
+  const ox=toCanvas(0,0,W,H,scale)[0], oy=toCanvas(0,0,W,H,scale)[1];
+  ctx.strokeStyle="#9ca3af"; ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(W,oy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();
+}
+
+function updateProjection(){
+  const y=[val("y1"),val("y2")], u=[val("u1"),val("u2")];
+  const uu=norm2(u);
+  let p=[0,0], r=y.slice(), coeff=0;
+  if(uu>1e-12){ coeff=dot(y,u)/uu; p=[coeff*u[0],coeff*u[1]]; r=[y[0]-p[0],y[1]-p[1]]; }
+  document.getElementById("projectionResult").innerHTML =
+    uu>1e-12 ?
+    `Coefficient: $\\frac{\\langle y,u\\rangle}{\\langle u,u\\rangle}=${fmt(coeff)}$<br>
+     Projection: $p=(${fmt(p[0])},${fmt(p[1])})$<br>
+     Residual: $y-p=(${fmt(r[0])},${fmt(r[1])})$<br>
+     Orthogonality check: $\\langle y-p,u\\rangle=${fmt(dot(r,u))}$` :
+    `<span class="bad">The direction vector u cannot be zero.</span>`;
+  drawProjection(y,u,p,r);
+}
+function drawProjection(y,u,p,r){
+  const canvas=document.getElementById("projCanvas"), ctx=canvas.getContext("2d");
+  const W=canvas.width,H=canvas.height,scale=55; ctx.clearRect(0,0,W,H); drawGrid(ctx,W,H,scale);
+  if(norm2(u)>1e-12){
+    const len=Math.sqrt(norm2(u)); const d=[u[0]/len,u[1]/len];
+    const a=toCanvas(-5*d[0],-5*d[1],W,H,scale), b=toCanvas(5*d[0],5*d[1],W,H,scale);
+    ctx.strokeStyle="#111827";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();
+  }
+  drawVec(ctx,y,"#2563eb",W,H,scale,"y");
+  drawVec(ctx,p,"#f97316",W,H,scale,"p");
+  const P=toCanvas(p[0],p[1],W,H,scale), Y=toCanvas(y[0],y[1],W,H,scale);
+  ctx.strokeStyle="#991b1b";ctx.setLineDash([7,6]);ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(P[0],P[1]);ctx.lineTo(Y[0],Y[1]);ctx.stroke();ctx.setLineDash([]);
+}
+function presetProjection(t){
+  if(t==="diag"){y1.value=3;y2.value=2;u1.value=1;u2.value=1;}
+  if(t==="xaxis"){y1.value=3;y2.value=2;u1.value=1;u2.value=0;}
+  if(t==="steep"){y1.value=4;y2.value=1;u1.value=1;u2.value=3;}
+  update();
+}
+
+function solveLinear(A,b){
+  const n=A.length;
+  const M=A.map((row,i)=>row.slice().concat([b[i]]));
+  for(let k=0;k<n;k++){
+    let piv=k;
+    for(let i=k;i<n;i++) if(Math.abs(M[i][k])>Math.abs(M[piv][k])) piv=i;
+    [M[k],M[piv]]=[M[piv],M[k]];
+    let p=M[k][k];
+    for(let j=k;j<=n;j++) M[k][j]/=p;
+    for(let i=0;i<n;i++){
+      if(i!==k){
+        let f=M[i][k];
+        for(let j=k;j<=n;j++) M[i][j]-=f*M[k][j];
+      }
+    }
+  }
+  return M.map(row=>row[n]);
+}
+function polyCoeffs(deg){
+  // use high resolution numerical quadrature for e^x on [0,1]
+  let n=5000, xs=[], h=1/(n-1);
+  for(let i=0;i<n;i++) xs.push(i*h);
+  let G=Array.from({length:deg+1},()=>Array(deg+1).fill(0));
+  let b=Array(deg+1).fill(0);
+  for(let i=0;i<n;i++){
+    let w=(i===0||i===n-1)?0.5:1;
+    let x=xs[i], fx=Math.exp(x);
+    let powers=Array(deg*2+1).fill(1);
+    for(let k=1;k<powers.length;k++) powers[k]=powers[k-1]*x;
+    for(let r=0;r<=deg;r++){
+      b[r]+=w*fx*powers[r]*h;
+      for(let c=0;c<=deg;c++) G[r][c]+=w*powers[r+c]*h;
+    }
+  }
+  return solveLinear(G,b);
+}
+function peval(c,x){return c.reduce((s,a,i)=>s+a*Math.pow(x,i),0);}
+function updatePoly(){
+  const deg=Number(polyDegree.value);
+  const coeff=polyCoeffs(deg);
+  const canvas=document.getElementById("polyCanvas"), ctx=canvas.getContext("2d"), W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);ctx.fillStyle="#fff";ctx.fillRect(0,0,W,H);
+  const xmin=0,xmax=1,ymin=0.8,ymax=3.0;
+  function P(x,y){return [50+(x-xmin)/(xmax-xmin)*(W-80), H-40-(y-ymin)/(ymax-ymin)*(H-70)];}
+  ctx.strokeStyle="#e5e7eb";ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){let x=i/5;let p=P(x,ymin),q=P(x,ymax);ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();}
+  for(let y=1;y<=3;y+=0.5){let p=P(xmin,y),q=P(xmax,y);ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();}
+  function drawFunc(f,color,label){
+    ctx.strokeStyle=color;ctx.lineWidth=3;ctx.beginPath();
+    for(let i=0;i<=300;i++){let x=i/300,y=f(x),p=P(x,y); if(i===0)ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[0],p[1]);}
+    ctx.stroke();ctx.fillStyle=color;ctx.font="15px system-ui";ctx.fillText(label,60,22+(label==="e^x"?0:22));
+  }
+  drawFunc(x=>Math.exp(x),"#2563eb","e^x");
+  drawFunc(x=>peval(coeff,x),"#f97316","projection");
+  const formula = coeff.map((a,i)=>{
+    if(i===0) return fmt(a);
+    if(i===1) return `${fmt(a)}x`;
+    return `${fmt(a)}x^${i}`;
+  }).join(" + ").replace(/\+ -/g,"- ");
+  document.getElementById("polyResult").innerHTML =
+    `Best degree ${deg} approximation:<br>$p(x)=${formula}$<br>
+     The residual is orthogonal to $1,x,\\ldots,x^${deg}$ in the $L^2$ inner product.`;
+}
+function updateFourier(){
+  const N=Number(fourierN.value); fourierNLabel.textContent=N;
+  const canvas=fourierCanvas,ctx=canvas.getContext("2d"),W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);ctx.fillStyle="#fff";ctx.fillRect(0,0,W,H);
+  const xmin=-Math.PI,xmax=Math.PI,ymin=-1.8,ymax=1.8;
+  function P(x,y){return [50+(x-xmin)/(xmax-xmin)*(W-80), H/2-y/(ymax-ymin)*(H-70)];}
+  ctx.strokeStyle="#e5e7eb";ctx.lineWidth=1;
+  for(let i=0;i<=8;i++){let x=xmin+i*(xmax-xmin)/8;let p=P(x,ymin),q=P(x,ymax);ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();}
+  let p0=P(xmin,0),p1=P(xmax,0);ctx.strokeStyle="#9ca3af";ctx.beginPath();ctx.moveTo(p0[0],p0[1]);ctx.lineTo(p1[0],p1[1]);ctx.stroke();
+  function square(x){return Math.sin(x)>=0?1:-1;}
+  function partial(x){let s=0;for(let j=0;j<N;j++){let k=2*j+1;s+=(4/Math.PI)*Math.sin(k*x)/k;}return s;}
+  function draw(f,color){ctx.strokeStyle=color;ctx.lineWidth=3;ctx.beginPath();for(let i=0;i<=600;i++){let x=xmin+i*(xmax-xmin)/600,y=f(x),p=P(x,y);if(i===0)ctx.moveTo(p[0],p[1]);else ctx.lineTo(p[0],p[1]);}ctx.stroke();}
+  draw(square,"#2563eb"); draw(partial,"#f97316");
+  document.getElementById("fourierResult").innerHTML = `Using ${N} odd sine terms. This is projection onto a finite-dimensional frequency subspace.`;
+}
+function updateSeq(){
+  const type=seqType.value,N=Number(seqN.value); seqNLabel.textContent=N;
+  let s=0, data=[];
+  for(let n=1;n<=N;n++){
+    let x= type==="oneover"?1/n : type==="sqrt"?1/Math.sqrt(n) : 1/Math.pow(2,n);
+    s+=x*x; data.push(s);
+  }
+  const canvas=seqCanvas,ctx=canvas.getContext("2d"),W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);ctx.fillStyle="#fff";ctx.fillRect(0,0,W,H);
+  const ymax=Math.max(...data)*1.1;
+  function P(i,y){return [45+(i-1)/(N-1)*(W-70), H-35-y/ymax*(H-60)];}
+  ctx.strokeStyle="#e5e7eb";ctx.lineWidth=1;
+  for(let k=0;k<=5;k++){let y=k*ymax/5,p=P(1,y),q=P(N,y);ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();}
+  ctx.strokeStyle="#2563eb";ctx.lineWidth=3;ctx.beginPath();
+  data.forEach((y,i)=>{let p=P(i+1,y);if(i===0)ctx.moveTo(p[0],p[1]);else ctx.lineTo(p[0],p[1]);});ctx.stroke();
+  let conclusion = type==="sqrt" ? "<span class='bad'>not in $\\ell^2$</span>" : "<span class='ok'>in $\\ell^2$</span>";
+  document.getElementById("seqResult").innerHTML = `Partial sum $\\sum_{n=1}^{${N}} |x_n|^2 = ${fmt(s)}$. Conclusion: ${conclusion}.`;
+}
+function eigSym3(A){
+  // Jacobi rotations for 3x3 symmetric matrix
+  let V=[[1,0,0],[0,1,0],[0,0,1]];
+  let M=A.map(r=>r.slice());
+  for(let iter=0;iter<80;iter++){
+    let p=0,q=1,max=Math.abs(M[0][1]);
+    [[0,2],[1,2]].forEach(pair=>{let v=Math.abs(M[pair[0]][pair[1]]);if(v>max){max=v;p=pair[0];q=pair[1];}});
+    if(max<1e-10) break;
+    let theta=0.5*Math.atan2(2*M[p][q],M[q][q]-M[p][p]);
+    let c=Math.cos(theta),s=Math.sin(theta);
+    for(let k=0;k<3;k++){let mkp=M[k][p],mkq=M[k][q];M[k][p]=c*mkp-s*mkq;M[k][q]=s*mkp+c*mkq;}
+    for(let k=0;k<3;k++){let mpk=M[p][k],mqk=M[q][k];M[p][k]=c*mpk-s*mqk;M[q][k]=s*mpk+c*mqk;}
+  }
+  return [M[0][0],M[1][1],M[2][2]].sort((a,b)=>a-b);
+}
+function updateKernel(){
+  const xs=[val("kx1"),val("kx2"),val("kx3")];
+  const G=xs.map(x=>xs.map(y=>Math.pow(1+x*y,2)));
+  const eig=eigSym3(G);
+  const ok=eig[0]>-1e-7;
+  document.getElementById("kernelResult").innerHTML =
+    `Points: (${xs.map(fmt).join(", ")})<br>
+     Gram matrix $G=[K(x_i,x_j)]$:${matHTML(G)}
+     Eigenvalues approximately: ${eig.map(fmt).join(", ")}<br>
+     ${ok? "<span class='ok'>The Gram matrix is positive semidefinite.</span>" : "<span class='bad'>A negative eigenvalue was detected.</span>"}`;
+}
+function presetKernel(t){
+  if(t==="basic"){kx1.value=-1;kx2.value=0;kx3.value=2;}
+  if(t==="close"){kx1.value=0;kx2.value=0.5;kx3.value=1;}
+  if(t==="wide"){kx1.value=-3;kx2.value=1;kx3.value=4;}
+  update();
+}
+
+function update(){
+  updateProjection(); updatePoly(); updateFourier(); updateSeq(); updateKernel();
+  if(window.MathJax){MathJax.typesetPromise();}
+}
+["y1","y2","u1","u2","polyDegree","fourierN","seqType","seqN","kx1","kx2","kx3"].forEach(id=>{
+  document.getElementById(id).addEventListener("input",update);
+});
+update();
+</script>
+</body>
+</html>

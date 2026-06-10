@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Interactive Timeline Plot: History of Linear Algebra</title>
+<style>
+  :root {
+    --bg: #f7f8fb;
+    --card: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --line: #cbd5e1;
+    --accent: #2563eb;
+    --accent2: #059669;
+    --shadow: 0 10px 25px rgba(0,0,0,0.08);
+    --border: #e5e7eb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+  h1 {
+    margin: 0 0 6px 0;
+    font-size: 2rem;
+  }
+  .subtitle {
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+  .controls {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 16px;
+  }
+  .searchbox input {
+    width: 100%;
+    font-size: 1rem;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    outline: none;
+  }
+  .searchbox input:focus {
+    border-color: var(--accent);
+  }
+  .button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .zoom-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-top: 12px;
+  }
+  .zoom-row button {
+    border: 1px solid var(--line);
+    background: white;
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.92rem;
+  }
+  .zoom-row button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .zoom-info {
+    color: var(--muted);
+    font-size: 0.9rem;
+    padding-left: 4px;
+  }
+  .range-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .range-row input {
+    width: 100%;
+    font-size: 0.92rem;
+    padding: 9px 10px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+  .range-label {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 3px;
+  }
+  button.filter-btn {
+    border: 1px solid var(--line);
+    background: white;
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 0.92rem;
+  }
+  button.filter-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  .main {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .timeline-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 14px 14px 6px;
+  }
+  .detail-card {
+    position: sticky;
+    top: 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 16px;
+    min-height: 540px;
+  }
+  .detail-card h2 {
+    margin-top: 0;
+    font-size: 1.2rem;
+  }
+  .muted {
+    color: var(--muted);
+  }
+  .badge {
+    display: inline-block;
+    font-size: 0.82rem;
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+    padding: 4px 9px;
+    border-radius: 999px;
+    margin-bottom: 8px;
+  }
+  .legend {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+    margin: 0 4px 10px;
+    color: var(--muted);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .small {
+    font-size: 0.92rem;
+  }
+  .timeline-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 10px;
+    touch-action: pan-x pan-y;
+    overscroll-behavior: contain;
+    cursor: grab;
+  }
+  .timeline-wrap.dragging {
+    cursor: grabbing;
+  }
+  svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .footer {
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  @media (max-width: 1000px) {
+    .controls, .main {
+      grid-template-columns: 1fr;
+    }
+    .detail-card {
+      position: static;
+      min-height: auto;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Interactive Timeline Plot: History of Linear Algebra</h1>
+  <div class="subtitle">
+    A standalone interactive HTML timeline with mathematicians, years, major ideas, and Wikipedia links.
+  </div>
+
+  <div class="controls">
+    <div class="panel searchbox">
+      <label for="search" class="muted small"><strong>Search</strong> by keyword, mathematician, idea, or topic</label>
+      <input id="search" type="text" placeholder="Example: Gauss, SVD, eigenvalues, Fourier, AI" />
+    </div>
+    <div class="panel">
+      <div class="muted small" style="margin-bottom:8px;"><strong>Filter by category</strong></div>
+      <div class="button-row" id="filterButtons"></div>
+      <div class="zoom-row">
+        <button id="zoomInBtn" type="button">Zoom In</button>
+        <button id="zoomOutBtn" type="button">Zoom Out</button>
+        <button id="panLeftBtn" type="button">← Pan</button>
+        <button id="panRightBtn" type="button">Pan →</button>
+        <button id="resetZoomBtn" type="button">Reset</button>
+        <span class="zoom-info" id="zoomInfo">Full timeline</span>
+      </div>
+      <div class="range-row">
+        <div>
+          <div class="range-label">Start year</div>
+          <input id="startYearInput" type="number" />
+        </div>
+        <div>
+          <div class="range-label">End year</div>
+          <input id="endYearInput" type="number" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="timeline-card">
+      <div class="legend" id="legend"></div>
+      <div class="timeline-wrap">
+        <svg id="timelineSvg" viewBox="0 0 1500 620" preserveAspectRatio="xMidYMid meet" aria-label="Interactive timeline"></svg>
+      </div>
+      <div class="footer">
+        Click a point for details. Hover to preview. Use trackpad scrolling to zoom continuously, horizontal two-finger scroll or drag to pan, pinch on touch screens to zoom, or use the buttons/custom years. Keyboard: +, -, ←, →, R.
+      </div>
+    </div>
+
+    <div class="detail-card" id="detailCard">
+      <h2>Selected Event</h2>
+      <p class="muted">Click a point on the timeline to see the full description here.</p>
+      <div id="detailContent"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const events = [{"year": -200, "label": "The Nine Chapters", "people": "Ancient Chinese mathematics", "category": "Ancient", "details": "Rod-table methods for solving systems of equations, historically close to elimination.", "wiki": "https://en.wikipedia.org/wiki/The_Nine_Chapters_on_the_Mathematical_Art"}, {"year": 1545, "label": "Early determinant-like formulas", "people": "Gerolamo Cardano", "category": "Foundations", "details": "Cardano's algebraic work includes determinant-like expressions for small linear systems.", "wiki": "https://en.wikipedia.org/wiki/Gerolamo_Cardano"}, {"year": 1683, "label": "Determinants in Japan", "people": "Seki Takakazu", "category": "Foundations", "details": "Independent development of determinant ideas outside Europe.", "wiki": "https://en.wikipedia.org/wiki/Seki_Takakazu"}, {"year": 1693, "label": "Determinant formulas", "people": "G. W. Leibniz", "category": "Foundations", "details": "Leibniz developed determinant-like symbolic formulas in Europe.", "wiki": "https://en.wikipedia.org/wiki/Gottfried_Wilhelm_Leibniz"}, {"year": 1750, "label": "Cramer's Rule", "people": "Gabriel Cramer", "category": "Foundations", "details": "Formula for solving square linear systems using determinants.", "wiki": "https://en.wikipedia.org/wiki/Cramer%27s_rule"}, {"year": 1809, "label": "Least Squares", "people": "Carl Friedrich Gauss", "category": "Foundations", "details": "Gauss develops least squares and systematic elimination in astronomy and measurement.", "wiki": "https://en.wikipedia.org/wiki/Least_squares"}, {"year": 1822, "label": "Fourier Analysis", "people": "Joseph Fourier", "category": "Spectral / Functional", "details": "Functions are expanded in orthogonal trigonometric bases; a major bridge from linear algebra to analysis and signal processing.", "wiki": "https://en.wikipedia.org/wiki/Joseph_Fourier"}, {"year": 1843, "label": "Quaternions", "people": "William Rowan Hamilton", "category": "Foundations", "details": "A new algebraic framework for rotations, helping expand ideas beyond ordinary coordinates.", "wiki": "https://en.wikipedia.org/wiki/William_Rowan_Hamilton"}, {"year": 1844, "label": "Ausdehnungslehre", "people": "Hermann Grassmann", "category": "Foundations", "details": "Grassmann introduces ideas anticipating vector spaces, subspaces, and exterior algebra.", "wiki": "https://en.wikipedia.org/wiki/Hermann_Grassmann"}, {"year": 1848, "label": "Term 'Matrix'", "people": "James Joseph Sylvester", "category": "Matrix Theory", "details": "Sylvester introduces the word 'matrix'.", "wiki": "https://en.wikipedia.org/wiki/James_Joseph_Sylvester"}, {"year": 1858, "label": "Matrix Algebra", "people": "Arthur Cayley", "category": "Matrix Theory", "details": "Cayley treats matrices as algebraic objects with multiplication and inverses.", "wiki": "https://en.wikipedia.org/wiki/Arthur_Cayley"}, {"year": 1870, "label": "Jordan Canonical Form", "people": "Camille Jordan", "category": "Matrix Theory", "details": "A structural description of linear transformations over the complex numbers.", "wiki": "https://en.wikipedia.org/wiki/Jordan_normal_form"}, {"year": 1878, "label": "Modern Matrix Theory", "people": "F. G. Frobenius", "category": "Matrix Theory", "details": "Frobenius advances matrix theory, eigenvalue ideas, and later Perron-Frobenius theory.", "wiki": "https://en.wikipedia.org/wiki/Ferdinand_Georg_Frobenius"}, {"year": 1901, "label": "PCA Roots", "people": "Karl Pearson", "category": "Data / AI", "details": "Principal axes in statistics establish a precursor to principal component analysis.", "wiki": "https://en.wikipedia.org/wiki/Karl_Pearson"}, {"year": 1909, "label": "Schur Decomposition", "people": "Issai Schur", "category": "Spectral / Functional", "details": "Every complex square matrix can be unitarily triangularized.", "wiki": "https://en.wikipedia.org/wiki/Schur_decomposition"}, {"year": 1910, "label": "Haar Basis", "people": "Alfr\u00e9d Haar", "category": "Spectral / Functional", "details": "A foundational multiscale orthogonal basis, later important in wavelet theory.", "wiki": "https://en.wikipedia.org/wiki/Haar_wavelet"}, {"year": 1920, "label": "Hilbert Spaces", "people": "Hilbert, Schmidt, Riesz, von Neumann", "category": "Spectral / Functional", "details": "Infinite-dimensional inner product spaces make projection, orthogonality, and operator theory rigorous.", "wiki": "https://en.wikipedia.org/wiki/Hilbert_space"}, {"year": 1933, "label": "PCA Formalization", "people": "Harold Hotelling", "category": "Data / AI", "details": "Principal component analysis becomes a major tool in multivariate statistics.", "wiki": "https://en.wikipedia.org/wiki/Principal_component_analysis"}, {"year": 1936, "label": "Eckart\u2013Young Theorem", "people": "Carl Eckart and Gale Young", "category": "Data / AI", "details": "Best low-rank approximation result at the heart of singular value decomposition applications.", "wiki": "https://en.wikipedia.org/wiki/Low-rank_approximation#Basic_low-rank_approximation_problem"}, {"year": 1952, "label": "Conjugate Gradient", "people": "Hestenes and Stiefel", "category": "Computation", "details": "An important iterative solver for large symmetric positive-definite systems.", "wiki": "https://en.wikipedia.org/wiki/Conjugate_gradient_method"}, {"year": 1958, "label": "Householder Transformations", "people": "Alston Householder", "category": "Computation", "details": "Stable orthogonal transformations used in QR decomposition and least squares.", "wiki": "https://en.wikipedia.org/wiki/Householder_transformation"}, {"year": 1961, "label": "QR Algorithm", "people": "Francis and Kublanovskaya", "category": "Computation", "details": "A landmark eigenvalue algorithm central to modern numerical linear algebra.", "wiki": "https://en.wikipedia.org/wiki/QR_algorithm"}, {"year": 1965, "label": "FFT", "people": "Cooley and Tukey", "category": "Computation", "details": "Fast Fourier Transform reduces DFT cost from O(n^2) to O(n log n).", "wiki": "https://en.wikipedia.org/wiki/Fast_Fourier_transform"}, {"year": 1970, "label": "Modern Numerical Linear Algebra", "people": "Wilkinson, Golub, Van Loan, Kahan", "category": "Computation", "details": "Stability, conditioning, and efficient matrix algorithms become central.", "wiki": "https://en.wikipedia.org/wiki/Numerical_linear_algebra"}, {"year": 1988, "label": "Wavelet Revolution", "people": "Daubechies, Mallat, Meyer", "category": "Spectral / Functional", "details": "Wavelets become a major tool in multiresolution signal analysis and compression.", "wiki": "https://en.wikipedia.org/wiki/Wavelet"}, {"year": 1998, "label": "PageRank", "people": "Larry Page and Sergey Brin", "category": "Data / AI", "details": "Eigenvectors are used to measure importance in the web graph.", "wiki": "https://en.wikipedia.org/wiki/PageRank"}, {"year": 2012, "label": "Deep Learning Era", "people": "Modern AI community", "category": "Data / AI", "details": "Vectors, matrices, tensors, gradients, and optimization become core tools of AI.", "wiki": "https://en.wikipedia.org/wiki/Deep_learning"}];
+const colors = {
+  "Ancient": "#7c3aed",
+  "Foundations": "#2563eb",
+  "Matrix Theory": "#dc2626",
+  "Spectral / Functional": "#059669",
+  "Computation": "#ea580c",
+  "Data / AI": "#0f766e"
+};
+
+const categories = ["All", ...Array.from(new Set(events.map(e => e.category)))];
+let activeCategory = "All";
+let searchTerm = "";
+let selectedIndex = null;
+
+const allYears = events.map(e => e.year);
+const fullMinYear = Math.min(...allYears) - 50;
+const fullMaxYear = Math.max(...allYears) + 50;
+let viewMinYear = fullMinYear;
+let viewMaxYear = fullMaxYear;
+
+const svg = document.getElementById("timelineSvg");
+const legend = document.getElementById("legend");
+const filterButtons = document.getElementById("filterButtons");
+const searchInput = document.getElementById("search");
+const detailContent = document.getElementById("detailContent");
+const zoomInfo = document.getElementById("zoomInfo");
+const startYearInput = document.getElementById("startYearInput");
+const endYearInput = document.getElementById("endYearInput");
+const zoomInBtn = document.getElementById("zoomInBtn");
+const zoomOutBtn = document.getElementById("zoomOutBtn");
+const panLeftBtn = document.getElementById("panLeftBtn");
+const panRightBtn = document.getElementById("panRightBtn");
+const resetZoomBtn = document.getElementById("resetZoomBtn");
+const timelineWrap = document.querySelector(".timeline-wrap");
+
+function makeLegend() {
+  legend.innerHTML = "";
+  Object.entries(colors).forEach(([name, color]) => {
+    const div = document.createElement("div");
+    div.className = "legend-item";
+    div.innerHTML = `<span class="dot" style="background:${color}"></span><span>${name}</span>`;
+    legend.appendChild(div);
+  });
+}
+
+function makeButtons() {
+  filterButtons.innerHTML = "";
+  categories.forEach(cat => {
+    const btn = document.createElement("button");
+    btn.className = "filter-btn" + (cat === activeCategory ? " active" : "");
+    btn.textContent = cat;
+    btn.addEventListener("click", () => {
+      activeCategory = cat;
+      makeButtons();
+      draw();
+    });
+    filterButtons.appendChild(btn);
+  });
+}
+
+function filteredEvents() {
+  return events.filter((e, i) => {
+    const matchesCategory = activeCategory === "All" || e.category === activeCategory;
+    const text = `${e.label} ${e.people} ${e.details} ${e.category} ${e.year}`.toLowerCase();
+    const matchesSearch = searchTerm.trim() === "" || text.includes(searchTerm.toLowerCase());
+    const inView = e.year >= viewMinYear && e.year <= viewMaxYear;
+    return matchesCategory && matchesSearch && inView;
+  });
+}
+
+function formatYear(y) {
+  return y < 0 ? `${Math.abs(Math.round(y))} BCE` : `${Math.round(y)}`;
+}
+
+function updateZoomControls() {
+  startYearInput.value = Math.round(viewMinYear);
+  endYearInput.value = Math.round(viewMaxYear);
+  zoomInfo.textContent = `${formatYear(viewMinYear)} to ${formatYear(viewMaxYear)}`;
+}
+
+function setViewRange(minYear, maxYear) {
+  if (maxYear <= minYear + 20) return;
+  viewMinYear = Math.max(fullMinYear, minYear);
+  viewMaxYear = Math.min(fullMaxYear, maxYear);
+  if (viewMaxYear <= viewMinYear + 20) {
+    viewMaxYear = Math.min(fullMaxYear, viewMinYear + 20);
+  }
+  updateZoomControls();
+  draw();
+}
+
+function zoom(factor) {
+  const center = (viewMinYear + viewMaxYear) / 2;
+  const half = (viewMaxYear - viewMinYear) * factor / 2;
+  setViewRange(center - half, center + half);
+}
+
+function pan(frac) {
+  const span = viewMaxYear - viewMinYear;
+  const shift = span * frac;
+  setViewRange(viewMinYear + shift, viewMaxYear + shift);
+}
+
+function resetZoom() {
+  setViewRange(fullMinYear, fullMaxYear);
+}
+
+function xScale(year, minYear, maxYear, left, width) {
+  return left + (year - minYear) * width / (maxYear - minYear);
+}
+
+function draw() {
+  const data = filteredEvents();
+  svg.innerHTML = "";
+
+  const width = 1500, height = 620;
+  const left = 80, right = 70, top = 50, bottom = 70;
+  const axisY = 300;
+  const usableWidth = width - left - right;
+
+  if (data.length === 0) {
+    svg.innerHTML = `<text x="750" y="280" text-anchor="middle" font-size="24" fill="#6b7280">No events match the current filters or zoom range.</text>
+    <text x="750" y="320" text-anchor="middle" font-size="16" fill="#6b7280">Try Reset, Zoom Out, or change the start/end years.</text>`;
+    detailContent.innerHTML = "";
+    return;
+  }
+
+  const minYear = viewMinYear;
+  const maxYear = viewMaxYear;
+
+  // Axis line
+  const axis = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  axis.setAttribute("x1", left);
+  axis.setAttribute("x2", width - right);
+  axis.setAttribute("y1", axisY);
+  axis.setAttribute("y2", axisY);
+  axis.setAttribute("stroke", "#64748b");
+  axis.setAttribute("stroke-width", "3");
+  svg.appendChild(axis);
+
+  // Ticks
+  const tickYears = [];
+  const step = 200;
+  for (let y = Math.floor(minYear/step)*step; y <= maxYear; y += step) tickYears.push(y);
+  tickYears.forEach(y => {
+    const x = xScale(y, minYear, maxYear, left, usableWidth);
+    const tick = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    tick.setAttribute("x1", x);
+    tick.setAttribute("x2", x);
+    tick.setAttribute("y1", axisY - 10);
+    tick.setAttribute("y2", axisY + 10);
+    tick.setAttribute("stroke", "#94a3b8");
+    tick.setAttribute("stroke-width", "1.5");
+    svg.appendChild(tick);
+
+    const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    label.setAttribute("x", x);
+    label.setAttribute("y", axisY + 32);
+    label.setAttribute("text-anchor", "middle");
+    label.setAttribute("font-size", "14");
+    label.setAttribute("fill", "#475569");
+    label.textContent = y < 0 ? `${Math.abs(y)} BCE` : `${y}`;
+    svg.appendChild(label);
+  });
+
+  // Alternate positions
+  data.forEach((d, i) => {
+    const x = xScale(d.year, minYear, maxYear, left, usableWidth);
+    const topSide = i % 2 === 0;
+    const labelY = topSide ? 130 : 470;
+    const stemY2 = topSide ? axisY - 18 : axisY + 18;
+    const circleColor = colors[d.category] || "#2563eb";
+
+    const stem = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    stem.setAttribute("x1", x);
+    stem.setAttribute("x2", x);
+    stem.setAttribute("y1", axisY);
+    stem.setAttribute("y2", topSide ? 170 : 430);
+    stem.setAttribute("stroke", circleColor);
+    stem.setAttribute("stroke-width", "2");
+    stem.setAttribute("opacity", "0.65");
+    svg.appendChild(stem);
+
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("cx", x);
+    circle.setAttribute("cy", axisY);
+    circle.setAttribute("r", selectedIndex !== null && events.indexOf(d) === selectedIndex ? "10" : "8");
+    circle.setAttribute("fill", circleColor);
+    circle.setAttribute("stroke", "#ffffff");
+    circle.setAttribute("stroke-width", "2.5");
+    circle.style.cursor = "pointer";
+    svg.appendChild(circle);
+
+    const yearText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    yearText.setAttribute("x", x);
+    yearText.setAttribute("y", topSide ? 158 : 448);
+    yearText.setAttribute("text-anchor", "middle");
+    yearText.setAttribute("font-size", "13");
+    yearText.setAttribute("font-weight", "700");
+    yearText.setAttribute("fill", circleColor);
+    yearText.textContent = d.year < 0 ? `${Math.abs(d.year)} BCE` : d.year;
+    svg.appendChild(yearText);
+
+    const title = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    title.setAttribute("x", x);
+    title.setAttribute("y", labelY);
+    title.setAttribute("text-anchor", "middle");
+    title.setAttribute("font-size", "15");
+    title.setAttribute("font-weight", "700");
+    title.setAttribute("fill", "#111827");
+
+    const lines = wrapText(d.label, 20);
+    lines.forEach((line, idx) => {
+      const tsp = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+      tsp.setAttribute("x", x);
+      tsp.setAttribute("dy", idx === 0 ? 0 : 18);
+      tsp.textContent = line;
+      title.appendChild(tsp);
+    });
+    svg.appendChild(title);
+
+    const people = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    people.setAttribute("x", x);
+    people.setAttribute("y", topSide ? labelY + 38 : labelY + 38);
+    people.setAttribute("text-anchor", "middle");
+    people.setAttribute("font-size", "12");
+    people.setAttribute("fill", "#6b7280");
+
+    const peopleLines = wrapText(d.people, 26);
+    peopleLines.forEach((line, idx) => {
+      const tsp = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+      tsp.setAttribute("x", x);
+      tsp.setAttribute("dy", idx === 0 ? 0 : 15);
+      tsp.textContent = line;
+      people.appendChild(tsp);
+    });
+    svg.appendChild(people);
+
+    circle.addEventListener("mouseenter", () => showDetail(d, true));
+    circle.addEventListener("click", () => {
+      selectedIndex = events.indexOf(d);
+      showDetail(d, false);
+      draw();
+    });
+
+    title.addEventListener("click", () => {
+      selectedIndex = events.indexOf(d);
+      showDetail(d, false);
+      draw();
+    });
+    title.style.cursor = "pointer";
+  });
+
+  if (selectedIndex === null && data.length > 0) {
+    showDetail(data[0], true);
+  }
+}
+
+function wrapText(str, maxChars) {
+  const words = str.split(" ");
+  const lines = [];
+  let line = "";
+  for (const w of words) {
+    if ((line + " " + w).trim().length <= maxChars) {
+      line = (line + " " + w).trim();
+    } else {
+      if (line) lines.push(line);
+      line = w;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function showDetail(d, preview=false) {
+  const yearText = d.year < 0 ? `${Math.abs(d.year)} BCE` : d.year;
+  detailContent.innerHTML = `
+    <div class="badge">${d.category}</div>
+    <h3 style="margin:4px 0 8px 0;">${d.label}</h3>
+    <p style="margin:0 0 8px 0;"><strong>Year:</strong> ${yearText}</p>
+    <p style="margin:0 0 8px 0;"><strong>Mathematician(s):</strong> ${d.people}</p>
+    <p style="margin:0 0 12px 0;">${d.details}</p>
+    <p style="margin:0 0 12px 0;"><a href="${d.wiki}" target="_blank" rel="noopener noreferrer">Open Wikipedia article</a></p>
+    ${
+      preview
+      ? '<p class="muted small">Preview mode: click the point to pin this event.</p>'
+      : '<p class="muted small">Pinned selection. Click another point to compare events.</p>'
+    }
+  `;
+}
+
+
+function wheelZoomAt(clientX, deltaY) {
+  const rect = timelineWrap.getBoundingClientRect();
+  const xRatio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+  const span = viewMaxYear - viewMinYear;
+  const anchorYear = viewMinYear + xRatio * span;
+
+  // Smooth trackpad-friendly zoom. Negative delta zooms in; positive zooms out.
+  const scale = Math.exp(deltaY * 0.0015);
+  const newSpan = Math.max(20, Math.min(fullMaxYear - fullMinYear, span * scale));
+
+  let newMin = anchorYear - xRatio * newSpan;
+  let newMax = newMin + newSpan;
+
+  if (newMin < fullMinYear) {
+    newMin = fullMinYear;
+    newMax = newMin + newSpan;
+  }
+  if (newMax > fullMaxYear) {
+    newMax = fullMaxYear;
+    newMin = newMax - newSpan;
+  }
+
+  setViewRange(newMin, newMax);
+}
+
+function wheelPan(deltaX, deltaY) {
+  const span = viewMaxYear - viewMinYear;
+  const dominantDelta = Math.abs(deltaX) > Math.abs(deltaY) ? deltaX : deltaY;
+  const shift = span * dominantDelta * 0.0012;
+  setViewRange(viewMinYear + shift, viewMaxYear + shift);
+}
+
+// Trackpad and mouse-wheel support:
+// - Pinch/ctrl+wheel zooms around pointer.
+// - Horizontal two-finger scroll pans.
+// - Shift+wheel pans.
+// - Regular vertical wheel zooms smoothly.
+timelineWrap.addEventListener("wheel", (e) => {
+  e.preventDefault();
+  if (e.ctrlKey || e.metaKey) {
+    wheelZoomAt(e.clientX, e.deltaY);
+  } else if (e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+    wheelPan(e.deltaX, e.deltaY);
+  } else {
+    wheelZoomAt(e.clientX, e.deltaY);
+  }
+}, { passive: false });
+
+// Pointer drag support for touch screens and mouse dragging.
+let isDraggingTimeline = false;
+let dragStartX = 0;
+let dragStartMin = viewMinYear;
+let dragStartMax = viewMaxYear;
+
+timelineWrap.addEventListener("pointerdown", (e) => {
+  isDraggingTimeline = true;
+  dragStartX = e.clientX;
+  dragStartMin = viewMinYear;
+  dragStartMax = viewMaxYear;
+  timelineWrap.classList.add("dragging");
+  timelineWrap.setPointerCapture(e.pointerId);
+});
+
+timelineWrap.addEventListener("pointermove", (e) => {
+  if (!isDraggingTimeline) return;
+  const rect = timelineWrap.getBoundingClientRect();
+  const span = dragStartMax - dragStartMin;
+  const dx = e.clientX - dragStartX;
+  const yearShift = -dx / rect.width * span;
+  setViewRange(dragStartMin + yearShift, dragStartMax + yearShift);
+});
+
+timelineWrap.addEventListener("pointerup", (e) => {
+  isDraggingTimeline = false;
+  timelineWrap.classList.remove("dragging");
+  try { timelineWrap.releasePointerCapture(e.pointerId); } catch (err) {}
+});
+
+timelineWrap.addEventListener("pointercancel", () => {
+  isDraggingTimeline = false;
+  timelineWrap.classList.remove("dragging");
+});
+
+// Two-finger touch pinch zoom support.
+let activeTouches = new Map();
+let pinchStartDistance = null;
+let pinchStartMin = null;
+let pinchStartMax = null;
+let pinchAnchorRatio = 0.5;
+
+function touchDistance(touches) {
+  const [a, b] = touches;
+  return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+}
+
+function touchCenterX(touches) {
+  const [a, b] = touches;
+  return (a.clientX + b.clientX) / 2;
+}
+
+timelineWrap.addEventListener("touchstart", (e) => {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    const touches = Array.from(e.touches);
+    const rect = timelineWrap.getBoundingClientRect();
+    pinchStartDistance = touchDistance(touches);
+    pinchStartMin = viewMinYear;
+    pinchStartMax = viewMaxYear;
+    pinchAnchorRatio = Math.min(1, Math.max(0, (touchCenterX(touches) - rect.left) / rect.width));
+  }
+}, { passive: false });
+
+timelineWrap.addEventListener("touchmove", (e) => {
+  if (e.touches.length === 2 && pinchStartDistance) {
+    e.preventDefault();
+    const touches = Array.from(e.touches);
+    const currentDistance = touchDistance(touches);
+    const factor = pinchStartDistance / currentDistance;
+    const oldSpan = pinchStartMax - pinchStartMin;
+    const newSpan = Math.max(20, Math.min(fullMaxYear - fullMinYear, oldSpan * factor));
+    const anchorYear = pinchStartMin + pinchAnchorRatio * oldSpan;
+
+    let newMin = anchorYear - pinchAnchorRatio * newSpan;
+    let newMax = newMin + newSpan;
+
+    if (newMin < fullMinYear) {
+      newMin = fullMinYear;
+      newMax = newMin + newSpan;
+    }
+    if (newMax > fullMaxYear) {
+      newMax = fullMaxYear;
+      newMin = newMax - newSpan;
+    }
+    setViewRange(newMin, newMax);
+  }
+}, { passive: false });
+
+timelineWrap.addEventListener("touchend", () => {
+  if (event.touches && event.touches.length < 2) {
+    pinchStartDistance = null;
+  }
+});
+
+searchInput.addEventListener("input", (e) => {
+  searchTerm = e.target.value;
+  draw();
+});
+
+zoomInBtn.addEventListener("click", () => zoom(0.55));
+zoomOutBtn.addEventListener("click", () => zoom(1.8));
+panLeftBtn.addEventListener("click", () => pan(-0.25));
+panRightBtn.addEventListener("click", () => pan(0.25));
+resetZoomBtn.addEventListener("click", resetZoom);
+
+startYearInput.addEventListener("change", () => {
+  const start = Number(startYearInput.value);
+  const end = Number(endYearInput.value);
+  if (!Number.isNaN(start) && !Number.isNaN(end)) setViewRange(start, end);
+});
+
+endYearInput.addEventListener("change", () => {
+  const start = Number(startYearInput.value);
+  const end = Number(endYearInput.value);
+  if (!Number.isNaN(start) && !Number.isNaN(end)) setViewRange(start, end);
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "+" || e.key === "=") zoom(0.55);
+  if (e.key === "-") zoom(1.8);
+  if (e.key === "ArrowLeft") pan(-0.25);
+  if (e.key === "ArrowRight") pan(0.25);
+  if (e.key.toLowerCase() === "r") resetZoom();
+});
+
+makeLegend();
+makeButtons();
+updateZoomControls();
+draw();
+</script>
+</body>
+</html>

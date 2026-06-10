@@ -1,0 +1,365 @@
+# Lab 7. Eigenvalues, Eigenvectors, and Diagonalization: Independent Study {.unnumbered}
+
+This lab accompanies **Chapter 7: Eigenvalues, Eigenvectors, and Diagonalization**.
+
+The goal is to connect the story of eigenvectors with computation:
+
+1. **Eigenvectors:** special directions that do not rotate under a linear transformation.
+2. **Eigenvalues:** scaling factors along eigenvector directions.
+3. **Diagonalization:** replacing a complicated transformation by a diagonal one after choosing the right basis.
+4. **Powers of matrices:** using $A=PDP^{-1}$ to compute $A^k$ efficiently.
+5. **Applications:** Markov chains, dynamical systems, dominant eigenvectors, and failure of diagonalization.
+
+This is an **independent-study lab**. Each main question includes a worked solution and a similar practice question.
+
+## Python practice notebook
+
+You may use the Jupyter notebook version for longer Python practice:
+
+- [Download Lab 7 independent-study notebook](lab-07-diagonalization-eigenvalues-independent-study.ipynb)
+- [Open Lab 7 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-07-diagonalization-eigenvalues-independent-study.ipynb)
+
+## Interactive lab
+
+```{=html}
+<iframe
+  src="lab-07-interactive.html"
+  width="100%"
+  height="3600"
+  style="border:1px solid #ddd; border-radius:12px;">
+</iframe>
+```
+
+## Study guide and worked questions
+
+### Question 1. Check an eigenvector
+
+Let
+
+$$
+A=\begin{bmatrix}2&1\\0&3\end{bmatrix},
+\qquad v=\begin{bmatrix}1\\0\end{bmatrix}.
+$$
+
+Determine whether $v$ is an eigenvector of $A$.
+
+#### Solution
+
+Compute
+
+$$
+Av=\begin{bmatrix}2&1\\0&3\end{bmatrix}
+\begin{bmatrix}1\\0\end{bmatrix}
+=\begin{bmatrix}2\\0\end{bmatrix}=2v.
+$$
+
+Therefore $v$ is an eigenvector with eigenvalue $\lambda=2$.
+
+#### Similar practice
+
+For the same matrix $A$, decide whether
+
+$$
+w=\begin{bmatrix}1\\1\end{bmatrix}
+$$
+
+is an eigenvector.
+
+#### Answer
+
+$$
+Aw=\begin{bmatrix}3\\3\end{bmatrix}=3w.
+$$
+
+So $w$ is an eigenvector with eigenvalue $3$.
+
+### Question 2. Compute eigenvalues and eigenspaces
+
+Let
+
+$$
+A=\begin{bmatrix}4&1\\2&3\end{bmatrix}.
+$$
+
+Find its eigenvalues and eigenspaces.
+
+#### Solution
+
+The characteristic polynomial is
+
+$$
+\det(A-\lambda I)
+=\det\begin{bmatrix}4-\lambda&1\\2&3-\lambda\end{bmatrix}
+=(4-\lambda)(3-\lambda)-2.
+$$
+
+Thus
+
+$$
+\lambda^2-7\lambda+10=(\lambda-5)(\lambda-2),
+$$
+
+so the eigenvalues are $5$ and $2$.
+
+For $\lambda=5$,
+
+$$
+A-5I=\begin{bmatrix}-1&1\\2&-2\end{bmatrix},
+$$
+
+so $-x+y=0$ and $y=x$. Hence
+
+$$
+E_5=\operatorname{span}\left\{\begin{bmatrix}1\\1\end{bmatrix}\right\}.
+$$
+
+For $\lambda=2$,
+
+$$
+A-2I=\begin{bmatrix}2&1\\2&1\end{bmatrix},
+$$
+
+so $2x+y=0$ and $y=-2x$. Hence
+
+$$
+E_2=\operatorname{span}\left\{\begin{bmatrix}1\\-2\end{bmatrix}\right\}.
+$$
+
+#### Similar practice
+
+Find the eigenvalues and eigenspaces of
+
+$$
+B=\begin{bmatrix}3&1\\0&2\end{bmatrix}.
+$$
+
+#### Answer
+
+The eigenvalues are $3$ and $2$. The eigenspaces are
+
+$$
+E_3=\operatorname{span}\left\{\begin{bmatrix}1\\0\end{bmatrix}\right\},
+\qquad
+E_2=\operatorname{span}\left\{\begin{bmatrix}-1\\1\end{bmatrix}\right\}.
+$$
+
+### Question 3. Diagonalize a matrix
+
+Let
+
+$$
+A=\begin{bmatrix}4&1\\2&3\end{bmatrix}.
+$$
+
+Using the eigenvectors from Question 2, diagonalize $A$.
+
+#### Solution
+
+Use
+
+$$
+P=\begin{bmatrix}1&1\\1&-2\end{bmatrix},
+\qquad
+D=\begin{bmatrix}5&0\\0&2\end{bmatrix}.
+$$
+
+The columns of $P$ are eigenvectors corresponding to the diagonal entries of $D$. Therefore
+
+$$
+AP=PD,
+$$
+
+and since the two eigenvectors are linearly independent,
+
+$$
+A=PDP^{-1}.
+$$
+
+#### Similar practice
+
+Diagonalize
+
+$$
+B=\begin{bmatrix}3&1\\0&2\end{bmatrix}.
+$$
+
+#### Answer
+
+One choice is
+
+$$
+P=\begin{bmatrix}1&-1\\0&1\end{bmatrix},
+\qquad
+D=\begin{bmatrix}3&0\\0&2\end{bmatrix}.
+$$
+
+Then $B=PDP^{-1}$.
+
+### Question 4. Use diagonalization to compute powers
+
+Let $A=PDP^{-1}$, where
+
+$$
+P=\begin{bmatrix}1&1\\1&-2\end{bmatrix},
+\qquad
+D=\begin{bmatrix}5&0\\0&2\end{bmatrix}.
+$$
+
+Compute $A^{10}$ in terms of $P$ and $D$.
+
+#### Solution
+
+Because
+
+$$
+A=PDP^{-1},
+$$
+
+we have
+
+$$
+A^{10}=PD^{10}P^{-1}.
+$$
+
+Since $D$ is diagonal,
+
+$$
+D^{10}=\begin{bmatrix}5^{10}&0\\0&2^{10}\end{bmatrix}.
+$$
+
+Therefore
+
+$$
+A^{10}
+=P\begin{bmatrix}5^{10}&0\\0&2^{10}\end{bmatrix}P^{-1}.
+$$
+
+The main computational benefit is that raising a diagonal matrix to a power only requires raising its diagonal entries to that power.
+
+#### Similar practice
+
+If $B=PDP^{-1}$ with $D=\operatorname{diag}(3,2)$, write a formula for $B^k$.
+
+#### Answer
+
+$$
+B^k=P\begin{bmatrix}3^k&0\\0&2^k\end{bmatrix}P^{-1}.
+$$
+
+### Question 5. A matrix that is not diagonalizable
+
+Let
+
+$$
+J=\begin{bmatrix}2&1\\0&2\end{bmatrix}.
+$$
+
+Show that $J$ is not diagonalizable.
+
+#### Solution
+
+The only eigenvalue is $\lambda=2$. Compute
+
+$$
+J-2I=\begin{bmatrix}0&1\\0&0\end{bmatrix}.
+$$
+
+The equation $(J-2I)x=0$ gives $x_2=0$, so
+
+$$
+E_2=\operatorname{span}\left\{\begin{bmatrix}1\\0\end{bmatrix}\right\}.
+$$
+
+This eigenspace has dimension $1$, but a $2\times2$ diagonalizable matrix needs two linearly independent eigenvectors. Therefore $J$ is not diagonalizable.
+
+#### Similar practice
+
+Is
+
+$$
+C=\begin{bmatrix}4&0\\0&4\end{bmatrix}
+$$
+
+diagonalizable?
+
+#### Answer
+
+Yes. Although $4$ is a repeated eigenvalue, the eigenspace is all of $\mathbb R^2$. Thus $C$ has two linearly independent eigenvectors and is diagonalizable.
+
+### Question 6. Markov chain and long-run behavior
+
+Let
+
+$$
+M=\begin{bmatrix}0.8&0.3\\0.2&0.7\end{bmatrix}.
+$$
+
+This is a column-stochastic matrix. Find the steady-state vector $p$ satisfying
+
+$$
+Mp=p,\qquad p_1+p_2=1.
+$$
+
+#### Solution
+
+Solve
+
+$$
+(M-I)p=0.
+$$
+
+This gives
+
+$$
+\begin{bmatrix}-0.2&0.3\\0.2&-0.3\end{bmatrix}
+\begin{bmatrix}p_1\\p_2\end{bmatrix}=0.
+$$
+
+The equation $-0.2p_1+0.3p_2=0$ gives
+
+$$
+p_1=1.5p_2.
+$$
+
+Together with $p_1+p_2=1$, we get $2.5p_2=1$, so $p_2=0.4$ and $p_1=0.6$. Therefore
+
+$$
+p=\begin{bmatrix}0.6\\0.4\end{bmatrix}.
+$$
+
+#### Similar practice
+
+Find the steady state of
+
+$$
+N=\begin{bmatrix}0.9&0.4\\0.1&0.6\end{bmatrix}.
+$$
+
+#### Answer
+
+Solve $Np=p$ and $p_1+p_2=1$. The equation is $-0.1p_1+0.4p_2=0$, so $p_1=4p_2$. Hence $5p_2=1$, and
+
+$$
+p=\begin{bmatrix}0.8\\0.2\end{bmatrix}.
+$$
+
+## AI companion activities
+
+Use an AI tool as a tutor, not as a replacement for computation. For each prompt, first work by hand or in Python, then ask the AI to check your reasoning.
+
+1. Explain in plain language why an eigenvector is a direction preserved by a linear transformation.
+2. Given a $2\times2$ matrix with two distinct eigenvalues, ask the AI to help you find eigenvectors step by step.
+3. Ask for a geometric explanation of why diagonalization makes powers of matrices easier.
+4. Ask the AI to compare a diagonalizable matrix with a Jordan block.
+5. Ask for a real-world example where a dominant eigenvector is useful.
+
+## Submission checklist
+
+Before moving on, make sure you can do the following without looking at the solutions:
+
+- Compute eigenvalues from a characteristic polynomial.
+- Compute eigenspaces by solving $(A-\lambda I)x=0$.
+- Decide whether a matrix is diagonalizable.
+- Build $P$ and $D$ for a diagonalization.
+- Use $A^k=PD^kP^{-1}$.
+- Interpret a steady-state vector as an eigenvector with eigenvalue $1$.

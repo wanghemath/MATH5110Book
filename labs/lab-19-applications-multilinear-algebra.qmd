@@ -1,0 +1,316 @@
+# Lab 19. Applications of Multilinear Algebra: Independent Study {.unnumbered}
+
+This lab accompanies **Chapter 19: Applications of Multilinear Algebra**.
+
+The goal is to make tensor products, Kronecker products, wedge products, and simple tensor decompositions computational and visual.
+
+This is an **independent-study lab**. Each main question includes a worked solution and a similar practice question.
+
+## Python practice notebook
+
+You may use the Jupyter notebook version for longer Python practice:
+
+- [Download Lab 19 independent-study notebook](lab-19-applications-multilinear-algebra-independent-study.ipynb)
+- [Open Lab 19 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-19-applications-multilinear-algebra-independent-study.ipynb)
+
+## Interactive lab
+
+```{=html}
+<iframe
+  src="lab-19-interactive.html"
+  width="100%"
+  height="3900"
+  style="border:1px solid #ddd; border-radius:12px;">
+</iframe>
+```
+
+## Study guide and worked questions
+
+### Question 1. Outer products and simple tensors
+
+Let
+
+$$
+u=\begin{bmatrix}1\\2\\3\end{bmatrix},
+\qquad
+v=\begin{bmatrix}4\\5\end{bmatrix}.
+$$
+
+Compute the matrix corresponding to $u\otimes v$.
+
+#### Solution
+
+Under the identification $\mathbb R^3\otimes\mathbb R^2\cong\mathbb R^{3\times2}$,
+
+$$
+u\otimes v\leftrightarrow uv^T.
+$$
+
+Thus
+
+$$
+uv^T=
+\begin{bmatrix}1\\2\\3\end{bmatrix}
+\begin{bmatrix}4&5\end{bmatrix}
+=
+\begin{bmatrix}
+4&5\\
+8&10\\
+12&15
+\end{bmatrix}.
+$$
+
+This is a rank-one matrix because every column is a scalar multiple of $u$.
+
+#### Similar practice
+
+Compute $a\otimes b$ for
+
+$$
+a=\begin{bmatrix}2\\-1\end{bmatrix},
+\qquad
+b=\begin{bmatrix}3\\0\\4\end{bmatrix}.
+$$
+
+#### Answer
+
+$$
+ab^T=
+\begin{bmatrix}
+6&0&8\\
+-3&0&-4
+\end{bmatrix}.
+$$
+
+### Question 2. Kronecker product
+
+Let
+
+$$
+A=\begin{bmatrix}1&2\\3&4\end{bmatrix},
+\qquad
+B=\begin{bmatrix}0&5\\6&7\end{bmatrix}.
+$$
+
+Compute $A\otimes B$.
+
+#### Solution
+
+Use the block definition:
+
+$$
+A\otimes B=
+\begin{bmatrix}
+1B&2B\\
+3B&4B
+\end{bmatrix}.
+$$
+
+Therefore
+
+$$
+A\otimes B=
+\begin{bmatrix}
+0&5&0&10\\
+6&7&12&14\\
+0&15&0&20\\
+18&21&24&28
+\end{bmatrix}.
+$$
+
+#### Similar practice
+
+Compute
+
+$$
+\begin{bmatrix}1&0\\0&-1\end{bmatrix}
+\otimes
+\begin{bmatrix}2&1\\1&2\end{bmatrix}.
+$$
+
+#### Answer
+
+$$
+\begin{bmatrix}
+2&1&0&0\\
+1&2&0&0\\
+0&0&-2&-1\\
+0&0&-1&-2
+\end{bmatrix}.
+$$
+
+### Question 3. Verify the vectorization identity
+
+Let
+
+$$
+A=\begin{bmatrix}1&2\\0&1\end{bmatrix},
+\quad
+X=\begin{bmatrix}1&3\\2&4\end{bmatrix},
+\quad
+B=\begin{bmatrix}2&0\\1&1\end{bmatrix}.
+$$
+
+Verify
+
+$$
+\operatorname{vec}(AXB)=(B^T\otimes A)\operatorname{vec}(X).
+$$
+
+#### Solution
+
+First compute both sides using column-stacking convention.
+
+$$
+AX=
+\begin{bmatrix}1&2\\0&1\end{bmatrix}
+\begin{bmatrix}1&3\\2&4\end{bmatrix}
+=
+\begin{bmatrix}5&11\\2&4\end{bmatrix}.
+$$
+
+Then
+
+$$
+AXB=
+\begin{bmatrix}5&11\\2&4\end{bmatrix}
+\begin{bmatrix}2&0\\1&1\end{bmatrix}
+=
+\begin{bmatrix}21&11\\8&4\end{bmatrix}.
+$$
+
+So
+
+$$
+\operatorname{vec}(AXB)=
+\begin{bmatrix}21\\8\\11\\4\end{bmatrix}.
+$$
+
+On the other hand,
+
+$$
+B^T\otimes A
+=\begin{bmatrix}2&1\\0&1\end{bmatrix}\otimes A
+=\begin{bmatrix}
+2A&A\\
+0A&A
+\end{bmatrix}.
+$$
+
+Multiplying by
+
+$$
+\operatorname{vec}(X)=\begin{bmatrix}1\\2\\3\\4\end{bmatrix}
+$$
+
+gives the same vector.
+
+#### Similar practice
+
+Choose your own $2\times2$ matrices $A,X,B$ and verify the identity using Python.
+
+#### Answer
+
+A correct Python check should return `True` for `np.allclose(left, right)`.
+
+### Question 4. Wedge product and signed area
+
+Let
+
+$$
+u=\begin{bmatrix}2\\1\end{bmatrix},
+\qquad
+v=\begin{bmatrix}1\\3\end{bmatrix}.
+$$
+
+Compute $u\wedge v$ and interpret the result.
+
+#### Solution
+
+$$
+u\wedge v=(2\cdot3-1\cdot1)(e_1\wedge e_2)=5(e_1\wedge e_2).
+$$
+
+The signed area of the parallelogram spanned by $u$ and $v$ is $5$.
+
+#### Similar practice
+
+Compute the signed area for
+
+$$
+a=\begin{bmatrix}1\\4\end{bmatrix},
+\qquad
+b=\begin{bmatrix}3\\2\end{bmatrix}.
+$$
+
+#### Answer
+
+$$
+\det\begin{bmatrix}1&3\\4&2\end{bmatrix}=2-12=-10.
+$$
+
+The signed area is $-10$, and the ordinary area is $10$.
+
+### Question 5. Entanglement as matrix rank
+
+Consider the two-qubit state
+
+$$
+\psi=\frac{1}{\sqrt2}(|00\rangle+|11\rangle).
+$$
+
+Decide whether it is separable.
+
+#### Solution
+
+The coefficient matrix is
+
+$$
+M=\frac{1}{\sqrt2}\begin{bmatrix}1&0\\0&1\end{bmatrix}.
+$$
+
+This matrix has rank $2$. A separable two-qubit state corresponds to a rank-one coefficient matrix. Therefore this Bell state is entangled.
+
+#### Similar practice
+
+Decide whether
+
+$$
+\phi=\frac12(|00\rangle+|01\rangle+|10\rangle+|11\rangle)
+$$
+
+is separable.
+
+#### Answer
+
+The coefficient matrix is
+
+$$
+\frac12\begin{bmatrix}1&1\\1&1\end{bmatrix},
+$$
+
+which has rank $1$. Therefore $\phi$ is separable.
+
+## Python starter code
+
+```{python}
+import numpy as np
+
+# Outer product
+u = np.array([1, 2, 3])
+v = np.array([4, 5])
+print(np.outer(u, v))
+
+# Kronecker product
+A = np.array([[1, 2], [3, 4]])
+B = np.array([[0, 5], [6, 7]])
+print(np.kron(A, B))
+
+# Vectorization identity
+A = np.array([[1, 2], [0, 1]])
+X = np.array([[1, 3], [2, 4]])
+B = np.array([[2, 0], [1, 1]])
+left = (A @ X @ B).reshape(-1, order="F")
+right = np.kron(B.T, A) @ X.reshape(-1, order="F")
+print(np.allclose(left, right))
+```

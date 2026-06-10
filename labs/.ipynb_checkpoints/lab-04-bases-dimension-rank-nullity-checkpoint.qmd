@@ -1,0 +1,408 @@
+# Lab 4. Bases, Dimension, Coordinates, and Rank--Nullity: Independent Study {.unnumbered}
+
+This lab accompanies **Chapter 4: Coordinates: Bases, Dimension, and Rank--Nullity**.
+
+The goal is to connect the story of Chapter 4 with computation:
+
+1. **Linear independence:** find redundancy in a list of vectors.
+2. **Bases and coordinates:** express a vector in a chosen coordinate system.
+3. **Dimension:** count degrees of freedom.
+4. **Rank--nullity:** separate information that survives from information that is lost.
+5. **Change of basis:** translate coordinates between two coordinate systems.
+
+This is an **independent-study lab**. Each main question includes a worked solution and a similar practice question so that students can check their work as they go.
+
+## Python practice notebook
+
+You may also use the Jupyter notebook version for longer Python practice:
+
+- [Download Lab 4 independent-study notebook](lab-04-bases-dimension-rank-nullity-independent-study.ipynb)
+- [Open Lab 4 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-04-bases-dimension-rank-nullity-independent-study.ipynb)
+
+## Interactive lab
+
+```{=html}
+<iframe
+  src="lab-04-interactive.html"
+  width="100%"
+  height="3100"
+  style="border:1px solid #ddd; border-radius:12px;">
+</iframe>
+```
+
+
+
+## Study guide and worked questions
+
+### Question 1. Linear independence and redundancy
+
+Let
+
+$$
+v_1=\begin{bmatrix}1\\-3\\4\end{bmatrix},\qquad
+v_2=\begin{bmatrix}2\\-2\\5\end{bmatrix},\qquad
+v_3=\begin{bmatrix}3\\-1\\6\end{bmatrix}.
+$$
+
+Determine whether the vectors are linearly independent. If they are dependent, find a nontrivial linear relation.
+
+#### Solution
+
+Put the vectors into the columns of a matrix:
+
+$$
+A=\begin{bmatrix}
+1&2&3\\
+-3&-2&-1\\
+4&5&6
+\end{bmatrix}.
+$$
+
+Row reduction gives
+
+$$
+\operatorname{rref}(A)=
+\begin{bmatrix}
+1&0&-1\\
+0&1&2\\
+0&0&0
+\end{bmatrix}.
+$$
+
+The equation $Ax=0$ has a free variable $x_3$. From the RREF,
+
+$$
+x_1-x_3=0,\qquad x_2+2x_3=0.
+$$
+
+Let $x_3=1$. Then $x_1=1$ and $x_2=-2$, so
+
+$$
+v_1-2v_2+v_3=0.
+$$
+
+Therefore the vectors are linearly dependent.
+
+#### Similar practice
+
+Let
+
+$$
+w_1=\begin{bmatrix}1\\0\\1\end{bmatrix},\qquad
+w_2=\begin{bmatrix}0\\1\\1\end{bmatrix},\qquad
+w_3=\begin{bmatrix}1\\1\\2\end{bmatrix}.
+$$
+
+Are these vectors independent?
+
+**Answer:** They are dependent because $w_3=w_1+w_2$, so
+
+$$
+w_1+w_2-w_3=0.
+$$
+
+### Question 2. Basis and coordinates in $\mathbb R^2$
+
+Let
+
+$$
+b_1=\begin{bmatrix}1\\1\end{bmatrix},\qquad
+b_2=\begin{bmatrix}1\\-1\end{bmatrix},\qquad
+v=\begin{bmatrix}4\\2\end{bmatrix}.
+$$
+
+1. Show that $\mathcal B=(b_1,b_2)$ is a basis of $\mathbb R^2$.
+2. Find the coordinate vector $[v]_{\mathcal B}$.
+
+#### Solution
+
+Let
+
+$$
+P_{\mathcal B}=\begin{bmatrix}1&1\\1&-1\end{bmatrix}.
+$$
+
+The determinant is
+
+$$
+\det(P_{\mathcal B})=(1)(-1)-(1)(1)=-2\neq 0.
+$$
+
+So the columns are linearly independent and form a basis of $\mathbb R^2$.
+
+To find coordinates, solve
+
+$$
+P_{\mathcal B}c=v.
+$$
+
+That is,
+
+$$
+c_1\begin{bmatrix}1\\1\end{bmatrix}
++c_2\begin{bmatrix}1\\-1\end{bmatrix}
+=\begin{bmatrix}4\\2\end{bmatrix}.
+$$
+
+This gives
+
+$$
+c_1+c_2=4,\qquad c_1-c_2=2.
+$$
+
+Hence $c_1=3$ and $c_2=1$. Therefore
+
+$$
+[v]_{\mathcal B}=\begin{bmatrix}3\\1\end{bmatrix}.
+$$
+
+#### Similar practice
+
+For the same basis $\mathcal B$, find the coordinates of $u=(5,-1)$.
+
+**Answer:** Solve $c_1+c_2=5$ and $c_1-c_2=-1$. Then $c_1=2$ and $c_2=3$, so
+
+$$
+[u]_{\mathcal B}=\begin{bmatrix}2\\3\end{bmatrix}.
+$$
+
+### Question 3. Finding a basis from a spanning list
+
+Let
+
+$$
+S=\left\{
+\begin{bmatrix}1\\0\\1\end{bmatrix},
+\begin{bmatrix}0\\1\\1\end{bmatrix},
+\begin{bmatrix}1\\1\\2\end{bmatrix},
+\begin{bmatrix}2\\1\\3\end{bmatrix}
+\right\}.
+$$
+
+Find a basis for $\operatorname{span}(S)$.
+
+#### Solution
+
+Place the vectors as columns:
+
+$$
+A=\begin{bmatrix}
+1&0&1&2\\
+0&1&1&1\\
+1&1&2&3
+\end{bmatrix}.
+$$
+
+A row reduction shows that columns $1$ and $2$ are pivot columns. Therefore a basis for the span is given by the corresponding original columns:
+
+$$
+\left\{
+\begin{bmatrix}1\\0\\1\end{bmatrix},
+\begin{bmatrix}0\\1\\1\end{bmatrix}
+\right\}.
+$$
+
+The other vectors are redundant:
+
+$$
+\begin{bmatrix}1\\1\\2\end{bmatrix}
+=
+\begin{bmatrix}1\\0\\1\end{bmatrix}
++
+\begin{bmatrix}0\\1\\1\end{bmatrix},
+$$
+
+and
+
+$$
+\begin{bmatrix}2\\1\\3\end{bmatrix}
+=2\begin{bmatrix}1\\0\\1\end{bmatrix}
++
+\begin{bmatrix}0\\1\\1\end{bmatrix}.
+$$
+
+#### Similar practice
+
+Find a basis for the span of
+
+$$
+(1,2,0),\qquad (2,4,0),\qquad (0,1,1),\qquad (1,3,1).
+$$
+
+**Answer:** A basis is
+
+$$
+\{(1,2,0),(0,1,1)\}.
+$$
+
+The second vector is $2(1,2,0)$, and the fourth vector is $(1,2,0)+(0,1,1)$.
+
+### Question 4. Kernel, image, rank, and nullity
+
+Let $T:\mathbb R^4\to\mathbb R^3$ be defined by $T(x)=Ax$, where
+
+$$
+A=\begin{bmatrix}
+1&0&2&1\\
+0&1&-1&3\\
+1&1&1&4
+\end{bmatrix}.
+$$
+
+Find bases for $\operatorname{im}(T)$ and $\ker(T)$, and verify the rank--nullity theorem.
+
+#### Solution
+
+Row reducing $A$ gives
+
+$$
+\operatorname{rref}(A)=
+\begin{bmatrix}
+1&0&2&1\\
+0&1&-1&3\\
+0&0&0&0
+\end{bmatrix}.
+$$
+
+The pivot columns are columns $1$ and $2$. Therefore
+
+$$
+\operatorname{im}(T)=\operatorname{span}\left\{
+\begin{bmatrix}1\\0\\1\end{bmatrix},
+\begin{bmatrix}0\\1\\1\end{bmatrix}
+\right\}.
+$$
+
+The equations from the RREF are
+
+$$
+x_1+2x_3+x_4=0,\qquad x_2-x_3+3x_4=0.
+$$
+
+Let $x_3=s$ and $x_4=t$. Then
+
+$$
+x_1=-2s-t,\qquad x_2=s-3t.
+$$
+
+So
+
+$$
+x=s\begin{bmatrix}-2\\1\\1\\0\end{bmatrix}
++t\begin{bmatrix}-1\\-3\\0\\1\end{bmatrix}.
+$$
+
+Hence
+
+$$
+\ker(T)=\operatorname{span}\left\{
+\begin{bmatrix}-2\\1\\1\\0\end{bmatrix},
+\begin{bmatrix}-1\\-3\\0\\1\end{bmatrix}
+\right\}.
+$$
+
+The rank is $2$ and the nullity is $2$. Since the domain is $\mathbb R^4$,
+
+$$
+\operatorname{rank}(T)+\operatorname{nullity}(T)=2+2=4=\dim(\mathbb R^4).
+$$
+
+#### Similar practice
+
+Let
+
+$$
+B=\begin{bmatrix}
+1&0&0&2\\
+0&1&0&-1\\
+0&0&1&3
+\end{bmatrix}.
+$$
+
+Find $\ker(B)$ and the rank of $B$.
+
+**Answer:** The rank is $3$. The equations are
+
+$$
+x_1+2x_4=0,\qquad x_2-x_4=0,\qquad x_3+3x_4=0.
+$$
+
+Let $x_4=t$. Then
+
+$$
+\ker(B)=\operatorname{span}\left\{
+\begin{bmatrix}-2\\1\\-3\\1\end{bmatrix}
+\right\}.
+$$
+
+The nullity is $1$, and $3+1=4$.
+
+### Question 5. Change of basis
+
+Let
+
+$$
+\mathcal B=\left(\begin{bmatrix}1\\1\end{bmatrix},\begin{bmatrix}1\\-1\end{bmatrix}\right),
+\qquad
+\mathcal C=\left(\begin{bmatrix}2\\0\end{bmatrix},\begin{bmatrix}0\\3\end{bmatrix}\right).
+$$
+
+Suppose
+
+$$
+[v]_{\mathcal B}=\begin{bmatrix}3\\1\end{bmatrix}.
+$$
+
+Find $[v]_{\mathcal C}$.
+
+#### Solution
+
+First convert from $\mathcal B$-coordinates to standard coordinates:
+
+$$
+v=P_{\mathcal B}[v]_{\mathcal B}
+=\begin{bmatrix}1&1\\1&-1\end{bmatrix}
+\begin{bmatrix}3\\1\end{bmatrix}
+=\begin{bmatrix}4\\2\end{bmatrix}.
+$$
+
+Now solve
+
+$$
+P_{\mathcal C}[v]_{\mathcal C}=v,
+\qquad
+P_{\mathcal C}=\begin{bmatrix}2&0\\0&3\end{bmatrix}.
+$$
+
+Thus
+
+$$
+[v]_{\mathcal C}=P_{\mathcal C}^{-1}v
+=\begin{bmatrix}1/2&0\\0&1/3\end{bmatrix}
+\begin{bmatrix}4\\2\end{bmatrix}
+=\begin{bmatrix}2\\2/3\end{bmatrix}.
+$$
+
+#### Similar practice
+
+Using the same bases, if $[u]_{\mathcal B}=(2,3)$, find $[u]_{\mathcal C}$.
+
+**Answer:** First $u=2(1,1)+3(1,-1)=(5,-1)$. Then
+
+$$
+[u]_{\mathcal C}=\begin{bmatrix}5/2\\-1/3\end{bmatrix}.
+$$
+
+### Question 6. AI companion critique
+
+Ask an AI tool:
+
+> Explain rank--nullity using the metaphor of information preserved and information lost.
+
+Then critique the response. Your critique should answer:
+
+1. Does it correctly state that the domain dimension is split into rank and nullity?
+2. Does it identify the image as the information that survives?
+3. Does it identify the kernel as the directions that are sent to zero?
+4. Does it include a concrete matrix example?
+5. Does it avoid saying that nullity is always bad? In applications, null directions may represent compression, invariance, or constraints.

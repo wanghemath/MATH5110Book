@@ -1,0 +1,121 @@
+# Lab 2. Matrix Algebra: Interactive Practice {.unnumbered}
+
+This lab accompanies **Chapter 2: Matrices as Machines: Algebra, Inverses, Rank, and LU**.
+
+The goal is to connect several views of matrix algebra:
+
+1. **Algebra:** matrix products, inverses, transposes, and powers.
+2. **Geometry:** matrices as transformations of the plane.
+3. **Computation:** rank, determinant, Gram matrices, and LU factorization.
+
+
+## Python practice notebook
+
+You may also use the Jupyter notebook version for longer Python practice:
+
+- [Download Lab 2 notebook](lab-02-matrix-algebra.ipynb)
+- [Open Lab 2 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-02-matrix-algebra.ipynb)
+
+More examples: 
+
+- [Chromaticity](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/Lab_2a_Chromaticity.ipynb)
+
+- [Circular Orbit](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/Lab_2b_Circular_Orbit.ipynb)
+
+- [Determinant](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/Lab_2c_Areas_Determinants.ipynb)
+
+
+## Interactive lab
+
+```{=html}
+<iframe
+  src="lab-02-interactive.html"
+  width="100%"
+  height="1850"
+  style="border:1px solid #ddd; border-radius:12px;">
+</iframe>
+```
+
+
+
+## Submission questions
+
+Submit short written answers to the following questions.
+
+### Question 1. Matrix multiplication and order
+
+Use the interactive lab to find two $2\times 2$ matrices $A$ and $B$ such that
+
+$$
+AB\neq BA.
+$$
+
+Record:
+
+- $A$;
+- $B$;
+- $AB$;
+- $BA$.
+
+Explain why the order of matrix multiplication matters when matrices are interpreted as transformations.
+
+### Question 2. Invertibility and information loss
+
+Create one invertible matrix $A$ and one singular matrix $S$.
+
+For each matrix, record:
+
+- determinant;
+- rank;
+- whether the inverse exists;
+- the geometric effect on the unit square.
+
+Explain why singular matrices lose information.
+
+### Question 3. Transpose and Gram matrix
+
+For one matrix $A$, compute
+
+$$
+A^T,\qquad A^TA.
+$$
+
+Explain why $A^TA$ is symmetric. What information does $A^TA$ record about the columns of $A$?
+
+### Question 4. LU factorization
+
+Use the LU tool on the Chapter 2 example
+
+$$
+A=
+\begin{bmatrix}
+2&1&1\\
+4&-6&0\\
+-2&7&2
+\end{bmatrix}.
+$$
+
+Record $L$ and $U$, and verify that
+
+$$
+A=LU.
+$$
+
+### Question 5. Pivoting
+
+Use the LU tool on a matrix that needs pivoting. Explain why the ordinary LU algorithm fails without row swaps.
+
+### Question 6. AI companion
+
+Ask an AI tool:
+
+> Explain why $A(Bx)$ is often faster to compute than $(AB)x$.
+
+Then critique the response.
+
+Your critique should answer:
+
+1. Does the response compare the number of operations?
+2. Does it mention matrix-vector multiplication versus matrix-matrix multiplication?
+3. Does it correctly say that the two expressions are mathematically equal when dimensions match?
+4. Does it explain why implementation choices matter?

@@ -1,0 +1,849 @@
+---
+title: "Chapter 27: Matrix Calculus"
+subtitle: "How linear algebra learns to change"
+author: "He Wang"
+format:
+  html:
+    toc: true
+    number-sections: true
+    code-fold: true
+    code-tools: true
+jupyter: python3
+---
+
+## 27.1 The story: from static matrices to changing matrices
+
+In the first part of the course, matrices acted like machines: they transformed vectors, solved linear systems, projected data, diagonalized dynamics, compressed images, and described networks. In this chapter, we ask a new question:
+
+> What happens when the entries of a vector or matrix are allowed to move?
+
+This question is the beginning of **matrix calculus**. It is the language behind least squares, optimization, machine learning, neural networks, scientific computing, statistics, and sensitivity analysis.
+
+A function may take a vector and return a number,
+$$
+f:\mathbb R^n\to \mathbb R.
+$$
+A function may take a vector and return another vector,
+$$
+F:\mathbb R^n\to \mathbb R^m.
+$$
+A function may even take a matrix and return a scalar,
+$$
+f:\mathbb R^{m\times n}\to \mathbb R.
+$$
+
+Matrix calculus gives a precise answer to the question:
+
+> What is the best linear approximation to this function near the current point?
+
+That sentence is the bridge between calculus and linear algebra.
+
+## 27.2 Differentials: the linear algebra meaning of derivative
+
+::: {.callout-note}
+## Definition 27.1: Differential
+
+Let $f:\mathbb R^n\to \mathbb R$ be differentiable at $x$. The **differential** of $f$ at $x$ is the linear map
+$$
+df_x:\mathbb R^n\to \mathbb R
+$$
+such that, for small $h$,
+$$
+f(x+h)=f(x)+df_x(h)+o(\|h\|).
+$$
+:::
+
+The differential is not a mysterious new object. It is the best linear prediction of the change in $f$.
+
+::: {.callout-note}
+## Definition 27.2: Gradient
+
+For $f:\mathbb R^n\to\mathbb R$, the **gradient** is the vector
+$$
+\nabla f(x)=
+\begin{bmatrix}
+\frac{\partial f}{\partial x_1}(x)\\
+\vdots\\
+\frac{\partial f}{\partial x_n}(x)
+\end{bmatrix}.
+$$
+It is defined by the identity
+$$
+df_x(h)=\nabla f(x)^T h.
+$$
+:::
+
+So the gradient is the vector representation of the differential after choosing the standard Euclidean inner product.
+
+::: {.callout-tip collapse="true"}
+## Proof idea: why the gradient represents the differential
+
+The linear approximation from multivariable calculus is
+$$
+f(x+h)-f(x)\approx
+\frac{\partial f}{\partial x_1}h_1+\\cdots+
+\frac{\partial f}{\partial x_n}h_n.
+$$
+This sum is exactly the dot product
+$$
+\nabla f(x)^T h.
+$$
+Therefore the derivative is a linear functional, and the gradient is its coordinate vector.
+:::
+
+### Example 27.1: A quadratic function
+
+Let
+$$
+f(x)=x^T A x,
+$$
+where $A\in\mathbb R^{n\times n}$. Then
+$$
+\begin{aligned}
+f(x+h)&=(x+h)^TA(x+h)\\
+&=x^TAx+h^TAx+x^TAh+h^TAh.
+\end{aligned}
+$$
+The linear terms in $h$ are
+$$
+h^TAx+x^TAh=h^T(A+A^T)x.
+$$
+Hence
+$$
+\nabla f(x)=(A+A^T)x.
+$$
+If $A=A^T$, then
+$$
+\nabla f(x)=2Ax.
+$$
+
+## 27.3 Jacobian matrices
+
+Scalar-valued functions have gradients. Vector-valued functions have Jacobian matrices.
+
+::: {.callout-note}
+## Definition 27.3: Jacobian matrix
+
+Let $F:\mathbb R^n\to\mathbb R^m$ be differentiable, with component functions
+$$
+F(x)=
+\begin{bmatrix}
+F_1(x)\\
+\vdots\\
+F_m(x)
+\end{bmatrix}.
+$$
+The **Jacobian matrix** of $F$ at $x$ is
+$$
+J_F(x)=
+\begin{bmatrix}
+\frac{\partial F_1}{\partial x_1} & \cdots & \frac{\partial F_1}{\partial x_n}\\
+\vdots & \ddots & \vdots\\
+\frac{\partial F_m}{\partial x_1} & \cdots & \frac{\partial F_m}{\partial x_n}
+\end{bmatrix}.
+$$
+It satisfies
+$$
+F(x+h)=F(x)+J_F(x)h+o(\|h\|).
+$$
+:::
+
+Thus the Jacobian is the matrix of the derivative as a linear transformation.
+
+### Example 27.2: Linear maps have constant Jacobian
+
+If
+$$
+F(x)=Ax+b,
+$$
+then
+$$
+F(x+h)=Ax+Ah+b=F(x)+Ah.
+$$
+Therefore
+$$
+J_F(x)=A.
+$$
+This is why linear algebra is the local model for nonlinear maps.
+
+### Example 27.3: A nonlinear map
+
+Let
+$$
+F(x,y)=
+\begin{bmatrix}
+x^2+y\\
+xy\\
+e^x\sin y
+\end{bmatrix}.
+$$
+Then
+$$
+J_F(x,y)=
+\begin{bmatrix}
+2x & 1\\
+y & x\\
+e^x\sin y & e^x\cos y
+\end{bmatrix}.
+$$
+
+## 27.4 Hessians and curvature
+
+::: {.callout-note}
+## Definition 27.4: Hessian matrix
+
+Let $f:\mathbb R^n\to\mathbb R$ have continuous second partial derivatives. The **Hessian matrix** is
+$$
+\nabla^2 f(x)=
+\begin{bmatrix}
+\frac{\partial^2 f}{\partial x_1\partial x_1} & \cdots & \frac{\partial^2 f}{\partial x_1\partial x_n}\\
+\vdots & \ddots & \vdots\\
+\frac{\partial^2 f}{\partial x_n\partial x_1} & \cdots & \frac{\partial^2 f}{\partial x_n\partial x_n}
+\end{bmatrix}.
+$$
+:::
+
+The Hessian is a symmetric matrix when the second partial derivatives are continuous.
+
+::: {.callout-note}
+## Theorem 27.1: Second-order Taylor approximation
+
+If $f:\mathbb R^n\to\mathbb R$ is twice continuously differentiable near $x$, then for small $h$,
+$$
+f(x+h)=f(x)+\nabla f(x)^Th+
+\frac12 h^T\nabla^2 f(x)h+o(\|h\|^2).
+$$
+:::
+
+::: {.callout-tip collapse="true"}
+## Proof idea
+
+The one-variable Taylor expansion of $g(t)=f(x+th)$ at $t=0$ gives
+$$
+g(1)=g(0)+g'(0)+\frac12 g''(0)+o(\|h\|^2).
+$$
+By the chain rule,
+$$
+g'(0)=\nabla f(x)^T h,
+$$
+and
+$$
+g''(0)=h^T\nabla^2 f(x)h.
+$$
+Substituting these into Taylor's formula gives the result.
+:::
+
+### Example 27.4: Hessian of a quadratic objective
+
+Let
+$$
+f(x)=\frac12 x^TQx-b^Tx+c,
+$$
+where $Q=Q^T$. Then
+$$
+\nabla f(x)=Qx-b,
+\qquad
+\nabla^2 f(x)=Q.
+$$
+The Hessian is the matrix that controls curvature.
+
+## 27.5 Least squares through matrix calculus
+
+The least squares objective is
+$$
+f(x)=\frac12\|Ax-b\|_2^2.
+$$
+Let $r(x)=Ax-b$. Then
+$$
+f(x)=\frac12 r(x)^Tr(x).
+$$
+Using differentials,
+$$
+df=r^Tdr=r^T A\,dx.
+$$
+Since
+$$
+r^T A\,dx=(A^Tr)^Tdx,
+$$
+we get
+$$
+\nabla f(x)=A^T(Ax-b).
+$$
+The critical point satisfies
+$$
+A^T(Ax-b)=0,
+$$
+or
+$$
+A^TAx=A^Tb.
+$$
+Thus the normal equations are not just algebraic tricks: they are the condition $\nabla f(x)=0$.
+
+::: {.callout-tip collapse="true"}
+## Proof: least squares gradient
+
+Let $f(x)=\frac12(Ax-b)^T(Ax-b)$. Write $r=Ax-b$. Then
+$$
+dr=A\,dx.
+$$
+Also
+$$
+df=\frac12(d r^T r+r^T dr)=r^Tdr,
+$$
+because the expression is scalar. Therefore
+$$
+df=r^TA\,dx=(A^Tr)^Tdx.
+$$
+By the definition of the gradient,
+$$
+\nabla f(x)=A^Tr=A^T(Ax-b).
+$$
+:::
+
+## 27.6 Matrix-valued variables and the trace trick
+
+Many modern applications optimize over a matrix $X$, not just a vector $x$. To define gradients with respect to matrices, we use the Frobenius inner product.
+
+::: {.callout-note}
+## Definition 27.5: Frobenius inner product and matrix gradient
+
+For $A,B\in\mathbb R^{m\times n}$, the **Frobenius inner product** is
+$$
+\langle A,B\rangle_F=\operatorname{tr}(A^TB).
+$$
+If $f:\mathbb R^{m\times n}\to\mathbb R$, the **matrix gradient** $\nabla_X f(X)$ is the matrix satisfying
+$$
+df_X(H)=\langle \nabla_X f(X),H\rangle_F
+=\operatorname{tr}\big((\nabla_X f(X))^T H\big).
+$$
+:::
+
+The trace allows us to rotate matrix products until the perturbation $dX$ appears at the end.
+
+::: {.callout-note}
+## Trace identities
+
+For compatible matrices,
+$$
+\operatorname{tr}(AB)=\operatorname{tr}(BA),
+$$
+and more generally,
+$$
+\operatorname{tr}(ABC)=\operatorname{tr}(BCA)=\operatorname{tr}(CAB).
+$$
+Also,
+$$
+\langle A,B\rangle_F=\operatorname{tr}(A^TB)=\sum_{i,j}a_{ij}b_{ij}.
+$$
+:::
+
+### Example 27.5: Gradient of a matrix least squares objective
+
+Let
+$$
+f(X)=\frac12\|AX-B\|_F^2.
+$$
+Let $R=AX-B$. Then
+$$
+dR=A\,dX.
+$$
+Thus
+$$
+\begin{aligned}
+df
+&=\operatorname{tr}(R^T dR)\\
+&=\operatorname{tr}(R^T A\,dX)\\
+&=\operatorname{tr}((A^TR)^T dX).
+\end{aligned}
+$$
+Therefore
+$$
+\nabla_X f(X)=A^T(AX-B).
+$$
+
+### Example 27.6: A two-sided matrix objective
+
+Let
+$$
+f(X)=\frac12\|AXB-C\|_F^2.
+$$
+Let $R=AXB-C$. Then
+$$
+dR=A\,dX\,B.
+$$
+Therefore
+$$
+\begin{aligned}
+df
+&=\operatorname{tr}(R^TA\,dX\,B)\\
+&=\operatorname{tr}(B R^T A\,dX)\\
+&=\operatorname{tr}((A^T R B^T)^T dX).
+\end{aligned}
+$$
+Hence
+$$
+\nabla_X f(X)=A^T(AXB-C)B^T.
+$$
+
+## 27.7 Common matrix derivative rules
+
+The following table is useful in optimization and machine learning.
+
+| Function | Gradient |
+|---|---|
+| $a^Tx$ | $a$ |
+| $x^TAx$ | $(A+A^T)x$ |
+| $\frac12\|Ax-b\|_2^2$ | $A^T(Ax-b)$ |
+| $\frac12 x^TQx-b^Tx$, $Q=Q^T$ | $Qx-b$ |
+| $\operatorname{tr}(A^TX)$ | $A$ |
+| $\frac12\|X-C\|_F^2$ | $X-C$ |
+| $\frac12\|AX-B\|_F^2$ | $A^T(AX-B)$ |
+| $\frac12\|AXB-C\|_F^2$ | $A^T(AXB-C)B^T$ |
+
+## 27.8 Chain rule in matrix form
+
+::: {.callout-note}
+## Theorem 27.2: Chain rule for vector functions
+
+Let $F:\mathbb R^n\to\mathbb R^m$ and $g:\mathbb R^m\to\mathbb R$. Define
+$$
+h(x)=g(F(x)).
+$$
+Then
+$$
+\nabla h(x)=J_F(x)^T\nabla g(F(x)).
+$$
+:::
+
+This formula is the linear algebra behind backpropagation. The Jacobian transpose moves sensitivity backward from outputs to inputs.
+
+::: {.callout-tip collapse="true"}
+## Proof idea
+
+The differentials satisfy
+$$
+dh=dg_{F(x)}(dF_x(h)).
+$$
+In coordinates,
+$$
+dF_x(h)=J_F(x)h,
+$$
+and
+$$
+dg_y(k)=\nabla g(y)^Tk.
+$$
+Therefore
+$$
+dh=\nabla g(F(x))^T J_F(x)h
+=\big(J_F(x)^T\nabla g(F(x))\big)^T h.
+$$
+So
+$$
+\nabla h(x)=J_F(x)^T\nabla g(F(x)).
+$$
+:::
+
+## 27.9 Python computation: gradients, Hessians, and finite differences
+
+```{python}
+import numpy as np
+
+A = np.array([[3.0, 1.0], [1.0, 2.0]])
+b = np.array([1.0, -2.0])
+
+def f(x):
+    return 0.5 * x @ A @ x - b @ x
+
+def grad_f(x):
+    return A @ x - b
+
+def finite_difference_grad(f, x, eps=1e-6):
+    g = np.zeros_like(x, dtype=float)
+    for i in range(len(x)):
+        e = np.zeros_like(x, dtype=float)
+        e[i] = 1.0
+        g[i] = (f(x + eps*e) - f(x - eps*e))/(2*eps)
+    return g
+
+x = np.array([0.5, -1.0])
+print("analytic gradient:", grad_f(x))
+print("finite-difference gradient:", finite_difference_grad(f, x))
+```
+
+Finite differences are useful for checking formulas, but analytic gradients are more accurate and efficient.
+
+## 27.10 Python computation: gradient descent and Newton's method
+
+For a quadratic function
+$$
+f(x)=\frac12 x^TQx-b^Tx,
+$$
+gradient descent uses
+$$
+x_{k+1}=x_k-\alpha(Qx_k-b).
+$$
+Newton's method uses
+$$
+x_{k+1}=x_k-(\nabla^2 f(x_k))^{-1}\nabla f(x_k).
+$$
+For a quadratic function with Hessian $Q$, Newton's method reaches the minimizer in one step if $Q$ is invertible.
+
+```{python}
+Q = np.array([[4.0, 1.0], [1.0, 3.0]])
+b = np.array([1.0, 2.0])
+
+def f_quad(x):
+    return 0.5*x @ Q @ x - b @ x
+
+def grad_quad(x):
+    return Q @ x - b
+
+x_star = np.linalg.solve(Q, b)
+print("exact minimizer:", x_star)
+
+x = np.array([3.0, -2.0])
+alpha = 0.15
+history = [x.copy()]
+for k in range(20):
+    x = x - alpha*grad_quad(x)
+    history.append(x.copy())
+
+print("gradient descent approximation:", x)
+print("objective value:", f_quad(x))
+
+x0 = np.array([3.0, -2.0])
+x_newton = x0 - np.linalg.solve(Q, grad_quad(x0))
+print("one Newton step:", x_newton)
+```
+
+## 27.11 Application: logistic regression gradient
+
+In binary classification, a common model is
+$$
+p_i=\sigma(x_i^T w),
+\qquad
+\sigma(t)=\frac{1}{1+e^{-t}}.
+$$
+For labels $y_i\in\{0,1\}$, the average logistic loss is
+$$
+L(w)=-\frac1m\sum_{i=1}^m
+\left[y_i\log p_i+(1-y_i)\log(1-p_i)\right].
+$$
+If $X\in\mathbb R^{m\times n}$ has rows $x_i^T$, then
+$$
+\nabla L(w)=\frac1m X^T(p-y).
+$$
+This is one of the most important gradients in data science.
+
+```{python}
+def sigmoid(z):
+    return 1/(1+np.exp(-z))
+
+X = np.array([[1.0, 0.0], [1.0, 1.0], [1.0, 2.0], [1.0, 3.0]])
+y = np.array([0.0, 0.0, 1.0, 1.0])
+w = np.array([0.2, 0.5])
+
+p = sigmoid(X @ w)
+grad = X.T @ (p - y) / len(y)
+print("probabilities:", p)
+print("gradient:", grad)
+```
+
+## 27.12 Challenge questions
+
+### Challenge 27.1: Derivative of a Rayleigh quotient
+
+Let $A=A^T$, and define
+$$
+R(x)=\frac{x^TAx}{x^Tx},\qquad x\ne 0.
+$$
+Show that
+$$
+\nabla R(x)=\frac{2}{x^Tx}\left(Ax-R(x)x\right).
+$$
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+Let $g(x)=x^TAx$ and $h(x)=x^Tx$. Since $A=A^T$,
+$$
+\nabla g(x)=2Ax,
+\qquad
+\nabla h(x)=2x.
+$$
+Using the quotient rule,
+$$
+\nabla R(x)=\frac{h(x)\nabla g(x)-g(x)\nabla h(x)}{h(x)^2}.
+$$
+Thus
+$$
+\nabla R(x)=\frac{(x^Tx)2Ax-(x^TAx)2x}{(x^Tx)^2}
+=\frac{2}{x^Tx}\left(Ax-\frac{x^TAx}{x^Tx}x\right).
+$$
+Therefore
+$$
+\nabla R(x)=\frac{2}{x^Tx}(Ax-R(x)x).
+$$
+:::
+
+### Challenge 27.2: Matrix gradient of ridge regression
+
+Let
+$$
+f(w)=\frac12\|Xw-y\|_2^2+\frac\lambda2\|w\|_2^2.
+$$
+Find $\nabla f(w)$ and the critical point equation.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+The first term has gradient
+$$
+X^T(Xw-y).
+$$
+The second term has gradient
+$$
+\lambda w.
+$$
+Hence
+$$
+\nabla f(w)=X^T(Xw-y)+\lambda w.
+$$
+The critical point equation is
+$$
+X^TXw-X^Ty+\lambda w=0,
+$$
+or
+$$
+(X^TX+\lambda I)w=X^Ty.
+$$
+:::
+
+### Challenge 27.3: Two-sided matrix least squares
+
+For
+$$
+f(X)=\frac12\|AXB-C\|_F^2,
+$$
+prove that
+$$
+\nabla_X f(X)=A^T(AXB-C)B^T.
+$$
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+Let $R=AXB-C$. Then
+$$
+dR=A\,dX\,B.
+$$
+Since $f=\frac12\operatorname{tr}(R^TR)$,
+$$
+df=\operatorname{tr}(R^T dR)
+=\operatorname{tr}(R^T A\,dX\,B).
+$$
+Use cyclic invariance of trace:
+$$
+df=\operatorname{tr}(B R^T A\,dX).
+$$
+Now
+$$
+B R^T A=(A^T R B^T)^T.
+$$
+Thus
+$$
+df=\operatorname{tr}((A^T R B^T)^T dX),
+$$
+so
+$$
+\nabla_X f(X)=A^T(AXB-C)B^T.
+$$
+:::
+
+## 27.13 Practice problems
+
+### Problem 27.1
+
+Let
+$$
+f(x,y)=3x^2+2xy+y^2-4x+5y.
+$$
+Find $\nabla f(x,y)$ and $\nabla^2 f(x,y)$.
+
+::: {.callout-important collapse="true"}
+## Solution
+
+Compute partial derivatives:
+$$
+\frac{\partial f}{\partial x}=6x+2y-4,
+\qquad
+\frac{\partial f}{\partial y}=2x+2y+5.
+$$
+Therefore
+$$
+\nabla f(x,y)=
+\begin{bmatrix}
+6x+2y-4\\
+2x+2y+5
+\end{bmatrix}.
+$$
+The Hessian is
+$$
+\nabla^2 f(x,y)=
+\begin{bmatrix}
+6&2\\
+2&2
+\end{bmatrix}.
+$$
+:::
+
+### Problem 27.2
+
+Let
+$$
+f(x)=\frac12\|Ax-b\|_2^2.
+$$
+Show that the Hessian is $A^TA$.
+
+::: {.callout-important collapse="true"}
+## Solution
+
+We have
+$$
+\nabla f(x)=A^T(Ax-b)=A^TAx-A^Tb.
+$$
+Differentiating the gradient with respect to $x$,
+$$
+\nabla^2 f(x)=A^TA.
+$$
+:::
+
+### Problem 27.3
+
+Let
+$$
+f(X)=\operatorname{tr}(A^TX).
+$$
+Find $\nabla_X f(X)$.
+
+::: {.callout-important collapse="true"}
+## Solution
+
+The differential is
+$$
+df=\operatorname{tr}(A^T dX).
+$$
+By the definition of the Frobenius gradient,
+$$
+df=\operatorname{tr}((\nabla_X f)^T dX).
+$$
+Thus
+$$
+\nabla_X f(X)=A.
+$$
+:::
+
+### Problem 27.4
+
+Let
+$$
+f(X)=\frac12\|X-C\|_F^2.
+$$
+Find $\nabla_X f(X)$.
+
+::: {.callout-important collapse="true"}
+## Solution
+
+Let $R=X-C$. Then $dR=dX$, and
+$$
+df=\operatorname{tr}(R^T dX).
+$$
+Therefore
+$$
+\nabla_X f(X)=R=X-C.
+$$
+:::
+
+### Problem 27.5
+
+Let
+$$
+F(x,y)=
+\begin{bmatrix}
+x^2y\\
+\sin(x+y)
+\end{bmatrix}.
+$$
+Compute $J_F(x,y)$.
+
+::: {.callout-important collapse="true"}
+## Solution
+
+The first component is $F_1=x^2y$, so
+$$
+\frac{\partial F_1}{\partial x}=2xy,
+\qquad
+\frac{\partial F_1}{\partial y}=x^2.
+$$
+The second component is $F_2=\sin(x+y)$, so
+$$
+\frac{\partial F_2}{\partial x}=\cos(x+y),
+\qquad
+\frac{\partial F_2}{\partial y}=\cos(x+y).
+$$
+Therefore
+$$
+J_F(x,y)=
+\begin{bmatrix}
+2xy & x^2\\
+\cos(x+y)&\cos(x+y)
+\end{bmatrix}.
+$$
+:::
+
+## 27.14 AI companion activities
+
+Use an AI assistant as a study partner, but verify every formula by checking dimensions, testing with finite differences, or comparing with NumPy.
+
+### Activity 27.1: Dimension check
+
+Ask:
+
+> I have $f(x)=\frac12\|Ax-b\|^2$, where $A\in\mathbb R^{m\times n}$, $x\in\mathbb R^n$, and $b\in\mathbb R^m$. Explain why $\nabla f(x)=A^T(Ax-b)$ has the correct dimension.
+
+### Activity 27.2: Trace trick practice
+
+Ask:
+
+> Derive the gradient of $f(X)=\frac12\|AXB-C\|_F^2$ using differentials and the trace trick. Show every cyclic trace step.
+
+Then compare the result with this chapter.
+
+### Activity 27.3: Gradient checker
+
+Ask:
+
+> Write a Python function that checks a proposed gradient using centered finite differences.
+
+Use it to test your gradients for least squares, ridge regression, and matrix least squares.
+
+### Activity 27.4: Explain like linear algebra
+
+Ask:
+
+> Explain the gradient, Jacobian, and Hessian using only linear algebra ideas: linear maps, matrices, inner products, and quadratic forms.
+
+## 27.15 Summary
+
+Matrix calculus is the calculus of linear algebraic objects.
+
+- The **differential** is the best linear approximation.
+- The **gradient** represents a scalar derivative using an inner product.
+- The **Jacobian** is the matrix of the derivative for vector-valued functions.
+- The **Hessian** is the matrix of second-order curvature.
+- The **trace trick** turns matrix derivatives into Frobenius inner-product identities.
+- Least squares, ridge regression, logistic regression, and backpropagation all rely on these ideas.
+
+The main lesson is:
+
+> Derivatives are linear maps, and matrix calculus is the art of writing those linear maps in useful coordinates.

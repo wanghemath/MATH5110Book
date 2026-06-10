@@ -1,0 +1,1244 @@
+---
+title: "Chapter 22: Duality, Dual Spaces, and Cohomology"
+subtitle: "Linear Measurements, Transposes, and Topological Features"
+author: "He Wang"
+format:
+  html:
+    toc: true
+    number-sections: true
+    code-fold: true
+    code-tools: true
+jupyter: python3
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# The story: learning a space by measuring it
+
+In earlier chapters, we usually treated vectors as the main objects:
+
+$$
+x=\begin{bmatrix}x_1\\ \vdots\\ x_n\end{bmatrix}.
+$$
+
+But in many applications we do not observe a vector directly. We observe **measurements** of it.
+
+A sensor records a number.  
+A linear constraint checks whether a vector satisfies an inequality.  
+A statistic extracts a score from data.  
+A cochain in topology assigns values to chains.
+
+The common form is
+
+$$
+\ell(x)=a_1x_1+\cdots+a_nx_n.
+$$
+
+This chapter develops the linear algebra of such measurements. The main idea is:
+
+> A vector space can be studied not only by its vectors, but also by all linear measurements on those vectors.
+
+This viewpoint leads to dual spaces, dual bases, transpose maps, annihilators, Riesz representation, dual norms, and finally cohomology.
+
+# Dual spaces
+
+::: {.callout-note}
+## Definition: Dual space
+
+Let $V$ be a vector space over a field $\mathbb F$. The **dual space** of $V$ is
+
+$$
+V^*=\operatorname{Hom}(V,\mathbb F),
+$$
+
+the vector space of all linear maps from $V$ to $\mathbb F$.
+
+An element $\ell\in V^*$ is called a **linear functional**.
+:::
+
+A functional $\ell:V\to \mathbb F$ satisfies
+
+$$
+\ell(au+bv)=a\ell(u)+b\ell(v)
+$$
+
+for all $u,v\in V$ and all scalars $a,b\in\mathbb F$.
+
+## Example: $(\mathbb R^n)^*$
+
+Every row vector
+
+$$
+a^T=\begin{bmatrix}a_1&\cdots&a_n\end{bmatrix}
+$$
+
+defines a linear functional on $\mathbb R^n$ by
+
+$$
+\ell_a(x)=a^Tx=a_1x_1+\cdots+a_nx_n.
+$$
+
+After choosing the standard basis, we identify
+
+$$
+(\mathbb R^n)^*\cong \mathbb R^{1\times n}.
+$$
+
+This is why ordinary vectors are often columns, while dual vectors are often rows.
+
+## Example: polynomial measurements
+
+Let
+
+$$
+P_2=\{a+bt+ct^2:a,b,c\in\mathbb R\}.
+$$
+
+The following are linear functionals on $P_2$:
+
+$$
+\ell_1(p)=p(0),\qquad
+\ell_2(p)=p(1),\qquad
+\ell_3(p)=\int_0^1 p(t)\,dt.
+$$
+
+Evaluation and integration preserve linear combinations, so they are linear measurements.
+
+## Example: matrix measurements
+
+For $V=\mathbb R^{m\times n}$ and fixed $B\in\mathbb R^{m\times n}$, define
+
+$$
+\ell_B(A)=\operatorname{tr}(B^TA).
+$$
+
+This is a linear functional on the matrix space. It is the matrix analogue of a dot product.
+
+# The dual basis
+
+::: {.callout-note}
+## Definition: Dual basis
+
+Let $V$ be an $n$-dimensional vector space with basis
+
+$$
+\mathcal B=\{v_1,\ldots,v_n\}.
+$$
+
+The **dual basis** of $V^*$ is the collection
+
+$$
+\mathcal B^*=\{\varphi^1,\ldots,\varphi^n\}
+$$
+
+defined by
+
+$$
+\varphi^i(v_j)=\delta_{ij}
+=
+\begin{cases}
+1,&i=j,\\
+0,&i\ne j.
+\end{cases}
+$$
+:::
+
+The dual basis extracts coordinates. If
+
+$$
+x=c_1v_1+\cdots+c_nv_n,
+$$
+
+then
+
+$$
+\varphi^i(x)=c_i.
+$$
+
+So coordinate functions are linear functionals.
+
+::: {.callout-important}
+## Theorem: Dual basis theorem
+
+If $V$ is finite-dimensional and $\mathcal B=\{v_1,\ldots,v_n\}$ is a basis of $V$, then the dual basis
+
+$$
+\mathcal B^*=\{\varphi^1,\ldots,\varphi^n\}
+$$
+
+is a basis of $V^*$. In particular,
+
+$$
+\dim V^*=\dim V.
+$$
+:::
+
+<details>
+<summary>Show proof</summary>
+
+Let $\ell\in V^*$. For any vector
+
+$$
+x=\sum_{j=1}^n c_jv_j,
+$$
+
+linearity gives
+
+$$
+\ell(x)=\sum_{j=1}^n c_j\ell(v_j).
+$$
+
+But
+
+$$
+\left(\sum_{j=1}^n \ell(v_j)\varphi^j\right)(x)
+=
+\sum_{j=1}^n \ell(v_j)c_j.
+$$
+
+Therefore
+
+$$
+\ell=\sum_{j=1}^n \ell(v_j)\varphi^j,
+$$
+
+so the dual basis spans $V^*$.
+
+Now suppose
+
+$$
+a_1\varphi^1+\cdots+a_n\varphi^n=0.
+$$
+
+Evaluating at $v_j$ gives $a_j=0$. Therefore the dual basis is linearly independent. Hence it is a basis.
+
+</details>
+
+## Example: dual basis in $\mathbb R^2$
+
+Let
+
+$$
+v_1=\begin{bmatrix}1\\1\end{bmatrix},
+\qquad
+v_2=\begin{bmatrix}1\\2\end{bmatrix}.
+$$
+
+Let
+
+$$
+P=[v_1\ v_2]
+=
+\begin{bmatrix}
+1&1\\
+1&2
+\end{bmatrix}.
+$$
+
+The rows of $P^{-1}$ form the dual basis:
+
+$$
+P^{-1}
+=
+\begin{bmatrix}
+2&-1\\
+-1&1
+\end{bmatrix}.
+$$
+
+Therefore
+
+$$
+\varphi^1(x)=\begin{bmatrix}2&-1\end{bmatrix}x,
+\qquad
+\varphi^2(x)=\begin{bmatrix}-1&1\end{bmatrix}x.
+$$
+
+These satisfy
+
+$$
+\varphi^1(v_1)=1,\quad \varphi^1(v_2)=0,\quad
+\varphi^2(v_1)=0,\quad \varphi^2(v_2)=1.
+$$
+
+# Python computation: dual basis from an inverse matrix
+
+```{python}
+import numpy as np
+
+P = np.array([[1, 1],
+              [1, 2]], dtype=float)
+
+Pinv = np.linalg.inv(P)
+
+print("P =")
+print(P)
+
+print("\nP^{-1} =")
+print(Pinv)
+
+print("\nRows of P^{-1} are the dual basis functionals.")
+print("\nP^{-1} P =")
+print(Pinv @ P)
+```
+
+The identity matrix confirms that the $i$th row of $P^{-1}$ evaluates to $1$ on $v_i$ and $0$ on the other basis vector.
+
+# Dual maps and transposes
+
+::: {.callout-note}
+## Definition: Dual map
+
+Let $T:V\to W$ be a linear map. The **dual map**, or **pullback**, of $T$ is
+
+$$
+T^*:W^*\to V^*
+$$
+
+defined by
+
+$$
+T^*(\ell)=\ell\circ T.
+$$
+
+Equivalently,
+
+$$
+(T^*\ell)(v)=\ell(Tv).
+$$
+:::
+
+The direction reverses:
+
+$$
+V\xrightarrow{\ T\ }W,
+\qquad
+W^*\xrightarrow{\ T^*\ }V^*.
+$$
+
+::: {.callout-important}
+## Proposition: Matrix of the dual map
+
+Suppose $T:V\to W$ has matrix $A$ with respect to chosen bases of $V$ and $W$. Then the dual map $T^*:W^*\to V^*$ is represented by the transpose matrix $A^T$ when functionals are represented by column coordinate vectors.
+:::
+
+<details>
+<summary>Show proof</summary>
+
+Write vectors as columns and functionals as row vectors. If $T$ has matrix $A$, then
+
+$$
+Tx=Ax.
+$$
+
+Let $\ell\in W^*$ be represented by a row vector $y^T$. Then
+
+$$
+(T^*\ell)(x)=\ell(Tx)=y^T(Ax)=(y^TA)x.
+$$
+
+Thus $T^*\ell$ is represented by the row vector $y^TA$. If functionals are represented as column coordinate vectors, this becomes multiplication by $A^T$.
+
+</details>
+
+::: {.callout-warning}
+## Complex vector spaces
+
+For complex vector spaces, distinguish:
+
+- algebraic duality, where the dual map uses transpose;
+- inner-product geometry, where the adjoint uses conjugate transpose:
+
+$$
+A^*=\overline A^T.
+$$
+:::
+
+# Annihilators and fundamental subspaces
+
+::: {.callout-note}
+## Definition: Annihilator
+
+Let $S\subseteq V$. The **annihilator** of $S$ is
+
+$$
+S^\circ=\{\ell\in V^*:\ell(s)=0\text{ for all }s\in S\}.
+$$
+
+If $U\le V$ is a subspace, then $U^\circ$ is a subspace of $V^*$.
+:::
+
+An annihilator is the space of all linear measurements that vanish on a given subspace.
+
+::: {.callout-important}
+## Theorem: Dimension formula for annihilators
+
+Let $V$ be finite-dimensional and let $U\le V$. Then
+
+$$
+\dim U^\circ=\dim V-\dim U.
+$$
+:::
+
+<details>
+<summary>Show proof</summary>
+
+Choose a basis $\{u_1,\ldots,u_k\}$ of $U$ and extend it to a basis
+
+$$
+\{u_1,\ldots,u_k,v_{k+1},\ldots,v_n\}
+$$
+
+of $V$. Let
+
+$$
+\{\varphi^1,\ldots,\varphi^k,\varphi^{k+1},\ldots,\varphi^n\}
+$$
+
+be the dual basis. A functional vanishes on $U$ if and only if it has no components in $\varphi^1,\ldots,\varphi^k$. Hence
+
+$$
+U^\circ=\operatorname{span}\{\varphi^{k+1},\ldots,\varphi^n\}.
+$$
+
+Therefore
+
+$$
+\dim U^\circ=n-k=\dim V-\dim U.
+$$
+
+</details>
+
+::: {.callout-important}
+## Theorem: Kernel-image duality
+
+Let $T:V\to W$ be linear. Then
+
+$$
+\ker(T^*)=(\operatorname{im}T)^\circ.
+$$
+:::
+
+<details>
+<summary>Show proof</summary>
+
+Let $\ell\in W^*$. Then
+
+$$
+\ell\in\ker(T^*)
+\Longleftrightarrow
+T^*\ell=0.
+$$
+
+This means
+
+$$
+(T^*\ell)(v)=\ell(Tv)=0
+$$
+
+for all $v\in V$. Equivalently, $\ell$ vanishes on every vector in $\operatorname{im}T$. Therefore
+
+$$
+\ell\in(\operatorname{im}T)^\circ.
+$$
+
+</details>
+
+For a matrix $A\in\mathbb R^{m\times n}$,
+
+$$
+\operatorname{Null}(A^T)=(\operatorname{Col}(A))^\circ.
+$$
+
+After identifying $(\mathbb R^m)^*$ with $\mathbb R^m$ using the dot product, this becomes
+
+$$
+\operatorname{Null}(A^T)=\operatorname{Col}(A)^\perp.
+$$
+
+# Python computation: annihilator of a column space
+
+```{python}
+import sympy as sp
+
+A = sp.Matrix([
+    [1, 2],
+    [2, 4],
+    [1, 1]
+])
+
+print("A =")
+sp.pretty_print(A)
+
+print("\nColumn space basis:")
+for v in A.columnspace():
+    sp.pretty_print(v)
+
+print("\nAnnihilator of Col(A) = Null(A.T):")
+for v in A.T.nullspace():
+    sp.pretty_print(v)
+
+print("\nRank(A) =", A.rank())
+print("dim Col(A) =", A.rank())
+print("dim annihilator =", len(A.T.nullspace()))
+print("ambient dimension =", A.rows)
+```
+
+# The double dual
+
+::: {.callout-note}
+## Definition: Double dual
+
+The **double dual** of $V$ is
+
+$$
+V^{**}=(V^*)^*.
+$$
+:::
+
+There is a natural map
+
+$$
+\iota:V\to V^{**}
+$$
+
+defined by
+
+$$
+\iota(v)(\ell)=\ell(v).
+$$
+
+Thus $\iota(v)$ is a linear functional on $V^*$: it takes a measurement $\ell$ and returns the measured value $\ell(v)$.
+
+::: {.callout-important}
+## Theorem: Finite-dimensional double dual theorem
+
+If $V$ is finite-dimensional, then the natural map
+
+$$
+\iota:V\to V^{**}
+$$
+
+is an isomorphism.
+:::
+
+<details>
+<summary>Show proof</summary>
+
+The map $\iota$ is linear. If $\iota(v)=0$, then
+
+$$
+\ell(v)=0
+$$
+
+for every $\ell\in V^*$. If $v\ne 0$, extend $v$ to a basis of $V$ and choose the dual basis functional that sends $v$ to $1$. This contradicts $\ell(v)=0$ for all $\ell$.
+
+Hence $\iota$ is injective. Since
+
+$$
+\dim V=\dim V^*=\dim V^{**},
+$$
+
+an injective linear map from $V$ to $V^{**}$ is also surjective. Therefore $\iota$ is an isomorphism.
+
+</details>
+
+# Inner products and the Riesz representation idea
+
+In a finite-dimensional inner product space, each vector defines a linear functional by taking inner products.
+
+::: {.callout-important}
+## Theorem: Riesz representation in finite dimension
+
+Let $V$ be a finite-dimensional real inner product space. For every $\ell\in V^*$, there exists a unique vector $a\in V$ such that
+
+$$
+\ell(x)=\langle x,a\rangle
+$$
+
+for all $x\in V$.
+:::
+
+<details>
+<summary>Show proof</summary>
+
+Let $\{e_1,\ldots,e_n\}$ be an orthonormal basis of $V$. Define
+
+$$
+a=\sum_{i=1}^n \ell(e_i)e_i.
+$$
+
+If $x=\sum_i x_ie_i$, then
+
+$$
+\langle x,a\rangle
+=
+\left\langle \sum_i x_ie_i,\sum_j\ell(e_j)e_j\right\rangle
+=
+\sum_i x_i\ell(e_i)
+=
+\ell(x).
+$$
+
+For uniqueness, suppose
+
+$$
+\langle x,a\rangle=\langle x,b\rangle
+$$
+
+for all $x$. Then
+
+$$
+\langle x,a-b\rangle=0
+$$
+
+for all $x$. Taking $x=a-b$ gives
+
+$$
+\|a-b\|^2=0,
+$$
+
+so $a=b$.
+
+</details>
+
+# Dual norms
+
+::: {.callout-note}
+## Definition: Dual norm
+
+Let $(V,\|\cdot\|)$ be a finite-dimensional normed vector space. The **dual norm** on $V^*$ is
+
+$$
+\|\ell\|_*=\sup_{x\ne 0}\frac{|\ell(x)|}{\|x\|}
+=
+\sup_{\|x\|\le 1}|\ell(x)|.
+$$
+:::
+
+::: {.callout-important}
+## Proposition: Dual norm inequality
+
+For all $\ell\in V^*$ and $x\in V$,
+
+$$
+|\ell(x)|\le \|\ell\|_*\|x\|.
+$$
+:::
+
+<details>
+<summary>Show proof</summary>
+
+If $x=0$, the result is immediate. If $x\ne0$, then
+
+$$
+\left\|\frac{x}{\|x\|}\right\|=1.
+$$
+
+By definition of the dual norm,
+
+$$
+\left|\ell\left(\frac{x}{\|x\|}\right)\right|\le \|\ell\|_*.
+$$
+
+Multiplying by $\|x\|$ gives
+
+$$
+|\ell(x)|\le \|\ell\|_*\|x\|.
+$$
+
+</details>
+
+For finite-dimensional $\mathbb R^n$, if
+
+$$
+\ell_a(x)=a^Tx,
+$$
+
+then the dual of the $p$-norm is the $q$-norm, where
+
+$$
+\frac1p+\frac1q=1.
+$$
+
+Important examples:
+
+$$
+(\ell^1)^*=\ell^\infty,\qquad
+(\ell^2)^*=\ell^2,\qquad
+(\ell^\infty)^*=\ell^1.
+$$
+
+# Cohomology as dual linear algebra
+
+Homology studies cycles modulo boundaries. Cohomology studies linear measurements on chains modulo trivial measurements.
+
+A chain complex is a sequence
+
+$$
+\cdots \xrightarrow{\partial_{p+2}} C_{p+1}
+\xrightarrow{\partial_{p+1}} C_p
+\xrightarrow{\partial_p} C_{p-1}
+\xrightarrow{\partial_{p-1}}\cdots
+$$
+
+such that
+
+$$
+\partial_p\partial_{p+1}=0.
+$$
+
+::: {.callout-note}
+## Definition: Cochain spaces
+
+The $p$th cochain space is the dual vector space
+
+$$
+C^p=C_p^*=\operatorname{Hom}(C_p,\mathbb F).
+$$
+
+An element $\alpha\in C^p$ is called a **$p$-cochain**.
+:::
+
+A $p$-cochain assigns a scalar to each $p$-chain.
+
+::: {.callout-note}
+## Definition: Coboundary map
+
+The $p$th coboundary map is
+
+$$
+\delta^p:C^p\to C^{p+1}
+$$
+
+defined by
+
+$$
+(\delta^p\alpha)(c)=\alpha(\partial_{p+1}c).
+$$
+
+Equivalently,
+
+$$
+\delta^p=\partial_{p+1}^*.
+$$
+:::
+
+Thus, if $D_p$ is the matrix of $\partial_p$, then the matrix of $\delta^{p-1}$ is
+
+$$
+D_p^T.
+$$
+
+::: {.callout-important}
+## Proposition: Coboundaries square to zero
+
+For every $p$,
+
+$$
+\delta^{p+1}\delta^p=0.
+$$
+:::
+
+<details>
+<summary>Show proof</summary>
+
+Let $\alpha\in C^p$ and let $c\in C_{p+2}$. Then
+
+$$
+((\delta^{p+1}\delta^p)\alpha)(c)
+=
+(\delta^p\alpha)(\partial_{p+2}c)
+=
+\alpha(\partial_{p+1}\partial_{p+2}c).
+$$
+
+Since $\partial_{p+1}\partial_{p+2}=0$, this equals $0$. Hence
+
+$$
+\delta^{p+1}\delta^p=0.
+$$
+
+</details>
+
+::: {.callout-note}
+## Definition: Cohomology
+
+The space of $p$-cocycles is
+
+$$
+Z^p=\ker\delta^p.
+$$
+
+The space of $p$-coboundaries is
+
+$$
+B^p=\operatorname{im}\delta^{p-1}.
+$$
+
+The $p$th cohomology group over $\mathbb F$ is
+
+$$
+H^p=Z^p/B^p=\ker\delta^p/\operatorname{im}\delta^{p-1}.
+$$
+:::
+
+## Homology and cohomology side by side
+
+| Homology | Cohomology |
+|---|---|
+| chains $C_p$ | cochains $C^p=C_p^*$ |
+| boundary matrix $D_p$ | coboundary matrix $D_p^T$ |
+| cycles $\ker D_p$ | cocycles $\ker D_{p+1}^T$ |
+| boundaries $\operatorname{im}D_{p+1}$ | coboundaries $\operatorname{im}D_p^T$ |
+| $H_p=\ker D_p/\operatorname{im}D_{p+1}$ | $H^p=\ker D_{p+1}^T/\operatorname{im}D_p^T$ |
+
+::: {.callout-important}
+## Theorem: Same Betti numbers over a field
+
+If coefficients are taken in a field $\mathbb F$, then
+
+$$
+\dim H^p=\dim H_p.
+$$
+:::
+
+<details>
+<summary>Show proof</summary>
+
+Let $n_p=\dim C_p$. Since $\delta^p$ has matrix $D_{p+1}^T$,
+
+$$
+\dim\ker\delta^p
+=
+\dim\ker D_{p+1}^T
+=
+n_p-\operatorname{rank}(D_{p+1}^T)
+=
+n_p-\operatorname{rank}(D_{p+1}).
+$$
+
+Also,
+
+$$
+\dim\operatorname{im}\delta^{p-1}
+=
+\operatorname{rank}(D_p^T)
+=
+\operatorname{rank}(D_p).
+$$
+
+Therefore
+
+$$
+\dim H^p
+=
+\dim\ker\delta^p-\dim\operatorname{im}\delta^{p-1}
+=
+n_p-\operatorname{rank}(D_{p+1})-\operatorname{rank}(D_p).
+$$
+
+For homology,
+
+$$
+\dim H_p
+=
+\dim\ker D_p-\dim\operatorname{im}D_{p+1}
+=
+(n_p-\operatorname{rank}D_p)-\operatorname{rank}D_{p+1}.
+$$
+
+The two formulas are equal.
+
+</details>
+
+# Example: hollow triangle
+
+Consider vertices $\{1,2,3\}$ and edges
+
+$$
+[1,2],\qquad [2,3],\qquad [1,3],
+$$
+
+with no filled triangle.
+
+Choose oriented edges
+
+$$
+e_1=[1,2],\qquad e_2=[2,3],\qquad e_3=[1,3].
+$$
+
+The boundary matrix $\partial_1:C_1\to C_0$ is
+
+$$
+D_1=
+\begin{bmatrix}
+-1&0&-1\\
+1&-1&0\\
+0&1&1
+\end{bmatrix}.
+$$
+
+Since there are no $2$-simplices, $D_2$ is an empty matrix. The coboundary map $\delta^0:C^0\to C^1$ has matrix
+
+$$
+D_1^T=
+\begin{bmatrix}
+-1&1&0\\
+0&-1&1\\
+-1&0&1
+\end{bmatrix}.
+$$
+
+Every $1$-cochain is a cocycle because $\delta^1=0$. Since $\operatorname{rank}D_1=2$,
+
+$$
+\dim H^1=3-2=1.
+$$
+
+The one-dimensional cohomology detects the loop.
+
+# Example: filled triangle
+
+Now add the $2$-simplex $[1,2,3]$. Then
+
+$$
+\partial_2([1,2,3])=[2,3]-[1,3]+[1,2].
+$$
+
+In the edge basis $([1,2],[2,3],[1,3])$,
+
+$$
+D_2=
+\begin{bmatrix}
+1\\
+1\\
+-1
+\end{bmatrix}.
+$$
+
+The coboundary map $\delta^1:C^1\to C^2$ has matrix
+
+$$
+D_2^T=
+\begin{bmatrix}
+1&1&-1
+\end{bmatrix}.
+$$
+
+A $1$-cochain $\alpha=(a_1,a_2,a_3)$ is a cocycle if
+
+$$
+a_1+a_2-a_3=0.
+$$
+
+Now
+
+$$
+\dim H^1=0.
+$$
+
+The loop is now the boundary of a filled face, so it is no longer a hole.
+
+# Python computation: homology and cohomology of triangles
+
+```{python}
+import sympy as sp
+
+def betti_numbers(D1, D2, n0, n1, n2):
+    r1 = D1.rank()
+    r2 = D2.rank()
+    beta0 = n0 - r1
+    beta1 = n1 - r1 - r2
+    beta2 = n2 - r2
+    return beta0, beta1, beta2, r1, r2
+
+D1 = sp.Matrix([
+    [-1, 0, -1],
+    [ 1,-1,  0],
+    [ 0, 1,  1]
+])
+
+# Hollow triangle: no 2-simplex
+D2_hollow = sp.zeros(3, 0)
+print("Hollow triangle:")
+print(betti_numbers(D1, D2_hollow, n0=3, n1=3, n2=0))
+
+# Filled triangle: one 2-simplex
+D2_filled = sp.Matrix([[1], [1], [-1]])
+print("Filled triangle:")
+print(betti_numbers(D1, D2_filled, n0=3, n1=3, n2=1))
+
+print("\nCoboundary matrices for filled triangle:")
+print("delta^0 = D1.T")
+sp.pretty_print(D1.T)
+print("delta^1 = D2.T")
+sp.pretty_print(D2_filled.T)
+```
+
+# Why cohomology is useful in TDA
+
+In topological data analysis, one often builds a filtration
+
+$$
+K_0\subseteq K_1\subseteq\cdots\subseteq K_m
+$$
+
+from a point cloud.
+
+Homology tracks cycles that appear and disappear. Cohomology gives a dual measurement-based view of the same information.
+
+- A homology class is represented by a cycle.
+- A cohomology class is represented by a cocycle.
+- Persistent cohomology is often computationally efficient because cochains are naturally represented by sparse row operations.
+- In applications, cocycles can produce coordinates, circular parameters, and interpretable features.
+
+For example, if a data set has circular structure, a nonzero class in $H^1$ can be used to construct a circular coordinate on the data.
+
+# Challenge questions
+
+## Challenge 1: Dual basis by inverse matrix
+
+Let
+
+$$
+v_1=\begin{bmatrix}1\\2\end{bmatrix},
+\qquad
+v_2=\begin{bmatrix}3\\5\end{bmatrix}.
+$$
+
+Find the dual basis functionals $\varphi^1,\varphi^2$.
+
+<details>
+<summary>Show solution</summary>
+
+Let
+
+$$
+P=\begin{bmatrix}1&3\\2&5\end{bmatrix}.
+$$
+
+Then
+
+$$
+P^{-1}
+=
+\begin{bmatrix}
+-5&3\\
+2&-1
+\end{bmatrix}.
+$$
+
+Therefore
+
+$$
+\varphi^1(x)=\begin{bmatrix}-5&3\end{bmatrix}x,
+\qquad
+\varphi^2(x)=\begin{bmatrix}2&-1\end{bmatrix}x.
+$$
+
+</details>
+
+## Challenge 2: Row space as measurements
+
+Let $A\in\mathbb R^{m\times n}$. Explain why
+
+$$
+\operatorname{Null}(A)=\operatorname{Row}(A)^\circ.
+$$
+
+<details>
+<summary>Show solution</summary>
+
+Each row of $A$ is a linear functional on $\mathbb R^n$. A vector $x$ belongs to $\operatorname{Null}(A)$ exactly when every row of $A$ gives measurement zero on $x$. Thus $x$ is annihilated by all row measurements, so
+
+$$
+\operatorname{Null}(A)=\operatorname{Row}(A)^\circ.
+$$
+
+</details>
+
+## Challenge 3: Filled versus hollow triangle
+
+Explain why the hollow triangle has $\dim H^1=1$ but the filled triangle has $\dim H^1=0$.
+
+<details>
+<summary>Show solution</summary>
+
+For the hollow triangle, there are three edge cochains and no $2$-simplex, so every $1$-cochain is a cocycle. Since $\operatorname{rank}D_1=2$,
+
+$$
+\dim H^1=3-2=1.
+$$
+
+For the filled triangle, the $2$-simplex introduces one independent condition
+
+$$
+a_1+a_2-a_3=0
+$$
+
+on $1$-cocycles. Then $\dim Z^1=2$ and $\dim B^1=2$, so
+
+$$
+\dim H^1=0.
+$$
+
+</details>
+
+# Practice problems
+
+## Problem 1
+
+Let $V=\mathbb R^3$ and let $U=\operatorname{span}\{(1,1,0),(0,1,1)\}$. Find $\dim U^\circ$.
+
+<details>
+<summary>Show solution</summary>
+
+The two spanning vectors are linearly independent, so $\dim U=2$. Since $\dim V=3$,
+
+$$
+\dim U^\circ=3-2=1.
+$$
+
+</details>
+
+## Problem 2
+
+Find a nonzero linear functional that vanishes on
+
+$$
+U=\operatorname{span}\{(1,1,0),(0,1,1)\}.
+$$
+
+<details>
+<summary>Show solution</summary>
+
+Let $\ell(x,y,z)=ax+by+cz$. We need
+
+$$
+a+b=0,\qquad b+c=0.
+$$
+
+Choose $b=1$. Then $a=-1$ and $c=-1$. Thus one answer is
+
+$$
+\ell(x,y,z)=-x+y-z.
+$$
+
+</details>
+
+## Problem 3
+
+Let
+
+$$
+A=\begin{bmatrix}
+1&2\\
+2&4\\
+1&1
+\end{bmatrix}.
+$$
+
+Find a basis for $\operatorname{Null}(A^T)$.
+
+<details>
+<summary>Show solution</summary>
+
+Solve
+
+$$
+A^Ty=0.
+$$
+
+That is,
+
+$$
+\begin{bmatrix}
+1&2&1\\
+2&4&1
+\end{bmatrix}
+\begin{bmatrix}y_1\\y_2\\y_3\end{bmatrix}=0.
+$$
+
+The equations are
+
+$$
+y_1+2y_2+y_3=0,
+\qquad
+2y_1+4y_2+y_3=0.
+$$
+
+Subtract twice the first equation from the second:
+
+$$
+-y_3=0,
+$$
+
+so $y_3=0$. Then $y_1=-2y_2$. A basis is
+
+$$
+\begin{bmatrix}-2\\1\\0\end{bmatrix}.
+$$
+
+</details>
+
+## Problem 4
+
+For the filled triangle, compute $\dim H^0$ and $\dim H^1$.
+
+<details>
+<summary>Show solution</summary>
+
+The filled triangle is connected, so
+
+$$
+\dim H^0=1.
+$$
+
+The loop is filled by a $2$-simplex, so
+
+$$
+\dim H^1=0.
+$$
+
+Using matrices,
+
+$$
+\beta_0=n_0-\operatorname{rank}D_1=3-2=1,
+$$
+
+and
+
+$$
+\beta_1=n_1-\operatorname{rank}D_1-\operatorname{rank}D_2
+=3-2-1=0.
+$$
+
+</details>
+
+# AI companion activities
+
+Use an AI assistant as a study partner, not as a replacement for your reasoning.
+
+1. Ask the AI to explain the difference between a vector and a covector in three different ways: computational, geometric, and data-science language.
+2. Give the AI a basis of $\mathbb R^3$ and ask it to compute the dual basis. Then verify by multiplying $P^{-1}P$.
+3. Ask the AI to explain why dual maps reverse arrows.
+4. Give the AI a boundary matrix $D_1$ and ask it to build the coboundary matrix $D_1^T$.
+5. Ask the AI to compare homology and cohomology for a hollow triangle and a filled triangle.
+6. Ask the AI to generate one new example of an annihilator and then check the dimension formula yourself.
+
+# Summary
+
+Duality turns vectors into measurements. The key ideas are:
+
+- $V^*$ is the space of all linear functionals on $V$.
+- A basis of $V$ gives a dual basis of coordinate measurements.
+- A linear map $T:V\to W$ gives a reversed dual map $T^*:W^*\to V^*$.
+- The matrix of a dual map is a transpose.
+- Annihilators describe subspaces by the measurements that vanish on them.
+- Inner products identify vectors with functionals through Riesz representation.
+- Cohomology is the dual linear algebra of homology: coboundary matrices are transposes of boundary matrices.
+
+From an applied linear algebra perspective, cohomology is not mysterious: it is a systematic way to measure topological features using linear functionals.

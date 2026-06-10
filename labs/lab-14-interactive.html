@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 14 Interactive: Singular Value Decomposition</title>
+<script>
+window.MathJax = {tex: {inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']]}, svg: {fontCache: 'global'}};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<style>
+:root{--bg:#fff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);} header{padding:28px;border-bottom:1px solid var(--line);background:#fafafa;} header h1{margin:0 0 8px;font-size:1.8rem;} header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;} main{max-width:1240px;margin:0 auto;padding:24px;} .grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;} .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;} h2{font-size:1.25rem;margin:0 0 12px;} h3{font-size:1.05rem;margin:18px 0 8px;} p{line-height:1.55;} .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;} label{font-weight:600;} input[type=number]{width:70px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;} button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;} button.secondary{background:#fff;color:#111827;} canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;} .result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;} .matrix{display:grid;gap:6px;margin:8px 0 12px;align-items:center;} .m2{grid-template-columns:repeat(2,78px);} .ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .warn{color:var(--amber);font-weight:700;} .small{font-size:.92rem;color:var(--muted);} table{border-collapse:collapse;background:#fff;margin:8px 0;} th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;} .task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;} textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;} code{background:#f3f4f6;padding:1px 4px;border-radius:4px;} @media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+<h1>Lab 14 Interactive: Singular Value Decomposition</h1>
+<p>Explore $A=U\Sigma V^T$, singular values, the image of the unit circle, rank-one approximation, pseudoinverse least squares, and PCA directions.</p>
+</header>
+<main>
+<section class="grid">
+<div class="card">
+<h2>1. Choose a $2\times2$ matrix</h2>
+<p class="small">Edit $A=\begin{bmatrix}a&b\\c&d\end{bmatrix}$. The page computes its singular values from $A^TA$.</p>
+<div class="matrix m2" id="Ainputs"></div>
+<button onclick="preset('stretch')">Stretch + shear</button><button onclick="preset('rotation')">Rotation</button><button onclick="preset('singular')">Singular</button><button class="secondary" onclick="preset('random')">Random</button>
+<div class="result" id="svdResult"></div>
+</div>
+<div class="card">
+<h2>2. Geometry: unit circle to ellipse</h2>
+<canvas id="geom" width="720" height="540"></canvas>
+<p class="small">Blue: unit circle. Orange: image under $A$. The ellipse semi-axis lengths are the singular values.</p>
+</div>
+</section>
+<section class="grid">
+<div class="card">
+<h2>3. Rank-$k$ approximation</h2>
+<p>For a $2\times2$ matrix, the rank-one truncation is $A_1=\sigma_1u_1v_1^T$.</p>
+<div class="result" id="rankOne"></div>
+</div>
+<div class="card">
+<h2>4. Pseudoinverse least squares</h2>
+<p class="small">Solve $Ax=b$ in least-squares sense for $b=(1,2)^T$ using $A^+$.</p>
+<div class="result" id="pinvResult"></div>
+</div>
+</section>
+<section class="grid">
+<div class="card">
+<h2>5. PCA demo</h2>
+<p class="small">Move the covariance parameters to rotate and stretch a synthetic data cloud. The red direction is the first principal component.</p>
+<div class="row"><label>Stretch x</label><input id="px" type="number" value="3" step="0.2"><label>Stretch y</label><input id="py" type="number" value="0.8" step="0.2"><label>Angle</label><input id="pang" type="number" value="30" step="5"></div>
+<div class="result" id="pcaResult"></div>
+</div>
+<div class="card">
+<h2>6. PCA geometry</h2>
+<canvas id="pca" width="720" height="480"></canvas>
+</div>
+</section>
+<section class="card">
+<h2>7. Independent-study practice tasks with answers</h2>
+<div class="task"><strong>Task A.</strong> Why are singular values always nonnegative?<br><strong>Answer:</strong> They are square roots of eigenvalues of $A^TA$, and $A^TA$ is positive semidefinite.</div>
+<div class="task"><strong>Task B.</strong> If singular values are $8,2,0$, what are the rank and spectral norm?<br><strong>Answer:</strong> Rank is $2$ and $\|A\|_2=8$.</div>
+<div class="task"><strong>Task C.</strong> If singular values are $10,4,1$, what is the best rank-one spectral norm error?<br><strong>Answer:</strong> $\|A-A_1\|_2=\sigma_2=4$.</div>
+<div class="task"><strong>Similar practice.</strong> If singular values are $12,5,2,0.5$, what is the best rank-two spectral norm error?<br><strong>Answer:</strong> $\sigma_3=2$.</div>
+</section>
+<section class="card"><h2>8. Workspace</h2><textarea placeholder="Write your observations here. Copy final answers to your notebook or assignment."></textarea></section>
+</main>
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(r=>`<tr>${r.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function createInputs(){let el=document.getElementById('Ainputs');el.innerHTML='';let vals=[[2,1],[0.5,1.5]];for(let i=0;i<2;i++){for(let j=0;j<2;j++){let inp=document.createElement('input');inp.type='number';inp.step='0.1';inp.value=vals[i][j];inp.id=`a${i}${j}`;inp.addEventListener('input',update);el.appendChild(inp);}}}
+function getA(){return [[Number(a00.value)||0,Number(a01.value)||0],[Number(a10.value)||0,Number(a11.value)||0]];}
+function setA(M){for(let i=0;i<2;i++)for(let j=0;j<2;j++)document.getElementById(`a${i}${j}`).value=M[i][j];}
+function mm(A,B){return [[A[0][0]*B[0][0]+A[0][1]*B[1][0],A[0][0]*B[0][1]+A[0][1]*B[1][1]],[A[1][0]*B[0][0]+A[1][1]*B[1][0],A[1][0]*B[0][1]+A[1][1]*B[1][1]]];}
+function mt(A){return [[A[0][0],A[1][0]],[A[0][1],A[1][1]]];}
+function mv(A,x){return [A[0][0]*x[0]+A[0][1]*x[1],A[1][0]*x[0]+A[1][1]*x[1]];}
+function dot(a,b){return a[0]*b[0]+a[1]*b[1];} function norm(a){return Math.sqrt(dot(a,a));}
+function eigSym2(S){let a=S[0][0], b=S[0][1], d=S[1][1];let tr=a+d, disc=Math.sqrt((a-d)*(a-d)+4*b*b);let l1=(tr+disc)/2,l2=(tr-disc)/2;function eigv(l){let v;if(Math.abs(b)>1e-12)v=[b,l-a];else v=(a>=d?[1,0]:[0,1]);let n=norm(v);return [v[0]/n,v[1]/n];}let v1=eigv(l1), v2=[-v1[1],v1[0]];return {vals:[l1,l2],vecs:[v1,v2]};}
+function svd2(A){let S=mm(mt(A),A), eg=eigSym2(S);let s=eg.vals.map(x=>Math.sqrt(Math.max(0,x)));let V=eg.vecs;let U=[];for(let i=0;i<2;i++){if(s[i]>1e-10){let Av=mv(A,V[i]);U.push([Av[0]/s[i],Av[1]/s[i]]);}else{U.push(i===0?[1,0]:[-U[0][1],U[0][0]]);} } if(Math.abs(dot(U[0],U[1]))>1e-6)U[1]=[-U[0][1],U[0][0]];return {s,V,U,S};}
+function outer(u,v,scale){return [[scale*u[0]*v[0],scale*u[0]*v[1]],[scale*u[1]*v[0],scale*u[1]*v[1]]];}
+function pinv2(A){let sv=svd2(A), B=[[0,0],[0,0]];for(let k=0;k<2;k++){if(sv.s[k]>1e-10){let term=outer(sv.V[k],sv.U[k],1/sv.s[k]);for(let i=0;i<2;i++)for(let j=0;j<2;j++)B[i][j]+=term[i][j];}}return B;}
+function update(){let A=getA(), sv=svd2(A);let rank=sv.s.filter(x=>x>1e-8).length;document.getElementById('svdResult').innerHTML=`A = ${matHTML(A)} A^TA = ${matHTML(sv.S)}<br>Singular values: <strong>${sv.s.map(fmt).join(', ')}</strong><br>rank(A) = ${rank}<br>spectral norm ||A||₂ = ${fmt(sv.s[0])}`;let A1=outer(sv.U[0],sv.V[0],sv.s[0]);let err=Math.sqrt((A[0][0]-A1[0][0])**2+(A[0][1]-A1[0][1])**2+(A[1][0]-A1[1][0])**2+(A[1][1]-A1[1][1])**2);document.getElementById('rankOne').innerHTML=`A₁ = σ₁u₁v₁ᵀ = ${matHTML(A1)}<br>Frobenius error ||A-A₁||_F ≈ ${fmt(err)}<br>Spectral error should be σ₂ = ${fmt(sv.s[1])}.`;let P=pinv2(A), b=[1,2], x=mv(P,b), res=[mv(A,x)[0]-b[0],mv(A,x)[1]-b[1]];document.getElementById('pinvResult').innerHTML=`A⁺ = ${matHTML(P)}<br>x⁺=A⁺b = [${fmt(x[0])}, ${fmt(x[1])}]ᵀ<br>residual norm ||Ax-b||₂ = ${fmt(norm(res))}`;drawGeom();drawPCA();if(window.MathJax){MathJax.typesetPromise();}}
+function preset(t){if(t==='stretch')setA([[2,1],[0.5,1.5]]); if(t==='rotation')setA([[0,-1],[1,0]]); if(t==='singular')setA([[1,2],[2,4]]); if(t==='random'){let r=()=>Math.round((Math.random()*4-2)*10)/10;setA([[r(),r()],[r(),r()]]);}update();}
+function drawGeom(){let A=getA(), c=document.getElementById('geom'),ctx=c.getContext('2d'),W=c.width,H=c.height,sc=70;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);function pt(x,y){return [W/2+x*sc,H/2-y*sc];}ctx.strokeStyle='#eef2f7';for(let x=-5;x<=5;x++){let p=pt(x,0)[0];ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,H);ctx.stroke();}for(let y=-3;y<=3;y++){let p=pt(0,y)[1];ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(W,p);ctx.stroke();}let ox=pt(0,0)[0],oy=pt(0,0)[1];ctx.strokeStyle='#9ca3af';ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(W,oy);ctx.stroke();ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();let pts=[], im=[];for(let k=0;k<=360;k++){let t=2*Math.PI*k/360, p=[Math.cos(t),Math.sin(t)];pts.push(pt(p[0],p[1]));let q=mv(A,p);im.push(pt(q[0],q[1]));}function path(arr,color){ctx.strokeStyle=color;ctx.lineWidth=3;ctx.beginPath();arr.forEach((p,i)=>{if(i===0)ctx.moveTo(p[0],p[1]);else ctx.lineTo(p[0],p[1]);});ctx.stroke();}path(pts,'#2563eb');path(im,'#f97316');ctx.fillStyle='#2563eb';ctx.fillText('unit circle',20,25);ctx.fillStyle='#f97316';ctx.fillText('A(circle)',20,48);}
+function drawPCA(){let c=document.getElementById('pca'),ctx=c.getContext('2d'),W=c.width,H=c.height,sc=38;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);let sx=Number(px.value)||3, sy=Number(py.value)||.8, ang=(Number(pang.value)||0)*Math.PI/180;let ca=Math.cos(ang),sa=Math.sin(ang);function transform(x,y){let X=sx*x,Y=sy*y;return [ca*X-sa*Y,sa*X+ca*Y];}function pt(x,y){return [W/2+x*sc,H/2-y*sc];}ctx.strokeStyle='#e5e7eb';ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.moveTo(W/2,0);ctx.lineTo(W/2,H);ctx.stroke();ctx.fillStyle='#2563eb';for(let i=0;i<240;i++){let r1=Math.sqrt(-2*Math.log(((i*73)%239+1)/240));let th=(i*137.5%360)*Math.PI/180;let p=transform(r1*Math.cos(th),r1*Math.sin(th));let q=pt(p[0],p[1]);ctx.globalAlpha=.35;ctx.beginPath();ctx.arc(q[0],q[1],3,0,2*Math.PI);ctx.fill();}ctx.globalAlpha=1;let pc=transform(1,0);ctx.strokeStyle='#991b1b';ctx.lineWidth=4;ctx.beginPath();let p1=pt(-3*pc[0],-3*pc[1]),p2=pt(3*pc[0],3*pc[1]);ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();document.getElementById('pcaResult').innerHTML=`First principal direction angle ≈ ${fmt(Number(pang.value)||0)}°<br>Variance proportions approximately: ${fmt(sx*sx/(sx*sx+sy*sy))}, ${fmt(sy*sy/(sx*sx+sy*sy))}`;}
+createInputs();['px','py','pang'].forEach(id=>document.getElementById(id).addEventListener('input',update));update();
+</script>
+</body>
+</html>

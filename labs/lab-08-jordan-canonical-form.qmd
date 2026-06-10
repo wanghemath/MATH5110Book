@@ -1,0 +1,303 @@
+# Lab 8. Jordan Canonical Form: Independent Study {.unnumbered}
+
+This lab accompanies **Chapter 8: Jordan Canonical Form**.
+
+The goal is to understand what happens when diagonalization fails:
+
+1. repeated eigenvalues may not give enough eigenvectors;
+2. generalized eigenvectors repair the missing directions;
+3. Jordan chains create Jordan blocks;
+4. powers and exponentials of Jordan blocks have polynomial correction terms;
+5. kernel dimensions reveal Jordan block sizes.
+
+This is an **independent-study lab**. Each main question includes a worked solution and a similar practice question.
+
+## Python practice notebook
+
+You may use the Jupyter notebook version for longer Python practice:
+
+- [Download Lab 8 independent-study notebook](lab-08-jordan-canonical-form-independent-study.ipynb)
+- [Open Lab 8 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-08-jordan-canonical-form-independent-study.ipynb)
+
+## Interactive lab
+
+```{=html}
+<iframe
+  src="lab-08-interactive.html"
+  width="100%"
+  height="3900"
+  style="border:1px solid #ddd; border-radius:12px;">
+</iframe>
+```
+
+## Study guide and worked questions
+
+### Question 1. A matrix that is not diagonalizable
+
+Let
+
+$$
+A=\begin{bmatrix}2&1\\0&2\end{bmatrix}.
+$$
+
+Show that $A$ is not diagonalizable.
+
+#### Solution
+
+The characteristic polynomial is
+
+$$
+\det(A-\lambda I)=(2-\lambda)^2.
+$$
+
+So the only eigenvalue is $\lambda=2$, with algebraic multiplicity $2$.
+
+Now
+
+$$
+A-2I=\begin{bmatrix}0&1\\0&0\end{bmatrix}.
+$$
+
+The eigenspace is
+
+$$
+E_2=\ker(A-2I)=\operatorname{span}\left\{\begin{bmatrix}1\\0\end{bmatrix}\right\}.
+$$
+
+It has dimension $1$, not $2$. Therefore $A$ does not have enough eigenvectors to form a basis and is not diagonalizable.
+
+#### Similar practice
+
+Show that
+
+$$
+B=\begin{bmatrix}5&1\\0&5\end{bmatrix}
+$$
+
+is not diagonalizable.
+
+#### Answer
+
+The only eigenvalue is $5$. The eigenspace is
+
+$$
+\ker(B-5I)=\operatorname{span}\left\{\begin{bmatrix}1\\0\end{bmatrix}\right\},
+$$
+
+which is one-dimensional. Hence $B$ is not diagonalizable.
+
+### Question 2. Find a Jordan chain
+
+For
+
+$$
+A=\begin{bmatrix}2&1\\0&2\end{bmatrix},
+$$
+
+find a Jordan chain.
+
+#### Solution
+
+Let
+
+$$
+v_1=e_1=\begin{bmatrix}1\\0\end{bmatrix},
+\qquad
+v_2=e_2=\begin{bmatrix}0\\1\end{bmatrix}.
+$$
+
+Then
+
+$$
+(A-2I)v_1=0,
+\qquad
+(A-2I)v_2=v_1.
+$$
+
+Thus $v_1,v_2$ is a Jordan chain for the eigenvalue $2$.
+
+#### Similar practice
+
+Find a Jordan chain for
+
+$$
+B=\begin{bmatrix}5&1\\0&5\end{bmatrix}.
+$$
+
+#### Answer
+
+Use $v_1=e_1$ and $v_2=e_2$. Then
+
+$$
+(B-5I)v_1=0,
+\qquad
+(B-5I)v_2=v_1.
+$$
+
+### Question 3. Powers of a Jordan block
+
+Let
+
+$$
+J=\begin{bmatrix}3&1\\0&3\end{bmatrix}.
+$$
+
+Compute $J^m$.
+
+#### Solution
+
+Write
+
+$$
+J=3I+N,
+\qquad
+N=\begin{bmatrix}0&1\\0&0\end{bmatrix},
+\qquad
+N^2=0.
+$$
+
+Then
+
+$$
+J^m=(3I+N)^m=3^mI+m3^{m-1}N.
+$$
+
+Therefore
+
+$$
+J^m=\begin{bmatrix}3^m&m3^{m-1}\\0&3^m\end{bmatrix}.
+$$
+
+#### Similar practice
+
+For
+
+$$
+K=\begin{bmatrix}2&1\\0&2\end{bmatrix},
+$$
+
+compute $K^m$.
+
+#### Answer
+
+$$
+K^m=\begin{bmatrix}2^m&m2^{m-1}\\0&2^m\end{bmatrix}.
+$$
+
+### Question 4. Kernel dimensions and Jordan block sizes
+
+Suppose for one eigenvalue $\lambda$ we have
+
+$$
+d_1=2,
+\qquad d_2=4,
+\qquad d_3=5,
+$$
+
+where $d_j=\dim\ker((A-\lambda I)^j)$. Find the Jordan block sizes.
+
+#### Solution
+
+Let $d_0=0$. Then
+
+$$
+d_1-d_0=2,
+\qquad
+ d_2-d_1=2,
+\qquad
+ d_3-d_2=1.
+$$
+
+So there are two blocks of size at least $1$, two blocks of size at least $2$, and one block of size at least $3$. Hence the Jordan block sizes are
+
+$$
+3 \quad\text{and}\quad 2.
+$$
+
+#### Similar practice
+
+Suppose
+
+$$
+d_1=3,
+\qquad d_2=5,
+\qquad d_3=6.
+$$
+
+Find the Jordan block sizes.
+
+#### Answer
+
+The differences are
+
+$$
+3,2,1.
+$$
+
+Therefore the block sizes are
+
+$$
+3,2,1.
+$$
+
+### Question 5. Matrix exponential of a Jordan block
+
+Let
+
+$$
+J=\begin{bmatrix}\lambda&1\\0&\lambda\end{bmatrix}.
+$$
+
+Find $e^{tJ}$.
+
+#### Solution
+
+Write $J=\lambda I+N$, where
+
+$$
+N=\begin{bmatrix}0&1\\0&0\end{bmatrix},
+\qquad N^2=0.
+$$
+
+Then
+
+$$
+e^{tJ}=e^{\lambda t}e^{tN}=e^{\lambda t}(I+tN).
+$$
+
+Thus
+
+$$
+e^{tJ}=e^{\lambda t}
+\begin{bmatrix}1&t\\0&1\end{bmatrix}.
+$$
+
+#### Similar practice
+
+For
+
+$$
+J=\begin{bmatrix}2&1\\0&2\end{bmatrix},
+$$
+
+find $e^{tJ}$.
+
+#### Answer
+
+$$
+e^{tJ}=e^{2t}\begin{bmatrix}1&t\\0&1\end{bmatrix}.
+$$
+
+## Short reflection
+
+In your own words, explain this sentence:
+
+> A Jordan block is an eigenvalue plus a nilpotent correction.
+
+A good answer should mention the formula
+
+$$
+J_{\lambda,k}=\lambda I+N_k
+$$
+
+and explain how the nilpotent part creates generalized eigenvector chains.

@@ -1,0 +1,1501 @@
+ 
+# The Historical Story of Linear Algebra  {.unnumbered}
+
+Linear algebra did not begin as an abstract theory of vector spaces. It began with a practical problem:
+
+> **How do we solve many equations with many unknowns?**
+
+Over more than two thousand years, this practical question became a language for geometry, mechanics, computation, statistics, optimization, signal processing, machine learning, and artificial intelligence.
+
+This chapter gives a historical timeline of the major ideas in linear algebra. The goal is not to memorize dates, but to see how the subject grew from **equations** to **transformations**, from **coordinates** to **spaces**, from **matrices** to **algorithms**, and finally from **finite-dimensional vectors** to **modern data and AI**.
+
+---
+
+# 1. How to Read This Chapter
+
+This chapter is organized in three layers.
+
+1. **Timeline layer:** important years, people, and ideas.
+2. **Mathematical layer:** what each historical idea means in modern notation.
+3. **Application layer:** why the idea matters today in computation, data science, and AI.
+
+The main storyline is:
+
+$$
+\text{Equations}
+\rightarrow
+\text{Determinants}
+\rightarrow
+\text{Matrices}
+\rightarrow
+\text{Vector Spaces}
+\rightarrow
+\text{Transformations}
+\rightarrow
+\text{Spectral Theory}
+\rightarrow
+\text{Algorithms}
+\rightarrow
+\text{Data and AI}.
+$$
+
+---
+
+# 2. Master Timeline of Linear Algebra
+
+| Year / Period | Mathematician(s) / Source | Historical Development | Linear Algebra Idea | Wikipedia Link |
+|---:|---|---|---|---|
+| c. 1800 BCE | Old Babylonian mathematics | Early algebraic problems involving unknown quantities | Proto-linear equations | [Babylonian mathematics](https://en.wikipedia.org/wiki/Babylonian_mathematics) |
+| c. 200 BCE--200 CE | *The Nine Chapters on the Mathematical Art* | Rod-table methods for systems of equations | Elimination | [The Nine Chapters](https://en.wikipedia.org/wiki/The_Nine_Chapters_on_the_Mathematical_Art) |
+| 1545 | Gerolamo Cardano | Determinant-like expressions for solving two linear equations | Early determinants | [Gerolamo Cardano](https://en.wikipedia.org/wiki/Gerolamo_Cardano) |
+| 1683 | Seki Takakazu | Independent Japanese development of determinants | Determinants | [Seki Takakazu](https://en.wikipedia.org/wiki/Seki_Takakazu) |
+| 1693 | Gottfried Wilhelm Leibniz | Determinant-like symbolic formulas | Determinants and symbolic algebra | [Leibniz](https://en.wikipedia.org/wiki/Gottfried_Wilhelm_Leibniz) |
+| 1750 | Gabriel Cramer | Published Cramer's rule | Linear systems and determinants | [Gabriel Cramer](https://en.wikipedia.org/wiki/Gabriel_Cramer) |
+| 1770s | Alexandre-Théophile Vandermonde, Joseph-Louis Lagrange, Pierre-Simon Laplace | Development of determinant expansions and elimination ideas | Determinant theory | [Vandermonde](https://en.wikipedia.org/wiki/Alexandre-Th%C3%A9ophile_Vandermonde), [Lagrange](https://en.wikipedia.org/wiki/Joseph-Louis_Lagrange), [Laplace](https://en.wikipedia.org/wiki/Pierre-Simon_Laplace) |
+| 1795--1809 | Carl Friedrich Gauss | Systematic elimination in least squares and astronomy | Gaussian elimination, least squares | [Gauss](https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss) |
+| 1822 | Joseph Fourier | *Théorie analytique de la chaleur* | Fourier series and transform | [Joseph Fourier](https://en.wikipedia.org/wiki/Joseph_Fourier) |
+| 1827--1829 | Augustin-Louis Cauchy | Work on determinants, eigenvalue-type ideas, and symmetric forms | Determinants, quadratic forms | [Cauchy](https://en.wikipedia.org/wiki/Augustin-Louis_Cauchy) |
+| 1843 | William Rowan Hamilton | Quaternions | Vectors, rotations, noncommutative algebra | [Hamilton](https://en.wikipedia.org/wiki/William_Rowan_Hamilton) |
+| 1844 | Hermann Grassmann | *Ausdehnungslehre* | Vector spaces, exterior algebra | [Grassmann](https://en.wikipedia.org/wiki/Hermann_Grassmann) |
+| 1848 | James Joseph Sylvester | Introduced the term "matrix" | Matrix terminology | [Sylvester](https://en.wikipedia.org/wiki/James_Joseph_Sylvester) |
+| 1850s | Arthur Cayley | Matrix algebra, matrix multiplication, inverse matrices | Matrices as algebraic objects | [Arthur Cayley](https://en.wikipedia.org/wiki/Arthur_Cayley) |
+| 1870 | Camille Jordan | Canonical forms | Jordan form | [Camille Jordan](https://en.wikipedia.org/wiki/Camille_Jordan) |
+| 1878--1890s | Ferdinand Georg Frobenius | Matrix theory and linear transformations | Eigenvalues, canonical forms | [Frobenius](https://en.wikipedia.org/wiki/Ferdinand_Georg_Frobenius) |
+| 1900--1910 | David Hilbert, Erhard Schmidt, Frigyes Riesz | Infinite-dimensional inner product spaces | Hilbert spaces | [Hilbert space](https://en.wikipedia.org/wiki/Hilbert_space) |
+| 1901 | Karl Pearson | Principal axes in statistics | PCA roots | [Karl Pearson](https://en.wikipedia.org/wiki/Karl_Pearson) |
+| 1909 | Issai Schur | Schur decomposition | Unitary triangularization | [Issai Schur](https://en.wikipedia.org/wiki/Issai_Schur) |
+| 1910 | Alfréd Haar | Haar system | Haar basis and wavelets | [Haar wavelet](https://en.wikipedia.org/wiki/Haar_wavelet) |
+| 1925--1930 | Werner Heisenberg, John von Neumann, Paul Dirac | Quantum mechanics uses operators on Hilbert spaces | Linear operators, spectra | [Matrix mechanics](https://en.wikipedia.org/wiki/Matrix_mechanics), [Von Neumann](https://en.wikipedia.org/wiki/John_von_Neumann) |
+| 1933 | Harold Hotelling | Principal component analysis | Eigenvectors of covariance matrices | [PCA](https://en.wikipedia.org/wiki/Principal_component_analysis) |
+| 1936 | Carl Eckart and Gale Young | Best low-rank approximation theorem | SVD and approximation | [Eckart--Young theorem](https://en.wikipedia.org/wiki/Low-rank_approximation#Basic_low-rank_approximation_problem) |
+| 1946--1950s | Early electronic computers | Large-scale numerical matrix computation | Numerical linear algebra | [ENIAC](https://en.wikipedia.org/wiki/ENIAC) |
+| 1950s | Magnus Hestenes, Eduard Stiefel | Conjugate gradient method | Iterative linear solvers | [Conjugate gradient method](https://en.wikipedia.org/wiki/Conjugate_gradient_method) |
+| 1958 | Alston Householder | Householder transformations | Orthogonal transformations | [Householder transformation](https://en.wikipedia.org/wiki/Householder_transformation) |
+| 1961--1962 | John G. F. Francis, Vera Kublanovskaya | QR algorithm | Eigenvalue computation | [QR algorithm](https://en.wikipedia.org/wiki/QR_algorithm) |
+| 1965 | James Cooley and John Tukey | Popularization of FFT | Fast Fourier transform | [Fast Fourier transform](https://en.wikipedia.org/wiki/Fast_Fourier_transform) |
+| 1970s | Gene Golub, Charles Van Loan, James Wilkinson | Modern numerical linear algebra | Stability and algorithms | [Gene Golub](https://en.wikipedia.org/wiki/Gene_H._Golub), [James H. Wilkinson](https://en.wikipedia.org/wiki/James_H._Wilkinson) |
+| 1980s--1990s | Wavelet community: Ingrid Daubechies, Stéphane Mallat, Yves Meyer | Modern wavelet theory | Multiresolution analysis | [Ingrid Daubechies](https://en.wikipedia.org/wiki/Ingrid_Daubechies), [Wavelet](https://en.wikipedia.org/wiki/Wavelet) |
+| 1998 | Larry Page, Sergey Brin | PageRank | Eigenvectors of large graphs | [PageRank](https://en.wikipedia.org/wiki/PageRank) |
+| 2000s | Large-scale data science | Matrix factorization and PCA become standard tools | SVD, sparse matrices, optimization | [Matrix factorization](https://en.wikipedia.org/wiki/Matrix_factorization_(recommender_systems)) |
+| 2010s--present | Deep learning and generative AI | High-dimensional vectors, tensors, gradients | Linear algebra for AI | [Deep learning](https://en.wikipedia.org/wiki/Deep_learning), [Tensor](https://en.wikipedia.org/wiki/Tensor) |
+
+---
+
+# 3. Ancient and Early Algebra: Solving Many Equations
+
+Linear algebra begins with systems of equations. In modern notation, a system such as
+
+$$
+\begin{aligned}
+2x+3y-z &= 5,\\
+x-y+4z &= 2,\\
+3x+2y+z &= 7
+\end{aligned}
+$$
+
+is written as
+
+$$
+Ax=b.
+$$
+
+But historically, the matrix notation came much later. Ancient mathematicians worked directly with organized tables of numbers.
+
+## 3.1 The Nine Chapters and Elimination
+
+The Chinese text *The Nine Chapters on the Mathematical Art* contains procedures that are very close to what we now call Gaussian elimination.
+
+Modern row operations are:
+
+1. swap two rows;
+2. multiply a row by a nonzero scalar;
+3. add a multiple of one row to another row.
+
+These operations do not change the solution set.
+
+In matrix form:
+
+$$
+\left[
+\begin{array}{ccc|c}
+2 & 3 & -1 & 5\\
+1 & -1 & 4 & 2\\
+3 & 2 & 1 & 7
+\end{array}
+\right]
+\quad \longrightarrow \quad
+\text{row echelon form}.
+$$
+
+::: {.callout-note}
+## Historical lesson
+
+Linear algebra began as an algorithm. The earliest form of linear algebra was not a theorem about vector spaces, but a procedure for reducing equations.
+:::
+
+---
+
+# 4. Determinants: The First Great Invariant
+
+Before matrices became objects in their own right, determinants were already studied.
+
+For a $2\times 2$ matrix
+
+$$
+A=
+\begin{bmatrix}
+a & b\\
+c & d
+\end{bmatrix},
+$$
+
+the determinant is
+
+$$
+\det(A)=ad-bc.
+$$
+
+For a $3\times 3$ matrix,
+
+$$
+A=
+\begin{bmatrix}
+a & b & c\\
+d & e & f\\
+g & h & i
+\end{bmatrix},
+$$
+
+$$
+\det(A)=aei+bfg+cdh-ceg-bdi-afh.
+$$
+
+## 4.1 Mathematicians and Years
+
+| Year | Mathematician | Contribution |
+|---:|---|---|
+| 1545 | [Cardano](https://en.wikipedia.org/wiki/Gerolamo_Cardano) | Determinant-like expressions for small systems |
+| 1683 | [Seki Takakazu](https://en.wikipedia.org/wiki/Seki_Takakazu) | Independent determinant theory in Japan |
+| 1693 | [Leibniz](https://en.wikipedia.org/wiki/Gottfried_Wilhelm_Leibniz) | Determinant-like symbolic formulas in Europe |
+| 1750 | [Cramer](https://en.wikipedia.org/wiki/Gabriel_Cramer) | Cramer's rule |
+| 1771 | [Vandermonde](https://en.wikipedia.org/wiki/Alexandre-Th%C3%A9ophile_Vandermonde) | Determinants as functions |
+| 1772--1773 | [Laplace](https://en.wikipedia.org/wiki/Pierre-Simon_Laplace), [Lagrange](https://en.wikipedia.org/wiki/Joseph-Louis_Lagrange) | Expansion formulas and elimination |
+| 1812 | [Cauchy](https://en.wikipedia.org/wiki/Augustin-Louis_Cauchy) | Systematic determinant theory |
+
+## 4.2 Algebraic Meaning
+
+A square matrix $A$ is invertible if and only if
+
+$$
+\det(A)\ne 0.
+$$
+
+Thus, determinants determine whether the linear system
+
+$$
+Ax=b
+$$
+
+has a unique solution for every $b$.
+
+## 4.3 Geometric Meaning
+
+The absolute value $|\det(A)|$ measures volume scaling:
+
+$$
+\text{volume of }A(S)=|\det(A)|\cdot \text{volume of }S.
+$$
+
+So determinants connect algebra and geometry.
+
+## 4.4 Multilinear Meaning
+
+The determinant is an alternating multilinear function of the columns of $A$. If two columns are equal, then
+
+$$
+\det(A)=0.
+$$
+
+This is the historical bridge from determinants to exterior algebra.
+
+---
+
+# 5. Gauss, Least Squares, and Elimination
+
+[Carl Friedrich Gauss](https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss) used systematic elimination methods in astronomical computations. His work on least squares was motivated by the need to estimate orbits from imperfect observations.
+
+The least-squares problem is:
+
+$$
+\min_x \|Ax-b\|^2.
+$$
+
+The normal equations are:
+
+$$
+A^TAx=A^Tb.
+$$
+
+## 5.1 Historical Interpretation
+
+This is a turning point:
+
+| Earlier Problem | Gauss's Broader Problem |
+|---|---|
+| Solve exactly $Ax=b$ | Solve approximately when data are noisy |
+| Algebraic equations | Measurement and error |
+| Exact answer | Best approximation |
+
+Least squares introduces one of the most important ideas in applied linear algebra:
+
+> When exact solution is impossible, find the best projection.
+
+---
+
+# 6. Fourier: Functions as Infinite Vectors
+
+In 1822, [Joseph Fourier](https://en.wikipedia.org/wiki/Joseph_Fourier) published his work on heat flow. He proposed that complicated periodic functions could be decomposed into simple waves.
+
+A Fourier series has the form
+
+$$
+f(x)=\frac{a_0}{2}+\sum_{k=1}^{\infty}
+\left(a_k\cos(kx)+b_k\sin(kx)\right).
+$$
+
+## 6.1 Linear Algebra Meaning
+
+The functions
+
+$$
+1,\cos x,\sin x,\cos 2x,\sin 2x,\ldots
+$$
+
+act like an orthogonal basis.
+
+The Fourier coefficient is a coordinate:
+
+$$
+a_k=\frac{1}{\pi}\int_{-\pi}^{\pi} f(x)\cos(kx)\,dx.
+$$
+
+Thus Fourier analysis is infinite-dimensional linear algebra.
+
+## 6.2 Why This Was Revolutionary
+
+Fourier's idea connected:
+
+- heat equation,
+- differential equations,
+- orthogonality,
+- projections,
+- basis expansions,
+- signal processing,
+- Hilbert spaces.
+
+The modern [Fourier transform](https://en.wikipedia.org/wiki/Fourier_transform) extends this idea to nonperiodic functions.
+
+---
+
+# 7. Hamilton, Grassmann, and the Birth of Abstract Vectors
+
+## 7.1 Hamilton and Quaternions
+
+In 1843, [William Rowan Hamilton](https://en.wikipedia.org/wiki/William_Rowan_Hamilton) discovered quaternions. Quaternions were invented to describe rotations in space.
+
+A quaternion has the form
+
+$$
+a+bi+cj+dk.
+$$
+
+Quaternions are not ordinary vector spaces alone; they also have a multiplication rule. But they helped mathematicians think beyond ordinary real numbers.
+
+## 7.2 Grassmann and Extension Theory
+
+In 1844, [Hermann Grassmann](https://en.wikipedia.org/wiki/Hermann_Grassmann) published *Ausdehnungslehre*, or "Theory of Extension."
+
+Grassmann's work anticipated:
+
+- vector spaces,
+- subspaces,
+- linear independence,
+- exterior products,
+- oriented area and volume.
+
+The wedge product
+
+$$
+u\wedge v
+$$
+
+represents an oriented area element.
+
+## 7.3 Historical Importance
+
+Grassmann's ideas were too abstract for many readers of his time. But later they became central to modern linear algebra, differential geometry, topology, and physics.
+
+---
+
+# 8. Sylvester and Cayley: Matrices Become Objects
+
+The word **matrix** was introduced by [James Joseph Sylvester](https://en.wikipedia.org/wiki/James_Joseph_Sylvester) in 1848.
+
+Then [Arthur Cayley](https://en.wikipedia.org/wiki/Arthur_Cayley) developed matrix algebra in the 1850s. Cayley treated matrices not just as arrays of coefficients, but as mathematical objects that could be added, multiplied, and inverted.
+
+## 8.1 Matrix Multiplication
+
+If
+
+$$
+A\in \mathbb{R}^{m\times n},\qquad B\in \mathbb{R}^{n\times p},
+$$
+
+then
+
+$$
+AB\in \mathbb{R}^{m\times p}.
+$$
+
+Matrix multiplication represents composition of linear maps:
+
+$$
+A(Bx)=(AB)x.
+$$
+
+## 8.2 Historical Shift
+
+Before Cayley:
+
+$$
+\text{matrices were coefficient tables.}
+$$
+
+After Cayley:
+
+$$
+\text{matrices became algebraic objects and transformations.}
+$$
+
+This is one of the central conceptual shifts in the subject.
+
+---
+
+# 9. Vector Spaces: The Language of Modern Linear Algebra
+
+A vector space is a set where vectors can be added and scaled.
+
+Examples:
+
+$$
+\mathbb{R}^n,\qquad
+P_n=\{\text{polynomials of degree at most }n\},\qquad
+C[a,b],\qquad
+\mathbb{R}^{m\times n}.
+$$
+
+The abstract definition of vector spaces developed gradually in the nineteenth and early twentieth centuries.
+
+Important contributors include:
+
+- [Hermann Grassmann](https://en.wikipedia.org/wiki/Hermann_Grassmann),
+- [Giuseppe Peano](https://en.wikipedia.org/wiki/Giuseppe_Peano),
+- [David Hilbert](https://en.wikipedia.org/wiki/David_Hilbert),
+- [Stefan Banach](https://en.wikipedia.org/wiki/Stefan_Banach).
+
+## 9.1 Basis and Dimension
+
+A basis $\mathcal{B}=\{v_1,\ldots,v_n\}$ allows every vector $v\in V$ to be written uniquely as
+
+$$
+v=c_1v_1+\cdots+c_nv_n.
+$$
+
+The number of basis vectors is the dimension.
+
+## 9.2 A Basis Is a Language
+
+Different bases describe the same object in different languages.
+
+| Basis | Historical / Modern Use |
+|---|---|
+| Standard basis | Coordinates |
+| Eigenbasis | Dynamics and diagonalization |
+| Orthogonal basis | Projection and least squares |
+| Fourier basis | Frequency decomposition |
+| Haar basis | Multiscale decomposition |
+| Singular vectors | Low-rank data representation |
+
+---
+
+# 10. Cauchy, Jordan, Frobenius: Eigenvalues and Canonical Forms
+
+Eigenvalues answer the question:
+
+> Which directions are preserved by a linear transformation?
+
+A nonzero vector $v$ is an eigenvector of $A$ if
+
+$$
+Av=\lambda v.
+$$
+
+## 10.1 Important Mathematicians
+
+| Mathematician | Years | Contribution |
+|---|---:|---|
+| [Augustin-Louis Cauchy](https://en.wikipedia.org/wiki/Augustin-Louis_Cauchy) | 1789--1857 | Determinants, symmetric forms, early spectral ideas |
+| [Camille Jordan](https://en.wikipedia.org/wiki/Camille_Jordan) | 1838--1922 | Jordan canonical form |
+| [Ferdinand Georg Frobenius](https://en.wikipedia.org/wiki/Ferdinand_Georg_Frobenius) | 1849--1917 | Matrix theory, Perron--Frobenius theory |
+| [Oskar Perron](https://en.wikipedia.org/wiki/Oskar_Perron) | 1880--1975 | Positive matrices |
+| [Issai Schur](https://en.wikipedia.org/wiki/Issai_Schur) | 1875--1941 | Schur decomposition |
+
+## 10.2 Jordan Form
+
+The Jordan form says that, over the complex numbers, every square matrix can be put into a nearly diagonal form:
+
+$$
+A=PJP^{-1}.
+$$
+
+This is powerful in theory but often unstable numerically.
+
+## 10.3 Perron--Frobenius Theory
+
+For matrices with positive entries, the Perron--Frobenius theorem gives a dominant positive eigenvalue and positive eigenvector.
+
+This appears in:
+
+- Markov chains,
+- population models,
+- network centrality,
+- PageRank.
+
+---
+
+# 11. Symmetric Matrices and the Spectral Theorem
+
+A real matrix $A$ is symmetric if
+
+$$
+A^T=A.
+$$
+
+The spectral theorem states that a real symmetric matrix can be orthogonally diagonalized:
+
+$$
+A=QDQ^T.
+$$
+
+Here $Q$ is orthogonal and $D$ is diagonal.
+
+## 11.1 Historical Meaning
+
+Symmetric matrices arise naturally from:
+
+- quadratic forms,
+- mechanics,
+- energy,
+- covariance matrices,
+- optimization,
+- geometry.
+
+## 11.2 Quadratic Forms
+
+A symmetric matrix defines
+
+$$
+q(x)=x^TAx.
+$$
+
+Using the spectral theorem,
+
+$$
+q(x)=\lambda_1y_1^2+\cdots+\lambda_ny_n^2.
+$$
+
+Thus eigenvalues classify the shape:
+
+| Eigenvalues | Shape |
+|---|---|
+| all positive | positive definite bowl |
+| all nonnegative | positive semidefinite surface |
+| mixed signs | saddle |
+| all negative | negative definite bowl |
+
+---
+
+# 12. Schur Decomposition: Stable Triangularization
+
+[Issai Schur](https://en.wikipedia.org/wiki/Issai_Schur) introduced a decomposition that is central in modern numerical linear algebra.
+
+Every complex square matrix can be written as
+
+$$
+A=UTU^*,
+$$
+
+where $U$ is unitary and $T$ is upper triangular.
+
+## 12.1 Why Schur Decomposition Matters
+
+The Jordan form is elegant but unstable for computation. Schur decomposition is stable and works well numerically.
+
+It supports:
+
+- eigenvalue algorithms,
+- matrix functions,
+- stability analysis,
+- numerical spectral theory.
+
+A useful slogan is:
+
+> Anything the Jordan form can do theoretically, the Schur form can often do better numerically.
+
+---
+
+# 13. Hilbert Spaces: Infinite-Dimensional Geometry
+
+A Hilbert space is a complete inner product space.
+
+Important contributors include:
+
+- [David Hilbert](https://en.wikipedia.org/wiki/David_Hilbert),
+- [Erhard Schmidt](https://en.wikipedia.org/wiki/Erhard_Schmidt),
+- [Frigyes Riesz](https://en.wikipedia.org/wiki/Frigyes_Riesz),
+- [John von Neumann](https://en.wikipedia.org/wiki/John_von_Neumann).
+
+## 13.1 Definition
+
+A Hilbert space $\mathcal{H}$ has an inner product
+
+$$
+\langle f,g\rangle
+$$
+
+and every Cauchy sequence converges inside the space.
+
+Examples include:
+
+$$
+\mathbb{R}^n,
+\qquad
+\ell^2,
+\qquad
+L^2[a,b].
+$$
+
+## 13.2 Orthogonal Projection Theorem
+
+If $M$ is a closed subspace of a Hilbert space and $y\in \mathcal{H}$, then there exists a unique projection
+
+$$
+\operatorname{Proj}_M(y)\in M
+$$
+
+such that
+
+$$
+y-\operatorname{Proj}_M(y)
+$$
+
+is orthogonal to $M$.
+
+This is the infinite-dimensional version of least squares.
+
+## 13.3 Applications
+
+Hilbert spaces are central in:
+
+- Fourier analysis,
+- PDEs,
+- quantum mechanics,
+- probability,
+- signal processing,
+- kernel methods in machine learning.
+
+---
+
+# 14. Quantum Mechanics: Matrices Become Observables
+
+In the 1920s, quantum mechanics gave linear algebra a new physical meaning.
+
+Important figures:
+
+- [Werner Heisenberg](https://en.wikipedia.org/wiki/Werner_Heisenberg),
+- [Max Born](https://en.wikipedia.org/wiki/Max_Born),
+- [Pascual Jordan](https://en.wikipedia.org/wiki/Pascual_Jordan),
+- [John von Neumann](https://en.wikipedia.org/wiki/John_von_Neumann),
+- [Paul Dirac](https://en.wikipedia.org/wiki/Paul_Dirac).
+
+In quantum mechanics:
+
+- states are vectors,
+- observables are operators,
+- measurement outcomes are eigenvalues,
+- probabilities come from inner products.
+
+The equation
+
+$$
+A\psi=\lambda\psi
+$$
+
+has a physical interpretation: $\lambda$ is a possible measured value.
+
+---
+
+# 15. PCA: Statistics Meets Eigenvectors
+
+Principal component analysis grew from statistical work by [Karl Pearson](https://en.wikipedia.org/wiki/Karl_Pearson) and [Harold Hotelling](https://en.wikipedia.org/wiki/Harold_Hotelling).
+
+Given centered data matrix $X$, the covariance matrix is
+
+$$
+C=\frac{1}{N-1}X^TX.
+$$
+
+PCA finds eigenvectors of $C$:
+
+$$
+Cv_i=\lambda_i v_i.
+$$
+
+The eigenvectors $v_i$ are directions of maximal variance.
+
+## 15.1 Modern Meaning
+
+PCA is used for:
+
+- dimension reduction,
+- data visualization,
+- noise reduction,
+- feature extraction,
+- exploratory data analysis.
+
+---
+
+# 16. SVD: The Universal Matrix Decomposition
+
+The singular value decomposition states that every real matrix $X\in\mathbb{R}^{m\times n}$ can be written as
+
+$$
+X=U\Sigma V^T.
+$$
+
+The singular values are nonnegative:
+
+$$
+\sigma_1\geq \sigma_2\geq \cdots \geq 0.
+$$
+
+## 16.1 Historical Milestones
+
+| Year | People | Contribution |
+|---:|---|---|
+| 1870s--1900s | Beltrami, Jordan, Sylvester, Schmidt | Early singular value ideas |
+| 1936 | [Carl Eckart](https://en.wikipedia.org/wiki/Carl_Eckart), [Gale Young](https://en.wikipedia.org/wiki/Gale_Young) | Best low-rank approximation |
+| 1960s--1970s | [Gene Golub](https://en.wikipedia.org/wiki/Gene_H._Golub), William Kahan, Christian Reinsch | Stable numerical algorithms for SVD |
+
+## 16.2 Rank-One Expansion
+
+$$
+X=\sigma_1u_1v_1^T+\cdots+\sigma_ru_rv_r^T.
+$$
+
+The best rank-$k$ approximation is
+
+$$
+X_k=\sigma_1u_1v_1^T+\cdots+\sigma_ku_kv_k^T.
+$$
+
+## 16.3 Applications
+
+SVD is used in:
+
+- image compression,
+- pseudoinverse,
+- least squares,
+- PCA,
+- recommendation systems,
+- low-rank approximation,
+- latent semantic analysis,
+- numerical rank detection.
+
+---
+
+# 17. Haar, Wavelets, and Multiresolution
+
+In 1910, [Alfréd Haar](https://en.wikipedia.org/wiki/Alfr%C3%A9d_Haar) introduced what is now called the Haar system.
+
+A Haar basis for $\mathbb{R}^4$ is
+
+$$
+w_1=
+\begin{bmatrix}
+1\\1\\1\\1
+\end{bmatrix},
+\quad
+w_2=
+\begin{bmatrix}
+1\\1\\-1\\-1
+\end{bmatrix},
+\quad
+w_3=
+\begin{bmatrix}
+1\\-1\\0\\0
+\end{bmatrix},
+\quad
+w_4=
+\begin{bmatrix}
+0\\0\\1\\-1
+\end{bmatrix}.
+$$
+
+## 17.1 Meaning of Haar Coefficients
+
+For a signal $v=(v_1,v_2,v_3,v_4)^T$,
+
+$$
+c_1=\frac{v_1+v_2+v_3+v_4}{4}
+$$
+
+captures the average.
+
+Other coefficients capture coarse and fine differences.
+
+## 17.2 Modern Wavelet Theory
+
+Later mathematicians, including [Yves Meyer](https://en.wikipedia.org/wiki/Yves_Meyer), [Stéphane Mallat](https://en.wikipedia.org/wiki/St%C3%A9phane_Mallat), and [Ingrid Daubechies](https://en.wikipedia.org/wiki/Ingrid_Daubechies), developed modern wavelet theory.
+
+Wavelets are used in:
+
+- image compression,
+- denoising,
+- edge detection,
+- numerical PDEs,
+- signal processing.
+
+---
+
+# 18. FFT: The Fast Algorithm Era
+
+The [Fast Fourier Transform](https://en.wikipedia.org/wiki/Fast_Fourier_transform) computes the discrete Fourier transform efficiently.
+
+The discrete Fourier transform of a vector $x=(x_0,\ldots,x_{n-1})$ is
+
+$$
+X_k=\sum_{j=0}^{n-1}x_j e^{-2\pi i jk/n}.
+$$
+
+Direct computation costs $O(n^2)$.
+
+The FFT reduces this to
+
+$$
+O(n\log n).
+$$
+
+## 18.1 Important Names
+
+| Person | Role |
+|---|---|
+| [Carl Friedrich Gauss](https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss) | Early related ideas in interpolation and computation |
+| [James Cooley](https://en.wikipedia.org/wiki/James_Cooley) | Cooley--Tukey FFT algorithm |
+| [John Tukey](https://en.wikipedia.org/wiki/John_Tukey) | Cooley--Tukey FFT algorithm |
+
+## 18.2 Why FFT Matters
+
+FFT made Fourier analysis practical at scale.
+
+Applications include:
+
+- audio processing,
+- image processing,
+- solving PDEs,
+- convolution,
+- filtering,
+- radar,
+- medical imaging.
+
+---
+
+# 19. Numerical Linear Algebra: Stability and Algorithms
+
+Modern linear algebra is not only about whether a formula is true. It is also about whether an algorithm is fast and stable.
+
+Important contributors include:
+
+- [James H. Wilkinson](https://en.wikipedia.org/wiki/James_H._Wilkinson),
+- [Gene H. Golub](https://en.wikipedia.org/wiki/Gene_H._Golub),
+- [Charles F. Van Loan](https://en.wikipedia.org/wiki/Charles_F._Van_Loan),
+- [Alston Householder](https://en.wikipedia.org/wiki/Alston_Scott_Householder),
+- [Wallace Givens](https://en.wikipedia.org/wiki/Wallace_Givens).
+
+## 19.1 QR Algorithm
+
+The QR algorithm was developed independently by [John G. F. Francis](https://en.wikipedia.org/wiki/John_G._F._Francis) and [Vera Kublanovskaya](https://en.wikipedia.org/wiki/Vera_Kublanovskaya).
+
+Given
+
+$$
+A_k=Q_kR_k,
+$$
+
+define
+
+$$
+A_{k+1}=R_kQ_k.
+$$
+
+Repeated iteration reveals eigenvalue information and leads toward Schur form.
+
+## 19.2 Householder and Givens Transformations
+
+Householder reflections and Givens rotations are stable orthogonal transformations used to compute QR decompositions.
+
+They preserve length:
+
+$$
+\|Qx\|=\|x\|.
+$$
+
+This is why orthogonal transformations are numerically safe.
+
+---
+
+# 20. Sparse Matrices and Complexity
+
+Large-scale linear algebra requires attention to memory and time.
+
+For a dense matrix $A\in\mathbb{R}^{m\times n}$, memory cost is
+
+$$
+O(mn).
+$$
+
+For matrix-vector multiplication,
+
+$$
+Ax,
+$$
+
+the cost is
+
+$$
+O(mn).
+$$
+
+For matrix multiplication,
+
+$$
+AB,\qquad A\in\mathbb{R}^{m\times n},\quad B\in\mathbb{R}^{n\times p},
+$$
+
+the classical cost is
+
+$$
+O(mnp).
+$$
+
+## 20.1 Sparse Matrix Idea
+
+If most entries are zero, we should store only nonzero entries.
+
+This is essential for:
+
+- graph algorithms,
+- finite element methods,
+- PDE solvers,
+- recommender systems,
+- web search,
+- large neural networks.
+
+## 20.2 A Historical Shift
+
+Classical mathematics asked:
+
+> What is the formula?
+
+Numerical linear algebra asks:
+
+> What is the stable and efficient algorithm?
+
+---
+
+# 21. Grassmannians: Subspaces as Points
+
+The [Grassmannian](https://en.wikipedia.org/wiki/Grassmannian)
+
+$$
+\operatorname{Gr}(k,n)
+$$
+
+is the set of all $k$-dimensional subspaces of $\mathbb{R}^n$.
+
+This idea is named after [Hermann Grassmann](https://en.wikipedia.org/wiki/Hermann_Grassmann).
+
+## 21.1 Principal Angles
+
+Given two subspaces $U$ and $W$, their principal angles
+
+$$
+\theta_1,\ldots,\theta_k
+$$
+
+measure how far the subspaces are from each other.
+
+They can be computed using QR and SVD.
+
+## 21.2 Applications
+
+Grassmannian geometry appears in:
+
+- computer vision,
+- subspace clustering,
+- reduced-order modeling,
+- signal processing,
+- machine learning on subspaces.
+
+---
+
+# 22. Multilinear Algebra and Tensors
+
+Multilinear algebra generalizes linear algebra to several vector inputs.
+
+Important objects:
+
+- tensor product,
+- exterior product,
+- determinant,
+- bilinear forms,
+- multilinear maps.
+
+## 22.1 Tensor Products
+
+For vector spaces $V$ and $W$, the tensor product is
+
+$$
+V\otimes W.
+$$
+
+If
+
+$$
+v\in \mathbb{R}^m,\qquad w\in \mathbb{R}^n,
+$$
+
+then
+
+$$
+v\otimes w
+$$
+
+can be represented as an $m\times n$ matrix.
+
+## 22.2 Exterior Products
+
+The exterior product
+
+$$
+v_1\wedge v_2\wedge \cdots \wedge v_k
+$$
+
+represents oriented $k$-dimensional volume.
+
+This connects linear algebra to:
+
+- determinants,
+- differential forms,
+- geometry,
+- topology,
+- physics.
+
+## 22.3 Tensors in AI
+
+Modern AI uses tensors as multidimensional arrays:
+
+$$
+\text{image} \sim \text{height}\times \text{width}\times \text{channels},
+$$
+
+$$
+\text{video} \sim \text{time}\times \text{height}\times \text{width}\times \text{channels}.
+$$
+
+Thus tensor algebra is not only abstract. It is a practical language for modern data.
+
+---
+
+# 23. PageRank and Network Linear Algebra
+
+In the late 1990s, [Larry Page](https://en.wikipedia.org/wiki/Larry_Page) and [Sergey Brin](https://en.wikipedia.org/wiki/Sergey_Brin) developed PageRank.
+
+PageRank is based on an eigenvector problem.
+
+If $P$ is a transition matrix of the web graph, PageRank seeks a vector $r$ such that
+
+$$
+Pr=r.
+$$
+
+This means $r$ is an eigenvector with eigenvalue $1$.
+
+## 23.1 Historical Meaning
+
+This is a modern example of an old idea:
+
+$$
+\text{eigenvectors}
+\quad \longrightarrow \quad
+\text{importance in a network}.
+$$
+
+Eigenvectors are not only hidden directions in geometry; they can also measure centrality in graphs.
+
+---
+
+# 24. Linear Algebra in Optimization
+
+Optimization uses linear algebra at every step.
+
+For a quadratic function
+
+$$
+f(x)=\frac12 x^TAx-b^Tx,
+$$
+
+the gradient is
+
+$$
+\nabla f(x)=Ax-b.
+$$
+
+The Hessian is
+
+$$
+\nabla^2f(x)=A.
+$$
+
+If $A$ is positive definite, then $f$ is convex and has a unique minimizer.
+
+## 24.1 Eigenvalues and Conditioning
+
+The condition number
+
+$$
+\kappa(A)=\frac{\lambda_{\max}(A)}{\lambda_{\min}(A)}
+$$
+
+controls how difficult the optimization problem is.
+
+Large condition number means slow convergence for many algorithms.
+
+---
+
+# 25. Linear Algebra in Machine Learning and AI
+
+Modern AI is built from linear algebraic objects.
+
+| AI Object | Linear Algebra Interpretation |
+|---|---|
+| Data point | Vector |
+| Data set | Matrix |
+| Image | Tensor |
+| Word embedding | High-dimensional vector |
+| Neural network layer | Matrix transformation plus nonlinearity |
+| Attention scores | Matrix products |
+| Training | Gradient-based optimization |
+| Compression | Low-rank approximation |
+| Similarity search | Inner products and distances |
+
+A neural network layer has the form
+
+$$
+h=\sigma(Wx+b).
+$$
+
+Even when the full model is nonlinear, each layer uses linear transformations.
+
+---
+
+# 26. Topic-by-Topic Historical Map
+
+| Course Topic | Main Historical Names | Key Years | Modern Meaning |
+|---|---|---:|---|
+| Linear systems | Ancient Chinese mathematicians, Gauss | ancient--1800s | Solving constraints |
+| Determinants | Seki, Leibniz, Cramer, Vandermonde, Laplace, Cauchy | 1683--1812 | Invertibility and volume |
+| Matrices | Sylvester, Cayley | 1848--1858 | Transformations |
+| Vector spaces | Grassmann, Peano, Hilbert, Banach | 1844--1930 | Abstract structure |
+| Inner products | Euclid, Fourier, Hilbert | ancient--1900s | Geometry and projection |
+| Eigenvalues | Cauchy, Jordan, Frobenius, Perron, Schur | 1800s--1900s | Hidden directions |
+| Symmetric matrices | Cauchy, Jacobi, Hilbert | 1800s--1900s | Spectral theorem |
+| Schur decomposition | Issai Schur | 1909 | Stable triangularization |
+| SVD | Beltrami, Jordan, Schmidt, Eckart, Young, Golub, Kahan | 1870s--1970s | Data decomposition |
+| Fourier analysis | Fourier, Dirichlet, Riemann, Hilbert | 1822--1900s | Frequency basis |
+| Haar bases | Alfréd Haar | 1910 | Multiscale basis |
+| Wavelets | Meyer, Mallat, Daubechies | 1980s--1990s | Modern signal compression |
+| Hilbert spaces | Hilbert, Schmidt, Riesz, von Neumann | 1900s--1930s | Infinite-dimensional geometry |
+| QR algorithm | Francis, Kublanovskaya | 1961--1962 | Eigenvalue computation |
+| FFT | Cooley, Tukey, Gauss | 1965 | Fast frequency computation |
+| Grassmannians | Grassmann, Plücker | 1800s | Geometry of subspaces |
+| Tensors | Grassmann, Ricci-Curbastro, Levi-Civita | 1800s--1900s | Multidimensional data |
+| Numerical linear algebra | Wilkinson, Golub, Van Loan | 1950s--present | Stable algorithms |
+| Machine learning | Pearson, Hotelling, Vapnik, modern AI researchers | 1901--present | Data and prediction |
+
+---
+
+# 27. A More Detailed Chronological Narrative
+
+## 27.1 Ancient to 1700: Equations Before Matrices
+
+Linear algebra begins with practical arithmetic. People needed to solve problems involving unknown quantities. The idea of eliminating unknowns existed long before matrices were formally defined.
+
+Important ideas:
+
+$$
+\text{unknowns},\quad
+\text{systems},\quad
+\text{tables},\quad
+\text{elimination}.
+$$
+
+## 27.2 1700--1800: Determinants and Exact Solutions
+
+The determinant became the first major invariant of linear systems.
+
+Important names:
+
+- Seki,
+- Leibniz,
+- Cramer,
+- Vandermonde,
+- Laplace,
+- Lagrange.
+
+The central question was:
+
+> When does a system have a unique solution?
+
+## 27.3 1800--1850: Approximation, Fourier, and Abstract Directions
+
+Gauss pushed linear algebra toward approximation and computation. Fourier pushed it toward functions and infinite series. Hamilton and Grassmann pushed it toward abstract algebra and geometry.
+
+This period created three major future directions:
+
+$$
+\text{computation},\quad
+\text{function spaces},\quad
+\text{abstract vector spaces}.
+$$
+
+## 27.4 1850--1900: Matrices Become Algebra
+
+Sylvester named matrices. Cayley developed matrix algebra. Jordan and Frobenius studied canonical forms.
+
+The matrix became a mathematical object.
+
+## 27.5 1900--1950: Spectral Theory and Hilbert Space
+
+Hilbert spaces, functional analysis, quantum mechanics, and PCA all developed during this period.
+
+Linear algebra expanded from finite-dimensional spaces to infinite-dimensional spaces.
+
+## 27.6 1950--1980: Numerical Linear Algebra
+
+Computers made large matrix problems central.
+
+New questions appeared:
+
+- Is the algorithm stable?
+- How many operations does it take?
+- How much memory does it need?
+- Can it exploit sparsity?
+- Can it work for ill-conditioned matrices?
+
+## 27.7 1980--Present: Data, Networks, and AI
+
+Linear algebra became the core language of data science.
+
+The main objects are:
+
+$$
+\text{vectors},\quad
+\text{matrices},\quad
+\text{tensors},\quad
+\text{subspaces},\quad
+\text{graphs}.
+$$
+
+---
+
+# 28. Mathematician Mini-Biographies
+
+## 28.1 Seki Takakazu
+
+[Seki Takakazu](https://en.wikipedia.org/wiki/Seki_Takakazu) was a Japanese mathematician of the Edo period. He developed determinant ideas independently of European mathematicians.
+
+His work shows that determinant theory did not belong to only one mathematical tradition.
+
+## 28.2 Gottfried Wilhelm Leibniz
+
+[Leibniz](https://en.wikipedia.org/wiki/Gottfried_Wilhelm_Leibniz) developed symbolic methods that anticipated determinant formulas. He is also famous for calculus and symbolic notation.
+
+## 28.3 Gabriel Cramer
+
+[Gabriel Cramer](https://en.wikipedia.org/wiki/Gabriel_Cramer) is remembered for Cramer's rule, which expresses solutions of linear systems using determinants.
+
+## 28.4 Carl Friedrich Gauss
+
+[Gauss](https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss) contributed to elimination, least squares, number theory, geometry, statistics, and astronomy.
+
+In linear algebra, his influence appears through:
+
+- Gaussian elimination,
+- least squares,
+- numerical computation,
+- quadratic forms.
+
+## 28.5 Joseph Fourier
+
+[Fourier](https://en.wikipedia.org/wiki/Joseph_Fourier) showed that functions could be decomposed into trigonometric waves.
+
+This idea later became central to:
+
+- signal processing,
+- PDEs,
+- Hilbert spaces,
+- FFT.
+
+## 28.6 Hermann Grassmann
+
+[Grassmann](https://en.wikipedia.org/wiki/Hermann_Grassmann) developed a highly abstract theory of extension, including ideas close to vector spaces and exterior algebra.
+
+His work was ahead of its time.
+
+## 28.7 James Joseph Sylvester
+
+[Sylvester](https://en.wikipedia.org/wiki/James_Joseph_Sylvester) introduced the word "matrix" and contributed to invariant theory and algebra.
+
+## 28.8 Arthur Cayley
+
+[Cayley](https://en.wikipedia.org/wiki/Arthur_Cayley) developed matrix algebra and treated matrices as mathematical objects.
+
+## 28.9 Camille Jordan
+
+[Jordan](https://en.wikipedia.org/wiki/Camille_Jordan) developed canonical forms that describe the structure of linear transformations.
+
+## 28.10 Ferdinand Georg Frobenius
+
+[Frobenius](https://en.wikipedia.org/wiki/Ferdinand_Georg_Frobenius) contributed deeply to matrix theory, group theory, and representation theory.
+
+## 28.11 David Hilbert
+
+[Hilbert](https://en.wikipedia.org/wiki/David_Hilbert) helped shape functional analysis and infinite-dimensional geometry.
+
+## 28.12 Issai Schur
+
+[Schur](https://en.wikipedia.org/wiki/Issai_Schur) introduced Schur decomposition, a central tool in matrix analysis.
+
+## 28.13 Alfréd Haar
+
+[Haar](https://en.wikipedia.org/wiki/Alfr%C3%A9d_Haar) introduced the Haar system, one of the earliest wavelet bases.
+
+## 28.14 John von Neumann
+
+[Von Neumann](https://en.wikipedia.org/wiki/John_von_Neumann) helped formulate quantum mechanics using Hilbert spaces and operators.
+
+## 28.15 Gene Golub
+
+[Gene Golub](https://en.wikipedia.org/wiki/Gene_H._Golub) was one of the founders of modern numerical linear algebra.
+
+His work helped make matrix computations reliable and practical.
+
+---
+
+# 29.  Timeline Plot
+
+Here is a Timeline page: [Timeline.html](Timeline.html)
+
+```{=html}
+<iframe
+  src="Timeline.html"
+  width="100%"
+  height="3600"
+  style="border:1px solid #ddd; border-radius:12px;">
+</iframe>
+```
+
+---
+
+# 30. Practice Questions
+
+## Question 1
+
+Why did determinants appear historically before matrices became formal objects?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+Determinants were useful for solving systems of equations. Matrices were originally just coefficient tables. Only later did mathematicians such as Sylvester and Cayley treat matrices as objects with their own algebra.
+:::
+
+## Question 2
+
+Explain why Fourier analysis can be viewed as linear algebra.
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+Fourier analysis represents functions as sums of basis functions. Fourier coefficients are coordinates. Orthogonality and projection are the same ideas used in finite-dimensional inner product spaces.
+:::
+
+## Question 3
+
+Why is Schur decomposition more useful than Jordan form in numerical computation?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+Jordan form is very sensitive to perturbations and is often numerically unstable. Schur decomposition uses unitary transformations, which preserve length and are stable in floating-point computation.
+:::
+
+## Question 4
+
+Why is SVD especially important for data science?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+SVD applies to every matrix, including rectangular data matrices. It gives low-rank approximations, principal directions, compression, denoising, pseudoinverses, and PCA.
+:::
+
+## Question 5
+
+What is the difference between Fourier and Haar bases?
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+Fourier bases are global waves and are excellent for frequency information. Haar bases are localized and multiscale, making them useful for detecting local changes and compressing signals with sharp features.
+:::
+
+---
+
+# 31. AI Companion Activities
+
+## Activity 1: Historical Concept Map
+
+Ask an AI tool:
+
+> Create a concept map connecting determinants, matrices, vector spaces, eigenvalues, Fourier analysis, Hilbert spaces, SVD, QR algorithm, FFT, PCA, and AI.
+
+Then compare the answer with this chapter.
+
+## Activity 2: Mathematician Biography
+
+Choose one mathematician from this chapter and ask:
+
+> Explain this mathematician's contribution to linear algebra in three levels: high school, undergraduate, and graduate.
+
+## Activity 3: Timeline Reconstruction
+
+Ask:
+
+> Make a timeline of linear algebra from ancient elimination to deep learning, including years and mathematicians.
+
+Then check whether it includes:
+
+- Seki,
+- Leibniz,
+- Cramer,
+- Gauss,
+- Fourier,
+- Grassmann,
+- Sylvester,
+- Cayley,
+- Jordan,
+- Frobenius,
+- Hilbert,
+- Schur,
+- Haar,
+- Golub.
+
+## Activity 4: Historical Reflection
+
+Ask:
+
+> Why did numerical linear algebra become so important after computers were invented?
+
+Then write a short answer connecting stability, complexity, and large data matrices.
+
+---
+
+# 32. Key Takeaways
+
+1. Linear algebra began with systems of equations.
+2. Determinants were developed before matrices were formalized.
+3. Matrices became mathematical objects through Sylvester and Cayley.
+4. Grassmann's abstract vector ideas became central only later.
+5. Fourier analysis extended linear algebra to functions.
+6. Hilbert spaces made infinite-dimensional geometry rigorous.
+7. Eigenvalues describe hidden directions of transformations.
+8. Symmetric matrices led to the spectral theorem.
+9. Schur decomposition provides stable triangularization.
+10. SVD became the universal decomposition for data matrices.
+11. Haar bases and wavelets introduced multiscale linear algebra.
+12. Numerical linear algebra transformed the subject into a computational science.
+13. Modern AI depends on vectors, matrices, tensors, optimization, and decompositions.
+
+---
+
+# 33. Closing Reflection
+
+The history of linear algebra is a story of both abstraction and usefulness.
+
+Each abstraction made the subject more powerful:
+
+$$
+\text{numbers}
+\rightarrow
+\text{vectors}
+\rightarrow
+\text{matrices}
+\rightarrow
+\text{spaces}
+\rightarrow
+\text{operators}
+\rightarrow
+\text{algorithms}
+\rightarrow
+\text{data}.
+$$
+
+Linear algebra is not only a branch of mathematics. It is one of the main languages of modern science, computation, and artificial intelligence.
+
+---
+
+# 34. Selected Wikipedia Links for Further Reading
+
+- [Linear algebra](https://en.wikipedia.org/wiki/Linear_algebra)
+- [Timeline of mathematics](https://en.wikipedia.org/wiki/Timeline_of_mathematics)
+- [Timeline of algebra](https://en.wikipedia.org/wiki/Timeline_of_algebra)
+- [Matrix mathematics](https://en.wikipedia.org/wiki/Matrix_(mathematics))
+- [Determinant](https://en.wikipedia.org/wiki/Determinant)
+- [Gaussian elimination](https://en.wikipedia.org/wiki/Gaussian_elimination)
+- [Vector space](https://en.wikipedia.org/wiki/Vector_space)
+- [Eigenvalues and eigenvectors](https://en.wikipedia.org/wiki/Eigenvalues_and_eigenvectors)
+- [Spectral theorem](https://en.wikipedia.org/wiki/Spectral_theorem)
+- [Schur decomposition](https://en.wikipedia.org/wiki/Schur_decomposition)
+- [Singular value decomposition](https://en.wikipedia.org/wiki/Singular_value_decomposition)
+- [Fourier series](https://en.wikipedia.org/wiki/Fourier_series)
+- [Fourier transform](https://en.wikipedia.org/wiki/Fourier_transform)
+- [Fast Fourier transform](https://en.wikipedia.org/wiki/Fast_Fourier_transform)
+- [Haar wavelet](https://en.wikipedia.org/wiki/Haar_wavelet)
+- [Hilbert space](https://en.wikipedia.org/wiki/Hilbert_space)
+- [Grassmannian](https://en.wikipedia.org/wiki/Grassmannian)
+- [Tensor](https://en.wikipedia.org/wiki/Tensor)
+- [Principal component analysis](https://en.wikipedia.org/wiki/Principal_component_analysis)
+- [Numerical linear algebra](https://en.wikipedia.org/wiki/Numerical_linear_algebra)
+- [PageRank](https://en.wikipedia.org/wiki/PageRank)
+- [Deep learning](https://en.wikipedia.org/wiki/Deep_learning)

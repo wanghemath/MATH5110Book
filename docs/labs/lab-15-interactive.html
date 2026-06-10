@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 15 Interactive: Haar Bases and Wavelet Transforms</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] }, svg: { fontCache: 'global' } };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--bg:#fff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);}header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;}header h1{margin:0 0 8px;font-size:1.8rem;}header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;}main{max-width:1240px;margin:0 auto;padding:24px}.grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px}h2{font-size:1.25rem;margin:0 0 12px}h3{font-size:1.05rem;margin:18px 0 8px}p{line-height:1.55}.small{font-size:.92rem;color:var(--muted)}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}input[type=number]{width:72px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff}input[type=range]{width:220px}button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0}button.secondary{background:#fff;color:#111827}.result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto}.eq{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto}canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto}table{border-collapse:collapse;background:#fff;margin:8px 0}td,th{border:1px solid var(--line);padding:7px 10px;text-align:right}.ok{color:var(--green);font-weight:700}.bad{color:var(--red);font-weight:700}.warn{color:var(--amber);font-weight:700}.task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0}textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit}.vectorGrid{display:grid;grid-template-columns:repeat(4,80px);gap:8px}@media(max-width:920px){.grid{grid-template-columns:1fr}.vectorGrid{grid-template-columns:repeat(2,80px)}}
+</style>
+</head>
+<body>
+<header>
+<h1>Lab 15 Interactive: Haar Bases and Wavelet Transforms</h1>
+<p>Explore the Haar transform as repeated averaging and differencing. Edit a signal, compress it by thresholding small coefficients, reconstruct it, and interpret a $2\times2$ image block.</p>
+</header>
+<main>
+<section class="grid">
+<div class="card">
+<h2>1. Length-8 signal</h2>
+<p class="small">Enter a signal $\vec u\in\mathbb R^8$. The tool computes the non-normalized fast Haar coefficients.</p>
+<div class="vectorGrid" id="signalInputs"></div>
+<button onclick="presetSignal('lecture')">Lecture example</button>
+<button onclick="presetSignal('smooth')">Smooth blocks</button>
+<button onclick="presetSignal('jump')">Jump signal</button>
+<button class="secondary" onclick="randomSignal()">Random</button>
+<h3>Threshold</h3>
+<div class="row"><input id="threshold" type="range" min="0" max="10" step="0.5" value="0"><input id="thresholdNum" type="number" min="0" max="10" step="0.5" value="0"></div>
+<div class="result" id="signalResult"></div>
+</div>
+<div class="card">
+<h2>2. Signal and reconstruction</h2>
+<canvas id="signalCanvas" width="720" height="430"></canvas>
+<p class="small">Blue: original signal. Orange: reconstructed signal after thresholding.</p>
+</div>
+</section>
+<section class="grid">
+<div class="card">
+<h2>3. Coefficient interpretation</h2>
+<div class="result" id="interpretResult"></div>
+<p class="small">The first coefficient is the average. The next coefficients describe coarse-to-fine details.</p>
+</div>
+<div class="card">
+<h2>4. $2\times2$ image block</h2>
+<p class="small">For $A=\begin{bmatrix}a&b\\c&d\end{bmatrix}$, compute average, vertical, horizontal, and diagonal Haar quantities.</p>
+<div class="vectorGrid" id="blockInputs"></div>
+<button onclick="presetBlock('edge')">Edge block</button><button onclick="presetBlock('diagonal')">Diagonal contrast</button><button class="secondary" onclick="presetBlock('constant')">Constant block</button>
+<div class="result" id="blockResult"></div>
+</div>
+</section>
+<section class="card">
+<h2>5. Independent-study tasks with answers</h2>
+<div class="task"><strong>Task A.</strong> Use the lecture example and threshold $2$. Which coefficients remain? <br><strong>Answer:</strong> Coefficients with magnitude at least or greater than the chosen rule remain. In this tool, coefficients with $|c|<\tau$ are discarded.</div>
+<div class="task"><strong>Task B.</strong> Create a piecewise constant signal. Which detail coefficients become zero? <br><strong>Answer:</strong> Details inside constant adjacent pairs become zero. Larger-scale details are zero when larger blocks have the same average.</div>
+<div class="task"><strong>Task C.</strong> For a constant $2\times2$ block, what are the non-average Haar quantities? <br><strong>Answer:</strong> They are all zero.</div>
+</section>
+<section class="card"><h2>6. Workspace</h2><textarea placeholder="Write observations here. Copy final answers to your notebook or assignment."></textarea></section>
+</main>
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(3).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(row=>`<tr>${row.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function haarTransform(arr){let c=arr.slice();let len=c.length;while(len>1){let avg=[],diff=[];for(let i=0;i<len;i+=2){avg.push((c[i]+c[i+1])/2);diff.push((c[i]-c[i+1])/2);}for(let i=0;i<avg.length;i++)c[i]=avg[i];for(let i=0;i<diff.length;i++)c[avg.length+i]=diff[i];len=Math.floor(len/2);}return c;}
+function invHaar(coeff){let x=coeff.slice();let len=1;while(len<x.length){let avg=x.slice(0,len),diff=x.slice(len,2*len),out=[];for(let i=0;i<len;i++){out.push(avg[i]+diff[i]);out.push(avg[i]-diff[i]);}for(let i=0;i<out.length;i++)x[i]=out[i];len*=2;}return x;}
+function createInputs(){let s=document.getElementById('signalInputs');s.innerHTML='';for(let i=0;i<8;i++){let inp=document.createElement('input');inp.type='number';inp.step='0.5';inp.id='u'+i;inp.value=[31,29,23,17,-6,-8,-2,-4][i];inp.addEventListener('input',update);s.appendChild(inp);}let b=document.getElementById('blockInputs');b.innerHTML='';['a','b','c','d'].forEach((id,i)=>{let inp=document.createElement('input');inp.type='number';inp.step='1';inp.id='block_'+id;inp.value=[10,8,4,2][i];inp.addEventListener('input',update);b.appendChild(inp);});}
+function getSignal(){let u=[];for(let i=0;i<8;i++)u.push(Number(document.getElementById('u'+i).value)||0);return u;}
+function setSignal(u){for(let i=0;i<8;i++)document.getElementById('u'+i).value=u[i];update();}
+function presetSignal(t){if(t==='lecture')setSignal([31,29,23,17,-6,-8,-2,-4]); if(t==='smooth')setSignal([10,10,8,8,2,2,0,0]); if(t==='jump')setSignal([2,2,2,2,9,9,9,9]);}
+function randomSignal(){let u=[];for(let i=0;i<8;i++)u.push(Math.floor(Math.random()*21)-10);setSignal(u);}
+function getThreshold(){return Number(document.getElementById('threshold').value)||0;}
+function updateThresholdFromRange(){document.getElementById('thresholdNum').value=document.getElementById('threshold').value;update();}
+function updateThresholdFromNum(){document.getElementById('threshold').value=document.getElementById('thresholdNum').value;update();}
+function drawSignal(u,uhat){let canvas=document.getElementById('signalCanvas'),ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);let all=u.concat(uhat);let mn=Math.min(...all)-1,mx=Math.max(...all)+1;if(Math.abs(mx-mn)<1e-9){mx+=1;mn-=1;}function pt(i,y){let x=50+i*(W-100)/7;let yy=H-50-(y-mn)*(H-100)/(mx-mn);return [x,yy];}ctx.strokeStyle='#eef2f7';ctx.lineWidth=1;for(let k=0;k<=6;k++){let y=50+k*(H-100)/6;ctx.beginPath();ctx.moveTo(40,y);ctx.lineTo(W-40,y);ctx.stroke();}function plot(vals,color,label,offset){ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=3;ctx.beginPath();vals.forEach((v,i)=>{let p=pt(i,v);if(i===0)ctx.moveTo(p[0],p[1]);else ctx.lineTo(p[0],p[1]);});ctx.stroke();vals.forEach((v,i)=>{let p=pt(i,v);ctx.beginPath();ctx.arc(p[0],p[1],5,0,2*Math.PI);ctx.fill();});ctx.font='15px system-ui';ctx.fillText(label,55,25+offset);}plot(u,'#2563eb','original',0);plot(uhat,'#f97316','reconstruction',22);}
+function update(){let u=getSignal();let c=haarTransform(u);let tau=getThreshold();let chat=c.map(x=>Math.abs(x)<tau?0:x);let uhat=invHaar(chat);let err=Math.sqrt(u.reduce((s,x,i)=>s+(x-uhat[i])**2,0));document.getElementById('signalResult').innerHTML=`<strong>Haar coefficients</strong>${matHTML([c])}<strong>Thresholded coefficients ($|c_i| < ${fmt(tau)}$ set to zero)</strong>${matHTML([chat])}<strong>Reconstructed signal</strong>${matHTML([uhat])}<br>Error norm: <strong>${fmt(err)}</strong><br>Nonzero coefficients: <strong>${chat.filter(x=>Math.abs(x)>1e-10).length}</strong> of 8`;document.getElementById('interpretResult').innerHTML=`Global average: <strong>${fmt(c[0])}</strong><br>Largest-scale detail: <strong>${fmt(c[1])}</strong><br>Medium-scale details: <strong>${fmt(c[2])}, ${fmt(c[3])}</strong><br>Finest adjacent-pair details: <strong>${fmt(c[4])}, ${fmt(c[5])}, ${fmt(c[6])}, ${fmt(c[7])}</strong>`;drawSignal(u,uhat);updateBlock();if(window.MathJax){MathJax.typesetPromise();}}
+function updateBlock(){let a=Number(block_a.value)||0,b=Number(block_b.value)||0,c=Number(block_c.value)||0,d=Number(block_d.value)||0;let avg=(a+b+c+d)/4,vert=(a+b-c-d)/4,horiz=(a-b+c-d)/4,diag=(a-b-c+d)/4;document.getElementById('blockResult').innerHTML=`Block ${matHTML([[a,b],[c,d]])}Average: <strong>${fmt(avg)}</strong><br>Vertical contrast: <strong>${fmt(vert)}</strong><br>Horizontal contrast: <strong>${fmt(horiz)}</strong><br>Diagonal contrast: <strong>${fmt(diag)}</strong>`;}
+function presetBlock(t){let vals={edge:[10,8,4,2],diagonal:[10,0,0,10],constant:[5,5,5,5]}[t];['a','b','c','d'].forEach((id,i)=>document.getElementById('block_'+id).value=vals[i]);update();}
+document.getElementById('threshold').addEventListener('input',updateThresholdFromRange);document.getElementById('thresholdNum').addEventListener('input',updateThresholdFromNum);createInputs();update();
+</script>
+</body>
+</html>

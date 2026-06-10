@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 7 Interactive: Eigenvalues and Diagonalization</title>
+<script>
+window.MathJax = {tex: {inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']]}, svg: {fontCache: 'global'}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--bg:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);} header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;} header h1{margin:0 0 8px;font-size:1.8rem;} header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;} main{max-width:1240px;margin:0 auto;padding:24px;} .grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;} .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;} h2{font-size:1.25rem;margin:0 0 12px;} h3{font-size:1.05rem;margin:18px 0 8px;} p{line-height:1.55;} label{display:block;margin:8px 0 4px;font-weight:600;} input[type=number]{width:70px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;} .matrix{display:grid;gap:6px;margin:8px 0 12px;align-items:center;} .m2{grid-template-columns:repeat(2,76px);} .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;} button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;} button.secondary{background:#fff;color:#111827;} canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;} .result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;} .eq{background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto;} .small{font-size:.92rem;color:var(--muted);} table{border-collapse:collapse;background:#fff;margin:8px 0;} th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;} .ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .warn{color:var(--amber);font-weight:700;} .task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;} textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;} code{background:#f3f4f6;padding:1px 4px;border-radius:4px;} @media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+<h1>Lab 7 Interactive: Eigenvalues, Eigenvectors, and Diagonalization</h1>
+<p>Explore eigenvectors as preserved directions, diagonalization as a change to an eigenbasis, matrix powers, non-diagonalizable examples, and Markov-chain steady states.</p>
+</header>
+<main>
+<section class="grid">
+<div class="card">
+<h2>1. A $2\times2$ matrix</h2>
+<p class="small">Enter $A=\begin{bmatrix}a&b\\c&d\end{bmatrix}$. The tool computes the characteristic polynomial, eigenvalues, and a diagonalization test.</p>
+<div class="matrix m2" id="AInputs"></div>
+<button onclick="presetA('distinct')">Two eigenvalues</button><button onclick="presetA('jordan')">Jordan block</button><button onclick="presetA('rotation')">Rotation</button><button onclick="presetA('diagonal')">Diagonal</button><button class="secondary" onclick="randomA()">Random</button>
+<div class="result" id="eigenResult"></div>
+</div>
+<div class="card">
+<h2>2. Geometry: preserved directions</h2>
+<canvas id="geom" width="720" height="540"></canvas>
+<p class="small">Blue arrows are input directions. Orange arrows show where $A$ sends them. Eigenvectors are directions whose orange images stay on the same line.</p>
+</div>
+</section>
+
+<section class="grid">
+<div class="card">
+<h2>3. Check a proposed eigenvector</h2>
+<p class="small">A nonzero vector $v$ is an eigenvector if $Av=\lambda v$ for some scalar $\lambda$.</p>
+<div class="row"><label>$v_1$</label><input id="v1" type="number" value="1" step="1"><label>$v_2$</label><input id="v2" type="number" value="1" step="1"></div>
+<button onclick="vPreset('first')">First eigenvector</button><button onclick="vPreset('second')">Second eigenvector</button><button onclick="vPreset('not')">Usually not</button>
+<div class="result" id="checkResult"></div>
+</div>
+<div class="card">
+<h2>4. Diagonalization and powers</h2>
+<p class="small">When $A=PDP^{-1}$, we get $A^k=PD^kP^{-1}$.</p>
+<div class="row"><label>$k$</label><input id="powK" type="number" value="5" min="0" step="1"></div>
+<div class="result" id="powerResult"></div>
+</div>
+</section>
+
+<section class="grid">
+<div class="card">
+<h2>5. Markov chain steady state</h2>
+<p class="small">Use a column-stochastic matrix $M=\begin{bmatrix}p&q\\1-p&1-q\end{bmatrix}$. The steady state satisfies $Mp=p$ and $p_1+p_2=1$.</p>
+<div class="row"><label>$p$</label><input id="markP" type="number" value="0.8" step="0.05"><label>$q$</label><input id="markQ" type="number" value="0.3" step="0.05"></div>
+<button onclick="markPreset('one')">Example 1</button><button onclick="markPreset('two')">Example 2</button>
+<div class="result" id="markovResult"></div>
+</div>
+<div class="card">
+<h2>6. Power iteration</h2>
+<p class="small">The power method repeatedly applies $A$ and rescales. It often finds a dominant eigenvector.</p>
+<div class="row"><label>iterations</label><input id="iters" type="number" value="8" min="1" max="50" step="1"></div>
+<div class="result" id="powerIterResult"></div>
+</div>
+</section>
+
+<section class="card">
+<h2>7. Independent-study practice tasks with answers</h2>
+<div class="task"><strong>Task A.</strong> For $A=\begin{bmatrix}4&1\\2&3\end{bmatrix}$, find the eigenvalues. <br><strong>Answer:</strong> $\det(A-\lambda I)=\lambda^2-7\lambda+10=(\lambda-5)(\lambda-2)$, so $\lambda=5,2$.</div>
+<div class="task"><strong>Task B.</strong> Find an eigenvector for $\lambda=5$ for the same matrix. <br><strong>Answer:</strong> Solve $(A-5I)x=0$. One eigenvector is $(1,1)^T$.</div>
+<div class="task"><strong>Task C.</strong> Diagonalize $A=\begin{bmatrix}4&1\\2&3\end{bmatrix}$. <br><strong>Answer:</strong> One choice is $P=\begin{bmatrix}1&1\\1&-2\end{bmatrix}$ and $D=\begin{bmatrix}5&0\\0&2\end{bmatrix}$.</div>
+<div class="task"><strong>Similar practice.</strong> Diagonalize $B=\begin{bmatrix}3&1\\0&2\end{bmatrix}$. <br><strong>Answer:</strong> $P=\begin{bmatrix}1&-1\\0&1\end{bmatrix}$, $D=\operatorname{diag}(3,2)$.</div>
+<div class="task"><strong>Task D.</strong> Explain why $J=\begin{bmatrix}2&1\\0&2\end{bmatrix}$ is not diagonalizable. <br><strong>Answer:</strong> It has only one eigenvalue, $2$, and only one line of eigenvectors, $\operatorname{span}\{(1,0)^T\}$.</div>
+<div class="task"><strong>Task E.</strong> If $A=PDP^{-1}$, what is $A^{20}$? <br><strong>Answer:</strong> $A^{20}=PD^{20}P^{-1}$.</div>
+</section>
+
+<section class="card"><h2>8. Workspace</h2><textarea placeholder="Write observations here. Copy final answers to your notebook or assignment."></textarea></section>
+</main>
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(row=>`<tr>${row.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function vecHTML(v){return matHTML(v.map(x=>[x]));}
+function createInputs(containerId,prefix,vals){const el=document.getElementById(containerId);el.innerHTML='';for(let i=0;i<2;i++){for(let j=0;j<2;j++){let input=document.createElement('input');input.type='number';input.step='1';input.value=vals[i][j];input.id=`${prefix}${i}${j}`;input.addEventListener('input',update);el.appendChild(input);}}}
+function getA(){return [[Number(A00.value)||0,Number(A01.value)||0],[Number(A10.value)||0,Number(A11.value)||0]];}
+function setA(M){for(let i=0;i<2;i++)for(let j=0;j<2;j++)document.getElementById(`A${i}${j}`).value=M[i][j];}
+function mmul(A,B){return [[A[0][0]*B[0][0]+A[0][1]*B[1][0],A[0][0]*B[0][1]+A[0][1]*B[1][1]],[A[1][0]*B[0][0]+A[1][1]*B[1][0],A[1][0]*B[0][1]+A[1][1]*B[1][1]]];}
+function mv(A,v){return [A[0][0]*v[0]+A[0][1]*v[1],A[1][0]*v[0]+A[1][1]*v[1]];}
+function det(A){return A[0][0]*A[1][1]-A[0][1]*A[1][0];}
+function inv(A){let d=det(A);if(Math.abs(d)<1e-10)return null;return [[A[1][1]/d,-A[0][1]/d],[-A[1][0]/d,A[0][0]/d]];}
+function eig2(A){let tr=A[0][0]+A[1][1], de=det(A), disc=tr*tr-4*de;if(disc<-1e-10)return {real:false,tr,de,disc};disc=Math.max(0,disc);let s=Math.sqrt(disc);return {real:true,tr,de,disc,lams:[(tr+s)/2,(tr-s)/2]};}
+function eigenvector(A,lam){let a=A[0][0]-lam,b=A[0][1],c=A[1][0],d=A[1][1]-lam;let v;if(Math.abs(a)+Math.abs(b)>Math.abs(c)+Math.abs(d)){v=[-b,a];}else{v=[-d,c];}let n=Math.hypot(v[0],v[1]);if(n<1e-10)v=[1,0];else v=[v[0]/n,v[1]/n];return v;}
+function diagonalization(A){let e=eig2(A);if(!e.real)return {ok:false,reason:'The eigenvalues are not real, so this real interactive tool does not form a real eigenbasis.'};let [l1,l2]=e.lams;if(Math.abs(l1-l2)>1e-8){let v1=eigenvector(A,l1),v2=eigenvector(A,l2);let P=[[v1[0],v2[0]],[v1[1],v2[1]]],D=[[l1,0],[0,l2]];return {ok:true,P,D,lams:[l1,l2],vecs:[v1,v2]};}
+let lam=l1;let v=eigenvector(A,lam);let B=[[A[0][0]-lam,A[0][1]],[A[1][0],A[1][1]-lam]];let zero=Math.abs(B[0][0])+Math.abs(B[0][1])+Math.abs(B[1][0])+Math.abs(B[1][1])<1e-10;if(zero){return {ok:true,P:[[1,0],[0,1]],D:[[lam,0],[0,lam]],lams:[lam,lam],vecs:[[1,0],[0,1]]};}return {ok:false,reason:'Repeated eigenvalue with only one visible eigendirection. This is typically not diagonalizable.',lams:[lam,lam],vecs:[v]};}
+function matPow(A,k){let R=[[1,0],[0,1]],B=A;while(k>0){if(k%2===1)R=mmul(R,B);B=mmul(B,B);k=Math.floor(k/2);}return R;}
+function updateEigen(){let A=getA(), e=eig2(A), diag=diagonalization(A);let poly=`$p(\\lambda)=\\lambda^2-${fmt(e.tr)}\\lambda+${fmt(e.de)}$`;let txt=`A = ${matHTML(A)} trace(A) = ${fmt(e.tr)}, det(A) = ${fmt(e.de)}<br>Characteristic polynomial: ${poly}<br>`;if(!e.real){txt+=`<span class='warn'>The discriminant is ${fmt(e.disc)} &lt; 0. The eigenvalues are complex.</span>`;}else{txt+=`Eigenvalues: ${e.lams.map(fmt).join(', ')}<br>`;if(diag.ok){txt+=`<span class='ok'>Diagonalizable over the real numbers.</span><br>P = ${matHTML(diag.P)} D = ${matHTML(diag.D)}`;}else{txt+=`<span class='bad'>Not diagonalized by this real eigenvector test.</span><br>${diag.reason}`;}}eigenResult.innerHTML=txt; if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([eigenResult]);}
+function updateCheck(){let A=getA(), v=[Number(v1.value)||0,Number(v2.value)||0], Av=mv(A,v), n2=v[0]*v[0]+v[1]*v[1];let txt=`v = ${vecHTML(v)} Av = ${vecHTML(Av)}`;if(n2<1e-10){txt+=`<span class='bad'>The zero vector is not an eigenvector.</span>`;}else{let lam=(Av[0]*v[0]+Av[1]*v[1])/n2;let res=[Av[0]-lam*v[0],Av[1]-lam*v[1]],err=Math.hypot(res[0],res[1]);txt+=`Rayleigh quotient estimate $\\lambda=${fmt(lam)}$.<br>`;txt+=err<1e-8?`<span class='ok'>This is an eigenvector.</span>`:`<span class='bad'>This is not an eigenvector.</span> The residual $Av-\\lambda v$ has length ${fmt(err)}.`;}checkResult.innerHTML=txt;if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([checkResult]);}
+function updatePower(){let A=getA(), k=Math.max(0,Math.floor(Number(powK.value)||0)), diag=diagonalization(A);let txt='';if(diag.ok){let Pinv=inv(diag.P), Dk=[[Math.pow(diag.D[0][0],k),0],[0,Math.pow(diag.D[1][1],k)]], Ak=mmul(mmul(diag.P,Dk),Pinv);txt=`Using $A^k=PD^kP^{-1}$ with $k=${k}$:<br>$D^k$ = ${matHTML(Dk)} A^k = ${matHTML(Ak)}`;}else{txt=`<span class='warn'>The matrix is not diagonalized here. Direct repeated squaring gives:</span><br>A^${k} = ${matHTML(matPow(A,k))}`;}powerResult.innerHTML=txt;if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([powerResult]);}
+function updateMarkov(){let p=Number(markP.value),q=Number(markQ.value);let M=[[p,q],[1-p,1-q]];let denom=(1-p)+q;let steady;if(Math.abs(denom)<1e-10){steady=[1,0];}else{steady=[q/denom,(1-p)/denom];}let M10=[[1,0],[0,1]];for(let i=0;i<20;i++)M10=mmul(M10,M);markovResult.innerHTML=`M = ${matHTML(M)} Steady state eigenvector for $\\lambda=1$:<br>${vecHTML(steady)} M^{20} = ${matHTML(M10)}`;if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([markovResult]);}
+function updatePowerIter(){let A=getA(), it=Math.max(1,Math.floor(Number(iters.value)||1));let x=[1,1], rows=[];for(let k=1;k<=it;k++){x=mv(A,x);let n=Math.hypot(x[0],x[1]);if(n>1e-12)x=[x[0]/n,x[1]/n];if(k<=8||k===it)rows.push([k,x[0],x[1]]);}let lam=(mv(A,x)[0]*x[0]+mv(A,x)[1]*x[1])/(x[0]*x[0]+x[1]*x[1]);let tbl='<table><thead><tr><th>k</th><th>x1</th><th>x2</th></tr></thead><tbody>'+rows.map(r=>`<tr><td>${r[0]}</td><td>${fmt(r[1])}</td><td>${fmt(r[2])}</td></tr>`).join('')+'</tbody></table>';powerIterResult.innerHTML=`Approximate dominant eigenvector after ${it} iterations: ${vecHTML(x)} Rayleigh quotient: ${fmt(lam)}<br>${tbl}`;if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([powerIterResult]);}
+function drawGeom(){let A=getA(), c=geom,ctx=c.getContext('2d'),W=c.width,H=c.height,sc=65;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);function pt(x,y){return [W/2+x*sc,H/2-y*sc];}ctx.strokeStyle='#eef2f7';ctx.lineWidth=1;for(let x=-5;x<=5;x++){let p=pt(x,0)[0];ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,H);ctx.stroke();}for(let y=-4;y<=4;y++){let p=pt(0,y)[1];ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(W,p);ctx.stroke();}let ox=pt(0,0)[0],oy=pt(0,0)[1];ctx.strokeStyle='#9ca3af';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(W,oy);ctx.stroke();ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();function arrow(v,color,label){let p0=pt(0,0),p1=pt(v[0],v[1]);ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(p0[0],p0[1]);ctx.lineTo(p1[0],p1[1]);ctx.stroke();ctx.beginPath();ctx.arc(p1[0],p1[1],5,0,2*Math.PI);ctx.fill();ctx.font='14px system-ui';ctx.fillText(label,p1[0]+8,p1[1]-8);}let dirs=[[1,0],[0,1],[1,1],[-1,1]];dirs.forEach((v,i)=>{arrow(v,'#2563eb','v'+(i+1));let Av=mv(A,v).map(x=>x/Math.max(1,Math.hypot(...mv(A,v))/2.5));arrow(Av,'#f97316','Av'+(i+1));});let d=diagonalization(A);if(d.vecs){d.vecs.forEach((v,i)=>arrow([2*v[0],2*v[1]],'#065f46','eig '+(i+1)));}}
+function presetA(t){if(t==='distinct')setA([[4,1],[2,3]]);if(t==='jordan')setA([[2,1],[0,2]]);if(t==='rotation')setA([[0,-1],[1,0]]);if(t==='diagonal')setA([[5,0],[0,2]]);update();}
+function randomA(){let r=()=>Math.floor(Math.random()*7)-3;setA([[r(),r()],[r(),r()]]);update();}
+function vPreset(t){if(t==='first'){v1.value=1;v2.value=1;}if(t==='second'){v1.value=1;v2.value=-2;}if(t==='not'){v1.value=1;v2.value=0;}update();}
+function markPreset(t){if(t==='one'){markP.value=0.8;markQ.value=0.3;}if(t==='two'){markP.value=0.9;markQ.value=0.4;}update();}
+function update(){updateEigen();updateCheck();updatePower();updateMarkov();updatePowerIter();drawGeom();}
+createInputs('AInputs','A',[[4,1],[2,3]]);['v1','v2','powK','markP','markQ','iters'].forEach(id=>document.getElementById(id).addEventListener('input',update));update();
+</script>
+</body>
+</html>

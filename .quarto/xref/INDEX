@@ -1,0 +1,176 @@
+{
+  "index.qmd": {
+    "index.html": "cc9691e2"
+  },
+  "preface.qmd": {
+    "preface.html": "9fee8552"
+  },
+  "math-5110-book-overview.qmd": {
+    "math-5110-book-overview.html": "63d4d61a"
+  },
+  "chapters/chapter-history-linear-algebra-timeline.qmd": {
+    "chapter-history-linear-algebra-timeline.html": "f7f54d04"
+  },
+  "chapters/chapter-01-linear-systems.qmd": {
+    "chapter-01-linear-systems.html": "6797e9da"
+  },
+  "labs/lab-01-linear-systems.qmd": {
+    "lab-01-linear-systems.html": "492509cc"
+  },
+  "chapters/chapter-02-matrix-algebra.qmd": {
+    "chapter-02-matrix-algebra.html": "8e449e15"
+  },
+  "labs/lab-02-matrix-algebra.qmd": {
+    "lab-02-matrix-algebra.html": "e658478f"
+  },
+  "chapters/chapter-03-linear-spaces-subspaces-maps.qmd": {
+    "chapter-03-linear-spaces-subspaces-maps.html": "e6f6181d"
+  },
+  "labs/lab-03-linear-spaces-subspaces-maps.qmd": {
+    "lab-03-linear-spaces-subspaces-maps.html": "29ecc5e7"
+  },
+  "chapters/chapter-04-bases-dimension-rank-nullity.qmd": {
+    "chapter-04-bases-dimension-rank-nullity.html": "fce35fb5"
+  },
+  "labs/lab-04-bases-dimension-rank-nullity.qmd": {
+    "lab-04-bases-dimension-rank-nullity.html": "bdb58255"
+  },
+  "chapters/chapter-05-coordinates-matrices-change-of-basis.qmd": {
+    "chapter-05-coordinates-matrices-change-of-basis.html": "e290b00e"
+  },
+  "labs/lab-05-coordinates-matrices-change-of-basis.qmd": {
+    "lab-05-coordinates-matrices-change-of-basis.html": "2bc95d81"
+  },
+  "chapters/chapter-06-determinants.qmd": {
+    "chapter-06-determinants.html": "2e3553f1"
+  },
+  "labs/lab-06-determinants.qmd": {
+    "lab-06-determinants.html": "cdb0ab9b"
+  },
+  "chapters/chapter-07-diagonalization-eigenvalues.qmd": {
+    "chapter-07-diagonalization-eigenvalues.html": "a0ad6f5b"
+  },
+  "labs/lab-07-diagonalization-eigenvalues.qmd": {
+    "lab-07-diagonalization-eigenvalues.html": "58de3368"
+  },
+  "chapters/chapter-08-jordan-canonical-form.qmd": {
+    "chapter-08-jordan-canonical-form.html": "c7721426"
+  },
+  "labs/lab-08-jordan-canonical-form.qmd": {
+    "lab-08-jordan-canonical-form.html": "ed8d9a55"
+  },
+  "chapters/chapter-09-dynamical-systems-markov-chains-perron-frobenius.qmd": {
+    "chapter-09-dynamical-systems-markov-chains-perron-frobenius.html": "97364b1b"
+  },
+  "labs/lab-09-dynamical-systems-markov-chains.qmd": {
+    "lab-09-dynamical-systems-markov-chains.html": "3717176d"
+  },
+  "chapters/chapter-10-inner-products-projections-qr-adjoints.qmd": {
+    "chapter-10-inner-products-projections-qr-adjoints.html": "6061f065"
+  },
+  "labs/lab-10-inner-products-projections-qr-adjoints.qmd": {
+    "lab-10-inner-products-projections-qr-adjoints.html": "4a4c5a1b"
+  },
+  "chapters/chapter-11-complex-inner-products-schur.qmd": {
+    "chapter-11-complex-inner-products-schur.html": "24f60f97"
+  },
+  "labs/lab-11-complex-inner-products-schur.qmd": {
+    "lab-11-complex-inner-products-schur.html": "ca8f0b41"
+  },
+  "chapters/chapter-12-least-squares-data-fitting.qmd": {
+    "chapter-12-least-squares-data-fitting.html": "c0c3f93c"
+  },
+  "labs/lab-12-least-squares-data-fitting.qmd": {
+    "lab-12-least-squares-data-fitting.html": "e8f07a02"
+  },
+  "chapters/chapter-13-symmetric-hermitian-matrices.qmd": {
+    "chapter-13-symmetric-hermitian-matrices.html": "3ea776d5"
+  },
+  "labs/lab-13-symmetric-hermitian-matrices.qmd": {
+    "lab-13-symmetric-hermitian-matrices.html": "194fffc9"
+  },
+  "chapters/chapter-14-singular-value-decomposition.qmd": {
+    "chapter-14-singular-value-decomposition.html": "71f5cad4"
+  },
+  "labs/lab-14-singular-value-decomposition.qmd": {
+    "lab-14-singular-value-decomposition.html": "133ef743"
+  },
+  "chapters/chapter-15-haar-bases-wavelet-transforms.qmd": {
+    "chapter-15-haar-bases-wavelet-transforms.html": "db22a7c1"
+  },
+  "labs/lab-15-haar-bases-wavelet-transforms.qmd": {
+    "lab-15-haar-bases-wavelet-transforms.html": "937f7b93"
+  },
+  "chapters/chapter-16-fast-fourier-transforms.qmd": {
+    "chapter-16-fast-fourier-transforms.html": "7fa76e83"
+  },
+  "labs/lab-16-fast-fourier-transforms.qmd": {
+    "lab-16-fast-fourier-transforms.html": "9a43dbfc"
+  },
+  "chapters/chapter-17-grassmannians-subspace-distances.qmd": {
+    "chapter-17-grassmannians-subspace-distances.html": "d48ac209"
+  },
+  "labs/lab-17-grassmannians-subspace-distances.qmd": {
+    "lab-17-grassmannians-subspace-distances.html": "3dcbac1b"
+  },
+  "chapters/chapter-18-computational-complexity-eigenvalues.qmd": {
+    "chapter-18-computational-complexity-eigenvalues.html": "478a5e20"
+  },
+  "labs/lab-18-computational-complexity-eigenvalues.qmd": {
+    "lab-18-computational-complexity-eigenvalues.html": "8fe24d5c"
+  },
+  "chapters/chapter-19-applications-multilinear-algebra.qmd": {
+    "chapter-19-applications-multilinear-algebra.html": "7c06230f"
+  },
+  "labs/lab-19-applications-multilinear-algebra.qmd": {
+    "lab-19-applications-multilinear-algebra.html": "4a49e027"
+  },
+  "chapters/chapter-20-hilbert-spaces-applications.qmd": {
+    "chapter-20-hilbert-spaces-applications.html": "607ef792"
+  },
+  "labs/lab-20-hilbert-spaces-applications.qmd": {
+    "lab-20-hilbert-spaces-applications.html": "8f4b5e94"
+  },
+  "chapters/chapter-21-tda.qmd": {
+    "chapter-21-tda.html": "e8b527c3"
+  },
+  "labs/lab-21-tda.qmd": {
+    "lab-21-tda.html": "adfdfaf1"
+  },
+  "chapters/chapter-22-duality-cohomology.qmd": {
+    "chapter-22-duality-cohomology.html": "c7d8f25f"
+  },
+  "labs/lab-22-duality-cohomology.qmd": {
+    "lab-22-duality-cohomology.html": "8fdd74e7"
+  },
+  "chapters/chapter-23-spectral-graph-theory.qmd": {
+    "chapter-23-spectral-graph-theory.html": "5819d4dc"
+  },
+  "labs/lab-23-spectral-graph-theory.qmd": {
+    "lab-23-spectral-graph-theory.html": "a145cebd"
+  },
+  "chapters/chapter-24-linear-algebra-differential-equations.qmd": {
+    "chapter-24-linear-algebra-differential-equations.html": "02ff923a"
+  },
+  "labs/lab-24-linear-algebra-differential-equations.qmd": {
+    "lab-24-linear-algebra-differential-equations.html": "1cd53180"
+  },
+  "chapters/chapter-25-linear-algebra-optimization.qmd": {
+    "chapter-25-linear-algebra-optimization.html": "55e1cd91"
+  },
+  "labs/lab-25-linear-algebra-optimization.qmd": {
+    "lab-25-linear-algebra-optimization.html": "4bf6198a"
+  },
+  "chapters/chapter-26-linear-algebra-probability.qmd": {
+    "chapter-26-linear-algebra-probability.html": "a0b5b206"
+  },
+  "labs/lab-26-linear-algebra-probability.qmd": {
+    "lab-26-linear-algebra-probability.html": "55401145"
+  },
+  "chapters/chapter-27-matrix-calculus.qmd": {
+    "chapter-27-matrix-calculus.html": "f5bcb490"
+  },
+  "labs/lab-27-matrix-calculus.qmd": {
+    "lab-27-matrix-calculus.html": "752d725b"
+  }
+}

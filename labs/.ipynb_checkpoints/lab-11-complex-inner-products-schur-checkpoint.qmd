@@ -1,0 +1,297 @@
+# Lab 11. Complex Inner Products, Unitary Matrices, Hermitian Matrices, and Schur Decomposition: Independent Study {.unnumbered}
+
+This lab accompanies **Chapter 11: Complex Inner Products, Unitary Geometry, Hermitian Matrices, and Schur Decomposition**.
+
+The goal is to connect complex geometry with computation:
+
+1. Complex inner products require conjugation.
+2. Unitary matrices preserve length and angle.
+3. Hermitian matrices are the complex analogue of real symmetric matrices.
+4. Schur decomposition triangularizes every complex square matrix using a unitary basis.
+5. Normal matrices are exactly the matrices that can be unitarily diagonalized.
+
+This is an **independent-study lab**. Each main question includes a worked solution and a similar practice question.
+
+## Python practice notebook
+
+You may use the Jupyter notebook version for longer Python practice:
+
+- [Download Lab 11 independent-study notebook](lab-11-complex-inner-products-schur-independent-study.ipynb)
+- [Open Lab 11 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-11-complex-inner-products-schur-independent-study.ipynb)
+
+## Interactive lab
+
+```{=html}
+<iframe
+  src="lab-11-interactive.html"
+  width="100%"
+  height="4200"
+  style="border:1px solid #ddd; border-radius:12px;">
+</iframe>
+```
+
+## Study guide and worked questions
+
+### Question 1. Complex inner product
+
+Let
+$$
+u=\begin{bmatrix}1+i\\2\end{bmatrix},
+\qquad
+v=\begin{bmatrix}i\\1-i\end{bmatrix}.
+$$
+Using the convention $\langle u,v\rangle=v^*u$, compute $\langle u,v\rangle$, $\langle v,u\rangle$, and $\|u\|$.
+
+#### Solution
+
+$$
+\langle u,v\rangle
+=\overline{i}(1+i)+\overline{(1-i)}(2)
+=(-i)(1+i)+(1+i)2.
+$$
+Since
+$$
+(-i)(1+i)=1-i,
+\qquad
+2(1+i)=2+2i,
+$$
+we get
+$$
+\langle u,v\rangle=3+i.
+$$
+Therefore
+$$
+\langle v,u\rangle=3-i,
+$$
+and
+$$
+\|u\|=\sqrt{|1+i|^2+|2|^2}=\sqrt6.
+$$
+
+#### Similar practice
+
+Let
+$$
+a=\begin{bmatrix}2-i\\1+i\end{bmatrix},
+\qquad
+b=\begin{bmatrix}1+i\\-i\end{bmatrix}.
+$$
+Compute $\langle a,b\rangle$, $\langle b,a\rangle$, and $\|a\|$.
+
+#### Answer
+
+$$
+\langle a,b\rangle=\overline{(1+i)}(2-i)+\overline{(-i)}(1+i)
+=(1-i)(2-i)+i(1+i).
+$$
+Now
+$$
+(1-i)(2-i)=1-3i,
+\qquad
+ i(1+i)=i-1.
+$$
+Hence
+$$
+\langle a,b\rangle=-2i,
+\qquad
+\langle b,a\rangle=2i.
+$$
+Also
+$$
+\|a\|=\sqrt{|2-i|^2+|1+i|^2}=\sqrt{5+2}=\sqrt7.
+$$
+
+### Question 2. Projection onto a complex line
+
+Let
+$$
+u=\frac{1}{\sqrt2}\begin{bmatrix}1\\ i\end{bmatrix},
+\qquad
+y=\begin{bmatrix}2\\1+i\end{bmatrix}.
+$$
+Compute the projection of $y$ onto $\operatorname{span}(u)$.
+
+#### Solution
+
+Since $u$ is unit length,
+$$
+\operatorname{proj}_{\operatorname{span}(u)}(y)=\langle y,u\rangle u.
+$$
+Using $\langle y,u\rangle=u^*y$,
+$$
+\langle y,u\rangle=\frac{1}{\sqrt2}\begin{bmatrix}1&-i\end{bmatrix}
+\begin{bmatrix}2\\1+i\end{bmatrix}
+=\frac{3-i}{\sqrt2}.
+$$
+Thus
+$$
+\operatorname{proj}(y)=\frac{3-i}{2}\begin{bmatrix}1\\ i\end{bmatrix}.
+$$
+
+#### Similar practice
+
+Let
+$$
+w=\frac{1}{\sqrt5}\begin{bmatrix}1+2i\\0\end{bmatrix},
+\qquad
+z=\begin{bmatrix}3-i\\2\end{bmatrix}.
+$$
+Compute $\operatorname{proj}_{\operatorname{span}(w)}(z)$.
+
+#### Answer
+
+Because $w$ is unit length,
+$$
+\operatorname{proj}(z)=\langle z,w\rangle w.
+$$
+Now
+$$
+\langle z,w\rangle=w^*z
+=\frac{1}{\sqrt5}\overline{(1+2i)}(3-i)
+=\frac{1}{\sqrt5}(1-2i)(3-i)
+=\frac{1-7i}{\sqrt5}.
+$$
+Therefore
+$$
+\operatorname{proj}(z)=\frac{1-7i}{5}
+\begin{bmatrix}1+2i\\0\end{bmatrix}.
+$$
+
+### Question 3. Hermitian and unitary checks
+
+Let
+$$
+A=\begin{bmatrix}2&1+i\\1-i&3\end{bmatrix},
+\qquad
+U=\frac1{\sqrt2}\begin{bmatrix}1&1\\1&-1\end{bmatrix}.
+$$
+Check whether $A$ is Hermitian and whether $U$ is unitary.
+
+#### Solution
+
+$$
+A^*=\begin{bmatrix}2&1+i\\1-i&3\end{bmatrix}=A,
+$$
+so $A$ is Hermitian.
+
+Also,
+$$
+U^*U=I,
+$$
+so $U$ is unitary. Since this matrix is real, $U^*=U^T$.
+
+#### Similar practice
+
+Check whether
+$$
+B=\begin{bmatrix}1&i\\i&1\end{bmatrix}
+$$
+is Hermitian.
+
+#### Answer
+
+$$
+B^*=\begin{bmatrix}1&-i\\-i&1\end{bmatrix}\ne B.
+$$
+So $B$ is not Hermitian.
+
+### Question 4. Schur form and eigenvalues
+
+Suppose
+$$
+A=UTU^*,
+\qquad
+T=\begin{bmatrix}
+2&5&1\\0&3&4\\0&0&-1
+\end{bmatrix}.
+$$
+What are the eigenvalues of $A$?
+
+#### Solution
+
+Unitary similarity preserves eigenvalues, and the eigenvalues of an upper triangular matrix are the diagonal entries. Therefore the eigenvalues of $A$ are
+$$
+2,\quad 3,\quad -1.
+$$
+
+#### Similar practice
+
+If
+$$
+S=\begin{bmatrix}
+i&2\\0&1-i
+\end{bmatrix}
+$$
+is a Schur form of a matrix $B$, what are the eigenvalues of $B$?
+
+#### Answer
+
+The eigenvalues are
+$$
+i,\qquad 1-i.
+$$
+
+### Question 5. Normal but not Hermitian
+
+Give an example of a normal matrix that is not Hermitian.
+
+#### Solution
+
+Let
+$$
+D=\begin{bmatrix}i&0\\0&1\end{bmatrix}.
+$$
+Since $D$ is diagonal, it is normal:
+$$
+D^*D=DD^*.
+$$
+But
+$$
+D^*=\begin{bmatrix}-i&0\\0&1\end{bmatrix}\ne D,
+$$
+so $D$ is not Hermitian.
+
+#### Similar practice
+
+Show that
+$$
+R=\begin{bmatrix}0&-1\\1&0\end{bmatrix}
+$$
+is normal but not Hermitian.
+
+#### Answer
+
+Since $R$ is real orthogonal, $R^TR=RR^T=I$, so it is normal. But
+$$
+R^T=\begin{bmatrix}0&1\\-1&0\end{bmatrix}\ne R,
+$$
+so it is not Hermitian.
+
+## AI companion activities
+
+### Activity 1. Check conventions
+
+Ask an AI assistant:
+
+> Compute the complex inner product of $u=(1+i,2)$ and $v=(i,1-i)$. Use the convention $\langle u,v\rangle=v^*u$. Then explain what changes under the opposite convention.
+
+Then verify the answer by hand.
+
+### Activity 2. Compare Schur and Jordan
+
+Ask:
+
+> Why is Schur decomposition preferred over Jordan decomposition in numerical linear algebra?
+
+A good answer should mention unitary matrices, conditioning, perturbations, and numerical stability.
+
+### Activity 3. Generate examples
+
+Ask for one example of each:
+
+1. Hermitian matrix;
+2. unitary matrix;
+3. normal but non-Hermitian matrix;
+4. nonnormal matrix.
+
+Then test each example in Python.

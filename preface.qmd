@@ -1,0 +1,110 @@
+# Preface {.unnumbered}
+
+> **Linear algebra is not only a collection of calculations.  
+> It is a language for seeing structure.**
+
+This book grew out of **MATH 5110 -- Applied Linear Algebra and Matrix Analysis**.  It is written for students who are learning linear algebra in a new world: a world where computation is everywhere, where data are high-dimensional, where AI tools are available, and where mathematical understanding is more important than ever.
+
+This is not a traditional textbook.  A traditional textbook often begins with definitions, proceeds through algorithms, and ends with exercises.  This book takes a different path.  It is a guided mathematical journey.  We begin with ordinary vectors and matrices, but we treat them as living objects: vectors describe motion, data, signals, functions, and embeddings; matrices act as machines that rotate, stretch, project, compress, and reveal hidden structure.
+
+At the same time, this book is not merely an intuitive introduction.  It goes deeper than many standard linear algebra books.  The goal is to connect the first ideas of linear algebra with the modern mathematical tools used in computation, data science, signal processing, optimization, geometry, and artificial intelligence.
+
+## Why this book?
+
+Students today have access to Python, MATLAB, numerical libraries, symbolic computation, and AI assistants.  These tools can solve many routine calculations.  They can row-reduce a matrix, find eigenvalues, compute an SVD, generate plots, and explain standard procedures.
+
+But tools do not replace understanding.  In fact, they make understanding more important.
+
+A student using computational and AI tools must know:
+
+- what question to ask;
+- what assumptions are being made;
+- whether the answer is mathematically correct;
+- how to interpret the result geometrically;
+- how to connect a computation with a theorem;
+- how to explain the meaning of the answer to another person.
+
+For this reason, the book uses computation and AI as companions to mathematical thinking, not as shortcuts.  Coding is used to explore examples, test conjectures, visualize geometry, and study real data.  AI is used as a discussion partner, but students are asked to verify, critique, and improve its explanations.
+
+## The Central Story
+
+The central story of this book is the movement from simple objects to deep structure.
+
+Linear algebra begins with vectors and matrices, but it does not end there. A vector may first appear as an arrow in the plane, but later it becomes a point in space, a signal, a feature vector, a probability distribution, a function, or an embedding in a high-dimensional data set. A matrix may first appear as a rectangular array of numbers, but later it becomes a transformation, an algorithm, a model, a graph, a covariance structure, or a layer in a neural network.
+
+The book follows this gradual expansion of meaning:
+
+* a **vector** becomes a point, a signal, a feature vector, a function, a random variable, or an embedding;
+* a **basis** becomes a language for describing a problem efficiently;
+* a **change of basis** becomes a change of perspective;
+* a **matrix** becomes a transformation, an algorithm, a model, a graph, or a layer in a neural network;
+* a **subspace** becomes a space of solutions, constraints, signals, features, or possible states;
+* a **linear transformation** becomes a way to move, rotate, project, compress, mix, or evolve data;
+* a **projection** becomes the best approximation to imperfect or incomplete data;
+* a **least-squares solution** becomes the bridge between exact equations and real-world noisy measurements;
+* an **eigenvector** becomes a hidden direction of stability, importance, growth, variation, or long-term behavior;
+* the **spectral theorem** reveals the geometry of symmetric transformations and explains why orthogonal directions are so powerful;
+* the **singular value decomposition** becomes a universal tool for compression, denoising, PCA, least squares, recommender systems, and low-rank structure;
+* the **Schur decomposition** shows what remains possible when diagonalization is not enough;
+* **Fourier and Haar bases** show how signals and images can be decomposed into meaningful pieces at different frequencies and scales;
+* **Hilbert spaces** show that linear algebra continues when vectors become functions;
+* **multilinear algebra** shows how vectors and matrices extend naturally to tensors and higher-order data;
+* **duality and cohomology** show that linear algebra also studies measurements, constraints, and algebraic signatures of structure;
+* **topological data analysis** shows that data has shape: connected components, loops, holes, and persistent features can reveal hidden structure beyond coordinates and distances;
+* **spectral graph theory** shows how networks can be studied through eigenvalues, eigenvectors, Laplacians, diffusion, and clustering;
+* **differential equations** show how matrices describe change, motion, growth, decay, oscillation, and stability;
+* **optimization** shows how gradients, projections, Hessians, and convexity guide the search for best solutions;
+* **probability** shows how expectation vectors, covariance matrices, Gaussian distributions, and random matrices describe uncertainty and variation;
+* **matrix calculus** provides the language for differentiating models built from vectors and matrices, especially in optimization and machine learning.
+
+In this way, the book presents linear algebra not as a collection of isolated techniques, but as a connected story. Each new idea grows from earlier ones. Computation, geometry, data, probability, optimization, topology, and machine learning are not separate worlds; they are different ways of seeing the same linear structures.
+
+The goal is for students to understand not only how to compute with vectors and matrices, but also why these ideas organize so much of modern applied mathematics, data science, artificial intelligence, scientific computing, and mathematical modeling.
+
+
+The book begins with geometry, but it repeatedly returns to computation and applications.  The guiding question is always:
+
+> **What does this linear algebra idea help us see?**
+
+## How to read this book
+
+Each chapter is organized in layers.
+
+First comes the **story layer**.  This part introduces the main idea through a question, a picture, or a concrete example.  It is meant to be read slowly and conceptually.
+
+Second comes the **mathematical layer**.  Here we state definitions, theorems, proofs, and algorithms.  These sections provide the rigor expected in an applied graduate linear algebra course.
+
+Third comes the **computational layer**.  These sections use Python or another computational tool to test examples, visualize transformations, and work with data.
+
+Finally, many chapters include an **AI companion** activity.  These activities ask students to use an AI tool to generate an explanation or computation, and then critically evaluate it.  The goal is not to accept the AI answer, but to develop mathematical judgment.
+
+## What this book covers
+
+The book begins with vectors, coordinates, subspaces, linear transformations, systems of equations, and projections.  It then develops inner product geometry, least squares, orthogonal bases, QR decomposition, eigenvalues, diagonalization, symmetric matrices, quadratic forms, positive definiteness, and Rayleigh quotients.
+
+The middle of the book is built around the great matrix decompositions: spectral decomposition, singular value decomposition, Schur decomposition, and matrix functions.  These ideas form the bridge between theoretical linear algebra and modern computation.
+
+The later chapters move into numerical linear algebra, computational complexity, sparse matrices, eigenvalue algorithms, Fourier analysis, discrete Fourier transforms, fast Fourier transforms, Haar bases, wavelets, Hilbert spaces, Grassmannian geometry, multilinear algebra, graph methods, PCA, and applications to machine learning and AI.
+
+## A book for the AI age
+
+Artificial intelligence has changed the way students learn mathematics.  It can generate examples, write code, explain concepts, and help debug computations.  But AI can also make mistakes, skip assumptions, produce shallow explanations, or hide the mathematical structure behind fluent language.
+
+Therefore, this book treats AI as an object of mathematical practice.  Students are encouraged to ask AI questions, but also to ask:
+
+- Is this explanation precise?
+- Is the proof complete?
+- Are the assumptions correct?
+- Can I verify the result by hand?
+- Can I test it with code?
+- Can I explain the idea geometrically?
+
+In this sense, AI becomes a reason to go deeper, not a reason to think less.
+
+## The guiding message
+
+Linear algebra is one of the central languages of modern applied mathematics.  It is the language of data, images, signals, networks, optimization, statistics, machine learning, and artificial intelligence.  It is also a beautiful mathematical subject with its own internal geometry and structure.
+
+This book invites students to learn linear algebra not only as a set of techniques, but as a way of seeing.
+
+> **Linear algebra is the hidden geometry of data, computation, and intelligence.**

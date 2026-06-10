@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 16 Interactive: Fast Fourier Transforms</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] }, svg: { fontCache: 'global' } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<style>
+  :root{--bg:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+  body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);} header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;} header h1{margin:0 0 8px;font-size:1.8rem;} header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;} main{max-width:1240px;margin:0 auto;padding:24px;} .grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;} .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;} h2{font-size:1.25rem;margin:0 0 12px;} h3{font-size:1.05rem;margin:18px 0 8px;} p{line-height:1.55;} label{font-weight:600;} input[type=number]{width:64px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;} .signal{display:grid;grid-template-columns:repeat(8,70px);gap:6px;margin:8px 0 12px;align-items:center;} .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;} button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;} button.secondary{background:#fff;color:#111827;} canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;} .result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;} .eq{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto;} .small{font-size:.92rem;color:var(--muted);} table{border-collapse:collapse;background:#fff;margin:8px 0;} th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;} .ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .warn{color:var(--amber);font-weight:700;} .task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;} textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;} code{background:#f3f4f6;padding:1px 4px;border-radius:4px;} @media(max-width:920px){.grid{grid-template-columns:1fr;}.signal{grid-template-columns:repeat(4,70px);}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Lab 16 Interactive: Fast Fourier Transforms</h1>
+  <p>Explore the discrete Fourier transform, frequency coefficients, inverse reconstruction, low-pass filtering, and the even-odd recursion behind the FFT.</p>
+</header>
+<main>
+  <section class="grid">
+    <div class="card">
+      <h2>1. Build a length-8 signal</h2>
+      <p class="small">Edit the entries of $\vec f=(f_0,\ldots,f_7)^T$. The tool computes $\widehat{\vec f}=F_8\vec f$.</p>
+      <div class="signal" id="signalInputs"></div>
+      <button onclick="preset('impulse')">Impulse</button>
+      <button onclick="preset('constant')">Constant</button>
+      <button onclick="preset('low')">Low frequency</button>
+      <button onclick="preset('high')">High frequency</button>
+      <button onclick="preset('mixed')">Mixed</button>
+      <button class="secondary" onclick="randomSignal()">Random</button>
+      <div class="result" id="summary"></div>
+    </div>
+    <div class="card">
+      <h2>2. Time domain and frequency domain</h2>
+      <canvas id="plot" width="720" height="520"></canvas>
+      <p class="small">Blue bars show the time samples. Orange bars show magnitudes $|\widehat f_k|$.</p>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>3. DFT coefficients</h2>
+      <div class="result" id="coeffs"></div>
+      <p class="small">A coefficient with large magnitude means the signal has a strong component in that frequency mode.</p>
+    </div>
+    <div class="card">
+      <h2>4. Inverse DFT reconstruction</h2>
+      <div class="result" id="inverse"></div>
+      <p class="small">The inverse formula is $\vec f=\frac{1}{n}F_n^*\widehat{\vec f}$.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>5. Even-odd FFT recursion</h2>
+    <p>For $n=8$, split the signal into even and odd samples. Then combine two length-4 DFTs using twiddle factors.</p>
+    <div class="result" id="fftRecursion"></div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>6. Low-pass filtering</h2>
+      <p class="small">Keep frequency modes $k=0,1,7$ and set the others to zero. This keeps slow variation and removes fast oscillation.</p>
+      <button onclick="applyFilter()">Apply low-pass filter</button>
+      <button class="secondary" onclick="clearFilter()">Clear filter</button>
+      <div class="result" id="filterResult"></div>
+    </div>
+    <div class="card">
+      <h2>7. Complexity comparison</h2>
+      <div class="row"><label>n = </label><input id="nComplex" type="number" value="1024" step="1" min="2"></div>
+      <div class="result" id="complexity"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>8. Independent-study practice tasks with answers</h2>
+    <div class="task"><strong>Task A.</strong> Use the impulse preset. What are all DFT coefficients?<br><strong>Answer:</strong> They are all equal to $1$. A time-zero impulse contains all frequencies equally.</div>
+    <div class="task"><strong>Task B.</strong> Use the constant preset. Which frequency is nonzero?<br><strong>Answer:</strong> Only $k=0$ is nonzero. A constant signal has only zero-frequency content.</div>
+    <div class="task"><strong>Task C.</strong> Use the high-frequency preset. Which coefficient is largest?<br><strong>Answer:</strong> For the alternating signal, the main frequency is $k=4$.</div>
+    <div class="task"><strong>Task D.</strong> Explain why FFT is faster than direct DFT.<br><strong>Answer:</strong> Direct DFT costs $O(n^2)$, while FFT recursively splits the problem into two half-size DFTs plus $O(n)$ combination work, giving $O(n\log n)$.</div>
+  </section>
+
+  <section class="card"><h2>9. Workspace</h2><textarea placeholder="Write observations here. Copy final answers to your notebook or assignment."></textarea></section>
+</main>
+<script>
+function c(re, im=0){return {re:re, im:im};}
+function add(a,b){return c(a.re+b.re,a.im+b.im);} function sub(a,b){return c(a.re-b.re,a.im-b.im);} function mul(a,b){return c(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re);} function conj(a){return c(a.re,-a.im);} function scale(a,s){return c(a.re*s,a.im*s);} function absz(a){return Math.hypot(a.re,a.im);} function cis(theta){return c(Math.cos(theta),Math.sin(theta));}
+function fmt(x){if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(3).replace(/0+$/,'').replace(/\.$/,'');}
+function zfmt(z){let re=fmt(z.re), im=fmt(Math.abs(z.im)); if(Math.abs(z.im)<1e-10)return re; if(Math.abs(z.re)<1e-10)return (z.im<0?'-':'')+im+'i'; return re+(z.im<0?' - ':' + ')+im+'i';}
+function dft(arr){let n=arr.length, out=[]; for(let k=0;k<n;k++){let s=c(0,0); for(let j=0;j<n;j++){s=add(s,mul(arr[j],cis(-2*Math.PI*j*k/n)));} out.push(s);} return out;}
+function idft(hat){let n=hat.length, out=[]; for(let j=0;j<n;j++){let s=c(0,0); for(let k=0;k<n;k++){s=add(s,mul(hat[k],cis(2*Math.PI*j*k/n)));} out.push(scale(s,1/n));} return out;}
+function matHTML(rows){return `<table><tbody>${rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function getSignal(){let a=[]; for(let i=0;i<8;i++)a.push(c(Number(document.getElementById('s'+i).value)||0,0)); return a;}
+function setSignal(vals){for(let i=0;i<8;i++)document.getElementById('s'+i).value=vals[i]; update();}
+function preset(t){if(t==='impulse')setSignal([1,0,0,0,0,0,0,0]); if(t==='constant')setSignal([1,1,1,1,1,1,1,1]); if(t==='low')setSignal([0,1,1,1,0,-1,-1,-1]); if(t==='high')setSignal([1,-1,1,-1,1,-1,1,-1]); if(t==='mixed')setSignal([1,2,0,-1,0,1,0,0]);}
+function randomSignal(){let vals=[]; for(let i=0;i<8;i++)vals.push(Math.floor(Math.random()*7)-3); setSignal(vals);}
+function update(){let f=getSignal(), hat=dft(f), rec=idft(hat); let mags=hat.map(absz); let maxMag=Math.max(...mags); let maxK=mags.indexOf(maxMag); document.getElementById('summary').innerHTML=`Main observed frequency index: <span class='ok'>k=${maxK}</span><br>Largest magnitude: ${fmt(maxMag)}`; document.getElementById('coeffs').innerHTML=matHTML([['k','0','1','2','3','4','5','6','7'],['$\\widehat f_k$',...hat.map(zfmt)],['$|\\widehat f_k|$',...mags.map(fmt)]]); document.getElementById('inverse').innerHTML=matHTML([['j','0','1','2','3','4','5','6','7'],['recovered $f_j$',...rec.map(z=>fmt(z.re))]]) + `<span class='ok'>Reconstruction agrees up to rounding.</span>`; updateRecursion(f,hat); updateComplexity(); draw(f,hat,null); if(window.MathJax){MathJax.typesetPromise();}}
+function updateRecursion(f,hat){let even=[f[0],f[2],f[4],f[6]], odd=[f[1],f[3],f[5],f[7]], E=dft(even), O=dft(odd), rows=[['k','$\\widehat f^{e}_k$','$\\widehat f^{o}_k$','$\\omega_8^k$','$\\widehat f_k$','$\\widehat f_{k+4}$']]; for(let k=0;k<4;k++){let tw=cis(-2*Math.PI*k/8), top=add(E[k],mul(tw,O[k])), bot=sub(E[k],mul(tw,O[k])); rows.push([String(k),zfmt(E[k]),zfmt(O[k]),zfmt(tw),zfmt(top),zfmt(bot)]);} document.getElementById('fftRecursion').innerHTML=matHTML(rows);}
+function applyFilter(){let f=getSignal(), hat=dft(f), filt=hat.map((z,k)=>(k===0||k===1||k===7)?z:c(0,0)), rec=idft(filt); document.getElementById('filterResult').innerHTML=matHTML([['j','0','1','2','3','4','5','6','7'],['filtered signal',...rec.map(z=>fmt(z.re))]]); draw(f,hat,rec); if(window.MathJax){MathJax.typesetPromise();}}
+function clearFilter(){document.getElementById('filterResult').innerHTML='Filter cleared.'; update();}
+function updateComplexity(){let n=Number(document.getElementById('nComplex').value)||1024; let direct=n*n, fft=n*Math.log2(n); let ratio=direct/fft; document.getElementById('complexity').innerHTML=`Direct DFT: about ${fmt(direct)} operations ($O(n^2)$).<br>FFT: about ${fmt(fft)} operations ($O(n\\log_2 n)$).<br>Ratio: about <span class='ok'>${fmt(ratio)}</span> times.`;}
+function draw(f,hat,filtered){let canvas=document.getElementById('plot'),ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);let mid1=160, mid2=395;ctx.strokeStyle='#e5e7eb';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(40,mid1);ctx.lineTo(W-30,mid1);ctx.stroke();ctx.beginPath();ctx.moveTo(40,mid2);ctx.lineTo(W-30,mid2);ctx.stroke();ctx.fillStyle='#111827';ctx.font='16px system-ui';ctx.fillText('Time samples',40,28);ctx.fillText('Frequency magnitudes',40,260);let maxv=Math.max(1,...f.map(z=>Math.abs(z.re)),...(filtered?filtered.map(z=>Math.abs(z.re)):[]));for(let i=0;i<8;i++){let x=70+i*75, h=f[i].re/maxv*95;ctx.fillStyle='#2563eb';ctx.fillRect(x,mid1-Math.max(0,h),34,Math.abs(h)); if(h<0)ctx.fillRect(x,mid1,34,Math.abs(h)); ctx.fillStyle='#111827';ctx.fillText(String(i),x+10,mid1+22); if(filtered){let hf=filtered[i].re/maxv*95;ctx.fillStyle='#065f46';ctx.fillRect(x+38,mid1-Math.max(0,hf),18,Math.abs(hf)); if(hf<0)ctx.fillRect(x+38,mid1,18,Math.abs(hf));}}
+let mags=hat.map(absz), maxm=Math.max(1,...mags);for(let k=0;k<8;k++){let x=70+k*75, h=mags[k]/maxm*120;ctx.fillStyle='#f97316';ctx.fillRect(x,mid2-h,34,h);ctx.fillStyle='#111827';ctx.fillText(String(k),x+10,mid2+22);} if(filtered){ctx.fillStyle='#065f46';ctx.fillText('Green: filtered reconstruction',420,28);}}
+function setup(){let el=document.getElementById('signalInputs'); for(let i=0;i<8;i++){let inp=document.createElement('input');inp.type='number';inp.id='s'+i;inp.step='1';inp.value=[1,2,0,-1,0,1,0,0][i];inp.addEventListener('input',update);el.appendChild(inp);} document.getElementById('nComplex').addEventListener('input',updateComplexity); update();}
+setup();
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 8 Interactive: Jordan Canonical Form</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] }, svg: { fontCache: 'global' } };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--bg:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);}header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;}header h1{margin:0 0 8px;font-size:1.8rem;}header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;}main{max-width:1240px;margin:0 auto;padding:24px}.grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px}h2{font-size:1.25rem;margin:0 0 12px}h3{font-size:1.05rem;margin:18px 0 8px}p{line-height:1.55}label{display:block;margin:8px 0 4px;font-weight:600}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}input[type=number]{width:70px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff}.matrix{display:grid;gap:6px;margin:8px 0 12px;align-items:center}.m2{grid-template-columns:repeat(2,70px)}button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0}button.secondary{background:#fff;color:#111827}select{padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff}.result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto}.eq{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto}.small{font-size:.92rem;color:var(--muted)}table{border-collapse:collapse;background:#fff;margin:8px 0}th,td{border:1px solid var(--line);padding:7px 10px;text-align:right}.ok{color:var(--green);font-weight:700}.bad{color:var(--red);font-weight:700}.warn{color:var(--amber);font-weight:700}.task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0}textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit}canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto}@media(max-width:920px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<h1>Lab 8 Interactive: Jordan Canonical Form</h1>
+<p>Explore the failure of diagonalization, generalized eigenvectors, Jordan blocks, powers, exponentials, minimal polynomials, and block-size detection.</p>
+</header>
+<main>
+<section class="grid">
+<div class="card">
+<h2>1. A $2\times2$ repeated-eigenvalue matrix</h2>
+<p class="small">Use $A=\begin{bmatrix}\lambda&a\\0&\lambda\end{bmatrix}$. When $a\ne0$, there is only one eigenvector direction.</p>
+<div class="row"><label>$\lambda$</label><input id="lam2" type="number" value="2" step="1"><label>$a$</label><input id="a2" type="number" value="1" step="1"></div>
+<button onclick="preset2('jordan')">Jordan block</button><button onclick="preset2('diagonal')">Diagonal</button><button onclick="preset2('zero')">Zero eigenvalue block</button>
+<div class="result" id="diagResult"></div>
+</div>
+<div class="card">
+<h2>2. Jordan chain visualization</h2>
+<canvas id="chainCanvas" width="720" height="480"></canvas>
+<p class="small">The vector $e_2$ maps to a multiple of $e_1$ under $A-\lambda I$, and $e_1$ maps to $0$.</p>
+</div>
+</section>
+<section class="grid">
+<div class="card">
+<h2>3. Build a Jordan block $J_{\lambda,k}$</h2>
+<div class="row"><label>$\lambda$</label><input id="lam" type="number" value="3" step="1"><label>size $k$</label><select id="size"><option>1</option><option selected>2</option><option>3</option><option>4</option></select><label>power $m$</label><input id="powm" type="number" value="5" step="1"></div>
+<button onclick="blockPreset('two')">$2\times2$ block</button><button onclick="blockPreset('three')">$3\times3$ block</button><button class="secondary" onclick="blockPreset('nil')">Nilpotent block</button>
+<div class="result" id="blockResult"></div>
+</div>
+<div class="card">
+<h2>4. Matrix exponential</h2>
+<div class="row"><label>$t$</label><input id="timeT" type="number" value="1" step="0.25"></div>
+<div class="result" id="expResult"></div>
+</div>
+</section>
+<section class="grid">
+<div class="card">
+<h2>5. Kernel dimensions and block sizes</h2>
+<p class="small">Enter $d_j=\dim\ker((A-\lambda I)^j)$. The differences $d_j-d_{j-1}$ count blocks of size at least $j$.</p>
+<div class="row"><label>$d_1$</label><input id="d1" type="number" value="2" step="1"><label>$d_2$</label><input id="d2" type="number" value="4" step="1"><label>$d_3$</label><input id="d3" type="number" value="5" step="1"><label>$d_4$</label><input id="d4" type="number" value="5" step="1"></div>
+<button onclick="dimPreset('32')">Blocks 3 and 2</button><button onclick="dimPreset('321')">Blocks 3, 2, 1</button><button onclick="dimPreset('111')">Diagonal case</button>
+<div class="result" id="dimResult"></div>
+</div>
+<div class="card">
+<h2>6. Minimal polynomial</h2>
+<p class="small">Enter largest Jordan block size for each eigenvalue.</p>
+<div class="row"><label>$\lambda_1$</label><input id="ml1" type="number" value="1" step="1"><label>largest size</label><input id="mr1" type="number" value="3" step="1"></div>
+<div class="row"><label>$\lambda_2$</label><input id="ml2" type="number" value="-2" step="1"><label>largest size</label><input id="mr2" type="number" value="1" step="1"></div>
+<div class="result" id="minpolyResult"></div>
+</div>
+</section>
+<section class="card">
+<h2>7. Independent-study practice tasks with answers</h2>
+<div class="task"><strong>Task A.</strong> Decide whether $\begin{bmatrix}2&1\\0&2\end{bmatrix}$ is diagonalizable.<br><strong>Answer:</strong> No. The eigenvalue $2$ has algebraic multiplicity $2$ but only a one-dimensional eigenspace.</div>
+<div class="task"><strong>Task B.</strong> Find a Jordan chain for $\begin{bmatrix}2&1\\0&2\end{bmatrix}$.<br><strong>Answer:</strong> $v_1=e_1$, $v_2=e_2$, because $(A-2I)v_1=0$ and $(A-2I)v_2=v_1$.</div>
+<div class="task"><strong>Task C.</strong> Compute $J^m$ for $J=\begin{bmatrix}3&1\\0&3\end{bmatrix}$.<br><strong>Answer:</strong> $J^m=\begin{bmatrix}3^m&m3^{m-1}\\0&3^m\end{bmatrix}$.</div>
+<div class="task"><strong>Similar practice.</strong> Compute $J^5$ for $J=\begin{bmatrix}2&1\\0&2\end{bmatrix}$.<br><strong>Answer:</strong> $J^5=\begin{bmatrix}32&80\\0&32\end{bmatrix}$.</div>
+<div class="task"><strong>Task D.</strong> If $d_1=3,d_2=5,d_3=6$, find block sizes.<br><strong>Answer:</strong> Differences are $3,2,1$, so block sizes are $3,2,1$.</div>
+</section>
+<section class="card"><h2>8. Workspace</h2><textarea placeholder="Write observations here. Copy final answers to your notebook or assignment."></textarea></section>
+</main>
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(row=>`<tr>${row.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function eye(n){let I=[];for(let i=0;i<n;i++){let r=Array(n).fill(0);r[i]=1;I.push(r);}return I;}
+function add(A,B){return A.map((r,i)=>r.map((x,j)=>x+B[i][j]));}
+function scale(A,c){return A.map(r=>r.map(x=>c*x));}
+function mul(A,B){let C=Array.from({length:A.length},()=>Array(B[0].length).fill(0));for(let i=0;i<A.length;i++)for(let j=0;j<B[0].length;j++)for(let k=0;k<B.length;k++)C[i][j]+=A[i][k]*B[k][j];return C;}
+function pow(A,m){let R=eye(A.length), B=A.map(r=>r.slice());for(let i=0;i<m;i++)R=mul(R,A);return R;}
+function fact(n){let r=1;for(let i=2;i<=n;i++)r*=i;return r;}
+function binom(n,k){if(k<0||k>n)return 0;let r=1;for(let i=1;i<=k;i++)r=r*(n-k+i)/i;return r;}
+function jordan(lam,k){let J=eye(k).map(r=>r.map(x=>x*lam));for(let i=0;i<k-1;i++)J[i][i+1]=1;return J;}
+function nil(k){let N=Array.from({length:k},()=>Array(k).fill(0));for(let i=0;i<k-1;i++)N[i][i+1]=1;return N;}
+function jordanPowerFormula(lam,k,m){let N=nil(k), R=Array.from({length:k},()=>Array(k).fill(0)), Nr=eye(k);for(let r=0;r<k;r++){let coeff=binom(m,r)*Math.pow(lam,m-r);R=add(R,scale(Nr,coeff));Nr=mul(Nr,N);}return R;}
+function jordanExp(lam,k,t){let N=nil(k), R=Array.from({length:k},()=>Array(k).fill(0)), Nr=eye(k);for(let r=0;r<k;r++){let coeff=Math.exp(lam*t)*Math.pow(t,r)/fact(r);R=add(R,scale(Nr,coeff));Nr=mul(Nr,N);}return R;}
+function updateDiag(){let l=Number(lam2.value)||0,a=Number(a2.value)||0;let A=[[l,a],[0,l]];let msg=`A = ${matHTML(A)} Characteristic polynomial: $(t-${fmt(l)})^2$.<br>`;if(Math.abs(a)<1e-10){msg+=`<span class='ok'>Diagonalizable.</span> Since $a=0$, the matrix is already diagonal and has two independent eigenvectors.`;}else{msg+=`<span class='bad'>Not diagonalizable.</span> The eigenspace is $\\operatorname{span}(e_1)$, so there is only one independent eigenvector.<br>Jordan chain: $(A-${fmt(l)}I)e_1=0$ and $(A-${fmt(l)}I)e_2=${fmt(a)}e_1$.`;}diagResult.innerHTML=msg;drawChain(l,a);}
+function drawChain(l,a){let c=chainCanvas,ctx=c.getContext('2d'),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);ctx.strokeStyle='#9ca3af';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(80,H/2);ctx.lineTo(W-80,H/2);ctx.stroke();let xs=[160,360,560], labels=['$e_2$','$e_1$','$0$'];ctx.font='20px system-ui';for(let i=0;i<3;i++){ctx.fillStyle=i===0?'#f97316':i===1?'#2563eb':'#111827';ctx.beginPath();ctx.arc(xs[i],H/2,32,0,2*Math.PI);ctx.fill();ctx.fillStyle='#fff';ctx.textAlign='center';ctx.fillText(labels[i].replace(/\$/g,''),xs[i],H/2+7);}ctx.strokeStyle='#111827';ctx.lineWidth=3;function arrow(x1,x2,text){ctx.beginPath();ctx.moveTo(x1+38,H/2);ctx.lineTo(x2-38,H/2);ctx.stroke();ctx.beginPath();ctx.moveTo(x2-48,H/2-8);ctx.lineTo(x2-38,H/2);ctx.lineTo(x2-48,H/2+8);ctx.stroke();ctx.fillStyle='#111827';ctx.font='16px system-ui';ctx.textAlign='center';ctx.fillText(text,(x1+x2)/2,H/2-28);}arrow(xs[0],xs[1],`A-${fmt(l)}I`);arrow(xs[1],xs[2],`A-${fmt(l)}I`);ctx.textAlign='left';ctx.fillStyle='#111827';ctx.fillText(Math.abs(a)<1e-10?'Diagonal case: e₂ does not map to e₁.':'Jordan chain: e₂ → e₁ → 0',30,36);}
+function updateBlock(){let l=Number(lam.value)||0,k=Number(size.value),m=Math.max(0,Math.floor(Number(powm.value)||0));let J=jordan(l,k);let P=jordanPowerFormula(l,k,m);blockResult.innerHTML=`$J_{${fmt(l)},${k}}$ = ${matHTML(J)} $J^${m}$ by binomial formula = ${matHTML(P)} Formula: $J^m=\\sum_{r=0}^{k-1}\\binom{m}{r}\\lambda^{m-r}N^r$.`;let t=Number(timeT.value)||0;expResult.innerHTML=`$e^{tJ}$ at $t=${fmt(t)}$ = ${matHTML(jordanExp(l,k,t))} Formula: $e^{tJ}=e^{\\lambda t}\\sum_{r=0}^{k-1}\\frac{t^r}{r!}N^r$.`;}
+function updateDims(){let ds=[0,Number(d1.value)||0,Number(d2.value)||0,Number(d3.value)||0,Number(d4.value)||0];let dif=[];for(let i=1;i<ds.length;i++)dif.push(ds[i]-ds[i-1]);let sizes=[];for(let i=1;i<dif.length;i++){let exact=dif[i-1]-dif[i];for(let j=0;j<exact;j++)sizes.push(i);}for(let j=0;j<dif[dif.length-1];j++)sizes.push(dif.length);dimResult.innerHTML=`Differences $d_j-d_{j-1}$: ${dif.map(fmt).join(', ')}.<br>Estimated block sizes: <span class='ok'>${sizes.length?sizes.sort((a,b)=>b-a).join(', '):'none'}</span><br><span class='small'>These values should be nonnegative and nonincreasing for valid kernel dimensions from one eigenvalue.</span>`;}
+function updateMinpoly(){let l1=Number(ml1.value)||0,r1=Math.max(1,Number(mr1.value)||1),l2=Number(ml2.value)||0,r2=Math.max(1,Number(mr2.value)||1);let s=`$m_A(t)=(t-${fmt(l1)})^{${fmt(r1)}}`;if(Math.abs(l2-l1)>1e-10)s+=`(t-${fmt(l2)})^{${fmt(r2)}}`;s+=`$.<br>The exponent is the largest Jordan block size for each eigenvalue.`;minpolyResult.innerHTML=s;}
+function preset2(t){if(t==='jordan'){lam2.value=2;a2.value=1;}if(t==='diagonal'){lam2.value=2;a2.value=0;}if(t==='zero'){lam2.value=0;a2.value=1;}update();}
+function blockPreset(t){if(t==='two'){lam.value=3;size.value=2;powm.value=5;}if(t==='three'){lam.value=3;size.value=3;powm.value=4;}if(t==='nil'){lam.value=0;size.value=4;powm.value=3;}update();}
+function dimPreset(t){if(t==='32'){d1.value=2;d2.value=4;d3.value=5;d4.value=5;}if(t==='321'){d1.value=3;d2.value=5;d3.value=6;d4.value=6;}if(t==='111'){d1.value=3;d2.value=3;d3.value=3;d4.value=3;}update();}
+function update(){updateDiag();updateBlock();updateDims();updateMinpoly();if(window.MathJax){MathJax.typesetPromise();}}
+['lam2','a2','lam','size','powm','timeT','d1','d2','d3','d4','ml1','mr1','ml2','mr2'].forEach(id=>document.getElementById(id).addEventListener('input',update));
+update();
+</script>
+</body>
+</html>

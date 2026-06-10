@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 24 Interactive: Linear Algebra and Differential Equations</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]'], ['$$','$$']] }, svg: { fontCache: 'global' } };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--bg:#fff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink)}
+header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa} header h1{margin:0 0 8px;font-size:1.8rem} header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55}
+main{max-width:1240px;margin:0 auto;padding:24px}.grid{display:grid;grid-template-columns:430px 1fr;gap:24px;align-items:start}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px}h2{font-size:1.25rem;margin:0 0 12px}h3{font-size:1.05rem;margin:18px 0 8px}p{line-height:1.55}.small{font-size:.92rem;color:var(--muted)}label{display:block;margin:8px 0 4px;font-weight:600}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}input[type=number]{width:72px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff}.matrix{display:grid;gap:6px;margin:8px 0 12px}.m2{grid-template-columns:repeat(2,80px)}.m3{grid-template-columns:repeat(3,80px)}button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0}button.secondary{background:#fff;color:#111827}select{padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff}canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto}.result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto}.eq{background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto}table{border-collapse:collapse;background:#fff;margin:8px 0}td,th{border:1px solid var(--line);padding:7px 10px;text-align:right}.ok{color:var(--green);font-weight:700}.bad{color:var(--red);font-weight:700}.warn{color:var(--amber);font-weight:700}.task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0}textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit}@media(max-width:920px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<h1>Lab 24 Interactive: Linear Algebra and Differential Equations</h1>
+<p>Explore systems of the form \(\mathbf{x}'=A\mathbf{x}\), stability from eigenvalues, forward Euler as matrix iteration, and graph heat diffusion.</p>
+</header>
+<main>
+<section class="grid">
+<div class="card">
+<h2>1. Choose a \(2\times2\) system</h2>
+<p class="small">The system is \(\mathbf{x}'=A\mathbf{x}\), where \(A=\begin{bmatrix}a&b\\c&d\end{bmatrix}\).</p>
+<h3>Matrix \(A\)</h3><div class="matrix m2" id="Ainputs"></div>
+<h3>Initial condition \(\mathbf{x}_0\)</h3><div class="row"><label>\(x_0\)</label><input id="x0" type="number" value="1" step="0.5"><label>\(y_0\)</label><input id="y0" type="number" value="1" step="0.5"></div>
+<div class="row"><label>time \(T\)</label><input id="T" type="number" value="3" step="0.25"><label>Euler step \(h\)</label><input id="h" type="number" value="0.05" step="0.01"></div>
+<button onclick="preset('stable')">Stable spiral</button><button onclick="preset('saddle')">Saddle</button><button onclick="preset('center')">Center</button><button onclick="preset('node')">Stable node</button><button class="secondary" onclick="preset('jordan')">Jordan block</button>
+<div class="result" id="systemResult"></div>
+</div>
+<div class="card">
+<h2>2. Vector field and trajectory</h2>
+<canvas id="phase" width="720" height="560"></canvas>
+<p class="small">Gray arrows show the vector field \(A\mathbf{x}\). The orange curve is the Euler trajectory from \(\mathbf{x}_0\).</p>
+</div>
+</section>
+<section class="grid">
+<div class="card">
+<h2>3. Forward Euler multiplier</h2>
+<p>For an eigenvalue \(\lambda\), forward Euler uses the multiplier \(1+h\lambda\). The eigenmode decays when \(|1+h\lambda|<1\).</p>
+<div class="result" id="eulerResult"></div>
+</div>
+<div class="card">
+<h2>4. Graph heat equation on \(1-2-3\)</h2>
+<p class="small">The Laplacian is \(L=\begin{bmatrix}1&-1&0\\-1&2&-1\\0&-1&1\end{bmatrix}\). We simulate \(\mathbf{u}'=-L\mathbf{u}\).</p>
+<div class="row"><label>\(u_1(0)\)</label><input id="u1" type="number" value="10"><label>\(u_2(0)\)</label><input id="u2" type="number" value="0"><label>\(u_3(0)\)</label><input id="u3" type="number" value="0"><label>time</label><input id="heatT" type="number" value="2" step="0.25"></div>
+<canvas id="heat" width="720" height="360"></canvas>
+<div class="result" id="heatResult"></div>
+</div>
+</section>
+<section class="card">
+<h2>5. Independent-study tasks with answers</h2>
+<div class="task"><strong>Task A.</strong> Choose the saddle preset. What are the signs of the eigenvalues? <br><strong>Answer:</strong> One eigenvalue has positive real part and one has negative real part, so one direction grows and one direction decays.</div>
+<div class="task"><strong>Task B.</strong> Choose the center preset. Why do trajectories rotate instead of decay? <br><strong>Answer:</strong> The eigenvalues are purely imaginary, so the real parts are zero.</div>
+<div class="task"><strong>Task C.</strong> Try a larger Euler step for a stable system. What can go wrong? <br><strong>Answer:</strong> Euler may become numerically unstable when \(|1+h\lambda|\ge 1\) for some eigenvalue.</div>
+<div class="task"><strong>Task D.</strong> In the graph heat equation, what is the limiting vector? <br><strong>Answer:</strong> For the connected path graph, the solution converges to the average of the initial values times \((1,1,1)^T\).</div>
+</section>
+<section class="card"><h2>6. Workspace</h2><textarea placeholder="Write observations here..."></textarea></section>
+</main>
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'')}
+function createInputs(){const vals=[[-1,-4],[1,-1]], el=document.getElementById('Ainputs');el.innerHTML='';for(let i=0;i<2;i++){for(let j=0;j<2;j++){let inp=document.createElement('input');inp.type='number';inp.step='0.5';inp.value=vals[i][j];inp.id='A'+i+j;inp.addEventListener('input',update);el.appendChild(inp)}}}
+function getA(){return [[Number(A00.value)||0,Number(A01.value)||0],[Number(A10.value)||0,Number(A11.value)||0]]}
+function setA(M){for(let i=0;i<2;i++)for(let j=0;j<2;j++)document.getElementById('A'+i+j).value=M[i][j]}
+function eig2(A){let a=A[0][0],b=A[0][1],c=A[1][0],d=A[1][1];let tr=a+d,det=a*d-b*c,disc=tr*tr-4*det;if(disc>=0){let s=Math.sqrt(disc);return [{re:(tr+s)/2,im:0},{re:(tr-s)/2,im:0}]}else{let s=Math.sqrt(-disc)/2;return [{re:tr/2,im:s},{re:tr/2,im:-s}]}}
+function matVec(A,x){return [A[0][0]*x[0]+A[0][1]*x[1],A[1][0]*x[0]+A[1][1]*x[1]]}
+function add(x,y){return [x[0]+y[0],x[1]+y[1]]} function scale(s,x){return [s*x[0],s*x[1]]}
+function classify(eigs){let maxRe=Math.max(eigs[0].re,eigs[1].re), minRe=Math.min(eigs[0].re,eigs[1].re);let hasIm=Math.abs(eigs[0].im)>1e-8||Math.abs(eigs[1].im)>1e-8;if(maxRe<0)return hasIm?'Asymptotically stable spiral':'Asymptotically stable node'; if(maxRe>0&&minRe<0)return 'Unstable saddle'; if(maxRe>0)return hasIm?'Unstable spiral':'Unstable node'; return hasIm?'Center or borderline oscillation':'Borderline case'}
+function updateSystem(){let A=getA(), eigs=eig2(A), tr=A[0][0]+A[1][1], det=A[0][0]*A[1][1]-A[0][1]*A[1][0];let eigText=eigs.map(z=>Math.abs(z.im)<1e-10?fmt(z.re):`${fmt(z.re)} ${z.im>=0?'+':'-'} ${fmt(Math.abs(z.im))}i`).join(', ');systemResult.innerHTML=`trace = ${fmt(tr)}, determinant = ${fmt(det)}<br>eigenvalues: ${eigText}<br><span class='${classify(eigs).startsWith('Asym')?'ok':classify(eigs).includes('saddle')||classify(eigs).startsWith('Unstable')?'bad':'warn'}'>${classify(eigs)}</span>`;updateEuler(eigs);drawPhase(A)}
+function updateEuler(eigs){let hh=Number(h.value)||0;let lines=eigs.map(z=>{let re=1+hh*z.re, im=hh*z.im, mag=Math.sqrt(re*re+im*im);return `For λ=${Math.abs(z.im)<1e-10?fmt(z.re):fmt(z.re)+'+'+fmt(z.im)+'i'}, 1+hλ has magnitude ${fmt(mag)}: ${mag<1?'<span class="ok">decays</span>':'<span class="bad">does not decay</span>'}`});eulerResult.innerHTML=lines.join('<br>')}
+function drawPhase(A){let canvas=phase,ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height,sc=70;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);function pt(x,y){return [W/2+x*sc,H/2-y*sc]}ctx.strokeStyle='#eef2f7';for(let x=-5;x<=5;x++){let p=pt(x,0)[0];ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,H);ctx.stroke()}for(let y=-4;y<=4;y++){let p=pt(0,y)[1];ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(W,p);ctx.stroke()}ctx.strokeStyle='#9ca3af';ctx.lineWidth=1.5;let o=pt(0,0);ctx.beginPath();ctx.moveTo(0,o[1]);ctx.lineTo(W,o[1]);ctx.stroke();ctx.beginPath();ctx.moveTo(o[0],0);ctx.lineTo(o[0],H);ctx.stroke();
+ctx.strokeStyle='#cbd5e1';ctx.fillStyle='#cbd5e1';ctx.lineWidth=1;for(let x=-4;x<=4;x++){for(let y=-3;y<=3;y++){let v=matVec(A,[x,y]);let n=Math.hypot(v[0],v[1]);if(n<1e-8)continue;let len=.22;let q=[x+len*v[0]/n,y+len*v[1]/n],p=pt(x,y),r=pt(q[0],q[1]);ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(r[0],r[1]);ctx.stroke();ctx.beginPath();ctx.arc(r[0],r[1],2,0,2*Math.PI);ctx.fill();}}
+let x=[Number(x0.value)||0,Number(y0.value)||0], hh=Math.max(0.001,Number(h.value)||0.05), TT=Math.max(0,Number(T.value)||3), steps=Math.min(2000,Math.ceil(TT/hh));ctx.strokeStyle='#f97316';ctx.lineWidth=3;ctx.beginPath();let p=pt(x[0],x[1]);ctx.moveTo(p[0],p[1]);for(let k=0;k<steps;k++){x=add(x,scale(hh,matVec(A,x)));p=pt(x[0],x[1]);ctx.lineTo(p[0],p[1]);}ctx.stroke();ctx.fillStyle='#111827';let p0=pt(Number(x0.value)||0,Number(y0.value)||0);ctx.beginPath();ctx.arc(p0[0],p0[1],5,0,2*Math.PI);ctx.fill();ctx.fillText('x₀',p0[0]+8,p0[1]-8)}
+function preset(t){if(t==='stable')setA([[-1,-4],[1,-1]]);if(t==='saddle')setA([[1,0],[0,-3]]);if(t==='center')setA([[0,-2],[2,0]]);if(t==='node')setA([[-2,0],[0,-5]]);if(t==='jordan')setA([[3,1],[0,3]]);update()}
+function heatSim(){let u=[Number(u1.value)||0,Number(u2.value)||0,Number(u3.value)||0], TT=Math.max(0,Number(heatT.value)||0), h=.005, steps=Math.ceil(TT/h);let L=[[1,-1,0],[-1,2,-1],[0,-1,1]];function Lv(v){return [L[0][0]*v[0]+L[0][1]*v[1]+L[0][2]*v[2],L[1][0]*v[0]+L[1][1]*v[1]+L[1][2]*v[2],L[2][0]*v[0]+L[2][1]*v[1]+L[2][2]*v[2]]}for(let k=0;k<steps;k++){let w=Lv(u);u=[u[0]-h*w[0],u[1]-h*w[1],u[2]-h*w[2]]}return u}
+function drawHeat(){let u=heatSim(), init=[Number(u1.value)||0,Number(u2.value)||0,Number(u3.value)||0], avg=(init[0]+init[1]+init[2])/3;heatResult.innerHTML=`u(t) ≈ [${u.map(fmt).join(', ')}]<br>average of initial values = ${fmt(avg)}. Long-time limit: [${fmt(avg)}, ${fmt(avg)}, ${fmt(avg)}].`;let canvas=heat,ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);let maxv=Math.max(1,...init.map(Math.abs),...u.map(Math.abs));let xs=[W*.2,W*.5,W*.8];ctx.strokeStyle='#94a3b8';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(xs[0],H*.7);ctx.lineTo(xs[1],H*.7);ctx.lineTo(xs[2],H*.7);ctx.stroke();for(let i=0;i<3;i++){let r=25+40*Math.abs(u[i])/maxv;ctx.fillStyle='#f97316';ctx.beginPath();ctx.arc(xs[i],H*.7,r,0,2*Math.PI);ctx.globalAlpha=.25;ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle='#111827';ctx.stroke();ctx.fillStyle='#111827';ctx.font='16px system-ui';ctx.fillText(`u${i+1}=${fmt(u[i])}`,xs[i]-35,H*.7-r-12)}}
+function update(){updateSystem();drawHeat();if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise()}
+createInputs();['x0','y0','T','h','u1','u2','u3','heatT'].forEach(id=>document.getElementById(id).addEventListener('input',update));update();
+</script>
+</body>
+</html>

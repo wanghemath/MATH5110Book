@@ -1,0 +1,1649 @@
+---
+title: "Chapter 4. Coordinates: Bases, Dimension, and Rank--Nullity"
+subtitle: "How linear algebra measures information, redundancy, and lost directions"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: show
+    code-tools: true
+    html-math-method: mathjax
+  pdf:
+    toc: true
+    number-sections: true
+jupyter: python3
+---
+
+> **Guiding question.**  
+> When a vector space becomes large or abstract, how do we choose coordinates, count degrees of freedom, and measure what a linear transformation preserves or loses?
+
+In Chapter 3 we learned that vectors do not have to be arrows in the plane. They can be columns, polynomials, matrices, functions, or signals. We also learned that linear transformations preserve the operations of addition and scalar multiplication.
+
+Chapter 4 answers the next natural question: once we have a vector space, how do we build a coordinate system for it?
+
+A basis is a coordinate system. It is a list of vectors that is just large enough to describe the whole space and just small enough to avoid redundancy. Dimension is the number of independent directions in the space. Rank--nullity is the accounting law that says every linear transformation divides the input information into two parts: information that survives in the image and information that disappears into the kernel.
+
+This chapter is the bridge from abstract linear spaces to computation. It explains why row reduction finds bases, why rank measures information, why kernels describe lost directions, and why invertibility is the special case where nothing is lost.
+
+::: {.callout-note title="How to read this chapter"}
+This chapter has three layers.
+
+1. **Story.** A basis is a language for describing vectors.
+2. **Computation.** Row reduction finds independent columns, coordinates, kernels, and images.
+3. **Structure.** Dimension theorems explain why the computations work.
+:::
+
+::: {.callout-tip title="AI and coding companion"}
+Use Python or an AI assistant to check row reductions, compute ranks, and test conjectures. But always ask for an explanation in mathematical language: What is the space? What is the basis? What is the kernel? What information is lost?
+:::
+
+```{python}
+#| label: setup
+#| message: false
+import sympy as sp
+sp.init_printing()
+```
+
+## 4.1 Linear independence: finding redundancy
+
+Imagine several people give you directions to the same destination. Some directions may be necessary; some may repeat information already contained in the others. Linear independence is the mathematical test for whether a list of vectors contains redundancy.
+
+::: {.callout-note title="Definition 4.1: Linear independence"}
+Let $V$ be a vector space over a field $\mathbb F$. Vectors
+
+$$
+\vec v_1,\vec v_2,\ldots,\vec v_p\in V
+$$
+
+are **linearly independent** if the equation
+
+$$
+x_1\vec v_1+x_2\vec v_2+\cdots+x_p\vec v_p=\vec 0
+$$
+
+has only the trivial solution
+
+$$
+x_1=x_2=\cdots=x_p=0.
+$$
+
+They are **linearly dependent** if there exist scalars $a_1,\ldots,a_p\in \mathbb F$, not all zero, such that
+
+$$
+a_1\vec v_1+a_2\vec v_2+\cdots+a_p\vec v_p=\vec 0.
+$$
+
+Such an equation is called a **nontrivial linear relation**.
+:::
+
+For an infinite set $S\subseteq V$, linear independence means that every finite subset of $S$ is linearly independent. In this chapter most computations use finite lists.
+
+::: {.callout-important title="Meaning"}
+A dependent list contains at least one vector that can be built from the others. An independent list has no redundant vector.
+:::
+
+::: {.callout-note title="Proposition 4.2: Redundancy test"}
+Suppose $\vec v_i$ is a linear combination of the preceding vectors $\vec v_1,\ldots,\vec v_{i-1}$. Then removing $\vec v_i$ does not change the span:
+
+$$
+\operatorname{span}\{\vec v_1,\ldots,\vec v_p\}
+=
+\operatorname{span}\{\vec v_1,\ldots,\vec v_{i-1},\vec v_{i+1},\ldots,\vec v_p\}.
+$$
+:::
+
+::: {.callout-note title="Proposition 4.3: Basic consequences"}
+Let $\vec v_1,\ldots,\vec v_p\in V$.
+
+1. If one of the vectors is $\vec 0$, then the list is linearly dependent.
+2. If a sublist is linearly dependent, then the whole list is linearly dependent.
+3. A one-vector set $\{\vec v\}$ is dependent if and only if $\vec v=\vec 0$.
+4. A two-vector set $\{\vec u,\vec v\}$ is dependent if and only if one vector is a scalar multiple of the other.
+:::
+
+### 4.1.1 Matrix test for independence
+
+When the vectors are columns in $\mathbb F^n$, independence becomes a homogeneous linear system.
+
+::: {.callout-note title="Theorem 4.4: Matrix test for independence"}
+Let $\vec v_1,\ldots,\vec v_p\in \mathbb F^n$ and let
+
+$$
+A=\begin{bmatrix}\vec v_1&\vec v_2&\cdots&\vec v_p\end{bmatrix}.
+$$
+
+Then $\{\vec v_1,\ldots,\vec v_p\}$ is linearly independent if and only if any, and hence all, of the following equivalent conditions hold:
+
+1. $A\vec x=\vec 0$ has only the zero solution.
+2. There is no free variable in $A\vec x=\vec 0$.
+3. Every column of $A$ is a pivot column.
+4. $\operatorname{rank}(A)=p$.
+5. $\ker(A)=\{\vec 0\}$.
+:::
+
+::: {.callout-note title="Corollary 4.5"}
+If $p>n$, then any set of $p$ vectors in $\mathbb F^n$ is linearly dependent.
+:::
+
+The converse is false. Having $p\leq n$ does not guarantee independence. For example, two equal nonzero vectors in $\mathbb R^n$ are dependent.
+
+### 4.1.2 Example: finding a dependence relation
+
+Let
+
+$$
+\vec v_1=\begin{bmatrix}1\\-3\\4\end{bmatrix},\qquad
+\vec v_2=\begin{bmatrix}2\\-2\\5\end{bmatrix},\qquad
+\vec v_3=\begin{bmatrix}3\\-1\\6\end{bmatrix}.
+$$
+
+Form the matrix with these vectors as columns:
+
+$$
+A=\begin{bmatrix}
+1&2&3\\
+-3&-2&-1\\
+4&5&6
+\end{bmatrix}.
+$$
+
+```{python}
+A = sp.Matrix([[1, 2, 3],
+               [-3, -2, -1],
+               [4, 5, 6]])
+A_rref, pivots = A.rref()
+A, A_rref, pivots
+```
+
+The reduced row echelon form is
+
+$$
+\operatorname{rref}(A)=
+\begin{bmatrix}
+1&0&-1\\
+0&1&2\\
+0&0&0
+\end{bmatrix}.
+$$
+
+Thus $x_3$ is free, and the equations are
+
+$$
+x_1=x_3,\qquad x_2=-2x_3.
+$$
+
+Taking $x_3=1$ gives
+
+$$
+(x_1,x_2,x_3)=(1,-2,1).
+$$
+
+Therefore
+
+$$
+\vec v_1-2\vec v_2+\vec v_3=\vec 0.
+$$
+
+The third vector is redundant:
+
+$$
+\vec v_3=-\vec v_1+2\vec v_2.
+$$
+
+### 4.1.3 Example: polynomial independence
+
+Consider the polynomials in $P_3(\mathbb R)$:
+
+$$
+p_1(t)=1+t,\qquad
+p_2(t)=1-t,\qquad
+p_3(t)=t^2+t^3,\qquad
+p_4(t)=t^2-t^3.
+$$
+
+Suppose
+
+$$
+a_1p_1+a_2p_2+a_3p_3+a_4p_4=0.
+$$
+
+Comparing coefficients of $1,t,t^2,t^3$ gives
+
+$$
+\begin{aligned}
+a_1+a_2&=0, & a_1-a_2&=0,\\
+a_3+a_4&=0, & a_3-a_4&=0.
+\end{aligned}
+$$
+
+The coefficient matrix is
+
+$$
+\begin{bmatrix}
+1&1&0&0\\
+1&-1&0&0\\
+0&0&1&1\\
+0&0&1&-1
+\end{bmatrix}.
+$$
+
+```{python}
+C = sp.Matrix([[1,1,0,0],
+               [1,-1,0,0],
+               [0,0,1,1],
+               [0,0,1,-1]])
+C.det(), C.rank(), C.rref()[0]
+```
+
+Since the determinant is nonzero, the only solution is
+
+$$
+a_1=a_2=a_3=a_4=0.
+$$
+
+So the four polynomials are linearly independent.
+
+### 4.1.4 Example: functional independence
+
+The functions $e^t,e^{2t},e^{3t}$ are linearly independent in the vector space of all real-valued functions on $\mathbb R$.
+
+One computational way to test this is to evaluate at three points. If
+
+$$
+a e^t+b e^{2t}+c e^{3t}=0
+\quad \text{for all }t,
+$$
+
+then evaluating at $t=0,1,2$ gives
+
+$$
+\begin{bmatrix}
+1&1&1\\
+e&e^2&e^3\\
+e^2&e^4&e^6
+\end{bmatrix}
+\begin{bmatrix}a\\b\\c\end{bmatrix}=0.
+$$
+
+This is a Vandermonde-type matrix with distinct nodes $1,e,e^2$, hence it is invertible. Therefore $a=b=c=0$.
+
+```{python}
+t = sp.symbols('t')
+M = sp.Matrix([[1, 1, 1],
+               [sp.E, sp.E**2, sp.E**3],
+               [sp.E**2, sp.E**4, sp.E**6]])
+sp.factor(M.det())
+```
+
+## 4.2 Bases: coordinate systems for vector spaces
+
+A basis is a list of vectors that works like a dictionary. Every vector in the space can be translated into coordinates using the basis, and that translation is unique.
+
+::: {.callout-note title="Definition 4.6: Basis"}
+Let $V$ be a vector space over $\mathbb F$. A subset
+
+$$
+B=\{\vec b_1,\ldots,\vec b_n\}
+$$
+
+is a **basis** for $V$ if
+
+1. $B$ is linearly independent, and
+2. $\operatorname{span}(B)=V$.
+:::
+
+A basis balances two competing goals. A smaller set has a better chance to be independent; a larger set has a better chance to span. A basis is both:
+
+- a **minimal spanning set**, and
+- a **maximal linearly independent set**.
+
+::: {.callout-note title="Theorem 4.7: Independent set versus spanning set"}
+If $\{\vec v_1,\ldots,\vec v_n\}$ is linearly independent in $V$ and
+
+$$
+V=\operatorname{span}\{\vec w_1,\ldots,\vec w_m\},
+$$
+
+then
+
+$$
+n\leq m.
+$$
+:::
+
+::: {.callout-note title="Theorem 4.8: Spanning set theorem"}
+Let $S=\{\vec v_1,\ldots,\vec v_p\}$ span a subspace $H$ of $V$.
+
+1. If some $\vec v_k$ is a linear combination of the other vectors in $S$, then $S\setminus\{\vec v_k\}$ still spans $H$.
+2. If $H\ne\{0\}$, then some subset of $S$ is a basis for $H$.
+:::
+
+::: {.callout-note title="Proposition 4.9: Basis reduction and extension"}
+Let $V$ be finite-dimensional.
+
+1. Every finite spanning set can be reduced to a basis by removing redundant vectors.
+2. Every linearly independent set can be extended to a basis by adding vectors.
+3. Every finite-dimensional nonzero vector space has a basis.
+:::
+
+### 4.2.1 Standard bases and nonstandard bases
+
+The standard basis of $\mathbb F^n$ consists of the columns of the identity matrix:
+
+$$
+\vec e_1=\begin{bmatrix}1\\0\\\vdots\\0\end{bmatrix},\quad
+\vec e_2=\begin{bmatrix}0\\1\\\vdots\\0\end{bmatrix},\quad \ldots,\quad
+\vec e_n=\begin{bmatrix}0\\0\\\vdots\\1\end{bmatrix}.
+$$
+
+The vector space $M_2(\mathbb F)$ of $2\times 2$ matrices has standard basis
+
+$$
+E_{11}=\begin{bmatrix}1&0\\0&0\end{bmatrix},\quad
+E_{12}=\begin{bmatrix}0&1\\0&0\end{bmatrix},\quad
+E_{21}=\begin{bmatrix}0&0\\1&0\end{bmatrix},\quad
+E_{22}=\begin{bmatrix}0&0\\0&1\end{bmatrix}.
+$$
+
+Indeed,
+
+$$
+\begin{bmatrix}a&b\\c&d\end{bmatrix}
+=
+aE_{11}+bE_{12}+cE_{21}+dE_{22}.
+$$
+
+The standard basis for $P_2(\mathbb R)$ is
+
+$$
+\{1,t,t^2\}.
+$$
+
+But this is not the only basis. The set
+
+$$
+B=\{1,1+t,1+t+t^2\}
+$$
+
+is also a basis. To test independence, suppose
+
+$$
+a(1)+b(1+t)+c(1+t+t^2)=0.
+$$
+
+Comparing coefficients gives
+
+$$
+a+b+c=0,\qquad b+c=0,\qquad c=0.
+$$
+
+Thus $a=b=c=0$.
+
+### 4.2.2 Coordinate vectors
+
+::: {.callout-note title="Definition 4.10: Coordinate vector"}
+Let $B=\{\vec b_1,\ldots,\vec b_n\}$ be a basis for $V$. If
+
+$$
+\vec v=c_1\vec b_1+\cdots+c_n\vec b_n,
+$$
+
+then the **coordinate vector of $\vec v$ relative to $B$** is
+
+$$
+[\vec v]_B=
+\begin{bmatrix}
+c_1\\ \vdots\\ c_n
+\end{bmatrix}.
+$$
+:::
+
+The basis tells us which directions are allowed. The coordinate vector tells us how much of each direction we need.
+
+### 4.2.3 Example: coordinates in a nonstandard basis
+
+Let
+
+$$
+B=\left\{
+\vec b_1=\begin{bmatrix}1\\1\end{bmatrix},
+\vec b_2=\begin{bmatrix}1\\-1\end{bmatrix}
+\right\}.
+$$
+
+Find the coordinates of
+
+$$
+\vec v=\begin{bmatrix}5\\1\end{bmatrix}
+$$
+
+relative to $B$.
+
+We solve
+
+$$
+c_1\begin{bmatrix}1\\1\end{bmatrix}
++c_2\begin{bmatrix}1\\-1\end{bmatrix}
+=
+\begin{bmatrix}5\\1\end{bmatrix}.
+$$
+
+This gives
+
+$$
+c_1+c_2=5,\qquad c_1-c_2=1.
+$$
+
+Hence
+
+$$
+c_1=3,\qquad c_2=2.
+$$
+
+Therefore
+
+$$
+[\vec v]_B=\begin{bmatrix}3\\2\end{bmatrix}.
+$$
+
+```{python}
+B = sp.Matrix([[1, 1],
+               [1, -1]])
+v = sp.Matrix([5, 1])
+coords = B.LUsolve(v)
+coords
+```
+
+## 4.3 Dimension: counting independent directions
+
+Dimension is the number of coordinates needed to describe every vector in a space. It is not the number of objects in the space; most vector spaces contain infinitely many vectors. Dimension counts independent directions.
+
+::: {.callout-note title="Definition 4.11: Finite-dimensional vector space"}
+A vector space $V$ is **finite-dimensional** if it has a finite basis. If no finite basis exists, then $V$ is **infinite-dimensional**.
+:::
+
+::: {.callout-note title="Theorem 4.12: Dimension theorem"}
+If $V$ is finite-dimensional, then every basis of $V$ has the same number of vectors.
+
+This common number is called the **dimension** of $V$ and is denoted $\dim V$.
+:::
+
+::: {.callout-note title="Theorem 4.13: Basis theorem"}
+Let $V$ be a vector space with $\dim V=n$.
+
+1. Any linearly independent set in $V$ has at most $n$ vectors.
+2. Any spanning set for $V$ has at least $n$ vectors.
+3. Any linearly independent set of exactly $n$ vectors is a basis.
+4. Any spanning set of exactly $n$ vectors is a basis.
+:::
+
+This theorem is one of the most useful time-saving tools in the course. In an $n$-dimensional space, if you already have exactly $n$ vectors, then you only need to check one property:
+
+- independence implies basis;
+- spanning implies basis.
+
+### 4.3.1 Common dimensions
+
+$$
+\dim \mathbb F^n=n.
+$$
+
+$$
+\dim P_n(\mathbb F)=n+1,
+$$
+
+because the standard basis is
+
+$$
+\{1,t,t^2,\ldots,t^n\}.
+$$
+
+$$
+\dim M_{m\times n}(\mathbb F)=mn,
+$$
+
+because there is one independent coordinate for each matrix entry.
+
+For square matrices,
+
+$$
+\dim M_n(\mathbb F)=n^2.
+$$
+
+### 4.3.2 Example: basis test by dimension
+
+Let
+
+$$
+B=\{1,1+t,1+t+t^2\}\subset P_2(\mathbb R).
+$$
+
+Since $\dim P_2(\mathbb R)=3$, once we know that the three vectors in $B$ are independent, the Basis Theorem tells us that $B$ is a basis. We do not also need to prove spanning separately.
+
+```{python}
+# Coordinate columns of 1, 1+t, 1+t+t^2 in the standard basis (1,t,t^2)
+P = sp.Matrix([[1, 1, 1],
+               [0, 1, 1],
+               [0, 0, 1]])
+P.det(), P.rank()
+```
+
+The determinant is nonzero, so the columns are independent. Therefore the polynomials form a basis.
+
+## 4.4 Subspaces, complements, and direct sums
+
+A subspace is a smaller vector space inside a larger one. A complement is a second subspace that fills in the missing directions.
+
+::: {.callout-note title="Definition 4.14: Complement"}
+Let $U$ be a subspace of a vector space $V$. A subspace $W\subseteq V$ is called a **complement** of $U$ in $V$ if
+
+$$
+V=U\oplus W.
+$$
+
+Equivalently, every vector $\vec v\in V$ can be written uniquely as
+
+$$
+\vec v=\vec u+\vec w,
+\qquad
+\vec u\in U,\quad \vec w\in W.
+$$
+:::
+
+::: {.callout-note title="Theorem 4.15: Dimension formula for sums"}
+Let $U$ and $W$ be finite-dimensional subspaces of a vector space $V$. Then
+
+$$
+\dim(U+W)=\dim U+\dim W-\dim(U\cap W).
+$$
+:::
+
+::: {.callout-note title="Corollary 4.16: Direct-sum dimension formula"}
+If $U\cap W=\{\vec 0\}$, then
+
+$$
+\dim(U+W)=\dim U+\dim W.
+$$
+
+In particular, if $V=U\oplus W$, then
+
+$$
+\dim V=\dim U+\dim W.
+$$
+:::
+
+### 4.4.1 Example: a direct sum in $\mathbb R^3$
+
+Let
+
+$$
+U=\{(x,y,0):x,y\in\mathbb R\},
+\qquad
+W=\{(0,0,z):z\in\mathbb R\}.
+$$
+
+Then every vector in $\mathbb R^3$ decomposes uniquely as
+
+$$
+(a,b,c)=(a,b,0)+(0,0,c).
+$$
+
+Thus
+
+$$
+\mathbb R^3=U\oplus W.
+$$
+
+Here
+
+$$
+\dim U=2,
+\qquad
+\dim W=1,
+\qquad
+\dim \mathbb R^3=3.
+$$
+
+### 4.4.2 Example: a sum that is not direct
+
+Let
+
+$$
+U=\{(x,y,0):x,y\in\mathbb R\},
+\qquad
+W=\{(0,y,z):y,z\in\mathbb R\}.
+$$
+
+Then $U+W=\mathbb R^3$, but
+
+$$
+U\cap W=\{(0,y,0):y\in\mathbb R\}.
+$$
+
+The intersection is one-dimensional, so the sum is not direct.
+
+The dimension formula gives
+
+$$
+\dim(U+W)=2+2-1=3.
+$$
+
+This explains how two planes in $\mathbb R^3$ can span all of $\mathbb R^3$ while still overlapping in a line.
+
+## 4.5 Kernel, image, and rank--nullity
+
+A linear map $T:V\to W$ sends vectors in the input space to vectors in the output space. Some input directions may disappear; these form the kernel. The directions that appear in the output form the image.
+
+::: {.callout-note title="Definition 4.17: Kernel, image, rank, and nullity"}
+Let $T:V\to W$ be a linear transformation.
+
+The **kernel** of $T$ is
+
+$$
+\ker(T)=\{\vec v\in V:T(\vec v)=\vec 0\}.
+$$
+
+The **image** of $T$ is
+
+$$
+\operatorname{im}(T)=\{T(\vec v):\vec v\in V\}.
+$$
+
+If $V$ is finite-dimensional, the **nullity** of $T$ is
+
+$$
+\operatorname{nullity}(T)=\dim\ker(T),
+$$
+
+and the **rank** of $T$ is
+
+$$
+\operatorname{rank}(T)=\dim\operatorname{im}(T).
+$$
+:::
+
+::: {.callout-note title="Theorem 4.18: Rank--nullity theorem"}
+Let $T:V\to W$ be a linear transformation and suppose $V$ is finite-dimensional. Then
+
+$$
+\dim V=\operatorname{rank}(T)+\operatorname{nullity}(T).
+$$
+
+Equivalently,
+
+$$
+\dim V=\dim\operatorname{im}(T)+\dim\ker(T).
+$$
+:::
+
+::: {.callout-tip title="Story interpretation"}
+Rank--nullity is an information balance law. The input dimension splits into
+
+$$
+\text{input directions}
+=
+\text{visible output directions}
++
+\text{lost kernel directions}.
+$$
+:::
+
+### 4.5.1 Rank--nullity for matrices
+
+If $A\in\mathbb F^{m\times n}$ and $T(\vec x)=A\vec x$, then
+
+$$
+\operatorname{rank}(A)+\dim\ker(A)=n.
+$$
+
+The number $n$ is the number of input variables, not the number of rows.
+
+### 4.5.2 Example: kernel and image from a matrix
+
+Let $T:\mathbb R^4\to\mathbb R^3$ be defined by
+
+$$
+T(\vec x)=A\vec x,
+\qquad
+A=
+\begin{bmatrix}
+0&0&2&8\\
+1&5&2&-5\\
+2&10&6&-2
+\end{bmatrix}.
+$$
+
+```{python}
+A = sp.Matrix([[0, 0, 2, 8],
+               [1, 5, 2, -5],
+               [2, 10, 6, -2]])
+A_rref, pivots = A.rref()
+A_rref, pivots, A.rank(), A.nullspace()
+```
+
+Row reduction gives
+
+$$
+\operatorname{rref}(A)=
+\begin{bmatrix}
+1&5&0&-13\\
+0&0&1&4\\
+0&0&0&0
+\end{bmatrix}.
+$$
+
+The pivot columns are columns $1$ and $3$. Therefore a basis for the image is given by the corresponding original columns:
+
+$$
+\operatorname{im}(T)=\operatorname{span}\left\{
+\begin{bmatrix}0\\1\\2\end{bmatrix},
+\begin{bmatrix}2\\2\\6\end{bmatrix}
+\right\}.
+$$
+
+To find the kernel, solve $A\vec x=\vec 0$. From the RREF,
+
+$$
+x_1=-5x_2+13x_4,
+\qquad
+x_3=-4x_4.
+$$
+
+Thus
+
+$$
+\vec x=x_2
+\begin{bmatrix}-5\\1\\0\\0\end{bmatrix}
++x_4
+\begin{bmatrix}13\\0\\-4\\1\end{bmatrix}.
+$$
+
+So
+
+$$
+\ker(T)=\operatorname{span}\left\{
+\begin{bmatrix}-5\\1\\0\\0\end{bmatrix},
+\begin{bmatrix}13\\0\\-4\\1\end{bmatrix}
+\right\}.
+$$
+
+The rank is $2$ and the nullity is $2$. Rank--nullity says
+
+$$
+4=2+2.
+$$
+
+### 4.5.3 Python function for rank, image basis, and kernel basis
+
+```{python}
+def matrix_summary(A):
+    A = sp.Matrix(A)
+    R, pivots = A.rref()
+    image_basis = [A[:, j] for j in pivots]
+    kernel_basis = A.nullspace()
+    return {
+        "A": A,
+        "rref": R,
+        "pivot_columns_0_based": pivots,
+        "rank": A.rank(),
+        "nullity": A.shape[1] - A.rank(),
+        "image_basis": image_basis,
+        "kernel_basis": kernel_basis,
+    }
+
+summary = matrix_summary(A)
+summary
+```
+
+### 4.5.4 Example: derivative map
+
+Let
+
+$$
+D:P_3(\mathbb R)\to P_2(\mathbb R),
+\qquad
+D(p)=p'.
+$$
+
+If
+
+$$
+p(t)=a+bt+ct^2+dt^3,
+$$
+
+then
+
+$$
+D(p)=b+2ct+3dt^2.
+$$
+
+The kernel consists of constant polynomials:
+
+$$
+\ker(D)=\operatorname{span}\{1\}.
+$$
+
+The image is all of $P_2(\mathbb R)$:
+
+$$
+\operatorname{im}(D)=P_2(\mathbb R).
+$$
+
+Therefore
+
+$$
+\operatorname{nullity}(D)=1,
+\qquad
+\operatorname{rank}(D)=3.
+$$
+
+Since $\dim P_3(\mathbb R)=4$, rank--nullity gives
+
+$$
+4=3+1.
+$$
+
+## 4.6 Invertibility and bases
+
+Invertibility means perfect information preservation. A linear map is invertible when every output comes from exactly one input.
+
+::: {.callout-note title="Theorem 4.19: Invertibility and bases"}
+Let $T:V\to W$ be a linear transformation between finite-dimensional vector spaces with
+
+$$
+\dim V=\dim W=n.
+$$
+
+Then the following are equivalent:
+
+1. $T$ is invertible.
+2. $T$ is injective.
+3. $T$ is surjective.
+4. $\ker(T)=\{\vec 0\}$.
+5. $\operatorname{rank}(T)=n$.
+6. $T$ maps every basis of $V$ to a basis of $W$.
+7. $T$ maps some basis of $V$ to a basis of $W$.
+:::
+
+For a square matrix $A\in\mathbb F^{n\times n}$, this becomes the familiar invertible matrix theorem.
+
+::: {.callout-note title="Theorem 4.20: Basis test for square matrices"}
+Let $A\in\mathbb F^{n\times n}$. The following are equivalent:
+
+1. The columns of $A$ form a basis of $\mathbb F^n$.
+2. The columns of $A$ are linearly independent.
+3. The columns of $A$ span $\mathbb F^n$.
+4. $A$ is invertible.
+5. $A\vec x=\vec 0$ has only the zero solution.
+6. $\operatorname{rank}(A)=n$.
+7. $\det(A)\ne 0$.
+:::
+
+### 4.6.1 Example: checking whether columns form a basis
+
+Let
+
+$$
+A=
+\begin{bmatrix}
+1&2&0\\
+0&1&3\\
+2&0&1
+\end{bmatrix}.
+$$
+
+Do the columns form a basis of $\mathbb R^3$?
+
+```{python}
+A = sp.Matrix([[1,2,0],
+               [0,1,3],
+               [2,0,1]])
+A.det(), A.rank(), A.rref()[0]
+```
+
+Since $\det(A)=-11\ne 0$, the columns form a basis of $\mathbb R^3$.
+
+## 4.7 Hyperplanes and structured matrix spaces
+
+Dimension also helps us understand important subspaces that arise in applications.
+
+### 4.7.1 Hyperplanes
+
+::: {.callout-note title="Definition 4.21: Hyperplane"}
+A **hyperplane** in $\mathbb F^n$ is a subspace of dimension $n-1$.
+
+Equivalently, a hyperplane is the kernel of a nonzero linear functional
+
+$$
+\phi:\mathbb F^n\to\mathbb F.
+$$
+:::
+
+For example,
+
+$$
+H=\{(x,y,z)\in\mathbb R^3:2x-y+3z=0\}
+$$
+
+is a plane through the origin. It is the kernel of
+
+$$
+\phi(x,y,z)=2x-y+3z.
+$$
+
+Since $\phi:\mathbb R^3\to\mathbb R$ has rank $1$, rank--nullity gives
+
+$$
+\dim\ker(\phi)=3-1=2.
+$$
+
+### 4.7.2 Symmetric and skew-symmetric matrices
+
+Let
+
+$$
+\operatorname{Sym}_n=\{A\in\mathbb R^{n\times n}:A^T=A\}
+$$
+
+and
+
+$$
+\operatorname{Skew}_n=\{A\in\mathbb R^{n\times n}:A^T=-A\}.
+$$
+
+Both are subspaces of $\mathbb R^{n\times n}$.
+
+::: {.callout-note title="Theorem 4.22: Symmetric--skew decomposition"}
+Every real square matrix $A\in\mathbb R^{n\times n}$ can be written uniquely as
+
+$$
+A=\frac{A+A^T}{2}+\frac{A-A^T}{2},
+$$
+
+where $\frac{A+A^T}{2}$ is symmetric and $\frac{A-A^T}{2}$ is skew-symmetric. Therefore
+
+$$
+\mathbb R^{n\times n}=\operatorname{Sym}_n\oplus \operatorname{Skew}_n.
+$$
+:::
+
+The dimensions are
+
+$$
+\dim\operatorname{Sym}_n=\frac{n(n+1)}{2},
+\qquad
+\dim\operatorname{Skew}_n=\frac{n(n-1)}{2}.
+$$
+
+Their sum is
+
+$$
+\frac{n(n+1)}{2}+\frac{n(n-1)}{2}=n^2,
+$$
+
+which matches
+
+$$
+\dim\mathbb R^{n\times n}=n^2.
+$$
+
+### 4.7.3 Python example: symmetric and skew decomposition
+
+```{python}
+A = sp.Matrix([[1, 2, 5],
+               [0, -1, 4],
+               [7, 3, 2]])
+S = (A + A.T)/2
+K = (A - A.T)/2
+A, S, K, S + K, S.T == S, K.T == -K
+```
+
+## 4.8 Challenge questions
+
+These questions are designed to connect computation with interpretation. They are not only about getting an answer; they are about explaining why the answer makes sense.
+
+::: {.callout-warning title="Challenge Question 1: Basis versus representation"}
+A student says: "A vector has coordinates, so the coordinates are the vector." Explain why this is not quite correct. Use a nonstandard basis of $\mathbb R^2$ to illustrate your answer.
+:::
+
+::: {.callout-warning title="Challenge Question 2: Redundancy and modeling"}
+In a data set, suppose one feature vector is a linear combination of other feature vectors. What does this mean mathematically? What might it mean in a data-science model?
+:::
+
+::: {.callout-warning title="Challenge Question 3: Meaning of rank"}
+Explain why rank can be interpreted as the number of independent output directions of a linear transformation.
+:::
+
+::: {.callout-warning title="Challenge Question 4: Kernel as lost information"}
+Let $T:V\to W$ be linear. Explain why two vectors $\vec v_1$ and $\vec v_2$ have the same output under $T$ exactly when $\vec v_1-\vec v_2\in\ker(T)$.
+:::
+
+::: {.callout-warning title="Challenge Question 5: Complements are not unique"}
+Find two different complements of the $x$-axis in $\mathbb R^2$.
+:::
+
+::: {.callout-warning title="Challenge Question 6: Dimension count as a strategy"}
+Why is it often enough to check independence but not spanning when you have exactly $n$ vectors in an $n$-dimensional space?
+:::
+
+::: {.callout-warning title="Challenge Question 7: Rank--nullity and inverse problems"}
+Suppose $A\in\mathbb R^{m\times n}$ has a large kernel. What does this suggest about solving $A\vec x=\vec b$? Why might there be many solutions or no solutions?
+:::
+
+::: {.callout-warning title="Challenge Question 8: Structured matrix spaces"}
+Explain why $\operatorname{Sym}_n$ and $\operatorname{Skew}_n$ are natural subspaces. Why is their direct-sum decomposition useful?
+:::
+
+## 4.9 Solutions to challenge questions
+
+### Solution to Challenge Question 1
+
+A vector is an element of a vector space. Coordinates are the numbers used to describe that vector relative to a chosen basis.
+
+For example, in the standard basis of $\mathbb R^2$,
+
+$$
+\vec v=\begin{bmatrix}5\\1\end{bmatrix}
+$$
+
+has coordinates $(5,1)$. But relative to
+
+$$
+B=\left\{\begin{bmatrix}1\\1\end{bmatrix},\begin{bmatrix}1\\-1\end{bmatrix}\right\},
+$$
+
+we found
+
+$$
+[\vec v]_B=\begin{bmatrix}3\\2\end{bmatrix}.
+$$
+
+The vector did not change. The coordinate language changed.
+
+### Solution to Challenge Question 2
+
+If one feature vector is a linear combination of others, then it adds no new direction to the span. Mathematically, it is redundant.
+
+In data science, this may mean that one feature is determined by other features. Such redundancy can cause inefficient computation, unstable regression coefficients, or unnecessary model complexity.
+
+### Solution to Challenge Question 3
+
+The image of $T$ is the set of all outputs $T(\vec v)$. Its dimension is the number of independent directions that actually appear in the output. This is the rank. Thus rank measures the effective output dimension of the transformation.
+
+### Solution to Challenge Question 4
+
+We have
+
+$$
+T(\vec v_1)=T(\vec v_2)
+$$
+
+if and only if
+
+$$
+T(\vec v_1)-T(\vec v_2)=\vec 0.
+$$
+
+By linearity,
+
+$$
+T(\vec v_1-\vec v_2)=\vec 0.
+$$
+
+Thus
+
+$$
+\vec v_1-\vec v_2\in\ker(T).
+$$
+
+So the kernel tells us which differences are invisible to the transformation.
+
+### Solution to Challenge Question 5
+
+Let
+
+$$
+U=\operatorname{span}\{(1,0)\}.
+$$
+
+One complement is
+
+$$
+W_1=\operatorname{span}\{(0,1)\}.
+$$
+
+Another complement is
+
+$$
+W_2=\operatorname{span}\{(1,1)\}.
+$$
+
+Both satisfy
+
+$$
+\mathbb R^2=U\oplus W_i.
+$$
+
+Complements are generally not unique.
+
+### Solution to Challenge Question 6
+
+In an $n$-dimensional space, no independent set can have more than $n$ vectors. Therefore, an independent set with exactly $n$ vectors is already as large as possible. It must span the space, so it is a basis.
+
+Similarly, a spanning set with exactly $n$ vectors cannot contain redundancy. Otherwise, it could be reduced to a smaller spanning set, contradicting the definition of dimension.
+
+### Solution to Challenge Question 7
+
+A large kernel means many input directions are sent to zero. Thus different inputs may produce the same output. If the system $A\vec x=\vec b$ is consistent, then adding any vector in $\ker(A)$ to a solution gives another solution. Therefore there may be infinitely many solutions.
+
+But a large kernel does not guarantee consistency. If $\vec b$ is not in $\operatorname{im}(A)$, then there is no solution.
+
+### Solution to Challenge Question 8
+
+Symmetric and skew-symmetric matrices are natural because they are defined by simple structural equations:
+
+$$
+A^T=A,
+\qquad
+A^T=-A.
+$$
+
+They appear in quadratic forms, geometry, differential equations, mechanics, optimization, and numerical linear algebra.
+
+The decomposition
+
+$$
+A=\frac{A+A^T}{2}+\frac{A-A^T}{2}
+$$
+
+separates a matrix into two meaningful parts. The symmetric part controls many energy and quadratic-form properties, while the skew-symmetric part often represents rotation-like behavior.
+
+## 4.10 Practice problems
+
+### Practice Problem 1
+
+Determine whether the following vectors are linearly independent:
+
+$$
+\vec v_1=\begin{bmatrix}1\\2\\1\end{bmatrix},
+\quad
+\vec v_2=\begin{bmatrix}2\\4\\2\end{bmatrix},
+\quad
+\vec v_3=\begin{bmatrix}0\\1\\1\end{bmatrix}.
+$$
+
+If they are dependent, find a nontrivial linear relation.
+
+### Practice Problem 2
+
+Show that
+
+$$
+B=\{1+t,1-t,t^2\}
+$$
+
+is a basis for $P_2(\mathbb R)$. Then find the coordinate vector of
+
+$$
+p(t)=3+5t+2t^2
+$$
+
+relative to $B$.
+
+### Practice Problem 3
+
+Let
+
+$$
+U=\operatorname{span}\{(1,0,1),(0,1,1)\}
+$$
+
+and
+
+$$
+W=\operatorname{span}\{(1,1,2),(1,-1,0)\}.
+$$
+
+Find $\dim(U)$, $\dim(W)$, $\dim(U+W)$, and $\dim(U\cap W)$.
+
+### Practice Problem 4
+
+Let $T:\mathbb R^4\to\mathbb R^3$ be defined by
+
+$$
+A=
+\begin{bmatrix}
+1&2&0&1\\
+0&1&1&3\\
+1&3&1&4
+\end{bmatrix}.
+$$
+
+Find bases for $\ker(T)$ and $\operatorname{im}(T)$. Verify rank--nullity.
+
+### Practice Problem 5
+
+Let
+
+$$
+D:P_4(\mathbb R)\to P_3(\mathbb R),
+\qquad
+D(p)=p'.
+$$
+
+Find $\ker(D)$, $\operatorname{im}(D)$, $\operatorname{rank}(D)$, and $\operatorname{nullity}(D)$.
+
+### Practice Problem 6
+
+Determine whether the columns of
+
+$$
+A=
+\begin{bmatrix}
+1&0&2\\
+0&1&-1\\
+2&1&3
+\end{bmatrix}
+$$
+
+form a basis of $\mathbb R^3$.
+
+### Practice Problem 7
+
+Find dimensions of the following subspaces of $M_3(\mathbb R)$:
+
+1. diagonal matrices;
+2. symmetric matrices;
+3. skew-symmetric matrices;
+4. upper triangular matrices.
+
+### Practice Problem 8
+
+Let
+
+$$
+H=\{(x_1,x_2,x_3,x_4)\in\mathbb R^4:x_1-2x_2+x_3+3x_4=0\}.
+$$
+
+Find a basis for $H$ and compute $\dim H$.
+
+## 4.11 Solutions to practice problems
+
+### Solution to Practice Problem 1
+
+Form the matrix with the vectors as columns:
+
+$$
+A=\begin{bmatrix}
+1&2&0\\
+2&4&1\\
+1&2&1
+\end{bmatrix}.
+$$
+
+```{python}
+A = sp.Matrix([[1,2,0],
+               [2,4,1],
+               [1,2,1]])
+A.rref(), A.nullspace()
+```
+
+The first two vectors satisfy
+
+$$
+\vec v_2=2\vec v_1.
+$$
+
+Therefore the vectors are dependent. A nontrivial relation is
+
+$$
+-2\vec v_1+\vec v_2+0\vec v_3=\vec 0.
+$$
+
+### Solution to Practice Problem 2
+
+Write
+
+$$
+a(1+t)+b(1-t)+c t^2=0.
+$$
+
+Comparing coefficients gives
+
+$$
+a+b=0,
+\qquad
+ a-b=0,
+\qquad
+ c=0.
+$$
+
+Thus $a=b=c=0$, so the set is independent. Since $\dim P_2(\mathbb R)=3$, the set is a basis.
+
+To find coordinates of $p(t)=3+5t+2t^2$, solve
+
+$$
+a(1+t)+b(1-t)+c t^2=3+5t+2t^2.
+$$
+
+This gives
+
+$$
+a+b=3,
+\qquad
+ a-b=5,
+\qquad
+ c=2.
+$$
+
+So
+
+$$
+a=4,
+\qquad
+ b=-1,
+\qquad
+ c=2.
+$$
+
+Therefore
+
+$$
+[p]_B=\begin{bmatrix}4\\-1\\2\end{bmatrix}.
+$$
+
+```{python}
+a,b,c = sp.symbols('a b c')
+sol = sp.solve([sp.Eq(a+b,3), sp.Eq(a-b,5), sp.Eq(c,2)], [a,b,c])
+sol
+```
+
+### Solution to Practice Problem 3
+
+Let the four generators be columns of a matrix:
+
+$$
+A=\begin{bmatrix}
+1&0&1&1\\
+0&1&1&-1\\
+1&1&2&0
+\end{bmatrix}.
+$$
+
+```{python}
+A = sp.Matrix([[1,0,1,1],
+               [0,1,1,-1],
+               [1,1,2,0]])
+A.rank(), A.rref()
+```
+
+For $U$, the two generators are independent, so $\dim U=2$. For $W$, the two generators are independent, so $\dim W=2$.
+
+The rank of the combined matrix is $2$, so
+
+$$
+\dim(U+W)=2.
+$$
+
+The dimension formula gives
+
+$$
+\dim(U\cap W)=\dim U+\dim W-\dim(U+W)=2+2-2=2.
+$$
+
+In fact, in this example $U=W$.
+
+### Solution to Practice Problem 4
+
+```{python}
+A = sp.Matrix([[1,2,0,1],
+               [0,1,1,3],
+               [1,3,1,4]])
+R, pivots = A.rref()
+rank = A.rank()
+null_basis = A.nullspace()
+image_basis = [A[:,j] for j in pivots]
+R, pivots, rank, null_basis, image_basis
+```
+
+The RREF is
+
+$$
+\begin{bmatrix}
+1&0&-2&-5\\
+0&1&1&3\\
+0&0&0&0
+\end{bmatrix}.
+$$
+
+The pivot columns are $1$ and $2$, so a basis for the image is
+
+$$
+\left\{
+\begin{bmatrix}1\\0\\1\end{bmatrix},
+\begin{bmatrix}2\\1\\3\end{bmatrix}
+\right\}.
+$$
+
+Solving $A\vec x=\vec 0$ gives
+
+$$
+x_1=2x_3+5x_4,
+\qquad
+x_2=-x_3-3x_4.
+$$
+
+Thus
+
+$$
+\ker(T)=\operatorname{span}\left\{
+\begin{bmatrix}2\\-1\\1\\0\end{bmatrix},
+\begin{bmatrix}5\\-3\\0\\1\end{bmatrix}
+\right\}.
+$$
+
+Rank--nullity gives
+
+$$
+4=2+2.
+$$
+
+### Solution to Practice Problem 5
+
+If
+
+$$
+p(t)=a_0+a_1t+a_2t^2+a_3t^3+a_4t^4,
+$$
+
+then
+
+$$
+D(p)=a_1+2a_2t+3a_3t^2+4a_4t^3.
+$$
+
+The kernel is the space of constant polynomials:
+
+$$
+\ker(D)=\operatorname{span}\{1\}.
+$$
+
+Every polynomial in $P_3(\mathbb R)$ occurs as a derivative of some polynomial in $P_4(\mathbb R)$, so
+
+$$
+\operatorname{im}(D)=P_3(\mathbb R).
+$$
+
+Therefore
+
+$$
+\operatorname{nullity}(D)=1,
+\qquad
+\operatorname{rank}(D)=4.
+$$
+
+Since $\dim P_4(\mathbb R)=5$,
+
+$$
+5=4+1.
+$$
+
+### Solution to Practice Problem 6
+
+Compute the determinant:
+
+```{python}
+A = sp.Matrix([[1,0,2],
+               [0,1,-1],
+               [2,1,3]])
+A.det(), A.rank(), A.rref()[0]
+```
+
+The determinant is
+
+$$
+\det(A)=0.
+$$
+
+Therefore the columns do not form a basis of $\mathbb R^3$.
+
+### Solution to Practice Problem 7
+
+In $M_3(\mathbb R)$:
+
+1. A diagonal matrix has $3$ free diagonal entries, so the dimension is $3$.
+2. A symmetric matrix has $3$ diagonal entries and $3$ entries above the diagonal, so the dimension is
+
+$$
+\frac{3(3+1)}{2}=6.
+$$
+
+3. A skew-symmetric matrix has zero diagonal and $3$ free entries above the diagonal, so the dimension is
+
+$$
+\frac{3(3-1)}{2}=3.
+$$
+
+4. An upper triangular matrix has $3+2+1=6$ free entries, so the dimension is $6$.
+
+### Solution to Practice Problem 8
+
+The equation is
+
+$$
+x_1-2x_2+x_3+3x_4=0.
+$$
+
+Solve for $x_1$:
+
+$$
+x_1=2x_2-x_3-3x_4.
+$$
+
+Thus
+
+$$
+\begin{bmatrix}x_1\\x_2\\x_3\\x_4\end{bmatrix}
+=
+x_2\begin{bmatrix}2\\1\\0\\0\end{bmatrix}
++x_3\begin{bmatrix}-1\\0\\1\\0\end{bmatrix}
++x_4\begin{bmatrix}-3\\0\\0\\1\end{bmatrix}.
+$$
+
+A basis is
+
+$$
+\left\{
+\begin{bmatrix}2\\1\\0\\0\end{bmatrix},
+\begin{bmatrix}-1\\0\\1\\0\end{bmatrix},
+\begin{bmatrix}-3\\0\\0\\1\end{bmatrix}
+\right\}.
+$$
+
+Therefore
+
+$$
+\dim H=3.
+$$
+
+## 4.12 AI companion activities
+
+These activities are designed to help students use AI tools responsibly. The goal is not to outsource the solution, but to improve mathematical communication and verification.
+
+### AI Activity 1: Explain a basis in three levels
+
+Ask an AI assistant:
+
+> Explain what a basis is at three levels: for a beginner, for a linear algebra student, and for a data scientist.
+
+Then check whether the explanation includes both independence and spanning. Rewrite the answer in your own words.
+
+### AI Activity 2: Debug a false proof
+
+Ask an AI assistant:
+
+> A student claims: "Three vectors in $\mathbb R^3$ always form a basis." Find the mistake and give a counterexample.
+
+Then create your own counterexample and verify it using row reduction.
+
+### AI Activity 3: Rank--nullity interpretation
+
+Ask:
+
+> For a matrix $A\in\mathbb R^{3\times 5}$ with rank $2$, explain rank--nullity geometrically and computationally.
+
+Your final answer should mention:
+
+- the input dimension;
+- the output dimension;
+- the rank;
+- the nullity;
+- what the kernel means.
+
+### AI Activity 4: Generate and verify examples
+
+Ask an AI assistant to generate:
+
+1. a $3\times 3$ invertible matrix;
+2. a $3\times 3$ singular matrix;
+3. a $3\times 4$ matrix with rank $2$.
+
+Then use Python to verify the rank and nullity of each matrix.
+
+```{python}
+# Template for checking AI-generated matrices
+A = sp.Matrix([[1, 2, 3],
+               [0, 1, 4],
+               [5, 6, 0]])
+A.rank(), A.det() if A.rows == A.cols else None, A.nullspace()
+```
+
+### AI Activity 5: Translate between story and theorem
+
+Choose one theorem from this chapter, such as rank--nullity or the Basis Theorem. Ask an AI assistant to explain it as a story. Then rewrite the explanation using precise mathematical definitions.
+
+## 4.13 Further study and applications
+
+The ideas in this chapter appear throughout applied mathematics, data science, and AI.
+
+### Further mathematical directions
+
+- Quotient spaces and the first isomorphism theorem.
+- Dual bases and coordinate functionals.
+- Infinite-dimensional bases in Hilbert spaces.
+- Orthogonal bases and Gram--Schmidt.
+- Exterior algebra and determinants.
+
+### Applications
+
+- **Data compression:** rank measures the effective dimension of data.
+- **Machine learning:** redundant features create dependent columns in data matrices.
+- **Optimization:** kernels describe directions that do not change constraints.
+- **Differential equations:** solution spaces are vector spaces with bases of fundamental solutions.
+- **Computer graphics:** bases describe coordinate systems and transformations.
+- **Network science:** incidence matrices have kernels and images with structural meaning.
+
+::: {.callout-tip title="Chapter summary"}
+A basis gives coordinates. Dimension counts coordinates. Rank counts visible output directions. Nullity counts invisible input directions. Rank--nullity says that every input direction is either seen in the output or lost in the kernel.
+:::

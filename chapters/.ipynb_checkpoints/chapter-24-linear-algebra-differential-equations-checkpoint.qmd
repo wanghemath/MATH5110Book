@@ -1,0 +1,1173 @@
+---
+title: "Chapter 24: Linear Algebra and Differential Equations"
+subtitle: "Choosing the Right Basis for Motion, Diffusion, and Stability"
+author: "He Wang"
+format:
+  html:
+    toc: true
+    number-sections: true
+    code-fold: true
+    code-tools: true
+jupyter: python3
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# The story: when change becomes a matrix
+
+A differential equation describes change. A matrix describes a linear rule. When the change of a system is governed by a linear rule, the two languages become the same language.
+
+Imagine a small network of rooms, each with a temperature. Heat flows from a warm room to a cold room. The temperatures form a vector
+
+$$
+\mathbf u(t)=\begin{bmatrix}u_1(t)\\u_2(t)\\u_3(t)\end{bmatrix}.
+$$
+
+The rule for how heat moves can often be written as
+
+$$
+\mathbf u'(t)=-L\mathbf u(t),
+$$
+
+where $L$ is a matrix. If we understand the eigenvectors of $L$, then we understand the heat patterns. Constant patterns stay. Nonconstant patterns decay. Larger eigenvalues decay faster.
+
+This chapter is about one central idea:
+
+> To solve or understand a linear differential equation, choose a basis in which the matrix becomes simple.
+
+Sometimes that basis is an eigenbasis. Sometimes it is a generalized eigenbasis. Sometimes it is a Fourier basis. Sometimes it is the eigenbasis of a graph Laplacian. In every case, linear algebra turns a coupled system into simpler scalar equations.
+
+# Learning goals
+
+After this chapter, you should be able to:
+
+1. rewrite linear differential equations as vector equations $\mathbf x'=A\mathbf x$;
+2. use eigenvalues and eigenvectors to solve diagonalizable systems;
+3. define and use the matrix exponential $e^{At}$;
+4. interpret complex eigenvalues as rotations and oscillations;
+5. understand how Jordan blocks produce factors such as $t e^{\lambda t}$;
+6. classify stability from the real parts of eigenvalues;
+7. solve nonhomogeneous systems using variation of constants;
+8. recognize graph heat equations and discretized PDEs as matrix differential equations;
+9. analyze numerical time stepping as matrix iteration.
+
+# Linear differential operators and solution spaces
+
+Before starting with matrices, we recall that homogeneous linear differential equations have solution spaces.
+
+::: {.callout-important}
+## Definition: Linear differential operator
+
+A differential operator $L$ is **linear** if
+
+$$
+L(af+bg)=aL(f)+bL(g)
+$$
+
+for all functions $f,g$ in its domain and all scalars $a,b$.
+
+For example,
+
+$$
+L(y)=y''+3y'-4y
+$$
+
+is linear.
+:::
+
+::: {.callout-tip}
+## Theorem: Homogeneous solution set is a vector space
+
+Let $L$ be a linear differential operator. Then
+
+$$
+\ker(L)=\{y:L(y)=0\}
+$$
+
+is a vector space.
+:::
+
+<details>
+<summary>Proof</summary>
+
+If $y_1,y_2\in\ker(L)$, then $L(y_1)=0$ and $L(y_2)=0$. For scalars $a,b$,
+
+$$
+L(ay_1+by_2)=aL(y_1)+bL(y_2)=0.
+$$
+
+Thus $ay_1+by_2\in\ker(L)$. The zero function is in the kernel, and the inherited operations are the usual operations on functions. Hence the homogeneous solution set is a vector space.
+
+</details>
+
+::: {.callout-note}
+## Example: A second-order equation
+
+Consider
+
+$$
+y''-3y'+2y=0.
+$$
+
+The characteristic polynomial is
+
+$$
+r^2-3r+2=(r-1)(r-2).
+$$
+
+Thus a basis for the solution space is
+
+$$
+\{e^t,e^{2t}\},
+$$
+
+and every solution has the form
+
+$$
+y(t)=c_1e^t+c_2e^{2t}.
+$$
+
+This is a two-dimensional solution space.
+:::
+
+# First-order linear systems
+
+The central object is the autonomous linear system
+
+$$
+\mathbf x'(t)=A\mathbf x(t),\qquad \mathbf x(0)=\mathbf x_0.
+$$
+
+Here $A\in\mathbb R^{n\times n}$ or $A\in\mathbb C^{n\times n}$, and $\mathbf x(t)$ is a vector-valued function.
+
+::: {.callout-important}
+## Definition: Autonomous linear system
+
+A first-order autonomous linear system is an equation of the form
+
+$$
+\mathbf x'(t)=A\mathbf x(t),
+$$
+
+where $A$ is constant in time. The vector $\mathbf x(t)$ is the **state vector**, and $A$ is the **system matrix**.
+:::
+
+The matrix $A$ gives a vector field: at the point $\mathbf x$, the velocity is $A\mathbf x$.
+
+::: {.callout-tip}
+## Proposition: Eigenvector solutions
+
+Suppose
+
+$$
+A\mathbf v=\lambda\mathbf v,\qquad \mathbf v\ne\mathbf 0.
+$$
+
+Then
+
+$$
+\mathbf x(t)=e^{\lambda t}\mathbf v
+$$
+
+is a solution of $\mathbf x'=A\mathbf x$.
+:::
+
+<details>
+<summary>Proof</summary>
+
+Differentiate:
+
+$$
+\mathbf x'(t)=\lambda e^{\lambda t}\mathbf v.
+$$
+
+On the other hand,
+
+$$
+A\mathbf x(t)=A(e^{\lambda t}\mathbf v)=e^{\lambda t}A\mathbf v=e^{\lambda t}\lambda\mathbf v.
+$$
+
+Therefore $\mathbf x'(t)=A\mathbf x(t)$.
+
+</details>
+
+::: {.callout-note}
+## Example: Two directions that evolve independently
+
+The system
+
+$$
+\begin{cases}
+x_1'=2x_1+x_2,\\
+x_2'=x_1+2x_2
+\end{cases}
+$$
+
+is
+
+$$
+\mathbf x'=A\mathbf x,
+\qquad
+A=\begin{bmatrix}2&1\\1&2\end{bmatrix}.
+$$
+
+The eigenpairs are
+
+$$
+\lambda_1=3,\quad \mathbf v_1=\begin{bmatrix}1\\1\end{bmatrix},
+\qquad
+\lambda_2=1,\quad \mathbf v_2=\begin{bmatrix}1\\-1\end{bmatrix}.
+$$
+
+Hence
+
+$$
+\mathbf x(t)=c_1e^{3t}\begin{bmatrix}1\\1\end{bmatrix}+c_2e^t\begin{bmatrix}1\\-1\end{bmatrix}.
+$$
+:::
+
+# The matrix exponential
+
+For the scalar equation $x'=ax$, the solution is $x(t)=e^{at}x(0)$. For a matrix equation, the replacement is $e^{At}$.
+
+::: {.callout-important}
+## Definition: Matrix exponential
+
+For a square matrix $A$, define
+
+$$
+e^{At}=I+tA+\frac{t^2A^2}{2!}+\frac{t^3A^3}{3!}+\cdots
+=\sum_{k=0}^{\infty}\frac{t^kA^k}{k!}.
+$$
+:::
+
+::: {.callout-tip}
+## Theorem: Solution by matrix exponential
+
+The unique solution of
+
+$$
+\mathbf x'(t)=A\mathbf x(t),\qquad \mathbf x(0)=\mathbf x_0,
+$$
+
+is
+
+$$
+\mathbf x(t)=e^{At}\mathbf x_0.
+$$
+:::
+
+<details>
+<summary>Proof</summary>
+
+Differentiate the power series term by term:
+
+$$
+\frac{d}{dt}e^{At}
+= A+tA^2+\frac{t^2A^3}{2!}+\cdots
+=A\left(I+tA+\frac{t^2A^2}{2!}+\cdots\right)=Ae^{At}.
+$$
+
+Therefore
+
+$$
+\mathbf x'(t)=\frac{d}{dt}\left(e^{At}\mathbf x_0\right)=Ae^{At}\mathbf x_0=A\mathbf x(t).
+$$
+
+Also,
+
+$$
+\mathbf x(0)=e^{A0}\mathbf x_0=I\mathbf x_0=\mathbf x_0.
+$$
+
+</details>
+
+::: {.callout-tip}
+## Useful properties of the matrix exponential
+
+Let $A$ and $B$ be square matrices of the same size.
+
+1. $e^0=I$.
+2. If $AB=BA$, then $e^{A+B}=e^Ae^B$.
+3. If $P$ is invertible, then
+
+$$
+e^{PAP^{-1}t}=Pe^{At}P^{-1}.
+$$
+
+4. If $D=\operatorname{diag}(\lambda_1,\ldots,\lambda_n)$, then
+
+$$
+e^{Dt}=\operatorname{diag}(e^{\lambda_1t},\ldots,e^{\lambda_nt}).
+$$
+:::
+
+# Diagonalization and decoupling
+
+If $A$ is diagonalizable, the system is solved by changing coordinates to an eigenbasis.
+
+::: {.callout-tip}
+## Theorem: Diagonalizable systems
+
+Suppose
+
+$$
+A=PDP^{-1},
+\qquad
+D=\operatorname{diag}(\lambda_1,\ldots,\lambda_n).
+$$
+
+Then
+
+$$
+e^{At}=Pe^{Dt}P^{-1},
+$$
+
+and the solution of $\mathbf x'=A\mathbf x$ is
+
+$$
+\mathbf x(t)=Pe^{Dt}P^{-1}\mathbf x_0.
+$$
+
+Equivalently, if
+
+$$
+\mathbf x_0=c_1\mathbf v_1+\cdots+c_n\mathbf v_n,
+$$
+
+where $\mathbf v_i$ are eigenvectors, then
+
+$$
+\mathbf x(t)=c_1e^{\lambda_1t}\mathbf v_1+\cdots+c_ne^{\lambda_nt}\mathbf v_n.
+$$
+:::
+
+<details>
+<summary>Proof</summary>
+
+Since $A=PDP^{-1}$, we have
+
+$$
+A^k=PD^kP^{-1}
+$$
+
+for every $k\ge 0$. Hence
+
+$$
+e^{At}=\sum_{k=0}^{\infty}\frac{t^kA^k}{k!}
+=\sum_{k=0}^{\infty}\frac{t^kPD^kP^{-1}}{k!}
+=P\left(\sum_{k=0}^{\infty}\frac{t^kD^k}{k!}\right)P^{-1}
+=Pe^{Dt}P^{-1}.
+$$
+
+</details>
+
+::: {.callout-note}
+## Example: Decoupling a system
+
+Let
+
+$$
+A=\begin{bmatrix}2&1\\1&2\end{bmatrix}.
+$$
+
+The eigenpairs are
+
+$$
+\lambda_1=3,
+\quad
+\mathbf v_1=\begin{bmatrix}1\\1\end{bmatrix},
+\qquad
+\lambda_2=1,
+\quad
+\mathbf v_2=\begin{bmatrix}1\\-1\end{bmatrix}.
+$$
+
+For initial condition
+
+$$
+\mathbf x_0=\begin{bmatrix}4\\2\end{bmatrix},
+$$
+
+write
+
+$$
+\mathbf x_0=3\mathbf v_1+1\mathbf v_2.
+$$
+
+Therefore
+
+$$
+\mathbf x(t)=3e^{3t}\begin{bmatrix}1\\1\end{bmatrix}+e^t\begin{bmatrix}1\\-1\end{bmatrix}.
+$$
+:::
+
+# Python computation: matrix exponential and eigenbasis
+
+```{python}
+import numpy as np
+from scipy.linalg import expm, eig
+
+A = np.array([[2, 1],
+              [1, 2]], dtype=float)
+x0 = np.array([4, 2], dtype=float)
+
+for t in [0, 0.25, 0.5, 1.0]:
+    x = expm(A*t) @ x0
+    print(f"t={t:4.2f}, x(t)={x}")
+
+vals, vecs = eig(A)
+print("eigenvalues:", vals)
+print("eigenvectors:\n", vecs)
+```
+
+# Complex eigenvalues and real solutions
+
+Real matrices can have complex eigenvalues. This is not a defect. Complex eigenvalues encode rotation and oscillation.
+
+::: {.callout-note}
+## Example: A rotation system
+
+Let
+
+$$
+A=\begin{bmatrix}0&-\omega\\ \omega&0\end{bmatrix}.
+$$
+
+Then $A^2=-\omega^2I$, and
+
+$$
+e^{At}=I\cos(\omega t)+\frac{A}{\omega}\sin(\omega t)
+=\begin{bmatrix}
+\cos(\omega t)&-\sin(\omega t)\\
+\sin(\omega t)&\cos(\omega t)
+\end{bmatrix}.
+$$
+
+Thus $\mathbf x'=A\mathbf x$ rotates vectors in the plane.
+:::
+
+::: {.callout-tip}
+## Theorem: Real solutions from a complex eigenvalue
+
+Suppose $A$ is real and has a complex eigenvalue
+
+$$
+\lambda=\alpha+i\beta
+$$
+
+with eigenvector
+
+$$
+\mathbf z=\mathbf p+i\mathbf q,
+\qquad
+\mathbf p,\mathbf q\in\mathbb R^n.
+$$
+
+Then two real solutions are
+
+$$
+\mathbf x_1(t)=e^{\alpha t}\left(\cos(\beta t)\mathbf p-\sin(\beta t)\mathbf q\right),
+$$
+
+and
+
+$$
+\mathbf x_2(t)=e^{\alpha t}\left(\sin(\beta t)\mathbf p+\cos(\beta t)\mathbf q\right).
+$$
+:::
+
+<details>
+<summary>Proof</summary>
+
+A complex solution is
+
+$$
+e^{(\alpha+i\beta)t}(\mathbf p+i\mathbf q)
+=e^{\alpha t}(\cos\beta t+i\sin\beta t)(\mathbf p+i\mathbf q).
+$$
+
+Separating real and imaginary parts gives the two displayed real solutions. Since $A$ has real entries, the real and imaginary parts of a complex solution are real solutions.
+
+</details>
+
+# Jordan blocks and generalized eigenvectors
+
+Not every matrix is diagonalizable. Jordan form explains the difference.
+
+::: {.callout-important}
+## Definition: Generalized eigenvector
+
+A nonzero vector $\mathbf v$ is a **generalized eigenvector** of $A$ for eigenvalue $\lambda$ if
+
+$$
+(A-\lambda I)^m\mathbf v=\mathbf 0
+$$
+
+for some positive integer $m$.
+:::
+
+::: {.callout-note}
+## Example: A Jordan block
+
+Let
+
+$$
+J=\begin{bmatrix}\lambda&1\\0&\lambda\end{bmatrix}=\lambda I+N,
+\qquad
+N=\begin{bmatrix}0&1\\0&0\end{bmatrix}.
+$$
+
+Since $N^2=0$,
+
+$$
+e^{Jt}=e^{\lambda t}e^{Nt}=e^{\lambda t}(I+tN)
+=e^{\lambda t}\begin{bmatrix}1&t\\0&1\end{bmatrix}.
+$$
+
+The extra factor $t$ appears because the matrix is not diagonalizable.
+:::
+
+# Stability from eigenvalues
+
+The long-time behavior of $\mathbf x'=A\mathbf x$ is controlled by the real parts of the eigenvalues of $A$.
+
+::: {.callout-important}
+## Definition: Stability of the zero equilibrium
+
+The equilibrium solution $\mathbf x(t)=\mathbf 0$ of $\mathbf x'=A\mathbf x$ is:
+
+- **stable** if all solutions starting near $\mathbf 0$ stay near $\mathbf 0$;
+- **asymptotically stable** if all solutions starting near $\mathbf 0$ converge to $\mathbf 0$;
+- **unstable** if some solutions starting arbitrarily close to $\mathbf 0$ move away.
+:::
+
+::: {.callout-tip}
+## Theorem: Eigenvalue stability test
+
+Let $A\in\mathbb C^{n\times n}$.
+
+1. If every eigenvalue $\lambda$ of $A$ satisfies $\operatorname{Re}(\lambda)<0$, then $\mathbf 0$ is asymptotically stable.
+2. If some eigenvalue satisfies $\operatorname{Re}(\lambda)>0$, then $\mathbf 0$ is unstable.
+:::
+
+<details>
+<summary>Proof idea</summary>
+
+In a diagonal or Jordan basis, each component of the solution is a linear combination of terms
+
+$$
+t^k e^{\lambda t}.
+$$
+
+If $\operatorname{Re}(\lambda)<0$, then $t^k e^{\lambda t}\to 0$ as $t\to\infty$. If $\operatorname{Re}(\lambda)>0$, then $e^{\lambda t}$ grows exponentially along an eigenvector or generalized eigenvector direction.
+
+</details>
+
+::: {.callout-note}
+## Examples: Three phase portraits
+
+1. Eigenvalues $-1,-3$: all solutions decay to $0$.
+2. Eigenvalues $2,-1$: one direction grows and one direction decays; this is a saddle.
+3. Eigenvalues $\pm i$: solutions rotate and do not decay.
+:::
+
+# Python computation: stability and trajectories
+
+```{python}
+import numpy as np
+from scipy.linalg import expm
+
+systems = {
+    "stable node": np.array([[-2, 0], [0, -5]], dtype=float),
+    "saddle": np.array([[1, 0], [0, -3]], dtype=float),
+    "center": np.array([[0, -2], [2, 0]], dtype=float),
+}
+
+x0 = np.array([1.0, 1.0])
+for name, A in systems.items():
+    eigvals = np.linalg.eigvals(A)
+    print("\n", name)
+    print("eigenvalues:", eigvals)
+    for t in [0, 0.5, 1.0, 2.0]:
+        print(f"t={t}: {expm(A*t) @ x0}")
+```
+
+# Nonhomogeneous systems and variation of constants
+
+A nonhomogeneous linear system has the form
+
+$$
+\mathbf x'(t)=A\mathbf x(t)+\mathbf f(t).
+$$
+
+The homogeneous part $\mathbf x'=A\mathbf x$ controls the geometry, while $\mathbf f(t)$ adds external forcing.
+
+::: {.callout-tip}
+## Theorem: Variation of constants
+
+The solution of
+
+$$
+\mathbf x'(t)=A\mathbf x(t)+\mathbf f(t),
+\qquad
+\mathbf x(0)=\mathbf x_0,
+$$
+
+is
+
+$$
+\mathbf x(t)=e^{At}\mathbf x_0+
+\int_0^t e^{A(t-s)}\mathbf f(s)\,ds.
+$$
+:::
+
+<details>
+<summary>Proof</summary>
+
+Define
+
+$$
+\mathbf x(t)=e^{At}\mathbf x_0+
+\int_0^t e^{A(t-s)}\mathbf f(s)\,ds.
+$$
+
+Differentiate using the product rule and the fundamental theorem of calculus:
+
+$$
+\mathbf x'(t)=Ae^{At}\mathbf x_0+\mathbf f(t)+\int_0^t Ae^{A(t-s)}\mathbf f(s)\,ds.
+$$
+
+Thus
+
+$$
+\mathbf x'(t)=A\left(e^{At}\mathbf x_0+
+\int_0^t e^{A(t-s)}\mathbf f(s)\,ds\right)+\mathbf f(t)
+=A\mathbf x(t)+\mathbf f(t).
+$$
+
+At $t=0$, the integral is zero, so $\mathbf x(0)=\mathbf x_0$.
+
+</details>
+
+# Turning higher-order ODEs into first-order systems
+
+Many scalar differential equations can be rewritten as first-order vector systems.
+
+::: {.callout-note}
+## Example: Mass-spring oscillator
+
+Consider
+
+$$
+y''+2\gamma y'+\omega^2y=0.
+$$
+
+Let
+
+$$
+\mathbf x=\begin{bmatrix}y\\y'\end{bmatrix}.
+$$
+
+Then
+
+$$
+\mathbf x'=\begin{bmatrix}y'\\y''\end{bmatrix}
+=\begin{bmatrix}0&1\\-\omega^2&-2\gamma\end{bmatrix}
+\begin{bmatrix}y\\y'\end{bmatrix}.
+$$
+
+The eigenvalues of
+
+$$
+A=\begin{bmatrix}0&1\\-\omega^2&-2\gamma\end{bmatrix}
+$$
+
+determine whether the system oscillates, decays, or both.
+:::
+
+# Graph Laplacians and diffusion on networks
+
+Let $G$ be a graph with Laplacian matrix
+
+$$
+L=D-A_G,
+$$
+
+where $D$ is the degree matrix and $A_G$ is the adjacency matrix.
+
+::: {.callout-important}
+## Definition: Heat equation on a graph
+
+The graph heat equation is
+
+$$
+\mathbf u'(t)=-L\mathbf u(t),
+$$
+
+where $\mathbf u(t)$ assigns a temperature or signal value to each vertex.
+:::
+
+::: {.callout-tip}
+## Theorem: Solution of graph heat equation
+
+If
+
+$$
+L=Q\Lambda Q^T
+$$
+
+is an orthogonal diagonalization of the graph Laplacian, then
+
+$$
+\mathbf u(t)=e^{-Lt}\mathbf u(0)=Qe^{-\Lambda t}Q^T\mathbf u(0).
+$$
+
+Each Laplacian eigenvector is a diffusion mode.
+:::
+
+<details>
+<summary>Proof</summary>
+
+Since $L$ is real symmetric, the spectral theorem gives $L=Q\Lambda Q^T$. Therefore
+
+$$
+e^{-Lt}=Qe^{-\Lambda t}Q^T.
+$$
+
+If $\Lambda=\operatorname{diag}(\lambda_1,\ldots,\lambda_n)$, then
+
+$$
+e^{-\Lambda t}=\operatorname{diag}(e^{-\lambda_1t},\ldots,e^{-\lambda_nt}).
+$$
+
+</details>
+
+::: {.callout-note}
+## Example: Path graph with three vertices
+
+For the path graph $1-2-3$,
+
+$$
+L=\begin{bmatrix}
+1&-1&0\\
+-1&2&-1\\
+0&-1&1
+\end{bmatrix}.
+$$
+
+The eigenvalues are
+
+$$
+0,1,3.
+$$
+
+The zero eigenvalue corresponds to the constant equilibrium. The larger eigenvalues correspond to faster-decaying modes.
+:::
+
+```{python}
+import numpy as np
+from scipy.linalg import expm
+
+L = np.array([[ 1, -1,  0],
+              [-1,  2, -1],
+              [ 0, -1,  1]], dtype=float)
+
+u0 = np.array([10, 0, 0], dtype=float)
+
+for t in [0, 0.1, 1, 10]:
+    u = expm(-L*t) @ u0
+    print(f"t={t}: {u}")
+print("average:", np.mean(u0))
+```
+
+# Discretizing PDEs: matrices from differential operators
+
+Linear algebra also appears when continuous differential equations are discretized.
+
+::: {.callout-note}
+## Example: One-dimensional heat equation
+
+Consider
+
+$$
+\frac{\partial u}{\partial t}=\alpha\frac{\partial^2u}{\partial x^2}
+$$
+
+on an interval. Approximate
+
+$$
+\frac{\partial^2u}{\partial x^2}(x_i,t)\approx
+\frac{u_{i-1}(t)-2u_i(t)+u_{i+1}(t)}{h^2}.
+$$
+
+Then the PDE becomes
+
+$$
+\mathbf u'(t)=\frac{\alpha}{h^2}T\mathbf u(t),
+$$
+
+where
+
+$$
+T=\begin{bmatrix}
+-2&1&0&\cdots&0\\
+1&-2&1&\ddots&\vdots\\
+0&1&-2&\ddots&0\\
+\vdots&\ddots&\ddots&\ddots&1\\
+0&\cdots&0&1&-2
+\end{bmatrix}.
+$$
+
+Thus a PDE becomes a finite-dimensional linear system.
+:::
+
+# Numerical time-stepping as matrix iteration
+
+Numerical methods turn continuous time into discrete matrix iteration.
+
+::: {.callout-important}
+## Definition: Forward Euler method
+
+For
+
+$$
+\mathbf x'=A\mathbf x,
+$$
+
+the forward Euler method with step size $h$ is
+
+$$
+\mathbf x_{k+1}=\mathbf x_k+hA\mathbf x_k=(I+hA)\mathbf x_k.
+$$
+
+Thus
+
+$$
+\mathbf x_k=(I+hA)^k\mathbf x_0.
+$$
+:::
+
+::: {.callout-tip}
+## Proposition: Euler stability in one eigen-direction
+
+Suppose $A\mathbf v=\lambda\mathbf v$. Forward Euler evolves this eigen-direction by the multiplier
+
+$$
+1+h\lambda.
+$$
+
+For this mode to decay, one needs
+
+$$
+|1+h\lambda|<1.
+$$
+:::
+
+<details>
+<summary>Proof</summary>
+
+If $\mathbf x_k=c_k\mathbf v$, then
+
+$$
+\mathbf x_{k+1}=(I+hA)c_k\mathbf v=c_k(1+h\lambda)\mathbf v.
+$$
+
+Thus $c_{k+1}=(1+h\lambda)c_k$. The mode decays exactly when $|1+h\lambda|<1$.
+
+</details>
+
+```{python}
+import numpy as np
+
+A = np.array([[0, 1],
+              [-4, -1]], dtype=float)
+h = 0.05
+x = np.array([1.0, 0.0])
+
+for k in range(10):
+    x = (np.eye(2) + h*A) @ x
+    print(k+1, x)
+```
+
+# Challenge questions
+
+## Challenge 1: Eigenbasis solution
+
+Let
+
+$$
+A=\begin{bmatrix}4&1\\0&2\end{bmatrix}.
+$$
+
+Solve
+
+$$
+\mathbf x'=A\mathbf x,
+\qquad
+\mathbf x(0)=\begin{bmatrix}1\\3\end{bmatrix}.
+$$
+
+<details>
+<summary>Solution</summary>
+
+The eigenvalues are $4$ and $2$.
+
+For $\lambda=4$, an eigenvector is
+
+$$
+\mathbf v_1=\begin{bmatrix}1\\0\end{bmatrix}.
+$$
+
+For $\lambda=2$, solve
+
+$$
+\begin{bmatrix}2&1\\0&0\end{bmatrix}\mathbf v=0,
+$$
+
+so one eigenvector is
+
+$$
+\mathbf v_2=\begin{bmatrix}-1\\2\end{bmatrix}.
+$$
+
+Write
+
+$$
+\begin{bmatrix}1\\3\end{bmatrix}
+=c_1\begin{bmatrix}1\\0\end{bmatrix}
++c_2\begin{bmatrix}-1\\2\end{bmatrix}.
+$$
+
+The second component gives $2c_2=3$, so $c_2=3/2$. The first component gives $c_1-3/2=1$, so $c_1=5/2$. Therefore
+
+$$
+\mathbf x(t)=\frac52e^{4t}\begin{bmatrix}1\\0\end{bmatrix}
++\frac32e^{2t}\begin{bmatrix}-1\\2\end{bmatrix}.
+$$
+
+</details>
+
+## Challenge 2: A nondiagonalizable system
+
+Let
+
+$$
+A=\begin{bmatrix}3&1\\0&3\end{bmatrix}.
+$$
+
+Find $e^{At}$ and solve $\mathbf x'=A\mathbf x$.
+
+<details>
+<summary>Solution</summary>
+
+Write
+
+$$
+A=3I+N,
+\qquad
+N=\begin{bmatrix}0&1\\0&0\end{bmatrix}.
+$$
+
+Since $N^2=0$ and $3I$ commutes with $N$,
+
+$$
+e^{At}=e^{3tI+tN}=e^{3t}e^{tN}=e^{3t}(I+tN).
+$$
+
+Thus
+
+$$
+e^{At}=e^{3t}\begin{bmatrix}1&t\\0&1\end{bmatrix}.
+$$
+
+For $\mathbf x(0)=\begin{bmatrix}a\\b\end{bmatrix}$,
+
+$$
+\mathbf x(t)=e^{3t}\begin{bmatrix}a+tb\\b\end{bmatrix}.
+$$
+
+</details>
+
+## Challenge 3: Graph heat equation
+
+For the path graph $1-2-3$, explain why the solution of
+
+$$
+\mathbf u'=-L\mathbf u
+$$
+
+converges to a constant vector.
+
+<details>
+<summary>Solution</summary>
+
+The graph is connected, so $L$ has one zero eigenvalue with eigenvector $\mathbf 1=(1,1,1)^T$, and all other eigenvalues are positive. If
+
+$$
+\mathbf u(0)=c\mathbf 1+\mathbf w,
+\qquad
+\mathbf w\perp\mathbf 1,
+$$
+
+then
+
+$$
+\mathbf u(t)=c\mathbf 1+e^{-Lt}\mathbf w.
+$$
+
+All components of $\mathbf w$ lie in positive-eigenvalue directions of $L$, so they decay. Hence $\mathbf u(t)\to c\mathbf 1$. The constant $c$ is the average of the initial values.
+
+</details>
+
+# Practice problems
+
+## Problem 1
+
+Solve
+
+$$
+\mathbf x'=\begin{bmatrix}1&0\\0&-2\end{bmatrix}\mathbf x,
+\qquad
+\mathbf x(0)=\begin{bmatrix}3\\4\end{bmatrix}.
+$$
+
+<details>
+<summary>Solution</summary>
+
+The system is already diagonal:
+
+$$
+x_1'=x_1,
+\qquad
+x_2'=-2x_2.
+$$
+
+Thus
+
+$$
+x_1(t)=3e^t,
+\qquad
+x_2(t)=4e^{-2t}.
+$$
+
+So
+
+$$
+\mathbf x(t)=\begin{bmatrix}3e^t\\4e^{-2t}\end{bmatrix}.
+$$
+
+</details>
+
+## Problem 2
+
+Classify the stability of
+
+$$
+A=\begin{bmatrix}-1&-4\\1&-1\end{bmatrix}.
+$$
+
+<details>
+<summary>Solution</summary>
+
+The trace is $-2$ and the determinant is $5$. The characteristic polynomial is
+
+$$
+\lambda^2+2\lambda+5=0.
+$$
+
+The eigenvalues are
+
+$$
+\lambda=-1\pm 2i.
+$$
+
+Both have real part $-1<0$, so the equilibrium is asymptotically stable. The imaginary part means the solutions spiral while decaying.
+
+</details>
+
+## Problem 3
+
+For the Jordan block
+
+$$
+J=\begin{bmatrix}2&1\\0&2\end{bmatrix},
+$$
+
+compute $e^{Jt}$.
+
+<details>
+<summary>Solution</summary>
+
+Write $J=2I+N$, where
+
+$$
+N=\begin{bmatrix}0&1\\0&0\end{bmatrix}.
+$$
+
+Since $N^2=0$,
+
+$$
+e^{Jt}=e^{2t}(I+tN)=e^{2t}\begin{bmatrix}1&t\\0&1\end{bmatrix}.
+$$
+
+</details>
+
+## Problem 4
+
+For forward Euler applied to $x'=-8x$, find the range of step sizes $h>0$ for which the numerical solution decays.
+
+<details>
+<summary>Solution</summary>
+
+Forward Euler gives
+
+$$
+x_{k+1}=(1-8h)x_k.
+$$
+
+Decay requires
+
+$$
+|1-8h|<1.
+$$
+
+Thus
+
+$$
+-1<1-8h<1,
+$$
+
+so
+
+$$
+0<h<\frac14.
+$$
+
+</details>
+
+# AI companion activities
+
+Use an AI assistant as a study partner, not as a replacement for your own reasoning.
+
+1. **Explain the basis change.** Ask: “Explain why diagonalizing $A$ decouples $\mathbf x'=A\mathbf x$ into scalar equations.” Then test the explanation on a $2\times2$ example.
+2. **Generate examples.** Ask for three matrices whose systems are stable, unstable, and oscillatory. Compute their eigenvalues yourself.
+3. **Debug code.** Write Python code using `scipy.linalg.expm` and ask the AI to check whether your shapes, matrix products, and initial conditions are consistent.
+4. **Compare exact and numerical solutions.** Ask the AI to help design an experiment comparing $e^{At}\mathbf x_0$ with forward Euler for different step sizes.
+5. **Connect to applications.** Ask for a real-world interpretation of graph heat diffusion, mass-spring systems, and discretized heat equations.
+
+# Summary
+
+Linear differential equations are linear algebra in motion:
+
+- homogeneous solution sets are vector spaces;
+- $e^{At}$ solves $\mathbf x'=A\mathbf x$;
+- eigenvectors give independent solution directions;
+- complex eigenvalues describe rotations and oscillations;
+- Jordan blocks create polynomial factors;
+- stability is controlled by real parts of eigenvalues;
+- graph Laplacians model diffusion on networks;
+- discretized PDEs become large matrix ODEs;
+- numerical methods are matrix iterations.

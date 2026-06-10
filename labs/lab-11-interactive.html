@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 11 Interactive: Complex Inner Products and Schur Decomposition</title>
+<script>
+window.MathJax = {tex: {inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']]}, svg: {fontCache: 'global'}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root{--bg:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+  body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);} header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;} header h1{margin:0 0 8px;font-size:1.8rem;} header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;} main{max-width:1240px;margin:0 auto;padding:24px;} .grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;} .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;} h2{font-size:1.25rem;margin:0 0 12px;} h3{font-size:1.05rem;margin:18px 0 8px;} p{line-height:1.55;} label{display:block;margin:8px 0 4px;font-weight:600;} input[type=number]{width:70px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;} .matrix{display:grid;gap:6px;margin:8px 0 12px;align-items:center;} .m2{grid-template-columns:repeat(2,78px);} .m3{grid-template-columns:repeat(3,78px);} .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;} button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;} button.secondary{background:#fff;color:#111827;} select{padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff;} canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;} .result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;} .eq{background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto;} .small{font-size:.92rem;color:var(--muted);} table{border-collapse:collapse;background:#fff;margin:8px 0;} th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;} .ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .warn{color:var(--amber);font-weight:700;} .task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;} textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;} code{background:#f3f4f6;padding:1px 4px;border-radius:4px;} @media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Lab 11 Interactive: Complex Inner Products and Schur Decomposition</h1>
+  <p>Explore Hermitian inner products, conjugate transpose, unitary matrices, Hermitian matrices, normal matrices, and Schur form. This page uses MathJax so formulas display correctly.</p>
+</header>
+<main>
+<section class="grid">
+  <div class="card">
+    <h2>1. Complex inner product</h2>
+    <p class="small">Enter $u=(u_1,u_2)$ and $v=(v_1,v_2)$ using real and imaginary parts. We use $\langle u,v\rangle=v^*u$.</p>
+    <h3>Vector $u$</h3>
+    <div class="row"><label>$u_1$</label><input id="u1r" type="number" value="1"><span>+</span><input id="u1i" type="number" value="1"><span>$i$</span></div>
+    <div class="row"><label>$u_2$</label><input id="u2r" type="number" value="2"><span>+</span><input id="u2i" type="number" value="0"><span>$i$</span></div>
+    <h3>Vector $v$</h3>
+    <div class="row"><label>$v_1$</label><input id="v1r" type="number" value="0"><span>+</span><input id="v1i" type="number" value="1"><span>$i$</span></div>
+    <div class="row"><label>$v_2$</label><input id="v2r" type="number" value="1"><span>+</span><input id="v2i" type="number" value="-1"><span>$i$</span></div>
+    <button onclick="presetVec('orthogonal')">Orthogonal example</button><button onclick="presetVec('nonzero')">Nonzero length example</button><button class="secondary" onclick="presetVec('warning')">Warning: no conjugation</button>
+    <div class="result" id="innerResult"></div>
+  </div>
+  <div class="card">
+    <h2>2. Why conjugation matters</h2>
+    <p>For a complex vector $z$, the expression $z^Tz$ may fail to be positive, while $z^*z$ is always real and nonnegative.</p>
+    <div class="eq" id="warningResult"></div>
+    <canvas id="complexCanvas" width="720" height="420"></canvas>
+  </div>
+</section>
+
+<section class="grid">
+  <div class="card">
+    <h2>3. Matrix checks</h2>
+    <p class="small">Enter a $2\times2$ complex matrix $A$. Use entries $a+bi$.</p>
+    <div class="matrix m2" id="matInputs"></div>
+    <button onclick="presetMat('hermitian')">Hermitian</button><button onclick="presetMat('unitary')">Unitary</button><button onclick="presetMat('normal')">Normal not Hermitian</button><button onclick="presetMat('nonnormal')">Nonnormal</button>
+    <div class="result" id="matrixResult"></div>
+  </div>
+  <div class="card">
+    <h2>4. Unitary action on points</h2>
+    <p class="small">The plot shows a real slice of the action on the first two real coordinates. Unitary matrices preserve complex norm.</p>
+    <canvas id="unitaryCanvas" width="720" height="420"></canvas>
+    <div class="result" id="unitaryResult"></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>5. Schur form and eigenvalues</h2>
+  <p>If $A=UTU^*$ and $T$ is upper triangular, then the eigenvalues of $A$ are the diagonal entries of $T$.</p>
+  <div class="matrix m3" id="schurInputs"></div>
+  <button onclick="presetSchur('real')">Real triangular example</button><button onclick="presetSchur('complex')">Complex diagonal example</button>
+  <div class="result" id="schurResult"></div>
+</section>
+
+<section class="card">
+  <h2>6. QR iteration experiment</h2>
+  <p class="small">This simplified QR iteration works best for real symmetric examples. It illustrates how repeated unitary similarity transformations move a matrix toward triangular/diagonal form.</p>
+  <div class="matrix m3" id="qrInputs"></div>
+  <div class="row"><label>Iterations</label><input id="iters" type="number" value="15" min="1" max="80"></div>
+  <button onclick="presetQR('symmetric')">Symmetric example</button><button onclick="presetQR('nonsymmetric')">Nonsymmetric example</button>
+  <div class="result" id="qrResult"></div>
+</section>
+
+<section class="card">
+  <h2>7. Independent-study practice tasks with answers</h2>
+  <div class="task"><strong>Task A.</strong> Compute $\langle u,v\rangle$ for $u=(1+i,2)$ and $v=(i,1-i)$. <br><strong>Answer:</strong> $\langle u,v\rangle=3+i$.</div>
+  <div class="task"><strong>Task B.</strong> Decide whether $A=\begin{bmatrix}2&1+i\\1-i&3\end{bmatrix}$ is Hermitian. <br><strong>Answer:</strong> Yes, because $A=A^*$.</div>
+  <div class="task"><strong>Task C.</strong> Give a normal matrix that is not Hermitian. <br><strong>Answer:</strong> $\begin{bmatrix}i&0\\0&1\end{bmatrix}$ is diagonal, hence normal, but not Hermitian.</div>
+  <div class="task"><strong>Task D.</strong> If $T=\begin{bmatrix}2&5&1\\0&3&4\\0&0&-1\end{bmatrix}$ is a Schur form, find the eigenvalues. <br><strong>Answer:</strong> $2,3,-1$.</div>
+  <div class="task"><strong>Similar practice.</strong> If $S=\begin{bmatrix}i&2\\0&1-i\end{bmatrix}$ is a Schur form, find the eigenvalues. <br><strong>Answer:</strong> $i$ and $1-i$.</div>
+</section>
+
+<section class="card"><h2>8. Workspace</h2><textarea placeholder="Write observations here. Copy final answers to your notebook or assignment."></textarea></section>
+</main>
+<script>
+function C(re,im){return {re:re, im:im};}
+function add(a,b){return C(a.re+b.re,a.im+b.im)} function sub(a,b){return C(a.re-b.re,a.im-b.im)} function mul(a,b){return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re)} function conj(a){return C(a.re,-a.im)} function abs2(a){return a.re*a.re+a.im*a.im} function div(a,b){let d=abs2(b);return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d)}
+function cfmt(z){let r=Math.abs(z.re)<1e-10?0:z.re, i=Math.abs(z.im)<1e-10?0:z.im; function f(x){return Math.abs(x-Math.round(x))<1e-10?String(Math.round(x)):Number(x).toFixed(3).replace(/0+$/,'').replace(/\.$/,'')} if(i===0)return f(r); if(r===0)return (i===1?'i':i===-1?'-i':f(i)+'i'); return f(r)+(i>0?' + ':' - ')+(Math.abs(i)===1?'i':f(Math.abs(i))+'i');}
+function val(id){return Number(document.getElementById(id).value)||0} function numfmt(x){if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'')}
+function matHTML(M){return `<table><tbody>${M.map(r=>`<tr>${r.map(z=>`<td>${typeof z==='number'?numfmt(z):cfmt(z)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function getVec(){return [C(val('u1r'),val('u1i')), C(val('u2r'),val('u2i')), C(val('v1r'),val('v1i')), C(val('v2r'),val('v2i'))]}
+function inner(u,v){return add(mul(conj(v[0]),u[0]), mul(conj(v[1]),u[1]));}
+function bilinear(u){return add(mul(u[0],u[0]),mul(u[1],u[1]));}
+function updateInner(){let [u1,u2,v1,v2]=getVec(); let u=[u1,u2],v=[v1,v2]; let uv=inner(u,v),vu=inner(v,u); let nu=Math.sqrt(abs2(u1)+abs2(u2)), nv=Math.sqrt(abs2(v1)+abs2(v2)); innerResult.innerHTML=`$u=(${cfmt(u1)}, ${cfmt(u2)})$, $v=(${cfmt(v1)}, ${cfmt(v2)})$<br>$\\langle u,v\\rangle = ${cfmt(uv)}$<br>$\\langle v,u\\rangle = ${cfmt(vu)}$<br>$\\|u\\|=${numfmt(nu)}$, $\\|v\\|=${numfmt(nv)}$<br>`+(Math.hypot(uv.re,uv.im)<1e-10?`<span class='ok'>The vectors are orthogonal.</span>`:`<span class='warn'>The vectors are not orthogonal.</span>`); let wrong=bilinear(u); let right=C(abs2(u1)+abs2(u2),0); warningResult.innerHTML=`For the current $u$, $u^Tu=${cfmt(wrong)}$, but $u^*u=${cfmt(right)}$.`; drawComplex(); typeset();}
+function presetVec(t){if(t==='orthogonal'){setVals({u1r:1,u1i:0,u2r:0,u2i:0,v1r:0,v1i:0,v2r:1,v2i:0})} if(t==='nonzero'){setVals({u1r:1,u1i:1,u2r:2,u2i:0,v1r:0,v1i:1,v2r:1,v2i:-1})} if(t==='warning'){setVals({u1r:1,u1i:0,u2r:0,u2i:1,v1r:1,v1i:0,v2r:0,v2i:0})} update();}
+function setVals(o){for(let k in o)document.getElementById(k).value=o[k];}
+function createMatInputs(){let el=document.getElementById('matInputs');el.innerHTML=''; for(let i=0;i<2;i++)for(let j=0;j<2;j++){let wrap=document.createElement('div');wrap.innerHTML=`<input id="m${i}${j}r" type="number" value="0"> + <input id="m${i}${j}i" type="number" value="0"> i`;el.appendChild(wrap);} let s=document.getElementById('schurInputs');s.innerHTML=''; for(let i=0;i<3;i++)for(let j=0;j<3;j++){let wrap=document.createElement('div');wrap.innerHTML=`<input id="s${i}${j}r" type="number" value="0"> + <input id="s${i}${j}i" type="number" value="0"> i`;s.appendChild(wrap);} let q=document.getElementById('qrInputs');q.innerHTML=''; for(let i=0;i<3;i++)for(let j=0;j<3;j++){let inp=document.createElement('input');inp.id=`q${i}${j}`;inp.type='number';inp.value=(i===j?2:(Math.abs(i-j)===1?1:0));q.appendChild(inp);} }
+function getM(){let M=[];for(let i=0;i<2;i++){let row=[];for(let j=0;j<2;j++)row.push(C(val(`m${i}${j}r`),val(`m${i}${j}i`)));M.push(row)}return M}
+function getS(){let M=[];for(let i=0;i<3;i++){let row=[];for(let j=0;j<3;j++)row.push(C(val(`s${i}${j}r`),val(`s${i}${j}i`)));M.push(row)}return M}
+function cmatMul(A,B){let n=A.length,m=B[0].length,k=B.length,Cm=[];for(let i=0;i<n;i++){let row=[];for(let j=0;j<m;j++){let z=C(0,0);for(let l=0;l<k;l++)z=add(z,mul(A[i][l],B[l][j]));row.push(z)}Cm.push(row)}return Cm}
+function star(A){let n=A.length,m=A[0].length,R=[];for(let i=0;i<m;i++){let row=[];for(let j=0;j<n;j++)row.push(conj(A[j][i]));R.push(row)}return R}
+function eye(n){return Array.from({length:n},(_,i)=>Array.from({length:n},(_,j)=>C(i===j?1:0,0)))} function close(A,B){for(let i=0;i<A.length;i++)for(let j=0;j<A[0].length;j++)if(Math.hypot(A[i][j].re-B[i][j].re,A[i][j].im-B[i][j].im)>1e-8)return false;return true}
+function updateMatrix(){let A=getM(),As=star(A),AsA=cmatMul(As,A),AAs=cmatMul(A,As),I=eye(2);let herm=close(A,As),unit=close(AsA,I),normal=close(AsA,AAs); matrixResult.innerHTML=`$A=${matHTML(A)} A^*=${matHTML(As)} A^*A=${matHTML(AsA)} AA^*=${matHTML(AAs)}<br>`+(herm?`<span class='ok'>Hermitian: yes.</span><br>`:`<span class='bad'>Hermitian: no.</span><br>`)+(unit?`<span class='ok'>Unitary: yes.</span><br>`:`<span class='warn'>Unitary: no.</span><br>`)+(normal?`<span class='ok'>Normal: yes.</span>`:`<span class='bad'>Normal: no.</span>`); unitaryResult.innerHTML=`For the current matrix, $A^*A${unit?'=I':'\\ne I'}$. A unitary matrix preserves complex norms.`; drawUnitary(); typeset();}
+function setM(M){for(let i=0;i<2;i++)for(let j=0;j<2;j++){document.getElementById(`m${i}${j}r`).value=M[i][j].re;document.getElementById(`m${i}${j}i`).value=M[i][j].im;}}
+function presetMat(t){if(t==='hermitian')setM([[C(2,0),C(1,1)],[C(1,-1),C(3,0)]]); if(t==='unitary'){let a=1/Math.sqrt(2);setM([[C(a,0),C(a,0)],[C(a,0),C(-a,0)]])} if(t==='normal')setM([[C(0,1),C(0,0)],[C(0,0),C(1,0)]]); if(t==='nonnormal')setM([[C(1,0),C(1,0)],[C(0,0),C(1,0)]]); update();}
+function setS(M){for(let i=0;i<3;i++)for(let j=0;j<3;j++){document.getElementById(`s${i}${j}r`).value=M[i][j].re;document.getElementById(`s${i}${j}i`).value=M[i][j].im;}}
+function updateSchur(){let T=getS();let upper=true;for(let i=0;i<3;i++)for(let j=0;j<i;j++)if(Math.hypot(T[i][j].re,T[i][j].im)>1e-10)upper=false;let eig=[T[0][0],T[1][1],T[2][2]];schurResult.innerHTML=`$T=${matHTML(T)}$<br>`+(upper?`<span class='ok'>This is upper triangular.</span>`:`<span class='bad'>This is not upper triangular.</span>`)+`<br>If $T$ is a Schur form, the eigenvalues are ${eig.map(cfmt).join(', ')}.`; typeset();}
+function presetSchur(t){if(t==='real')setS([[C(2,0),C(5,0),C(1,0)],[C(0,0),C(3,0),C(4,0)],[C(0,0),C(0,0),C(-1,0)]]); if(t==='complex')setS([[C(0,1),C(2,0),C(0,0)],[C(0,0),C(1,-1),C(3,0)],[C(0,0),C(0,0),C(4,0)]]); update();}
+function getQ(){let M=[];for(let i=0;i<3;i++){let r=[];for(let j=0;j<3;j++)r.push(val(`q${i}${j}`));M.push(r)}return M}
+function transpose(A){return A[0].map((_,j)=>A.map(r=>r[j]))} function rmul(A,B){let C=[];for(let i=0;i<A.length;i++){let row=[];for(let j=0;j<B[0].length;j++){let s=0;for(let k=0;k<B.length;k++)s+=A[i][k]*B[k][j];row.push(s)}C.push(row)}return C}
+function qrDecomp(A){let cols=transpose(A),Qcols=[],R=Array.from({length:3},()=>Array(3).fill(0));for(let j=0;j<3;j++){let v=cols[j].slice();for(let i=0;i<j;i++){R[i][j]=Qcols[i].reduce((s,x,k)=>s+x*cols[j][k],0);for(let k=0;k<3;k++)v[k]-=R[i][j]*Qcols[i][k];}R[j][j]=Math.sqrt(v.reduce((s,x)=>s+x*x,0)); if(R[j][j]<1e-12)return null;Qcols[j]=v.map(x=>x/R[j][j]);}return {Q:transpose(Qcols),R};}
+function updateQR(){let A=getQ(),Ak=A.map(r=>r.slice()),n=Math.max(1,Math.min(80,Math.floor(val('iters'))));for(let k=0;k<n;k++){let de=qrDecomp(Ak);if(!de){qrResult.innerHTML=`<span class='bad'>QR failed because a column became dependent in this simple implementation.</span>`;return;}Ak=rmul(de.R,de.Q);}qrResult.innerHTML=`After ${n} QR iterations:<br>${matHTML(Ak)}<br>The diagonal entries often approximate eigenvalues for suitable examples.`; typeset();}
+function setQ(M){for(let i=0;i<3;i++)for(let j=0;j<3;j++)document.getElementById(`q${i}${j}`).value=M[i][j];}
+function presetQR(t){if(t==='symmetric')setQ([[2,1,0],[1,2,1],[0,1,2]]); if(t==='nonsymmetric')setQ([[1,2,0],[0,3,4],[0,0,5]]); update();}
+function drawComplex(){let c=complexCanvas,ctx=c.getContext('2d'),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);let [u1,u2]=getVec();function drawZ(z,x0,label,color){let sc=65, ox=x0, oy=H/2;ctx.strokeStyle='#ddd';ctx.beginPath();ctx.moveTo(ox-120,oy);ctx.lineTo(ox+120,oy);ctx.stroke();ctx.beginPath();ctx.moveTo(ox,oy-120);ctx.lineTo(ox,oy+120);ctx.stroke();ctx.strokeStyle=color;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(ox+z.re*sc,oy-z.im*sc);ctx.stroke();ctx.fillStyle=color;ctx.font='15px system-ui';ctx.fillText(label,ox+z.re*sc+8,oy-z.im*sc-8)}drawZ(u1,200,'u₁','#2563eb');drawZ(u2,520,'u₂','#f97316');}
+function drawUnitary(){let c=unitaryCanvas,ctx=c.getContext('2d'),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);let A=getM(), pts=[[1,0],[0,1],[-1,0],[0,-1],[1,0]];function apply(p){let x=C(p[0],0),y=C(p[1],0);let z1=add(mul(A[0][0],x),mul(A[0][1],y));let z2=add(mul(A[1][0],x),mul(A[1][1],y));return [z1.re,z2.re];}function to(p){return [W/2+p[0]*100,H/2-p[1]*100]}ctx.strokeStyle='#2563eb';ctx.lineWidth=3;ctx.beginPath();pts.forEach((p,i)=>{let q=to(p);if(i===0)ctx.moveTo(q[0],q[1]);else ctx.lineTo(q[0],q[1]);});ctx.stroke();ctx.strokeStyle='#f97316';ctx.beginPath();pts.map(apply).forEach((p,i)=>{let q=to(p);if(i===0)ctx.moveTo(q[0],q[1]);else ctx.lineTo(q[0],q[1]);});ctx.stroke();ctx.fillStyle='#111827';ctx.font='15px system-ui';ctx.fillText('Blue: original real unit circle slice. Orange: transformed real slice.',16,24);}
+function typeset(){if(window.MathJax && window.MathJax.typesetPromise) MathJax.typesetPromise();}
+function update(){updateInner();updateMatrix();updateSchur();updateQR();}
+createMatInputs();['u1r','u1i','u2r','u2i','v1r','v1i','v2r','v2i','iters'].forEach(id=>document.getElementById(id).addEventListener('input',update));document.querySelectorAll('#matInputs input,#schurInputs input,#qrInputs input').forEach(e=>e.addEventListener('input',update));presetMat('hermitian');presetSchur('real');presetQR('symmetric');update();
+</script>
+</body>
+</html>

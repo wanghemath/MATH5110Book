@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 22 Interactive: Duality and Cohomology</title>
+<script>
+window.MathJax = {
+  tex: {inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']]},
+  svg: {fontCache: 'global'}
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--bg:#fff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);}
+header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;}
+header h1{margin:0 0 8px;font-size:1.8rem;} header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;}
+main{max-width:1240px;margin:0 auto;padding:24px;}
+.grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;}
+h2{font-size:1.25rem;margin:0 0 12px;} h3{font-size:1.05rem;margin:18px 0 8px;} p{line-height:1.55;}
+label{display:block;margin:8px 0 4px;font-weight:600;}
+input[type=number]{width:64px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;}
+.matrix{display:grid;gap:6px;margin:8px 0 12px;align-items:center;}
+.m2{grid-template-columns:repeat(2,72px);} .m32{grid-template-columns:repeat(2,72px);}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;}
+button.secondary{background:#fff;color:#111827;}
+select{padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff;}
+canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;}
+.result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;}
+.eq{background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto;}
+.small{font-size:.92rem;color:var(--muted);}
+table{border-collapse:collapse;background:#fff;margin:8px 0;} th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;}
+.ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .warn{color:var(--amber);font-weight:700;}
+.task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;}
+textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;}
+@media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+<h1>Lab 22 Interactive: Duality and Cohomology</h1>
+<p>Explore dual bases, annihilators, transposes, and the cohomology of hollow versus filled triangles. This page uses MathJax so formulas display correctly.</p>
+</header>
+
+<main>
+<section class="grid">
+<div class="card">
+<h2>1. Dual basis in $\mathbb R^2$</h2>
+<p class="small">Enter basis vectors $v_1,v_2$. If $P=[v_1\ v_2]$, then the rows of $P^{-1}$ are the dual basis functionals.</p>
+<h3>Basis matrix $P=[v_1\ v_2]$</h3>
+<div class="matrix m2" id="Pinputs"></div>
+<button onclick="dualPreset('basic')">Basic example</button>
+<button onclick="dualPreset('practice')">Practice example</button>
+<button class="secondary" onclick="dualPreset('singular')">Dependent vectors</button>
+<div class="result" id="dualResult"></div>
+</div>
+<div class="card">
+<h2>2. Coordinate extraction by measurements</h2>
+<p class="small">Enter a vector $x$. The dual basis returns the coordinate vector $[x]_{\mathcal B}=P^{-1}x$.</p>
+<div class="row"><label>$x_1$</label><input id="x0" type="number" value="4" step="1"><label>$x_2$</label><input id="x1" type="number" value="7" step="1"></div>
+<canvas id="basisCanvas" width="720" height="520"></canvas>
+<div class="result" id="coordResult"></div>
+</div>
+</section>
+
+<section class="grid">
+<div class="card">
+<h2>3. Annihilator in $\mathbb R^3$</h2>
+<p class="small">Enter two spanning vectors for a subspace $U\subseteq\mathbb R^3$. The annihilator $U^\circ$ consists of row vectors $\ell$ satisfying $\ell u_1=\ell u_2=0$.</p>
+<h3>Columns $u_1,u_2$</h3>
+<div class="matrix m32" id="Uinputs"></div>
+<button onclick="annPreset('basic')">Chapter example</button>
+<button onclick="annPreset('practice')">Similar practice</button>
+<button class="secondary" onclick="annPreset('line')">One-dimensional span</button>
+<div class="result" id="annResult"></div>
+</div>
+<div class="card">
+<h2>4. Dual map and transpose</h2>
+<p>If $T(x)=Ax$, then the dual map $T^*$ is represented by $A^T$.</p>
+<div class="eq" id="transposeResult"></div>
+<p class="small">This is the same transpose operation that appears in coboundary matrices.</p>
+</div>
+</section>
+
+<section class="grid">
+<div class="card">
+<h2>5. Cohomology of a triangle</h2>
+<p class="small">Compare a hollow triangle with a filled triangle.</p>
+<select id="triangleType" onchange="update()">
+<option value="hollow">Hollow triangle</option>
+<option value="filled">Filled triangle</option>
+</select>
+<canvas id="triCanvas" width="720" height="500"></canvas>
+</div>
+<div class="card">
+<h2>6. Boundary and coboundary matrices</h2>
+<div class="result" id="cohomologyResult"></div>
+</div>
+</section>
+
+<section class="card">
+<h2>7. Independent-study practice tasks with answers</h2>
+<div class="task"><strong>Task A.</strong> Find the dual basis for $v_1=(1,1)$ and $v_2=(1,2)$.<br><strong>Answer:</strong> $P^{-1}=\begin{bmatrix}2&-1\\-1&1\end{bmatrix}$, so $\varphi^1(x,y)=2x-y$ and $\varphi^2(x,y)=-x+y$.</div>
+<div class="task"><strong>Task B.</strong> Find one functional that vanishes on $U=\operatorname{span}\{(1,1,0),(0,1,1)\}$.<br><strong>Answer:</strong> $\ell(x,y,z)=-x+y-z$.</div>
+<div class="task"><strong>Task C.</strong> Why does the hollow triangle have $\dim H^1=1$?<br><strong>Answer:</strong> There are three edge cochains, no $2$-simplices, and $\operatorname{rank}D_1=2$, so $\dim H^1=3-2=1$.</div>
+<div class="task"><strong>Task D.</strong> Why does the filled triangle have $\dim H^1=0$?<br><strong>Answer:</strong> The filled face adds $D_2$ with rank $1$, so $\dim H^1=3-2-1=0$.</div>
+</section>
+
+<section class="card">
+<h2>8. Workspace</h2>
+<textarea placeholder="Write your observations here. Copy final answers into your notebook or assignment."></textarea>
+</section>
+</main>
+
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(row=>`<tr>${row.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function createInputs(containerId,prefix,vals,rows,cols){const el=document.getElementById(containerId);el.innerHTML='';for(let i=0;i<rows;i++){for(let j=0;j<cols;j++){const input=document.createElement('input');input.type='number';input.step='1';input.value=vals[i][j];input.id=`${prefix}${i}${j}`;input.addEventListener('input',update);el.appendChild(input);}}}
+function getMat(prefix,rows,cols){let M=[];for(let i=0;i<rows;i++){let r=[];for(let j=0;j<cols;j++)r.push(Number(document.getElementById(`${prefix}${i}${j}`).value)||0);M.push(r);}return M;}
+function setMat(prefix,M){for(let i=0;i<M.length;i++)for(let j=0;j<M[0].length;j++)document.getElementById(`${prefix}${i}${j}`).value=M[i][j];}
+function det2(P){return P[0][0]*P[1][1]-P[0][1]*P[1][0];}
+function inv2(P){let d=det2(P); if(Math.abs(d)<1e-10)return null; return [[P[1][1]/d,-P[0][1]/d],[-P[1][0]/d,P[0][0]/d]];}
+function mmul(A,B){let C=Array.from({length:A.length},()=>Array(B[0].length).fill(0)); for(let i=0;i<A.length;i++)for(let j=0;j<B[0].length;j++)for(let k=0;k<B.length;k++)C[i][j]+=A[i][k]*B[k][j]; return C;}
+function trans(A){return A[0].map((_,j)=>A.map(row=>row[j]));}
+function cross(a,b){return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];}
+function rankCols2(U){let u=U.map(r=>r[0]),v=U.map(r=>r[1]);let c=cross(u,v);if(c.some(x=>Math.abs(x)>1e-10))return 2;if(u.concat(v).some(x=>Math.abs(x)>1e-10))return 1;return 0;}
+function updateDual(){let P=getMat('P',2,2), Pinv=inv2(P), x=[Number(x0.value)||0,Number(x1.value)||0]; if(!Pinv){dualResult.innerHTML=`<span class='bad'>The vectors are linearly dependent, so there is no dual basis.</span><br>$\\det(P)=0$.`;coordResult.innerHTML='No coordinates in a basis.';drawBasis();return;} let coord=[Pinv[0][0]*x[0]+Pinv[0][1]*x[1],Pinv[1][0]*x[0]+Pinv[1][1]*x[1]];dualResult.innerHTML=`$P=${matHTML(P)}$ $P^{-1}=${matHTML(Pinv)}$<br><span class='ok'>Rows of $P^{-1}$ are the dual basis.</span><br>$\\varphi^1(x,y)=${fmt(Pinv[0][0])}x+${fmt(Pinv[0][1])}y$<br>$\\varphi^2(x,y)=${fmt(Pinv[1][0])}x+${fmt(Pinv[1][1])}y$`;coordResult.innerHTML=`For $x=(${fmt(x[0])},${fmt(x[1])})$, the coordinate vector is $[x]_{\\mathcal B}=P^{-1}x=${matHTML([[coord[0]],[coord[1]]])}$`;drawBasis();typeset();}
+function dualPreset(t){if(t==='basic')setMat('P',[[1,1],[1,2]]); if(t==='practice')setMat('P',[[1,3],[2,5]]); if(t==='singular')setMat('P',[[1,2],[2,4]]); update();}
+function annPreset(t){if(t==='basic')setMat('U',[[1,0],[1,1],[0,1]]); if(t==='practice')setMat('U',[[1,1],[0,1],[1,0]]); if(t==='line')setMat('U',[[1,2],[2,4],[3,6]]); update();}
+function updateAnn(){let U=getMat('U',3,2), u=U.map(r=>r[0]),v=U.map(r=>r[1]),r=rankCols2(U);let c=cross(u,v);let msg=`$U=${matHTML(U)}$<br>$\\dim U=${r}$, so $\\dim U^\\circ=${3-r}$.<br>`; if(r===2){msg += `<span class='ok'>A basis for $U^\\circ$ is one functional:</span> $\\ell(x,y,z)=${fmt(c[0])}x+${fmt(c[1])}y+${fmt(c[2])}z$.`; } else if(r===1){msg += `<span class='warn'>$U$ is a line, so $U^\\circ$ is a plane of measurements. There are two independent functionals that vanish on it.</span>`;} else {msg += `<span class='warn'>$U=\\{0\\}$, so every functional vanishes on $U$.</span>`;} annResult.innerHTML=msg;transposeResult.innerHTML=`For the same matrix $A=U$, the dual map is represented by $A^T=${matHTML(trans(U))}$.`;typeset();}
+function drawBasis(){const c=document.getElementById('basisCanvas'),ctx=c.getContext('2d'),W=c.width,H=c.height,sc=45;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);function pt(x,y){return [W/2+x*sc,H/2-y*sc];}ctx.strokeStyle='#eef2f7';ctx.lineWidth=1;for(let x=-7;x<=7;x++){let p=pt(x,0)[0];ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,H);ctx.stroke();}for(let y=-5;y<=5;y++){let p=pt(0,y)[1];ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(W,p);ctx.stroke();}let ox=pt(0,0)[0],oy=pt(0,0)[1];ctx.strokeStyle='#9ca3af';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(W,oy);ctx.stroke();ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();let P=getMat('P',2,2),x=[Number(x0.value)||0,Number(x1.value)||0];function vec(v,color,label){let q=pt(v[0],v[1]);ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(q[0],q[1]);ctx.stroke();ctx.beginPath();ctx.arc(q[0],q[1],5,0,2*Math.PI);ctx.fill();ctx.font='15px system-ui';ctx.fillText(label,q[0]+8,q[1]-8);}vec([P[0][0],P[1][0]],'#2563eb','v₁');vec([P[0][1],P[1][1]],'#f97316','v₂');vec(x,'#111827','x');}
+function updateCohomology(){let filled=document.getElementById('triangleType').value==='filled';drawTriangle(filled);let D1=[[-1,0,-1],[1,-1,0],[0,1,1]];let D2=filled?[[1],[1],[-1]]:[[],[],[]];let r1=2,r2=filled?1:0,n0=3,n1=3,n2=filled?1:0;let beta0=n0-r1,beta1=n1-r1-r2,beta2=n2-r2;let D1T=trans(D1);let D2T=filled?[[1,1,-1]]:[[]];cohomologyResult.innerHTML=`Boundary matrix $D_1=${matHTML(D1)}$<br>Coboundary matrix $\\delta^0=D_1^T=${matHTML(D1T)}$<br>`+(filled?`Boundary matrix $D_2=${matHTML(D2)}$<br>Coboundary matrix $\\delta^1=D_2^T=${matHTML(D2T)}$<br>`:`There is no $2$-simplex, so $D_2$ has rank $0$ and $\\delta^1=0$.<br>`)+`<strong>Ranks:</strong> $\\operatorname{rank}D_1=${r1}$, $\\operatorname{rank}D_2=${r2}$.<br><strong>Betti numbers:</strong> $\\beta_0=${beta0}$, $\\beta_1=${beta1}$, $\\beta_2=${beta2}$.<br>`+(beta1===1?`<span class='ok'>There is one loop detected by $H^1$.</span>`:`<span class='warn'>The loop is filled, so $H^1=0$.</span>`);typeset();}
+function drawTriangle(filled){const c=triCanvas,ctx=c.getContext('2d'),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);let A=[W/2,80],B=[180,360],C=[W-180,360];ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.lineTo(C[0],C[1]);ctx.closePath();if(filled){ctx.fillStyle='rgba(249,115,22,.18)';ctx.fill();}ctx.strokeStyle='#111827';ctx.lineWidth=4;ctx.stroke();[[A,'1'],[B,'2'],[C,'3']].forEach(([p,l])=>{ctx.fillStyle='#111827';ctx.beginPath();ctx.arc(p[0],p[1],7,0,2*Math.PI);ctx.fill();ctx.font='18px system-ui';ctx.fillText(l,p[0]+10,p[1]-10);});ctx.fillStyle=filled?'#92400e':'#065f46';ctx.font='20px system-ui';ctx.fillText(filled?'Filled triangle: no 1-dimensional hole':'Hollow triangle: one 1-dimensional hole',180,430);}
+function update(){updateDual();updateAnn();updateCohomology();}
+function typeset(){if(window.MathJax && MathJax.typesetPromise){MathJax.typesetPromise();}}
+createInputs('Pinputs','P',[[1,1],[1,2]],2,2);
+createInputs('Uinputs','U',[[1,0],[1,1],[0,1]],3,2);
+['x0','x1'].forEach(id=>document.getElementById(id).addEventListener('input',update));
+update();
+</script>
+</body>
+</html>

@@ -1,0 +1,941 @@
+---
+title: "Chapter 11: Complex Inner Products, Unitary Geometry, Hermitian Matrices, and Schur Decomposition"
+subtitle: "Replacing transpose by conjugate transpose, and turning every complex matrix into triangular form"
+author: "He Wang"
+format:
+  html:
+    toc: true
+    number-sections: true
+    code-fold: true
+    code-tools: true
+jupyter: python3
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## The story: why complex geometry needs conjugation
+
+In Chapter 10, inner products turned vector spaces into geometric spaces. We could measure length, angle, orthogonality, projection, and least-squares error. In this chapter, we move from real vector spaces to complex vector spaces.
+
+At first, the change looks small. The real dot product
+$$
+x^T y
+$$
+is replaced by a Hermitian inner product involving complex conjugation. In matrix language, the transpose $A^T$ is replaced by the **conjugate transpose** $A^*$.
+
+But this small notational change is mathematically essential. Without conjugation, a nonzero vector can have length zero.
+
+### A warning example
+
+Let
+$$
+z=\begin{bmatrix}1\\ i\end{bmatrix}\in \mathbb C^2.
+$$
+If we tried to define length squared by $z^Tz$, then
+$$
+z^Tz=1^2+i^2=1-1=0.
+$$
+This says that a nonzero vector has length zero, which is impossible in a genuine geometry.
+
+The correct complex length uses conjugation:
+$$
+z^*z=\overline{1}\,1+\overline{i}\,i=1+(-i)i=2.
+$$
+
+The central idea of this chapter is:
+
+> Complex geometry is real geometry plus phase. Conjugation is what makes length, angle, projection, and diagonalization behave correctly.
+
+```{python}
+import numpy as np
+from numpy.linalg import norm, eig, qr
+np.set_printoptions(precision=4, suppress=True)
+```
+
+## Learning goals
+
+After this chapter, you should be able to:
+
+1. explain why complex inner products require conjugation;
+2. compute Hermitian inner products, norms, and orthogonality in $\mathbb C^n$;
+3. apply the complex Gram--Schmidt process;
+4. compute projections using $U U^*$;
+5. define adjoints and conjugate transposes;
+6. recognize unitary and Hermitian matrices;
+7. explain the complex spectral theorem for Hermitian matrices;
+8. state and use Schur decomposition;
+9. explain why Schur decomposition is more numerically stable than Jordan form;
+10. characterize normal matrices as unitarily diagonalizable matrices;
+11. use Python to compute unitary checks, Hermitian checks, Schur forms, and QR iterations;
+12. use an AI companion responsibly to test examples and compare real and complex conventions.
+
+## Complex inner product spaces
+
+### Definition 11.1: Complex inner product
+
+::: {.callout-note}
+Let $V$ be a vector space over $\mathbb C$. A **complex inner product** on $V$ is a function
+$$
+\langle -,-\rangle:V\times V\to \mathbb C
+$$
+such that for all $u,v,w\in V$ and all $\alpha,\beta\in\mathbb C$:
+
+1. **Conjugate symmetry:**
+   $$
+   \langle u,v\rangle=\overline{\langle v,u\rangle}.
+   $$
+2. **Linearity in the first variable:**
+   $$
+   \langle \alpha u+\beta v,w\rangle
+   =\alpha\langle u,w\rangle+\beta\langle v,w\rangle.
+   $$
+3. **Positive definiteness:**
+   $$
+   \langle u,u\rangle\ge 0,
+   \qquad
+   \langle u,u\rangle=0 \text{ if and only if } u=0.
+   $$
+
+The induced norm is
+$$
+\|u\|=\sqrt{\langle u,u\rangle}.
+$$
+:::
+
+Some textbooks use the opposite convention, linear in the second variable. In these notes we use the convention
+$$
+\langle u,v\rangle=v^*u=\sum_{j=1}^n u_j\overline{v_j},
+$$
+which is linear in the first variable.
+
+### Example 11.1: Standard Hermitian inner product
+
+For
+$$
+u=\begin{bmatrix}1+i\\2-i\\-i\end{bmatrix},
+\qquad
+v=\begin{bmatrix}2\\1+i\\3i\end{bmatrix},
+$$
+we have
+$$
+\langle u,v\rangle=v^*u
+= (1+i)\overline{2}+(2-i)\overline{(1+i)}+(-i)\overline{3i}.
+$$
+
+```{python}
+u = np.array([1+1j, 2-1j, -1j])
+v = np.array([2+0j, 1+1j, 3j])
+inner_uv = np.vdot(v, u)     # vdot(a,b)=conj(a) dot b = a^* b
+inner_vu = np.vdot(u, v)
+inner_uv, inner_vu, np.conj(inner_vu)
+```
+
+The output illustrates conjugate symmetry:
+$$
+\langle u,v\rangle=\overline{\langle v,u\rangle}.
+$$
+
+### Proposition 11.2: Basic consequences
+
+::: {.callout-important}
+For a complex inner product space:
+
+1. $\langle 0,v\rangle=0$ and $\langle u,0\rangle=0$.
+2. $\langle u,\alpha v+\beta w\rangle=\overline{\alpha}\langle u,v\rangle+\overline{\beta}\langle u,w\rangle$.
+3. $\|u\|^2=\langle u,u\rangle$ is always real and nonnegative.
+4. $u\perp v$ means $\langle u,v\rangle=0$.
+:::
+
+<details>
+<summary><strong>Show proof</strong></summary>
+
+The first statement follows from linearity in the first variable. For the second statement, use conjugate symmetry:
+$$
+\langle u,\alpha v+\beta w\rangle
+=\overline{\langle \alpha v+\beta w,u\rangle}
+=\overline{\alpha\langle v,u\rangle+\beta\langle w,u\rangle}
+=\overline\alpha\langle u,v\rangle+\overline\beta\langle u,w\rangle.
+$$
+The third statement is part of positive definiteness.
+
+</details>
+
+### Theorem 11.3: Cauchy--Schwarz inequality
+
+::: {.callout-important}
+For any complex inner product space $V$ and any $u,v\in V$,
+$$
+|\langle u,v\rangle|\le \|u\|\,\|v\|.
+$$
+Equality holds if and only if $u$ and $v$ are linearly dependent.
+:::
+
+<details>
+<summary><strong>Show proof</strong></summary>
+
+If $v=0$, the statement is immediate. Assume $v\ne 0$. Let
+$$
+\alpha=\frac{\langle u,v\rangle}{\langle v,v\rangle}.
+$$
+Then
+$$
+\langle u-\alpha v,v\rangle
+=\langle u,v\rangle-\alpha\langle v,v\rangle=0.
+$$
+Therefore
+$$
+0\le \|u-\alpha v\|^2
+=\|u\|^2-\frac{|\langle u,v\rangle|^2}{\|v\|^2}.
+$$
+Rearranging gives
+$$
+|\langle u,v\rangle|^2\le \|u\|^2\|v\|^2.
+$$
+Taking square roots gives the result.
+
+</details>
+
+## Orthogonality, orthonormal bases, and projection over $\mathbb C$
+
+### Definition 11.4: Orthogonal and orthonormal vectors
+
+::: {.callout-note}
+Vectors $u$ and $v$ in a complex inner product space are **orthogonal** if
+$$
+\langle u,v\rangle=0.
+$$
+A list $u_1,\ldots,u_k$ is **orthonormal** if
+$$
+\langle u_i,u_j\rangle=\delta_{ij}.
+$$
+:::
+
+### Theorem 11.5: Complex Gram--Schmidt process
+
+::: {.callout-important}
+Let $v_1,\ldots,v_k$ be linearly independent vectors in a complex inner product space. Define
+$$
+w_1=v_1,
+\qquad
+u_1=\frac{w_1}{\|w_1\|},
+$$
+and for $j=2,\ldots,k$,
+$$
+w_j=v_j-\sum_{i=1}^{j-1}\langle v_j,u_i\rangle u_i,
+\qquad
+u_j=\frac{w_j}{\|w_j\|}.
+$$
+Then $u_1,\ldots,u_k$ is an orthonormal basis for
+$$
+\operatorname{span}(v_1,\ldots,v_k).
+$$
+:::
+
+<details>
+<summary><strong>Show proof idea</strong></summary>
+
+At step $j$, the vector $w_j$ is obtained by subtracting from $v_j$ its components in the directions $u_1,\ldots,u_{j-1}$. For every $\ell<j$,
+$$
+\langle w_j,u_\ell\rangle
+=\langle v_j,u_\ell\rangle-
+\sum_{i=1}^{j-1}\langle v_j,u_i\rangle\langle u_i,u_\ell\rangle
+=\langle v_j,u_\ell\rangle-\langle v_j,u_\ell\rangle=0.
+$$
+Since the original vectors are independent, $w_j\ne 0$, so normalization is allowed. This constructs an orthonormal list with the same span.
+
+</details>
+
+### Python example: complex Gram--Schmidt
+
+```{python}
+def hermitian_inner(u, v):
+    # convention: <u,v> = v^* u
+    return np.vdot(v, u)
+
+def complex_gram_schmidt(cols):
+    Q = []
+    for v in cols:
+        w = v.astype(complex).copy()
+        for q in Q:
+            w = w - hermitian_inner(v, q) * q
+        nw = norm(w)
+        if nw > 1e-12:
+            Q.append(w / nw)
+    return np.column_stack(Q)
+
+v1 = np.array([1+1j, 1, 0], dtype=complex)
+v2 = np.array([1, 1j, 1], dtype=complex)
+v3 = np.array([0, 1, 1j], dtype=complex)
+Q = complex_gram_schmidt([v1, v2, v3])
+Q.conj().T @ Q
+```
+
+The matrix $Q^*Q$ should be the identity, up to roundoff error.
+
+### Proposition 11.6: Projection formula
+
+::: {.callout-important}
+Let $u_1,\ldots,u_k$ be an orthonormal basis for a subspace $W$ of a complex inner product space. Then
+$$
+\operatorname{proj}_W(y)=\sum_{i=1}^k \langle y,u_i\rangle u_i.
+$$
+In matrix form, if
+$$
+U=[u_1\ \cdots\ u_k],
+$$
+then
+$$
+P_W=UU^*.
+$$
+:::
+
+<details>
+<summary><strong>Show proof</strong></summary>
+
+Let
+$$
+p=\sum_{i=1}^k\langle y,u_i\rangle u_i.
+$$
+For each $j$,
+$$
+\langle y-p,u_j\rangle
+=\langle y,u_j\rangle-
+\sum_{i=1}^k\langle y,u_i\rangle\langle u_i,u_j\rangle
+=0.
+$$
+Thus $y-p$ is orthogonal to every vector in $W$. Therefore $p$ is the orthogonal projection of $y$ onto $W$.
+
+</details>
+
+```{python}
+y = np.array([2+1j, -1, 3j], dtype=complex)
+P = Q[:, :2] @ Q[:, :2].conj().T
+proj = P @ y
+residual = y - proj
+Q[:, :2].conj().T @ residual
+```
+
+## Conjugate transpose, adjoints, and unitary matrices
+
+### Definition 11.7: Conjugate transpose
+
+::: {.callout-note}
+For a complex matrix $A=(a_{ij})\in\mathbb C^{m\times n}$, the **conjugate transpose** is
+$$
+A^*=\overline{A}^{T}.
+$$
+Equivalently,
+$$
+(A^*)_{ij}=\overline{a_{ji}}.
+$$
+:::
+
+### Definition 11.8: Adjoint
+
+::: {.callout-note}
+Let $T:V\to V$ be a linear transformation on a finite-dimensional complex inner product space. The **adjoint** of $T$ is the unique linear map $T^*:V\to V$ satisfying
+$$
+\langle T u,v\rangle=\langle u,T^*v\rangle
+$$
+for all $u,v\in V$.
+With respect to an orthonormal basis, the matrix of $T^*$ is the conjugate transpose of the matrix of $T$.
+:::
+
+### Definition 11.9: Unitary matrix
+
+::: {.callout-note}
+A square matrix $U\in\mathbb C^{n\times n}$ is **unitary** if
+$$
+U^*U=UU^*=I.
+$$
+Equivalently, the columns of $U$ form an orthonormal basis of $\mathbb C^n$.
+:::
+
+### Proposition 11.10: Unitary matrices preserve geometry
+
+::: {.callout-important}
+If $U$ is unitary, then for all $x,y\in\mathbb C^n$,
+$$
+\langle Ux,Uy\rangle=\langle x,y\rangle.
+$$
+In particular,
+$$
+\|Ux\|=\|x\|.
+$$
+:::
+
+<details>
+<summary><strong>Show proof</strong></summary>
+
+Using $\langle x,y\rangle=y^*x$,
+$$
+\langle Ux,Uy\rangle=(Uy)^*(Ux)=y^*U^*Ux=y^*x=\langle x,y\rangle.
+$$
+Setting $x=y$ gives preservation of norm.
+
+</details>
+
+```{python}
+# A simple 2 x 2 unitary matrix
+U = (1/np.sqrt(2))*np.array([[1, 1], [1, -1]], dtype=complex)
+x = np.array([1+2j, -1j])
+np.allclose(U.conj().T @ U, np.eye(2)), norm(U @ x), norm(x)
+```
+
+## Hermitian matrices and the complex spectral theorem
+
+### Definition 11.11: Hermitian matrix
+
+::: {.callout-note}
+A square complex matrix $A\in\mathbb C^{n\times n}$ is **Hermitian** if
+$$
+A=A^*.
+$$
+Real symmetric matrices are special examples of Hermitian matrices.
+:::
+
+### Proposition 11.12: Eigenvalues of Hermitian matrices are real
+
+::: {.callout-important}
+If $A\in\mathbb C^{n\times n}$ is Hermitian and $Au=\lambda u$ with $u\ne 0$, then $\lambda\in\mathbb R$.
+:::
+
+<details>
+<summary><strong>Show proof</strong></summary>
+
+Since $A=A^*$,
+$$
+\lambda\|u\|^2=\langle Au,u\rangle
+=\langle u,Au\rangle
+=\langle u,\lambda u\rangle
+=\overline{\lambda}\|u\|^2.
+$$
+Because $u\ne 0$, $\|u\|^2>0$. Hence $\lambda=\overline{\lambda}$, so $\lambda$ is real.
+
+</details>
+
+### Theorem 11.13: Spectral theorem for Hermitian matrices
+
+::: {.callout-important}
+A matrix $A\in\mathbb C^{n\times n}$ is Hermitian if and only if there exists a unitary matrix $U$ and a real diagonal matrix $D$ such that
+$$
+A=UDU^*.
+$$
+The diagonal entries of $D$ are the eigenvalues of $A$, counted with algebraic multiplicity.
+:::
+
+<details>
+<summary><strong>Show proof idea</strong></summary>
+
+Hermitian matrices have real eigenvalues. Eigenvectors associated with distinct eigenvalues are orthogonal. Within each eigenspace, choose an orthonormal basis. Combining these orthonormal bases gives a unitary matrix $U$. In that basis, $A$ acts by scalar multiplication on each eigenvector, so the matrix is diagonal.
+
+Conversely, if $A=UDU^*$ with $D=D^*$ real diagonal and $U$ unitary, then
+$$
+A^*=(UDU^*)^*=UD^*U^*=UDU^*=A.
+$$
+
+</details>
+
+```{python}
+A = np.array([[2, 1+2j], [1-2j, 3]], dtype=complex)
+w, V = np.linalg.eigh(A)     # eigh is for Hermitian matrices
+D = np.diag(w)
+np.allclose(A, V @ D @ V.conj().T), w
+```
+
+## Schur decomposition
+
+The spectral theorem is powerful, but it applies only to Hermitian matrices. For an arbitrary complex matrix, we cannot always diagonalize by a unitary matrix. However, we can always triangularize by a unitary matrix.
+
+### Theorem 11.14: Schur decomposition
+
+::: {.callout-important}
+Every matrix $A\in\mathbb C^{n\times n}$ can be factored as
+$$
+A=UTU^*,
+$$
+where $U$ is unitary and $T$ is upper triangular. The diagonal entries of $T$ are the eigenvalues of $A$, counted with algebraic multiplicity.
+:::
+
+Schur decomposition says that there is an orthonormal basis
+$$
+\mathcal U=\{u_1,\ldots,u_n\}
+$$
+such that the matrix of the linear transformation in this basis is upper triangular.
+
+<details>
+<summary><strong>Show proof</strong></summary>
+
+We prove the theorem by induction on $n$.
+
+For $n=1$, the result is immediate. Assume the theorem holds for all $(n-1)\times(n-1)$ complex matrices. Let $A\in\mathbb C^{n\times n}$. Since every complex polynomial has a root, $A$ has an eigenvalue $\lambda$ and an eigenvector $u\ne 0$. Normalize $u$ so that $\|u\|=1$.
+
+Extend $u$ to an orthonormal basis
+$$
+u,v_1,\ldots,v_{n-1}
+$$
+of $\mathbb C^n$. Let
+$$
+V=[v_1\ \cdots\ v_{n-1}],
+\qquad
+U_1=[u\ V].
+$$
+Then $U_1$ is unitary, and
+$$
+U_1^*AU_1
+=\begin{bmatrix}
+u^*Au & u^*AV\\
+V^*Au & V^*AV
+\end{bmatrix}.
+$$
+Since $Au=\lambda u$ and $V^*u=0$,
+$$
+V^*Au=\lambda V^*u=0.
+$$
+Thus
+$$
+U_1^*AU_1=
+\begin{bmatrix}
+\lambda & u^*AV\\
+0 & V^*AV
+\end{bmatrix}.
+$$
+By the induction hypothesis, the lower-right block has a Schur decomposition
+$$
+V^*AV=\widetilde U\widetilde T\widetilde U^*.
+$$
+Set
+$$
+W=U_1\begin{bmatrix}1&0\\0&\widetilde U\end{bmatrix}.
+$$
+Then $W$ is unitary and
+$$
+W^*AW=
+\begin{bmatrix}
+\lambda & u^*AV\widetilde U\\
+0 & \widetilde T
+\end{bmatrix},
+$$
+which is upper triangular. Therefore $A=WTW^*$.
+
+</details>
+
+### Example 11.2: Schur decomposition and a matrix power
+
+Consider
+$$
+A=\begin{bmatrix}
+13&8&8\\
+-1&7&-2\\
+-1&-2&7
+\end{bmatrix}.
+$$
+One Schur decomposition is
+$$
+A=UTU^*,
+$$
+where
+$$
+U=\begin{bmatrix}
+2/3&2/3&1/3\\
+-2/3&1/3&2/3\\
+1/3&-2/3&2/3
+\end{bmatrix},
+\qquad
+T=\begin{bmatrix}
+9&0&9\\
+0&9&9\\
+0&0&9
+\end{bmatrix}.
+$$
+Since $T=9I+N$, where
+$$
+N=\begin{bmatrix}
+0&0&9\\
+0&0&9\\
+0&0&0
+\end{bmatrix},
+\qquad
+N^2=0,
+$$
+we get
+$$
+T^{50}=(9I+N)^{50}=9^{50}I+50\cdot 9^{49}N
+=9^{50}\begin{bmatrix}
+1&0&50\\
+0&1&50\\
+0&0&1
+\end{bmatrix}.
+$$
+Therefore
+$$
+A^{50}=UT^{50}U^*.
+$$
+This is much easier than multiplying $A$ by itself 50 times.
+
+```{python}
+A = np.array([[13,8,8],[-1,7,-2],[-1,-2,7]], dtype=float)
+U = np.array([[2/3,2/3,1/3],[-2/3,1/3,2/3],[1/3,-2/3,2/3]], dtype=float)
+T = U.T @ A @ U
+T
+```
+
+## Matrix functions and the QR algorithm
+
+If $A=UTU^*$, then many matrix functions can be computed by
+$$
+f(A)=Uf(T)U^*.
+$$
+This reduces the problem to a triangular matrix. Schur decomposition is central in numerical linear algebra because it uses unitary transformations, which do not amplify errors.
+
+### Theorem 11.15: Basic QR iteration
+
+::: {.callout-important}
+Let $A_0=A\in\mathbb C^{n\times n}$. At step $k$, compute a QR factorization
+$$
+A_k=Q_kR_k,
+$$
+where $Q_k$ is unitary and $R_k$ is upper triangular. Define
+$$
+A_{k+1}=R_kQ_k.
+$$
+Then
+$$
+A_{k+1}=Q_k^*A_kQ_k.
+$$
+Thus all $A_k$ are unitarily similar to $A$ and have the same eigenvalues. Under suitable hypotheses and with shifts in practical algorithms, this process converges toward Schur form.
+:::
+
+<details>
+<summary><strong>Show proof</strong></summary>
+
+Since $A_k=Q_kR_k$, we have $R_k=Q_k^*A_k$. Therefore
+$$
+A_{k+1}=R_kQ_k=Q_k^*A_kQ_k.
+$$
+Thus $A_{k+1}$ is unitarily similar to $A_k$. By induction, all $A_k$ are unitarily similar to $A$, so they have the same eigenvalues.
+
+</details>
+
+```{python}
+A = np.array([[2,1,0],[1,2,1],[0,1,2]], dtype=float)
+Ak = A.copy()
+for k in range(20):
+    Q, R = np.linalg.qr(Ak)
+    Ak = R @ Q
+Ak
+```
+
+The diagonal entries approximate the eigenvalues.
+
+## Normal matrices
+
+### Definition 11.16: Normal matrix
+
+::: {.callout-note}
+A square matrix $A\in\mathbb C^{n\times n}$ is **normal** if
+$$
+A^*A=AA^*.
+$$
+:::
+
+Important examples include Hermitian matrices, skew-Hermitian matrices, unitary matrices, and diagonal matrices over $\mathbb C$.
+
+### Theorem 11.17: Normal matrices are exactly the unitarily diagonalizable matrices
+
+::: {.callout-important}
+A matrix $A\in\mathbb C^{n\times n}$ is normal if and only if there exists a unitary matrix $U$ and a diagonal matrix $D$ such that
+$$
+A=UDU^*.
+$$
+:::
+
+<details>
+<summary><strong>Show proof</strong></summary>
+
+Suppose first that $A=UDU^*$, where $U$ is unitary and $D$ is diagonal. Then
+$$
+A^*=UD^*U^*.
+$$
+Since diagonal matrices commute with their conjugate transposes,
+$$
+A^*A=UD^*DU^*=UDD^*U^*=AA^*.
+$$
+Thus $A$ is normal.
+
+Conversely, suppose $A$ is normal. By Schur decomposition,
+$$
+A=UTU^*
+$$
+for a unitary $U$ and an upper triangular $T$. Normality is preserved by unitary similarity, so $T$ is normal. An upper triangular normal matrix must be diagonal. One way to see this is to compare the squared norm of the first row and the first column. Since entries below the diagonal in the first column are zero, normality forces the entries above the diagonal in the first row to be zero. Repeating this argument on trailing principal submatrices shows that all off-diagonal entries vanish. Hence $T=D$ is diagonal, and $A=UDU^*$.
+
+</details>
+
+## AI companion activities
+
+Use an AI assistant as a checking and explanation partner, not as a replacement for doing the mathematics.
+
+### Activity 11.A: Conventions for complex inner products
+
+Ask:
+
+> In complex inner product spaces, what changes if the inner product is linear in the first variable versus linear in the second variable? Give one example using vectors in $\mathbb C^2$.
+
+Then verify the example yourself by computing both conventions.
+
+### Activity 11.B: Explain Schur versus Jordan
+
+Ask:
+
+> Explain to a graduate linear algebra student why Schur decomposition is preferred over Jordan decomposition in numerical computation.
+
+Check whether the answer mentions unitary matrices, conditioning, and stability.
+
+### Activity 11.C: Generate and test examples
+
+Ask for three matrices:
+
+1. a Hermitian matrix;
+2. a unitary matrix;
+3. a normal but non-Hermitian matrix.
+
+Then test the claims in Python.
+
+```{python}
+def is_hermitian(A):
+    return np.allclose(A, A.conj().T)
+
+def is_unitary(U):
+    return np.allclose(U.conj().T @ U, np.eye(U.shape[0]))
+
+def is_normal(A):
+    return np.allclose(A.conj().T @ A, A @ A.conj().T)
+```
+
+## Classical challenge questions
+
+### Challenge 11.1: Complex least squares
+
+In real least squares, the normal equations are
+$$
+A^TAx=A^Tb.
+$$
+What is the correct version over $\mathbb C$? Explain why using $A^T$ instead of $A^*$ is generally wrong.
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+The correct complex normal equations are
+$$
+A^*Ax=A^*b.
+$$
+They come from the orthogonality condition
+$$
+b-Ax\perp \operatorname{im}(A),
+$$
+which means
+$$
+A^*(b-Ax)=0.
+$$
+Using $A^T$ ignores conjugation and therefore does not represent orthogonality in a complex inner product space.
+
+</details>
+
+### Challenge 11.2: Why Schur is more stable than Jordan
+
+Jordan decomposition is theoretically elegant, but Schur decomposition is preferred in numerical computation. Explain the main reason in terms of bases and perturbations.
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+Jordan decomposition often requires a basis of generalized eigenvectors, and this basis can be extremely ill-conditioned. A small perturbation of the matrix can change Jordan block structure. Schur decomposition uses a unitary basis, and unitary transformations preserve norms and inner products. Therefore numerical errors are not amplified by a badly conditioned change of basis.
+
+</details>
+
+### Challenge 11.3: Interpreting nonnormality
+
+Every matrix over $\mathbb C$ has a Schur decomposition $A=UTU^*$. Explain why the strictly upper triangular part of $T$ measures how far the matrix is from being unitarily diagonalizable.
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+If $A$ is normal, then its Schur form is diagonal. Therefore the strictly upper triangular part of $T$ vanishes exactly for normal matrices. When the strictly upper triangular part is nonzero, the matrix still has eigenvalues on the diagonal, but the orthonormal Schur basis does not diagonalize the action. The upper triangular coupling records how different eigendirections interact in an orthonormal coordinate system.
+
+</details>
+
+### Challenge 11.4: Fourier modes and circulant matrices
+
+Suppose a linear filter is represented by a circulant matrix. Explain why the Fourier basis is the natural coordinate system for this filter.
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+Circulant matrices are diagonalized by the discrete Fourier transform matrix. Therefore, in the Fourier basis, the filter acts by multiplying each frequency component by a scalar eigenvalue. Instead of mixing all coordinates, the operation becomes componentwise scaling in frequency space. This is the linear algebra reason behind Fourier-based filtering.
+
+</details>
+
+## Practice problems
+
+### Problem 11.1: Compute a complex inner product
+
+Let
+$$
+u=\begin{bmatrix}1+i\\2\end{bmatrix},
+\qquad
+v=\begin{bmatrix}i\\1-i\end{bmatrix}.
+$$
+Using the convention $\langle u,v\rangle=v^*u$, compute $\langle u,v\rangle$, $\langle v,u\rangle$, and $\|u\|$.
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+$$
+\langle u,v\rangle
+=\overline{i}(1+i)+\overline{(1-i)}(2)
+=(-i)(1+i)+(1+i)2.
+$$
+So
+$$
+(-i)(1+i)=-i-i^2=1-i,
+$$
+and
+$$
+2(1+i)=2+2i.
+$$
+Thus
+$$
+\langle u,v\rangle=3+i.
+$$
+By conjugate symmetry,
+$$
+\langle v,u\rangle=3-i.
+$$
+Finally,
+$$
+\|u\|^2=|1+i|^2+|2|^2=2+4=6,
+$$
+so $\|u\|=\sqrt6$.
+
+</details>
+
+### Problem 11.2: Check whether a matrix is Hermitian
+
+Let
+$$
+A=\begin{bmatrix}
+2 & 1+i\\
+1-i & 3
+\end{bmatrix}.
+$$
+Is $A$ Hermitian?
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+The conjugate transpose is
+$$
+A^*=\begin{bmatrix}
+2 & \overline{1-i}\\
+\overline{1+i} & 3
+\end{bmatrix}
+=
+\begin{bmatrix}
+2&1+i\\
+1-i&3
+\end{bmatrix}=A.
+$$
+Therefore $A$ is Hermitian.
+
+</details>
+
+### Problem 11.3: Projection in $\mathbb C^2$
+
+Let
+$$
+u=\frac{1}{\sqrt2}\begin{bmatrix}1\\ i\end{bmatrix},
+\qquad
+y=\begin{bmatrix}2\\1+i\end{bmatrix}.
+$$
+Compute $\operatorname{proj}_{\operatorname{span}(u)}(y)$.
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+Since $u$ is unit length,
+$$
+\operatorname{proj}(y)=\langle y,u\rangle u.
+$$
+Using $\langle y,u\rangle=u^*y$,
+$$
+\langle y,u\rangle
+=\frac{1}{\sqrt2}\begin{bmatrix}1&-i\end{bmatrix}
+\begin{bmatrix}2\\1+i\end{bmatrix}
+=\frac{1}{\sqrt2}(2-i(1+i))
+=\frac{1}{\sqrt2}(2-i+1)
+=\frac{3-i}{\sqrt2}.
+$$
+Thus
+$$
+\operatorname{proj}(y)=\frac{3-i}{2}\begin{bmatrix}1\\ i\end{bmatrix}.
+$$
+
+</details>
+
+### Problem 11.4: Normal but not Hermitian
+
+Give an example of a normal matrix that is not Hermitian.
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+The matrix
+$$
+U=\begin{bmatrix}i&0\\0&1\end{bmatrix}
+$$
+is unitary, hence normal. But
+$$
+U^*=\begin{bmatrix}-i&0\\0&1\end{bmatrix}\ne U,
+$$
+so it is not Hermitian.
+
+</details>
+
+### Problem 11.5: Schur form and eigenvalues
+
+Suppose
+$$
+A=UTU^*,
+\qquad
+T=\begin{bmatrix}
+2&5&1\\
+0&3&4\\
+0&0&-1
+\end{bmatrix}.
+$$
+What are the eigenvalues of $A$?
+
+<details>
+<summary><strong>Show solution</strong></summary>
+
+Unitary similarity preserves eigenvalues, and the eigenvalues of an upper triangular matrix are its diagonal entries. Therefore the eigenvalues of $A$ are
+$$
+2,\quad 3,\quad -1.
+$$
+
+</details>
+
+## Summary
+
+In this chapter:
+
+- complex inner products require conjugation;
+- transpose becomes conjugate transpose;
+- orthogonality, projection, Gram--Schmidt, and least squares extend naturally to $\mathbb C^n$;
+- unitary matrices are the complex analogue of orthogonal matrices;
+- Hermitian matrices are the complex analogue of symmetric matrices;
+- Hermitian matrices have real eigenvalues and unitary diagonalizations;
+- every complex square matrix has a Schur decomposition $A=UTU^*$;
+- normal matrices are exactly the matrices that are unitarily diagonalizable;
+- Schur decomposition is central in numerical linear algebra because unitary transformations are stable.

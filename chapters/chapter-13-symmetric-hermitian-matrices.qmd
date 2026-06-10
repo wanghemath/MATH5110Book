@@ -1,0 +1,1250 @@
+# Chapter 13. Symmetric and Hermitian Matrices
+
+> **Story of the chapter.** In many applied problems, a matrix is not merely a table of numbers. It is an **energy machine**. A covariance matrix measures variation, a graph Laplacian measures roughness on a network, a Hessian measures local curvature, and a Gram matrix measures similarity. These matrices have a special symmetry. Over the real numbers this symmetry is $A^T=A$; over the complex numbers it is $A^*=A$.
+>
+> The reward for this symmetry is enormous: real eigenvalues, orthogonal eigenvectors, stable decompositions, and a direct connection between algebra and geometry.
+
+The central message of this chapter is:
+
+$$
+\boxed{\text{Symmetric and Hermitian matrices are the matrices that behave like real geometric measurements.}}
+$$
+
+They are the matrices for which eigenvalues measure true stretching, eigenvectors can be chosen orthonormally, and quadratic forms can be understood as sums of squared coordinates.
+
+## Learning goals
+
+By the end of this chapter, you should be able to:
+
+1. distinguish symmetric, skew-symmetric, Hermitian, and skew-Hermitian matrices;
+2. decompose a matrix into symmetric/skew-symmetric or Hermitian/skew-Hermitian parts;
+3. prove that Hermitian matrices have real eigenvalues;
+4. explain why eigenvectors for distinct eigenvalues are orthogonal;
+5. use the spectral theorem for real symmetric and complex Hermitian matrices;
+6. write a spectral decomposition as a sum of rank-one projection matrices;
+7. classify quadratic and Hermitian forms as positive definite, positive semidefinite, negative definite, or indefinite;
+8. use eigenvalues, Sylvester's criterion, and Cholesky factorization to test positive definiteness;
+9. understand why Gram matrices and $A^*A$ are positive semidefinite;
+10. compute and visualize these ideas in Python.
+
+## 13.1 Why symmetry matters
+
+In earlier chapters, eigenvectors helped us understand how a linear map stretches special directions. But for a general matrix, eigenvectors may fail to form a basis, eigenvalues may be complex, and numerical behavior can be unstable. Symmetric and Hermitian matrices are different. They are the matrices where the eigenvalue story is as clean as possible.
+
+### Definition 13.1: Symmetric and Hermitian matrices
+
+Let $A\in \mathbb{R}^{n\times n}$. The matrix $A$ is **symmetric** if
+
+$$
+A^T=A.
+$$
+
+Let $A\in \mathbb{C}^{n\times n}$. The matrix $A$ is **Hermitian** if
+
+$$
+A^*=A,
+$$
+
+where
+
+$$
+A^*:=\overline{A}^{\,T}
+$$
+
+is the **conjugate transpose**.
+
+### Example 13.2: Real and complex symmetry
+
+The matrix
+
+$$
+A=\begin{bmatrix}10&1\\1&6\end{bmatrix}
+$$
+
+is symmetric. The matrix
+
+$$
+H=\begin{bmatrix}1&i\\-i&2\end{bmatrix}
+$$
+
+is Hermitian because
+
+$$
+H^*=\begin{bmatrix}1&i\\-i&2\end{bmatrix}=H.
+$$
+
+However,
+
+$$
+B=\begin{bmatrix}1&i\\ i&2\end{bmatrix}
+$$
+
+is not Hermitian, because the off-diagonal entries are not complex conjugates in the correct positions.
+
+### Remark 13.3: Why $A^*$ replaces $A^T$ over $\mathbb{C}$
+
+For complex vectors, the standard inner product is
+
+$$
+\langle \vec{z},\vec{w}\rangle=\vec{z}^{\,*}\vec{w}.
+$$
+
+The conjugate transpose is the operation that makes the identity
+
+$$
+\langle A\vec{z},\vec{w}\rangle=\langle \vec{z},A^*\vec{w}\rangle
+$$
+
+true for all vectors $\vec{z},\vec{w}$. Thus Hermitian matrices are the complex analogue of real symmetric matrices.
+
+## 13.2 Symmetric and skew-symmetric decomposition
+
+Every square matrix has a symmetric part and an antisymmetric part. This is a first example of how vector spaces of matrices split into meaningful pieces.
+
+### Definition 13.4: Symmetric and skew-symmetric subspaces
+
+Define
+
+$$
+\operatorname{Sym}_n=\{A\in \mathbb{R}^{n\times n}:A^T=A\}
+$$
+
+and
+
+$$
+\operatorname{Skew}_n=\{A\in \mathbb{R}^{n\times n}:A^T=-A\}.
+$$
+
+### Theorem 13.5: Real matrix decomposition
+
+Every real square matrix has a unique decomposition as
+
+$$
+M=S+K,
+$$
+
+where $S$ is symmetric and $K$ is skew-symmetric. More precisely,
+
+$$
+\mathbb{R}^{n\times n}=\operatorname{Sym}_n\oplus \operatorname{Skew}_n,
+$$
+
+and
+
+$$
+S=\frac{M+M^T}{2},
+\qquad
+K=\frac{M-M^T}{2}.
+$$
+
+<details>
+<summary><strong>Proof</strong></summary>
+
+Set
+
+$$
+S=\frac{M+M^T}{2},
+\qquad
+K=\frac{M-M^T}{2}.
+$$
+
+Then
+
+$$
+S^T=\frac{M^T+M}{2}=S,
+$$
+
+so $S$ is symmetric. Also,
+
+$$
+K^T=\frac{M^T-M}{2}=-K,
+$$
+
+so $K$ is skew-symmetric. Clearly $M=S+K$.
+
+For uniqueness, suppose
+
+$$
+M=S_1+K_1=S_2+K_2,
+$$
+
+where $S_1,S_2$ are symmetric and $K_1,K_2$ are skew-symmetric. Then
+
+$$
+S_1-S_2=K_2-K_1.
+$$
+
+The left side is symmetric, and the right side is skew-symmetric. A matrix that is both symmetric and skew-symmetric must satisfy $X^T=X$ and $X^T=-X$, so $X=-X$ and $X=0$. Hence $S_1=S_2$ and $K_1=K_2$.
+
+</details>
+
+### Example 13.6: Splitting a matrix
+
+Let
+
+$$
+M=\begin{bmatrix}
+1&4&0\\
+2&3&5\\
+-1&7&2
+\end{bmatrix}.
+$$
+
+Then
+
+$$
+\frac{M+M^T}{2}
+=
+\begin{bmatrix}
+1&3&-1/2\\
+3&3&6\\
+-1/2&6&2
+\end{bmatrix}
+$$
+
+and
+
+$$
+\frac{M-M^T}{2}
+=
+\begin{bmatrix}
+0&1&1/2\\
+-1&0&-1\\
+-1/2&1&0
+\end{bmatrix}.
+$$
+
+The first part is symmetric, the second part is skew-symmetric, and their sum is $M$.
+
+### Definition 13.7: Hermitian and skew-Hermitian decomposition
+
+Define
+
+$$
+\mathcal{H}_n=\{A\in \mathbb{C}^{n\times n}:A^*=A\}
+$$
+
+and
+
+$$
+\mathcal{K}_n=\{A\in \mathbb{C}^{n\times n}:A^*=-A\}.
+$$
+
+Matrices in $\mathcal{K}_n$ are called **skew-Hermitian**.
+
+### Proposition 13.8: Complex matrix decomposition
+
+Every complex square matrix has the decomposition
+
+$$
+M=\frac{M+M^*}{2}+\frac{M-M^*}{2},
+$$
+
+where $\frac{M+M^*}{2}$ is Hermitian and $\frac{M-M^*}{2}$ is skew-Hermitian.
+
+<details>
+<summary><strong>Proof</strong></summary>
+
+Let
+
+$$
+H=\frac{M+M^*}{2},
+\qquad
+K=\frac{M-M^*}{2}.
+$$
+
+Then
+
+$$
+H^*=\frac{M^*+M}{2}=H
+$$
+
+and
+
+$$
+K^*=\frac{M^*-M}{2}=-K.
+$$
+
+Thus $H$ is Hermitian, $K$ is skew-Hermitian, and $M=H+K$.
+
+</details>
+
+## 13.3 Real eigenvalues and orthogonal eigenvectors
+
+The first miracle is that Hermitian matrices may have complex entries, but their eigenvalues are real.
+
+### Proposition 13.9: Eigenvalues of Hermitian matrices are real
+
+Let $A\in \mathbb{C}^{n\times n}$ be Hermitian. If
+
+$$
+A\vec{z}=\lambda \vec{z}
+$$
+
+for some nonzero $\vec{z}\in \mathbb{C}^n$, then $\lambda\in \mathbb{R}$.
+
+<details>
+<summary><strong>Proof</strong></summary>
+
+Since $A\vec{z}=\lambda \vec{z}$,
+
+$$
+\vec{z}^{\,*}A\vec{z}=\vec{z}^{\,*}(\lambda \vec{z})
+=\lambda \vec{z}^{\,*}\vec{z}.
+$$
+
+Therefore
+
+$$
+\lambda=\frac{\vec{z}^{\,*}A\vec{z}}{\vec{z}^{\,*}\vec{z}}.
+$$
+
+The denominator is $\|\vec{z}\|^2>0$. The numerator is real because
+
+$$
+\overline{\vec{z}^{\,*}A\vec{z}}
+=(\vec{z}^{\,*}A\vec{z})^*
+=\vec{z}^{\,*}A^*\vec{z}
+=\vec{z}^{\,*}A\vec{z}.
+$$
+
+Thus $\lambda$ is real.
+
+</details>
+
+### Corollary 13.10: Real symmetric matrices have real eigenvalues
+
+If $A\in \mathbb{R}^{n\times n}$ is symmetric, then all eigenvalues of $A$ are real.
+
+<details>
+<summary><strong>Proof</strong></summary>
+
+A real symmetric matrix is Hermitian when viewed as a complex matrix. Therefore the previous proposition applies.
+
+</details>
+
+### Proposition 13.11: Orthogonality of eigenvectors
+
+Let $A\in \mathbb{C}^{n\times n}$ be Hermitian. Suppose
+
+$$
+A\vec{z}=\lambda \vec{z},
+\qquad
+A\vec{w}=\mu \vec{w},
+$$
+
+where $\lambda\ne \mu$. Then
+
+$$
+\langle \vec{z},\vec{w}\rangle=0.
+$$
+
+<details>
+<summary><strong>Proof</strong></summary>
+
+Using $A=A^*$, we have
+
+$$
+\langle A\vec{z},\vec{w}\rangle
+=
+\langle \vec{z},A\vec{w}\rangle.
+$$
+
+Since $\lambda$ and $\mu$ are real,
+
+$$
+\lambda\langle \vec{z},\vec{w}\rangle
+=
+\mu\langle \vec{z},\vec{w}\rangle.
+$$
+
+Thus
+
+$$
+(\lambda-\mu)\langle \vec{z},\vec{w}\rangle=0.
+$$
+
+Because $\lambda\ne \mu$, we get $\langle \vec{z},\vec{w}\rangle=0$.
+
+</details>
+
+## 13.4 The spectral theorem
+
+The spectral theorem is the main structural result of this chapter. It says that symmetric and Hermitian matrices are exactly the matrices that can be diagonalized by an orthonormal change of basis.
+
+### Definition 13.12: Orthogonal and unitary diagonalization
+
+A real matrix $A\in \mathbb{R}^{n\times n}$ is **orthogonally diagonalizable** if
+
+$$
+A=QDQ^T,
+$$
+
+where $Q$ is orthogonal and $D$ is diagonal.
+
+A complex matrix $A\in \mathbb{C}^{n\times n}$ is **unitarily diagonalizable** if
+
+$$
+A=UDU^*,
+$$
+
+where $U$ is unitary and $D$ is diagonal.
+
+### Theorem 13.13: Spectral theorem, real version
+
+A real matrix $A\in \mathbb{R}^{n\times n}$ is symmetric if and only if it is orthogonally diagonalizable. That is,
+
+$$
+A^T=A
+\quad\Longleftrightarrow\quad
+A=QDQ^T
+$$
+
+for some orthogonal matrix $Q$ and real diagonal matrix $D$.
+
+<details>
+<summary><strong>Proof idea</strong></summary>
+
+If $A=QDQ^T$, then
+
+$$
+A^T=(QDQ^T)^T=QD^TQ^T=QDQ^T=A,
+$$
+
+so $A$ is symmetric.
+
+Conversely, if $A$ is symmetric, choose a unit eigenvector $\vec{u}_1$. The orthogonal complement $\vec{u}_1^\perp$ is invariant under $A$. Indeed, if $\vec{x}\perp \vec{u}_1$, then
+
+$$
+(A\vec{x})\cdot \vec{u}_1
+=\vec{x}\cdot A\vec{u}_1
+=\lambda_1\vec{x}\cdot \vec{u}_1
+=0.
+$$
+
+Thus $A$ restricts to a symmetric operator on a space of dimension $n-1$. Induction gives an orthonormal eigenbasis. Placing these eigenvectors in the columns of $Q$ gives $A=QDQ^T$.
+
+</details>
+
+### Theorem 13.14: Spectral theorem, Hermitian version
+
+A complex matrix $A\in \mathbb{C}^{n\times n}$ is Hermitian if and only if it is unitarily diagonalizable with real eigenvalues:
+
+$$
+A^*=A
+\quad\Longleftrightarrow\quad
+A=UDU^*,
+$$
+
+where $U$ is unitary and $D$ is diagonal with real diagonal entries.
+
+<details>
+<summary><strong>Proof idea</strong></summary>
+
+The proof is the complex analogue of the real proof. Hermitian matrices have real eigenvalues. Choose a unit eigenvector $\vec{u}_1$. The orthogonal complement of $\vec{u}_1$ is invariant under $A$ because $A=A^*$. Restrict $A$ to that orthogonal complement and use induction. This gives an orthonormal eigenbasis of $\mathbb{C}^n$, hence $A=UDU^*$.
+
+</details>
+
+### Algorithm 13.15: Computing a spectral decomposition
+
+For a real symmetric matrix $A$:
+
+1. Find the eigenvalues $\lambda_1,\ldots,\lambda_n$.
+2. Find a basis for each eigenspace $E_{\lambda_i}=\ker(A-\lambda_iI)$.
+3. Orthonormalize each eigenspace if needed.
+4. Put the orthonormal eigenvectors into the columns of $Q$.
+5. Put the corresponding eigenvalues on the diagonal of $D$.
+6. Then $A=QDQ^T$.
+
+For a Hermitian matrix, the same steps work with complex inner products, producing $A=UDU^*$.
+
+## 13.5 Spectral decomposition as a sum of projections
+
+Suppose
+
+$$
+A=QDQ^T,
+\qquad
+Q=[\vec{u}_1\ \vec{u}_2\ \cdots\ \vec{u}_n],
+\qquad
+D=\operatorname{diag}(\lambda_1,\ldots,\lambda_n).
+$$
+
+Then
+
+$$
+A=\lambda_1\vec{u}_1\vec{u}_1^T+\cdots+\lambda_n\vec{u}_n\vec{u}_n^T.
+$$
+
+Each matrix $\vec{u}_i\vec{u}_i^T$ is an orthogonal projection onto the line $\operatorname{span}\{\vec{u}_i\}$.
+
+For Hermitian matrices,
+
+$$
+A=UDU^*
+$$
+
+becomes
+
+$$
+A=\lambda_1\vec{u}_1\vec{u}_1^*+\cdots+\lambda_n\vec{u}_n\vec{u}_n^*.
+$$
+
+### Proposition 13.16: Rank-one projection formula
+
+Let $\vec{u}\in \mathbb{C}^n$ be a unit vector. Then
+
+$$
+P=\vec{u}\vec{u}^{\,*}
+$$
+
+is the orthogonal projection matrix onto $\operatorname{span}\{\vec{u}\}$.
+
+<details>
+<summary><strong>Proof</strong></summary>
+
+For any $\vec{z}\in \mathbb{C}^n$,
+
+$$
+P\vec{z}=\vec{u}\vec{u}^{\,*}\vec{z}
+=\vec{u}\langle \vec{u},\vec{z}\rangle.
+$$
+
+This lies in $\operatorname{span}\{\vec{u}\}$. Also,
+
+$$
+\vec{z}-P\vec{z}
+$$
+
+is orthogonal to $\vec{u}$ because
+
+$$
+\langle \vec{u},\vec{z}-P\vec{z}\rangle
+=
+\langle \vec{u},\vec{z}\rangle-
+\langle \vec{u},\vec{u}\langle \vec{u},\vec{z}\rangle\rangle
+=0.
+$$
+
+Thus $P\vec{z}$ is exactly the orthogonal projection of $\vec{z}$ onto the line spanned by $\vec{u}$.
+
+</details>
+
+### Example 13.17: A $3\times 3$ spectral decomposition
+
+Consider
+
+$$
+A=\begin{bmatrix}
+1&1&7\\
+1&7&1\\
+7&1&1
+\end{bmatrix}.
+$$
+
+One spectral decomposition is
+
+$$
+A=9\vec{u}_1\vec{u}_1^T+6\vec{u}_2\vec{u}_2^T-6\vec{u}_3\vec{u}_3^T,
+$$
+
+where
+
+$$
+\vec{u}_1=\frac{1}{\sqrt{3}}
+\begin{bmatrix}1\\1\\1\end{bmatrix},
+\qquad
+\vec{u}_2=\frac{1}{\sqrt{6}}
+\begin{bmatrix}-1\\-2\\1\end{bmatrix},
+\qquad
+\vec{u}_3=\frac{1}{\sqrt{2}}
+\begin{bmatrix}-1\\0\\1\end{bmatrix}.
+$$
+
+This example shows a symmetric matrix as a weighted sum of orthogonal projection matrices.
+
+## 13.6 Quadratic forms and Hermitian forms
+
+Symmetric and Hermitian matrices appear naturally when a matrix is used to produce a scalar energy.
+
+### Definition 13.18: Quadratic form
+
+Let $A\in \mathbb{R}^{n\times n}$ be symmetric. The **quadratic form** defined by $A$ is
+
+$$
+q(\vec{x})=\vec{x}^{\,T}A\vec{x},
+\qquad \vec{x}\in \mathbb{R}^n.
+$$
+
+It is a second-degree polynomial with no linear or constant terms.
+
+### Example 13.19: Off-diagonal terms appear twice
+
+If
+
+$$
+A=\begin{bmatrix}1&3\\3&2\end{bmatrix},
+$$
+
+then
+
+$$
+q(\vec{x})=\vec{x}^{\,T}A\vec{x}=x_1^2+6x_1x_2+2x_2^2.
+$$
+
+The coefficient $6$ appears because the off-diagonal contribution is
+
+$$
+3x_1x_2+3x_2x_1=6x_1x_2.
+$$
+
+### Definition 13.20: Hermitian form
+
+Let $A\in \mathbb{C}^{n\times n}$ be Hermitian. The **Hermitian form** defined by $A$ is
+
+$$
+q(\vec{z})=\vec{z}^{\,*}A\vec{z},
+\qquad \vec{z}\in \mathbb{C}^n.
+$$
+
+This number is always real.
+
+<details>
+<summary><strong>Proof that $\vec{z}^{\,*}A\vec{z}$ is real</strong></summary>
+
+Let $\alpha=\vec{z}^{\,*}A\vec{z}$. Then
+
+$$
+\overline{\alpha}
+=(\vec{z}^{\,*}A\vec{z})^*
+=\vec{z}^{\,*}A^*\vec{z}
+=\vec{z}^{\,*}A\vec{z}
+=\alpha.
+$$
+
+So $\alpha$ is real.
+
+</details>
+
+### Example 13.21: A complex Hermitian form
+
+Let
+
+$$
+A=\begin{bmatrix}2&i\\-i&3\end{bmatrix},
+\qquad
+\vec{z}=\begin{bmatrix}z_1\\z_2\end{bmatrix}.
+$$
+
+Then
+
+$$
+\vec{z}^{\,*}A\vec{z}
+=2|z_1|^2+3|z_2|^2+i\overline{z_1}z_2-i\overline{z_2}z_1.
+$$
+
+The cross terms combine to a real number.
+
+## 13.7 Positive definite and positive semidefinite matrices
+
+Positive definite matrices are the matrices whose energy is strictly positive except at the origin.
+
+### Definition 13.22: Positive definiteness, real case
+
+Let $A\in \mathbb{R}^{n\times n}$ be symmetric.
+
+1. $A$ is **positive definite** if
+
+$$
+\vec{x}^{\,T}A\vec{x}>0
+$$
+
+for every nonzero $\vec{x}\in \mathbb{R}^n$.
+
+2. $A$ is **positive semidefinite** if
+
+$$
+\vec{x}^{\,T}A\vec{x}\ge 0
+$$
+
+for every $\vec{x}\in \mathbb{R}^n$.
+
+### Definition 13.23: Positive definiteness, complex case
+
+Let $A\in \mathbb{C}^{n\times n}$ be Hermitian.
+
+1. $A$ is **positive definite** if
+
+$$
+\vec{z}^{\,*}A\vec{z}>0
+$$
+
+for every nonzero $\vec{z}\in \mathbb{C}^n$.
+
+2. $A$ is **positive semidefinite** if
+
+$$
+\vec{z}^{\,*}A\vec{z}\ge 0
+$$
+
+for every $\vec{z}\in \mathbb{C}^n$.
+
+### Theorem 13.24: Positive definiteness and eigenvalues
+
+Let $A$ be real symmetric or complex Hermitian. Then:
+
+1. $A$ is positive definite if and only if every eigenvalue of $A$ is positive.
+2. $A$ is positive semidefinite if and only if every eigenvalue of $A$ is nonnegative.
+
+<details>
+<summary><strong>Proof</strong></summary>
+
+By the spectral theorem,
+
+$$
+A=UDU^*,
+$$
+
+where $U$ is unitary and
+
+$$
+D=\operatorname{diag}(\lambda_1,\ldots,\lambda_n)
+$$
+
+with real eigenvalues. Let $\vec{y}=U^*\vec{z}$. Since $U$ is unitary, $\vec{z}\ne 0$ if and only if $\vec{y}\ne 0$. Then
+
+$$
+\vec{z}^{\,*}A\vec{z}
+=\vec{z}^{\,*}UDU^*\vec{z}
+=(U^*\vec{z})^*D(U^*\vec{z})
+=\vec{y}^{\,*}D\vec{y}
+=\sum_{i=1}^n \lambda_i |y_i|^2.
+$$
+
+This is positive for all nonzero $\vec{y}$ exactly when every $\lambda_i>0$. It is nonnegative for every $\vec{y}$ exactly when every $\lambda_i\ge 0$.
+
+</details>
+
+### Example 13.25: Three basic quadratic forms
+
+On $\mathbb{R}^3$:
+
+1. $q(\vec{x})=2x_1^2+3x_2^2+4x_3^2$ is positive definite.
+2. $q(\vec{x})=2x_1^2+3x_2^2$ is positive semidefinite but not positive definite.
+3. $q(\vec{x})=2x_1^2+3x_2^2-4x_3^2$ is indefinite.
+
+## 13.8 Square roots of positive semidefinite matrices
+
+Positive semidefinite matrices have a natural square root.
+
+Suppose
+
+$$
+A=UDU^*,
+\qquad
+D=\operatorname{diag}(\lambda_1,\ldots,\lambda_n),
+\qquad
+\lambda_i\ge 0.
+$$
+
+Define
+
+$$
+D^{1/2}=\operatorname{diag}(\sqrt{\lambda_1},\ldots,\sqrt{\lambda_n})
+$$
+
+and
+
+$$
+A^{1/2}=UD^{1/2}U^*.
+$$
+
+### Proposition 13.26: Matrix square root
+
+If $A$ is Hermitian positive semidefinite, then
+
+$$
+A^{1/2}A^{1/2}=A.
+$$
+
+Moreover, $A^{1/2}$ is Hermitian positive semidefinite.
+
+<details>
+<summary><strong>Proof</strong></summary>
+
+Compute
+
+$$
+A^{1/2}A^{1/2}
+=(UD^{1/2}U^*)(UD^{1/2}U^*)
+=UD^{1/2}D^{1/2}U^*
+=UDU^*=A.
+$$
+
+Also,
+
+$$
+(A^{1/2})^*=A^{1/2},
+$$
+
+and the eigenvalues of $A^{1/2}$ are $\sqrt{\lambda_i}\ge 0$.
+
+</details>
+
+## 13.9 Gram matrices and $A^*A$
+
+Gram matrices record inner products among a collection of vectors. They are one of the most common sources of positive semidefinite matrices.
+
+### Definition 13.27: Gram matrix
+
+Let $\vec{v}_1,\ldots,\vec{v}_m$ be vectors in a real or complex inner product space. The **Gram matrix** is
+
+$$
+G=[g_{ij}],
+\qquad
+g_{ij}=\langle \vec{v}_i,\vec{v}_j\rangle.
+$$
+
+### Theorem 13.28: Gram matrices are positive semidefinite
+
+Every Gram matrix is Hermitian positive semidefinite. If $\vec{v}_1,\ldots,\vec{v}_m$ are linearly independent, then the Gram matrix is positive definite.
+
+<details>
+<summary><strong>Proof</strong></summary>
+
+First,
+
+$$
+g_{ji}=\langle \vec{v}_j,\vec{v}_i\rangle
+=\overline{\langle \vec{v}_i,\vec{v}_j\rangle},
+$$
+
+so $G^*=G$.
+
+For any coefficient vector $\vec{c}=(c_1,\ldots,c_m)^T$,
+
+$$
+\vec{c}^{\,*}G\vec{c}
+=
+\left\|\sum_{i=1}^m c_i\vec{v}_i\right\|^2
+\ge 0.
+$$
+
+Thus $G$ is positive semidefinite. If the vectors are linearly independent and $\vec{c}\ne 0$, then $\sum_i c_i\vec{v}_i\ne 0$, so $\vec{c}^{\,*}G\vec{c}>0$. Hence $G$ is positive definite.
+
+</details>
+
+### Theorem 13.29: $A^*A$ is positive semidefinite
+
+Let $A$ be an $m\times n$ real or complex matrix. Then $A^*A$ is Hermitian positive semidefinite. If $A$ has full column rank, then $A^*A$ is positive definite.
+
+<details>
+<summary><strong>Proof</strong></summary>
+
+First,
+
+$$
+(A^*A)^*=A^*A.
+$$
+
+For any $\vec{z}\in \mathbb{C}^n$,
+
+$$
+\vec{z}^{\,*}A^*A\vec{z}
+=(A\vec{z})^*(A\vec{z})
+=\|A\vec{z}\|^2
+\ge 0.
+$$
+
+If $A$ has full column rank, then $A\vec{z}=0$ implies $\vec{z}=0$. Therefore, for every nonzero $\vec{z}$,
+
+$$
+\|A\vec{z}\|^2>0,
+$$
+
+so $A^*A$ is positive definite.
+
+</details>
+
+### Remark 13.30: Connection to least squares
+
+In real least squares, the normal equations are
+
+$$
+A^TA\vec{x}=A^T\vec{b}.
+$$
+
+In complex least squares, they become
+
+$$
+A^*A\vec{x}=A^*\vec{b}.
+$$
+
+The theorem explains why the normal-equation matrix is positive semidefinite, and why it is positive definite when the columns of $A$ are independent.
+
+## 13.10 Cholesky decomposition and Sylvester criteria
+
+Positive definite matrices are special enough to admit a stable triangular factorization.
+
+### Theorem 13.31: Cholesky decomposition, real case
+
+If $A\in \mathbb{R}^{n\times n}$ is symmetric positive definite, then
+
+$$
+A=LL^T,
+$$
+
+where $L$ is real lower triangular with positive diagonal entries.
+
+### Theorem 13.32: Cholesky decomposition, complex case
+
+If $A\in \mathbb{C}^{n\times n}$ is Hermitian positive definite, then
+
+$$
+A=LL^*,
+$$
+
+where $L$ is lower triangular with positive real diagonal entries.
+
+### Definition 13.33: Principal minors
+
+A **principal minor** of order $k$ is the determinant of a $k\times k$ submatrix obtained by keeping the same set of $k$ rows and $k$ columns.
+
+The **leading principal minor** of order $k$ is
+
+$$
+\det A_{1:k,1:k}.
+$$
+
+### Theorem 13.34: Sylvester's criterion
+
+A real symmetric matrix or complex Hermitian matrix is positive definite if and only if all leading principal minors are positive.
+
+### Theorem 13.35: Positive semidefinite principal minor test
+
+A real symmetric matrix or complex Hermitian matrix is positive semidefinite if and only if all principal minors are nonnegative.
+
+### Example 13.36: Positive definite without eigenvalues
+
+Let
+
+$$
+A=\begin{bmatrix}
+2&1&0\\
+1&3&1\\
+0&1&2
+\end{bmatrix}.
+$$
+
+The leading principal minors are
+
+$$
+\Delta_1=2>0,
+$$
+
+$$
+\Delta_2=\det\begin{bmatrix}2&1\\1&3\end{bmatrix}=5>0,
+$$
+
+and
+
+$$
+\Delta_3=\det(A)=8>0.
+$$
+
+So $A$ is positive definite by Sylvester's criterion.
+
+## 13.11 Python computations
+
+Python is especially useful for this chapter because symmetric and Hermitian matrices have specialized algorithms. In NumPy, use `np.linalg.eigh` rather than `np.linalg.eig` when the matrix is symmetric or Hermitian.
+
+### Example 13.37: Spectral decomposition of a symmetric matrix
+
+```{python}
+import numpy as np
+
+A = np.array([[1, 1, 7],
+              [1, 7, 1],
+              [7, 1, 1]], dtype=float)
+
+# eigh is designed for symmetric/Hermitian matrices
+lam, Q = np.linalg.eigh(A)
+D = np.diag(lam)
+
+print("Eigenvalues:", lam)
+print("Q^T Q =")
+print(np.round(Q.T @ Q, 6))
+print("Reconstruction error:", np.linalg.norm(A - Q @ D @ Q.T))
+```
+
+### Example 13.38: Positive definiteness test by eigenvalues
+
+```{python}
+B = np.array([[2, 1, 0],
+              [1, 3, 1],
+              [0, 1, 2]], dtype=float)
+
+lam_B = np.linalg.eigvalsh(B)
+print("Eigenvalues of B:", lam_B)
+print("Positive definite?", np.all(lam_B > 0))
+```
+
+### Example 13.39: Complex Hermitian matrix
+
+```{python}
+H = np.array([[2, 1+2j],
+              [1-2j, 5]], dtype=complex)
+
+print("Hermitian check:", np.allclose(H.conj().T, H))
+
+lam_H, U = np.linalg.eigh(H)
+print("Eigenvalues:", lam_H)
+print("Unitary check:", np.linalg.norm(U.conj().T @ U - np.eye(2)))
+print("Reconstruction error:", np.linalg.norm(H - U @ np.diag(lam_H) @ U.conj().T))
+```
+
+### Example 13.40: Cholesky factorization
+
+```{python}
+C = np.array([[4, 2, 0],
+              [2, 5, 1],
+              [0, 1, 3]], dtype=float)
+
+L = np.linalg.cholesky(C)
+print("L =")
+print(np.round(L, 6))
+print("Reconstruction error:", np.linalg.norm(C - L @ L.T))
+```
+
+## 13.12 Challenge questions
+
+### Challenge 1: Sums and products of symmetric matrices
+
+Decide whether each statement is true or false.
+
+1. If $A$ and $B$ are diagonalizable, then $A+B$ is diagonalizable.
+2. If $A$ and $B$ are orthogonally diagonalizable real matrices, then $A+B$ is orthogonally diagonalizable.
+3. If $A$ and $B$ are orthogonally diagonalizable real matrices, then $AB$ is orthogonally diagonalizable.
+
+<details>
+<summary><strong>Solution</strong></summary>
+
+1. False. The sum of diagonalizable matrices need not be diagonalizable.
+2. True. Orthogonally diagonalizable real matrices are exactly symmetric matrices. If $A$ and $B$ are symmetric, then $A+B$ is symmetric, so it is orthogonally diagonalizable.
+3. False in general. If $A$ and $B$ are symmetric, then
+
+$$
+(AB)^T=B^TA^T=BA.
+$$
+
+Thus $AB$ is symmetric if and only if $AB=BA$. If $A$ and $B$ do not commute, $AB$ need not be orthogonally diagonalizable.
+
+</details>
+
+### Challenge 2: Complex cross terms
+
+Let
+
+$$
+A=\begin{bmatrix}a&c+di\\ c-di&b\end{bmatrix},
+\qquad a,b,c,d\in \mathbb{R}.
+$$
+
+Explain why $A$ is Hermitian and write $\vec{z}^{\,*}A\vec{z}$ for $\vec{z}=(z_1,z_2)^T$.
+
+<details>
+<summary><strong>Solution</strong></summary>
+
+The diagonal entries are real and the off-diagonal entries are conjugates of each other, so $A^*=A$. We compute
+
+$$
+\vec{z}^{\,*}A\vec{z}
+=a|z_1|^2+b|z_2|^2+(c+di)\overline{z_1}z_2+(c-di)\overline{z_2}z_1.
+$$
+
+The last two terms are conjugates, so their sum is twice the real part:
+
+$$
+\vec{z}^{\,*}A\vec{z}
+=a|z_1|^2+b|z_2|^2+2\operatorname{Re}\left((c+di)\overline{z_1}z_2\right).
+$$
+
+</details>
+
+### Challenge 3: When is $A^*A$ invertible?
+
+Let $A$ be an $m\times n$ complex matrix. Prove that $A^*A$ is invertible if and only if the columns of $A$ are linearly independent.
+
+<details>
+<summary><strong>Solution</strong></summary>
+
+The columns of $A$ are linearly independent if and only if $\ker(A)=\{0\}$. Also,
+
+$$
+A^*A\vec{z}=0
+\quad\Longrightarrow\quad
+\vec{z}^{\,*}A^*A\vec{z}=0
+\quad\Longrightarrow\quad
+\|A\vec{z}\|^2=0
+\quad\Longrightarrow\quad
+A\vec{z}=0.
+$$
+
+Thus $\ker(A^*A)=\ker(A)$. Therefore $A^*A$ is invertible if and only if $\ker(A^*A)=\{0\}$, which is equivalent to $\ker(A)=\{0\}$, which is equivalent to the columns of $A$ being linearly independent.
+
+</details>
+
+## 13.13 Practice problems
+
+### Problem 1
+
+For
+
+$$
+M=\begin{bmatrix}1&4\\2&3\end{bmatrix},
+$$
+
+find the symmetric and skew-symmetric parts of $M$.
+
+<details>
+<summary><strong>Solution</strong></summary>
+
+$$
+S=\frac{M+M^T}{2}
+=\begin{bmatrix}1&3\\3&3\end{bmatrix},
+\qquad
+K=\frac{M-M^T}{2}
+=\begin{bmatrix}0&1\\-1&0\end{bmatrix}.
+$$
+
+</details>
+
+### Problem 2
+
+Determine whether
+
+$$
+H=\begin{bmatrix}2&1+i\\1-i&4\end{bmatrix}
+$$
+
+is Hermitian.
+
+<details>
+<summary><strong>Solution</strong></summary>
+
+Yes. The diagonal entries are real and the off-diagonal entries are complex conjugates in symmetric positions. Therefore $H^*=H$.
+
+</details>
+
+### Problem 3
+
+Classify the quadratic form
+
+$$
+q(x,y)=3x^2+2xy+3y^2.
+$$
+
+<details>
+<summary><strong>Solution</strong></summary>
+
+The matrix is
+
+$$
+A=\begin{bmatrix}3&1\\1&3\end{bmatrix}.
+$$
+
+Its eigenvalues are $4$ and $2$, both positive. Therefore the quadratic form is positive definite.
+
+</details>
+
+### Problem 4
+
+Use Sylvester's criterion to test whether
+
+$$
+A=\begin{bmatrix}1&2\\2&1\end{bmatrix}
+$$
+
+is positive definite.
+
+<details>
+<summary><strong>Solution</strong></summary>
+
+The leading principal minors are
+
+$$
+\Delta_1=1>0,
+\qquad
+\Delta_2=\det(A)=1-4=-3<0.
+$$
+
+Since the second leading principal minor is negative, $A$ is not positive definite.
+
+</details>
+
+### Problem 5
+
+Let $A$ be a matrix with full column rank. Explain why the normal-equation matrix $A^TA$ is positive definite.
+
+<details>
+<summary><strong>Solution</strong></summary>
+
+For any nonzero $\vec{x}$,
+
+$$
+\vec{x}^{\,T}A^TA\vec{x}=\|A\vec{x}\|^2.
+$$
+
+If $A$ has full column rank, then $A\vec{x}\ne 0$ whenever $\vec{x}\ne 0$. Therefore $\|A\vec{x}\|^2>0$, so $A^TA$ is positive definite.
+
+</details>
+
+## 13.14 AI companion activities
+
+Use an AI tool as a study partner, not as a replacement for your reasoning. Ask for explanations, then verify the results by hand or in Python.
+
+### Activity 1: Explain the spectral theorem in three levels
+
+Ask:
+
+> Explain the spectral theorem for symmetric matrices at three levels: geometric intuition, computation, and proof.
+
+Then compare the AI response to the theorem in this chapter. Identify one sentence you would rewrite more precisely.
+
+### Activity 2: Generate examples and counterexamples
+
+Ask:
+
+> Give me one example of a symmetric positive definite matrix, one symmetric positive semidefinite matrix that is not positive definite, and one symmetric indefinite matrix. Verify each using eigenvalues.
+
+Then check the examples in Python.
+
+### Activity 3: Debug a false proof
+
+Ask:
+
+> A student claims that if $A$ and $B$ are symmetric, then $AB$ is symmetric. Find the mistake and give a counterexample.
+
+Then compute the counterexample by hand.
+
+### Activity 4: Connect to data science
+
+Ask:
+
+> Why are covariance matrices and Gram matrices positive semidefinite? Explain using both data and linear algebra.
+
+Then write a short paragraph explaining the connection in your own words.
+
+## 13.15 Summary
+
+In this chapter, we learned that:
+
+- real symmetric matrices satisfy $A^T=A$;
+- complex Hermitian matrices satisfy $A^*=A$;
+- Hermitian matrices have real eigenvalues;
+- eigenvectors for distinct eigenvalues are orthogonal;
+- the spectral theorem gives $A=QDQ^T$ or $A=UDU^*$;
+- spectral decompositions are sums of rank-one projection matrices;
+- positive definiteness can be tested using eigenvalues, Sylvester's criterion, or Cholesky factorization;
+- Gram matrices and $A^*A$ are always positive semidefinite;
+- these ideas are fundamental in least squares, covariance matrices, optimization, PCA, and numerical linear algebra.

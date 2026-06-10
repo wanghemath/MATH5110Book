@@ -1,0 +1,274 @@
+# Lab 27. Matrix Calculus: Independent Study {.unnumbered}
+
+This lab accompanies **Chapter 27: Matrix Calculus**.
+
+The goal is to make gradients, Jacobians, Hessians, and matrix derivatives computational:
+
+1. Use finite differences to check gradients.
+2. Compute gradients for quadratic and least squares functions.
+3. Interpret Hessians as curvature matrices.
+4. Use the trace trick for matrix variables.
+5. Run gradient descent and Newton's method.
+
+This is an **independent-study lab**. Each main question includes a worked solution and a similar practice question.
+
+## Python practice notebook
+
+You may use the Jupyter notebook version for longer Python practice:
+
+- [Download Lab 27 independent-study notebook](lab-27-matrix-calculus-independent-study.ipynb)
+- [Open Lab 27 in Google Colab](https://colab.research.google.com/github/wanghemath/MATH5110/blob/main/Labs/lab-27-matrix-calculus-independent-study.ipynb)
+
+## Interactive lab
+
+```{=html}
+<iframe
+  src="lab-27-interactive.html"
+  width="100%"
+  height="4200"
+  style="border:1px solid #ddd; border-radius:12px;">
+</iframe>
+```
+
+## Study guide and worked questions
+
+### Question 1. Gradient of a quadratic function
+
+Let
+$$
+f(x)=\frac12 x^TQx-b^Tx,
+\qquad
+Q=\begin{bmatrix}4&1\\1&3\end{bmatrix},
+\qquad
+b=\begin{bmatrix}1\\2\end{bmatrix}.
+$$
+Find $\nabla f(x)$ and the minimizer.
+
+#### Solution
+
+Since $Q=Q^T$,
+$$
+\nabla f(x)=Qx-b.
+$$
+The minimizer satisfies $Qx=b$, so
+$$
+x^*=Q^{-1}b.
+$$
+Using direct computation,
+$$
+Q^{-1}=\frac1{11}\begin{bmatrix}3&-1\\-1&4\end{bmatrix},
+$$
+so
+$$
+x^*=\frac1{11}\begin{bmatrix}1\\7\end{bmatrix}.
+$$
+
+#### Similar practice
+
+Let
+$$
+Q=\begin{bmatrix}5&2\\2&2\end{bmatrix},
+\qquad
+b=\begin{bmatrix}1\\0\end{bmatrix}.
+$$
+Find the minimizer of $\frac12x^TQx-b^Tx$.
+
+#### Answer
+
+Solve $Qx=b$. Since
+$$
+Q^{-1}=\frac1{6}\begin{bmatrix}2&-2\\-2&5\end{bmatrix},
+$$
+we get
+$$
+x^*=\begin{bmatrix}1/3\\-1/3\end{bmatrix}.
+$$
+
+### Question 2. Check a gradient by finite differences
+
+Let
+$$
+f(x,y)=3x^2+2xy+y^2-4x+5y.
+$$
+Find $\nabla f(1,-1)$, and explain how finite differences can check it.
+
+#### Solution
+
+The gradient is
+$$
+\nabla f(x,y)=
+\begin{bmatrix}
+6x+2y-4\\
+2x+2y+5
+\end{bmatrix}.
+$$
+At $(1,-1)$,
+$$
+\nabla f(1,-1)=
+\begin{bmatrix}
+0\\5
+\end{bmatrix}.
+$$
+A centered finite difference approximation uses
+$$
+\frac{f(x+\varepsilon e_i)-f(x-\varepsilon e_i)}{2\varepsilon}
+$$
+for each coordinate direction $e_i$.
+
+#### Similar practice
+
+Check $\nabla f(0,2)$.
+
+#### Answer
+
+$$
+\nabla f(0,2)=
+\begin{bmatrix}
+0\\9
+\end{bmatrix}.
+$$
+
+### Question 3. Least squares gradient
+
+Let
+$$
+f(x)=\frac12\|Ax-b\|_2^2.
+$$
+Show that
+$$
+\nabla f(x)=A^T(Ax-b).
+$$
+
+#### Solution
+
+Let $r=Ax-b$. Then
+$$
+f=\frac12 r^Tr.
+$$
+Since $dr=A\,dx$,
+$$
+df=r^Tdr=r^TA\,dx=(A^Tr)^Tdx.
+$$
+Therefore
+$$
+\nabla f(x)=A^T(Ax-b).
+$$
+
+#### Similar practice
+
+For
+$$
+f(x)=\frac12\|Ax-b\|_2^2+\frac\lambda2\|x\|_2^2,
+$$
+find the gradient.
+
+#### Answer
+
+$$
+\nabla f(x)=A^T(Ax-b)+\lambda x.
+$$
+
+### Question 4. Matrix least squares gradient
+
+Let
+$$
+f(X)=\frac12\|AX-B\|_F^2.
+$$
+Find $\nabla_X f(X)$.
+
+#### Solution
+
+Let $R=AX-B$. Then $dR=A\,dX$. Hence
+$$
+df=\operatorname{tr}(R^TdR)
+=\operatorname{tr}(R^TA\,dX)
+=\operatorname{tr}((A^TR)^T dX).
+$$
+Therefore
+$$
+\nabla_X f(X)=A^T(AX-B).
+$$
+
+#### Similar practice
+
+Find the gradient of
+$$
+f(X)=\frac12\|AXB-C\|_F^2.
+$$
+
+#### Answer
+
+$$
+\nabla_X f(X)=A^T(AXB-C)B^T.
+$$
+
+### Question 5. Jacobian and chain rule
+
+Let
+$$
+F(x,y)=\begin{bmatrix}x^2+y\\xy\end{bmatrix},
+\qquad
+ g(u,v)=u^2+v^2.
+$$
+Find $\nabla(g\circ F)(x,y)$ using the chain rule.
+
+#### Solution
+
+The Jacobian is
+$$
+J_F(x,y)=
+\begin{bmatrix}
+2x&1\\
+y&x
+\end{bmatrix}.
+$$
+Also
+$$
+\nabla g(u,v)=\begin{bmatrix}2u\\2v\end{bmatrix}.
+$$
+Therefore
+$$
+\nabla(g\circ F)(x,y)
+=J_F(x,y)^T
+\begin{bmatrix}
+2(x^2+y)\\
+2xy
+\end{bmatrix}.
+$$
+
+#### Similar practice
+
+Evaluate this gradient at $(x,y)=(1,2)$.
+
+#### Answer
+
+At $(1,2)$, $F(1,2)=(3,2)$, and
+$$
+J_F(1,2)=\begin{bmatrix}2&1\\2&1\end{bmatrix}.
+$$
+Thus
+$$
+\nabla(g\circ F)(1,2)=
+\begin{bmatrix}2&2\\1&1\end{bmatrix}
+\begin{bmatrix}6\\4\end{bmatrix}
+=\begin{bmatrix}20\\10\end{bmatrix}.
+$$
+
+## Python checklist
+
+After finishing the lab, students should be able to write Python code to:
+
+- compute analytic gradients;
+- check gradients with finite differences;
+- solve normal equations;
+- run gradient descent;
+- compute matrix gradients using NumPy;
+- compare gradient descent and Newton's method.
+
+## AI companion activity
+
+Ask an AI assistant:
+
+> I derived a gradient formula. Help me verify it by checking dimensions, deriving it with differentials, and writing a finite-difference test in Python.
+
+Then test the answer yourself with a small numerical example.

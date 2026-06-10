@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 17 Interactive: Grassmannians and Subspace Distances</title>
+<script>
+window.MathJax = {tex: {inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']]}, svg: {fontCache: 'global'}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--bg:#fff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);} header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;} header h1{margin:0 0 8px;font-size:1.8rem;} header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;} main{max-width:1240px;margin:0 auto;padding:24px;} .grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;} .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;} h2{font-size:1.25rem;margin:0 0 12px;} h3{font-size:1.05rem;margin:18px 0 8px;} p{line-height:1.55;} label{font-weight:600;} input[type=number],input[type=range]{margin:4px;} input[type=number]{width:72px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;} button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;} button.secondary{background:#fff;color:#111827;} canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;} .result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;} .small{font-size:.92rem;color:var(--muted);} table{border-collapse:collapse;background:#fff;margin:8px 0;} td,th{border:1px solid var(--line);padding:7px 10px;text-align:right;} .ok{color:var(--green);font-weight:700;} .task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;} textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;} .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;} @media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+<h1>Lab 17 Interactive: Grassmannians and Subspace Distances</h1>
+<p>Explore principal angles and Grassmannian distances between two planes in $\mathbb R^3$. One plane is $U=\operatorname{span}\{e_1,e_2\}$, and the other is $W=\operatorname{span}\{e_1,\cos(\alpha)e_2+\sin(\alpha)e_3\}$.</p>
+</header>
+<main>
+<section class="grid">
+<div class="card">
+<h2>1. Choose the angle between planes</h2>
+<p class="small">The planes share the $e_1$ direction, so the principal angles should be $(0,\alpha)$.</p>
+<div class="row"><label for="alpha">$\alpha$ in degrees</label><input id="alpha" type="range" min="0" max="90" step="1" value="30"><input id="alphan" type="number" min="0" max="90" step="1" value="30"></div>
+<button onclick="preset(0)">Same plane</button><button onclick="preset(30)">30 degrees</button><button onclick="preset(60)">60 degrees</button><button class="secondary" onclick="preset(90)">Orthogonal direction</button>
+<div class="result" id="summary"></div>
+</div>
+<div class="card">
+<h2>2. Visual picture</h2>
+<canvas id="plot" width="720" height="520"></canvas>
+<p class="small">Blue: plane $U$. Orange: plane $W$. The drawing is a 2D projection of the 3D geometry.</p>
+</div>
+</section>
+<section class="grid">
+<div class="card">
+<h2>3. Matrices</h2>
+<div class="result" id="matrices"></div>
+</div>
+<div class="card">
+<h2>4. Distances</h2>
+<div class="result" id="distances"></div>
+</div>
+</section>
+<section class="card">
+<h2>5. Independent-study practice tasks with answers</h2>
+<div class="task"><strong>Task A.</strong> Explain why $\min_{u\in U,w\in W}\|u-w\|=0$ for any two linear subspaces.<br><strong>Answer:</strong> Both subspaces contain $0$, so choose $u=w=0$.</div>
+<div class="task"><strong>Task B.</strong> If the principal angles are $0$ and $\pi/3$, compute the geodesic distance.<br><strong>Answer:</strong> $d_{\operatorname{Gr}}=\sqrt{0^2+(\pi/3)^2}=\pi/3$.</div>
+<div class="task"><strong>Task C.</strong> If the principal angles are $0.2$ and $0.6$, compute the chordal distance.<br><strong>Answer:</strong> $d_{\mathrm{chordal}}=\sqrt{\sin^2(0.2)+\sin^2(0.6)}\approx 0.5985$.</div>
+<div class="task"><strong>Similar practice.</strong> Try angles $0.1,0.4,0.7$. Compute geodesic and chordal distances.<br><strong>Answer:</strong> $d_{\operatorname{Gr}}\approx0.8124$ and $d_{\mathrm{chordal}}\approx0.7580$.</div>
+</section>
+<section class="card"><h2>6. Workspace</h2><textarea placeholder="Write observations here. Copy final answers to your notebook or assignment."></textarea></section>
+</main>
+<script>
+const alpha=document.getElementById('alpha'), alphan=document.getElementById('alphan');
+alpha.addEventListener('input',()=>{alphan.value=alpha.value;update();}); alphan.addEventListener('input',()=>{alpha.value=alphan.value;update();});
+function fmt(x){if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(r=>`<tr>${r.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function preset(v){alpha.value=v;alphan.value=v;update();}
+function update(){let deg=Number(alpha.value), a=deg*Math.PI/180;let sig=[1,Math.cos(a)], theta=[0,a];let geo=Math.sqrt(theta[0]*theta[0]+theta[1]*theta[1]);let chord=Math.sqrt(Math.sin(theta[0])**2+Math.sin(theta[1])**2);let proj=Math.sin(Math.max(...theta));let procr=2*Math.sqrt(Math.sin(theta[0]/2)**2+Math.sin(theta[1]/2)**2);let fs=Math.acos(sig[0]*sig[1]);
+summary.innerHTML=`Principal angles: <span class='ok'>(${fmt(theta[0])}, ${fmt(theta[1])}) radians</span><br>In degrees: <span class='ok'>(0, ${fmt(deg)})</span><br>Singular values of $Q_U^TQ_W$: (${fmt(sig[0])}, ${fmt(sig[1])})`;
+let QU=[[1,0],[0,1],[0,0]], QW=[[1,0],[0,Math.cos(a)],[0,Math.sin(a)]], M=[[1,0],[0,Math.cos(a)]];
+matrices.innerHTML=`$Q_U=$ ${matHTML(QU)} $Q_W=$ ${matHTML(QW)} $Q_U^TQ_W=$ ${matHTML(M)} The singular values are $1$ and $\cos(\alpha)$.`;
+distances.innerHTML=`Grassmann geodesic distance: ${fmt(geo)}<br>Chordal distance: ${fmt(chord)}<br>Projection distance: ${fmt(proj)}<br>Asimov distance: ${fmt(Math.max(...theta))}<br>Procrustes distance: ${fmt(procr)}<br>Fubini-Study distance: ${fmt(fs)}`;
+draw(deg); if(window.MathJax){MathJax.typesetPromise();}}
+function project3(p){let x=p[0],y=p[1],z=p[2];return [360+90*(x-y),260-65*z-35*(x+y)];}
+function drawPlane(ctx,pts,color){ctx.beginPath();pts.forEach((p,i)=>{let q=project3(p); if(i==0)ctx.moveTo(q[0],q[1]); else ctx.lineTo(q[0],q[1]);});ctx.closePath();ctx.fillStyle=color;ctx.globalAlpha=.18;ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=color;ctx.lineWidth=3;ctx.stroke();}
+function drawVec(ctx,v,color,label){let o=project3([0,0,0]),q=project3(v);ctx.strokeStyle=color;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(o[0],o[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();ctx.fillStyle=color;ctx.beginPath();ctx.arc(q[0],q[1],5,0,2*Math.PI);ctx.fill();ctx.font='15px system-ui';ctx.fillText(label,q[0]+8,q[1]-8);}
+function draw(deg){let c=document.getElementById('plot'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);let a=deg*Math.PI/180;let U=[[-2,-2,0],[2,-2,0],[2,2,0],[-2,2,0]];let w2=[0,Math.cos(a),Math.sin(a)];let W=[[-2,-2*w2[1],-2*w2[2]],[2,-2*w2[1],-2*w2[2]],[2,2*w2[1],2*w2[2]],[-2,2*w2[1],2*w2[2]]];drawPlane(ctx,U,'#2563eb');drawPlane(ctx,W,'#f97316');drawVec(ctx,[1.7,0,0],'#111827','shared direction e₁');drawVec(ctx,[0,1.7,0],'#2563eb','e₂ in U');drawVec(ctx,[0,1.7*w2[1],1.7*w2[2]],'#f97316','rotated direction in W');ctx.fillStyle='#111827';ctx.font='16px system-ui';ctx.fillText(`alpha = ${deg}°`,18,28);}
+update();
+</script>
+</body>
+</html>

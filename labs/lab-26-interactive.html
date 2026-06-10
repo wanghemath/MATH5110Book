@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 26 Interactive: Linear Algebra and Probability</title>
+<script>
+window.MathJax = {tex: {inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']]}, svg: {fontCache: 'global'}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--bg:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);}header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;}header h1{margin:0 0 8px;font-size:1.8rem;}header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;}main{max-width:1240px;margin:0 auto;padding:24px}.grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px}h2{font-size:1.25rem;margin:0 0 12px}h3{font-size:1.05rem;margin:18px 0 8px}p{line-height:1.55}.small{font-size:.92rem;color:var(--muted)}label{display:block;margin:8px 0 4px;font-weight:600}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}input[type=number]{width:70px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff}button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0}button.secondary{background:#fff;color:#111827}canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto}.result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto}.eq{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#fff;border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0;overflow:auto}table{border-collapse:collapse;background:#fff;margin:8px 0}td,th{border:1px solid var(--line);padding:7px 10px;text-align:right}.ok{color:var(--green);font-weight:700}.bad{color:var(--red);font-weight:700}.warn{color:var(--amber);font-weight:700}.task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0}textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit}@media(max-width:920px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<h1>Lab 26 Interactive: Linear Algebra and Probability</h1>
+<p>Explore random vectors, covariance matrices, principal directions, Gaussian ellipses, affine transformations, whitening, and high-dimensional random directions.</p>
+</header>
+<main>
+<section class="grid">
+<div class="card">
+<h2>1. Covariance matrix</h2>
+<p class="small">Use a symmetric matrix $\Sigma=\begin{bmatrix}a&c\\c&b\end{bmatrix}$. It is a valid covariance matrix exactly when it is positive semidefinite.</p>
+<div class="row"><label>$a$</label><input id="s11" type="number" value="4" step="0.25"><label>$c$</label><input id="s12" type="number" value="3" step="0.25"><label>$b$</label><input id="s22" type="number" value="4" step="0.25"></div>
+<button onclick="preset('correlated')">Correlated</button><button onclick="preset('diagonal')">Diagonal</button><button onclick="preset('invalid')">Invalid covariance</button><button class="secondary" onclick="preset('flat')">Nearly singular</button>
+<div class="result" id="covResult"></div>
+</div>
+<div class="card">
+<h2>2. Covariance ellipse and principal directions</h2>
+<canvas id="ellipse" width="720" height="520"></canvas>
+<p class="small">The ellipse axes are eigenvectors of $\Sigma$. Axis lengths are proportional to $\sqrt{\lambda_i}$.</p>
+</div>
+</section>
+<section class="grid">
+<div class="card">
+<h2>3. Directional variance</h2>
+<p class="small">For a unit direction $u=(\cos\theta,\sin\theta)$, the variance of the projection $u^TX$ is $u^T\Sigma u$.</p>
+<div class="row"><label>$\theta$ degrees</label><input id="theta" type="number" value="45" step="5"></div>
+<div class="result" id="dirResult"></div>
+</div>
+<div class="card">
+<h2>4. Affine transformation</h2>
+<p class="small">Let $Y=AX+b$. The covariance transforms by $\operatorname{Cov}(Y)=A\Sigma A^T$.</p>
+<div class="row"><label>$A_{11}$</label><input id="a11" type="number" value="1" step="0.25"><label>$A_{12}$</label><input id="a12" type="number" value="1" step="0.25"></div>
+<div class="row"><label>$A_{21}$</label><input id="a21" type="number" value="0" step="0.25"><label>$A_{22}$</label><input id="a22" type="number" value="1" step="0.25"></div>
+<div class="result" id="affineResult"></div>
+</div>
+</section>
+<section class="grid">
+<div class="card">
+<h2>5. Whitening</h2>
+<p class="small">If $\Sigma=Q\Lambda Q^T$, then $W=\Lambda^{-1/2}Q^T$ gives $W\Sigma W^T=I$ when $\Sigma$ is positive definite.</p>
+<div class="result" id="whiteResult"></div>
+</div>
+<div class="card">
+<h2>6. High-dimensional random directions</h2>
+<p class="small">For random unit vectors $u,v\in\mathbb R^d$, a typical inner product has size about $1/\sqrt d$.</p>
+<div class="row"><label>dimension $d$</label><input id="dim" type="number" value="100" step="10"><button onclick="simulateDots()">Simulate</button></div>
+<div class="result" id="dotResult"></div>
+</div>
+</section>
+<section class="card">
+<h2>7. Independent-study tasks with answers</h2>
+<div class="task"><strong>Task A.</strong> For $\Sigma=\begin{bmatrix}4&3\\3&4\end{bmatrix}$, find the largest variance direction.<br><strong>Answer:</strong> The largest eigenvalue is $7$, with eigenvector proportional to $(1,1)$. The maximum variance direction is $\frac1{\sqrt2}(1,1)$.</div>
+<div class="task"><strong>Task B.</strong> Explain why $\Sigma$ cannot have a negative eigenvalue.<br><strong>Answer:</strong> If $\Sigma q=\lambda q$ and $\|q\|=1$, then $\lambda=q^T\Sigma q=\operatorname{Var}(q^TX)\ge0$.</div>
+<div class="task"><strong>Similar practice.</strong> Try $\Sigma=\begin{bmatrix}5&2\\2&5\end{bmatrix}$. What are the eigenvalues?<br><strong>Answer:</strong> $7$ and $3$.</div>
+</section>
+<section class="card"><h2>8. Workspace</h2><textarea placeholder="Write observations here..."></textarea></section>
+</main>
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(r=>`<tr>${r.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function getSigma(){return [[Number(s11.value)||0,Number(s12.value)||0],[Number(s12.value)||0,Number(s22.value)||0]];}
+function eig2(M){let a=M[0][0],c=M[0][1],b=M[1][1];let tr=a+b, disc=Math.sqrt((a-b)*(a-b)+4*c*c);let l1=(tr+disc)/2,l2=(tr-disc)/2;function ev(l){let x=c,y=l-a;if(Math.abs(x)+Math.abs(y)<1e-10){x=l-b;y=c;}let n=Math.sqrt(x*x+y*y);return n<1e-10?[1,0]:[x/n,y/n];}return {vals:[l1,l2],vecs:[ev(l1),ev(l2)]};}
+function mmul(A,B){let C=[[0,0],[0,0]];for(let i=0;i<2;i++)for(let j=0;j<2;j++)for(let k=0;k<2;k++)C[i][j]+=A[i][k]*B[k][j];return C;}
+function trans(A){return [[A[0][0],A[1][0]],[A[0][1],A[1][1]]];}
+function update(){let S=getSigma(), e=eig2(S), psd=e.vals[1]>=-1e-10;covResult.innerHTML=`$\\Sigma=$ ${matHTML(S)} Eigenvalues: ${fmt(e.vals[0])}, ${fmt(e.vals[1])}<br>`+(psd?`<span class='ok'>Valid covariance matrix: positive semidefinite.</span>`:`<span class='bad'>Not a valid covariance matrix: one eigenvalue is negative.</span>`);updateDir();updateAffine();updateWhite();drawEllipse();if(window.MathJax)MathJax.typesetPromise();}
+function updateDir(){let S=getSigma(), th=(Number(theta.value)||0)*Math.PI/180,u=[Math.cos(th),Math.sin(th)];let v=u[0]*(S[0][0]*u[0]+S[0][1]*u[1])+u[1]*(S[1][0]*u[0]+S[1][1]*u[1]);dirResult.innerHTML=`$u=(\\cos\\theta,\\sin\\theta)$ with $\\theta=${fmt(Number(theta.value)||0)}^\\circ$.<br>$u^T\\Sigma u=${fmt(v)}$`;}
+function updateAffine(){let S=getSigma(), A=[[Number(a11.value)||0,Number(a12.value)||0],[Number(a21.value)||0,Number(a22.value)||0]], C=mmul(mmul(A,S),trans(A));affineResult.innerHTML=`$A=$ ${matHTML(A)} $A\\Sigma A^T=$ ${matHTML(C)}`;}
+function updateWhite(){let S=getSigma(), e=eig2(S);if(e.vals[1]<=1e-10){whiteResult.innerHTML=`<span class='warn'>Whitening requires positive definite covariance. Smallest eigenvalue is ${fmt(e.vals[1])}.</span>`;return;}let Q=[[e.vecs[0][0],e.vecs[1][0]],[e.vecs[0][1],e.vecs[1][1]]];let D=[[1/Math.sqrt(e.vals[0]),0],[0,1/Math.sqrt(e.vals[1])]];let W=mmul(D,trans(Q));let I=mmul(mmul(W,S),trans(W));whiteResult.innerHTML=`$W=\\Lambda^{-1/2}Q^T=$ ${matHTML(W)} $W\\Sigma W^T=$ ${matHTML(I)}`;}
+function drawEllipse(){let canvas=document.getElementById('ellipse'),ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height,sc=45;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);function pt(x,y){return [W/2+x*sc,H/2-y*sc];}ctx.strokeStyle='#eef2f7';ctx.lineWidth=1;for(let x=-7;x<=7;x++){let p=pt(x,0)[0];ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,H);ctx.stroke();}for(let y=-5;y<=5;y++){let p=pt(0,y)[1];ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(W,p);ctx.stroke();}let ox=pt(0,0)[0],oy=pt(0,0)[1];ctx.strokeStyle='#9ca3af';ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(W,oy);ctx.stroke();ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();let S=getSigma(),e=eig2(S);if(e.vals[1]<0){ctx.fillStyle='#991b1b';ctx.font='18px system-ui';ctx.fillText('Not positive semidefinite: no covariance ellipse.',30,40);return;}ctx.strokeStyle='#2563eb';ctx.lineWidth=4;ctx.beginPath();for(let i=0;i<=360;i++){let t=2*Math.PI*i/360;let r1=Math.sqrt(Math.max(e.vals[0],0)),r2=Math.sqrt(Math.max(e.vals[1],0));let x=r1*Math.cos(t)*e.vecs[0][0]+r2*Math.sin(t)*e.vecs[1][0];let y=r1*Math.cos(t)*e.vecs[0][1]+r2*Math.sin(t)*e.vecs[1][1];let p=pt(x,y);if(i===0)ctx.moveTo(p[0],p[1]);else ctx.lineTo(p[0],p[1]);}ctx.stroke();function vec(v,l,color,label){ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=4;let p=pt(l*v[0],l*v[1]);ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(p[0],p[1]);ctx.stroke();ctx.beginPath();ctx.arc(p[0],p[1],5,0,2*Math.PI);ctx.fill();ctx.font='16px system-ui';ctx.fillText(label,p[0]+8,p[1]-8);}vec(e.vecs[0],Math.sqrt(Math.max(e.vals[0],0)),'#f97316','q1');vec(e.vecs[1],Math.sqrt(Math.max(e.vals[1],0)),'#065f46','q2');}
+function preset(t){if(t==='correlated'){s11.value=4;s12.value=3;s22.value=4;}if(t==='diagonal'){s11.value=9;s12.value=0;s22.value=1;}if(t==='invalid'){s11.value=1;s12.value=3;s22.value=1;}if(t==='flat'){s11.value=1;s12.value=.95;s22.value=1;}update();}
+function simulateDots(){let d=Math.max(2,Math.floor(Number(dim.value)||100)), m=300;let vals=[];for(let k=0;k<m;k++){let u=[],v=[],su=0,sv=0;for(let i=0;i<d;i++){let a=randn(),b=randn();u.push(a);v.push(b);su+=a*a;sv+=b*b;}su=Math.sqrt(su);sv=Math.sqrt(sv);let dot=0;for(let i=0;i<d;i++)dot+=(u[i]/su)*(v[i]/sv);vals.push(dot);}let mean=vals.reduce((a,b)=>a+b,0)/m;let rms=Math.sqrt(vals.reduce((a,b)=>a+b*b,0)/m);dotResult.innerHTML=`dimension $d=${d}$<br>average inner product: ${fmt(mean)}<br>root mean square inner product: ${fmt(rms)}<br>theory: $1/\\sqrt d=${fmt(1/Math.sqrt(d))}$`;if(window.MathJax)MathJax.typesetPromise();}
+function randn(){let u=1-Math.random(),v=1-Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}['s11','s12','s22','theta','a11','a12','a21','a22'].forEach(id=>document.getElementById(id).addEventListener('input',update));update();simulateDots();
+</script>
+</body>
+</html>

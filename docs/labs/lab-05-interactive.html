@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lab 5 Interactive: Coordinates, Matrices, and Change of Basis</title>
+<script>
+window.MathJax = {
+  tex: {inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']]},
+  svg: {fontCache: 'global'}
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root{--bg:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--card:#f9fafb;--blue:#2563eb;--orange:#f97316;--green:#065f46;--red:#991b1b;--amber:#92400e;}
+  body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:var(--ink);} header{padding:28px 28px 18px;border-bottom:1px solid var(--line);background:#fafafa;} header h1{margin:0 0 8px;font-size:1.8rem;} header p{margin:0;max-width:1050px;color:var(--muted);line-height:1.55;} main{max-width:1240px;margin:0 auto;padding:24px;} .grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;} .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;} h2{font-size:1.25rem;margin:0 0 12px;} h3{font-size:1.05rem;margin:18px 0 8px;} p{line-height:1.55;} label{display:block;margin:8px 0 4px;font-weight:600;} input[type=number]{width:62px;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff;} .matrix{display:grid;gap:6px;margin:8px 0 12px;align-items:center;} .m2{grid-template-columns:repeat(2,70px);} .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;} button{border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;margin:5px 5px 5px 0;} button.secondary{background:#fff;color:#111827;} select{padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff;} canvas{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;height:auto;} .result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;line-height:1.55;margin-top:10px;overflow:auto;} .small{font-size:.92rem;color:var(--muted);} table{border-collapse:collapse;background:#fff;margin:8px 0;} th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;} .ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .warn{color:var(--amber);font-weight:700;} .task{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0;} textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;} code{background:#f3f4f6;padding:1px 4px;border-radius:4px;} @media(max-width:920px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Lab 5 Interactive: Coordinates, Matrices, and Change of Basis</h1>
+  <p>Explore coordinate vectors, matrix representations of linear transformations, change of basis, similarity, and diagonalization. The goal is to see that coordinates are a language, not the object itself.</p>
+</header>
+<main>
+  <section class="grid">
+    <div class="card">
+      <h2>1. Coordinates in a basis of \(\mathbb R^2\)</h2>
+      <p class="small">Enter basis vectors \(b_1,b_2\) and a vector \(v\). The tool solves \(P_{\mathcal B}c=v\), where \(P_{\mathcal B}=[b_1\ b_2]\).</p>
+      <h3>Basis matrix \(P_{\mathcal B}\)</h3>
+      <div class="matrix m2" id="basisInputs"></div>
+      <h3>Vector \(v\)</h3>
+      <div class="matrix m2" id="vecInputs"></div>
+      <button onclick="coordPreset('chapter')">Chapter example</button><button onclick="coordPreset('standard')">Standard basis</button><button onclick="coordPreset('bad')">Not a basis</button>
+      <div class="result" id="coordResult"></div>
+    </div>
+    <div class="card">
+      <h2>2. Geometry of coordinates</h2>
+      <canvas id="coordCanvas" width="720" height="520"></canvas>
+      <p class="small">Blue and orange vectors are the basis vectors. The black vector is \(v\). The coordinate vector tells how many copies of each basis vector are needed to build \(v\).</p>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>3. Reconstruct a vector from coordinates</h2>
+      <p class="small">Enter \([v]_{\mathcal B}\). The tool computes \(v=P_{\mathcal B}[v]_{\mathcal B}\).</p>
+      <h3>Coordinate column \([v]_{\mathcal B}\)</h3>
+      <div class="matrix m2" id="coordColumnInputs"></div>
+      <button onclick="reconPreset('chapter')">Use \((3,-1)\)</button><button onclick="reconPreset('practice')">Use \((2,5)\)</button>
+      <div class="result" id="reconResult"></div>
+    </div>
+    <div class="card">
+      <h2>4. Change coordinates from \(\mathcal B\) to \(\mathcal C\)</h2>
+      <p class="small">The change-of-coordinate matrix is \(P_{\mathcal C}^{-1}P_{\mathcal B}\). It converts \([v]_{\mathcal B}\) into \([v]_{\mathcal C}\).</p>
+      <h3>New basis matrix \(P_{\mathcal C}\)</h3>
+      <div class="matrix m2" id="basisCInputs"></div>
+      <button onclick="changePreset('diagonal')">Diagonal C</button><button onclick="changePreset('standard')">Standard C</button><button onclick="changePreset('same')">C = B</button>
+      <div class="result" id="changeResult"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>5. Matrix of a linear transformation in chosen bases</h2>
+    <p>Let \(T:\mathbb R^2\to\mathbb R^2\) be given in standard coordinates by \(T(x)=Ax\). The matrix with input basis \(\mathcal B\) and output basis \(\mathcal C\) is</p>
+    <p>\[ [T]_{\mathcal C\leftarrow\mathcal B}=P_{\mathcal C}^{-1}AP_{\mathcal B}. \]</p>
+    <h3>Standard matrix \(A\)</h3>
+    <div class="matrix m2" id="AInputs"></div>
+    <button onclick="mapPreset('upper')">Upper triangular example</button><button onclick="mapPreset('shear')">Shear example</button><button onclick="mapPreset('rotation')">Rotation example</button>
+    <div class="result" id="mapResult"></div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>6. Similarity: same map, same basis for input and output</h2>
+      <p class="small">When the same basis is used for domain and codomain, the new matrix is \(A_{\mathcal B}=P_{\mathcal B}^{-1}AP_{\mathcal B}\). Similar matrices have the same determinant, trace, and eigenvalues.</p>
+      <div class="result" id="similarResult"></div>
+    </div>
+    <div class="card">
+      <h2>7. Diagonalization check</h2>
+      <p class="small">If the basis vectors are eigenvectors of \(A\), then \(P_{\mathcal B}^{-1}AP_{\mathcal B}\) is diagonal.</p>
+      <button onclick="diagPreset('diagonalize')">Use eigenbasis</button><button onclick="diagPreset('notdiag')">Use non-eigenbasis</button>
+      <div class="result" id="diagResult"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>8. Independent-study practice tasks with answers</h2>
+    <div class="task"><strong>Task A.</strong> Let \(b_1=(1,1)\), \(b_2=(-1,2)\), and \(v=(2,8)\). Find \([v]_{\mathcal B}\).<br><strong>Answer:</strong> \([v]_{\mathcal B}=(4,2)^T\).</div>
+    <div class="task"><strong>Task B.</strong> If \([v]_{\mathcal B}=(3,-1)^T\) for the same basis, find \(v\).<br><strong>Answer:</strong> \(v=3b_1-b_2=(4,1)^T\).</div>
+    <div class="task"><strong>Task C.</strong> For \(A=\begin{bmatrix}2&1\\0&3\end{bmatrix}\), compute \([T]_{\mathcal C\leftarrow\mathcal B}\) when \(\mathcal C\) is the standard basis.<br><strong>Answer:</strong> \([T]_{\mathcal C\leftarrow\mathcal B}=AP_{\mathcal B}=\begin{bmatrix}3&0\\3&6\end{bmatrix}\).</div>
+    <div class="task"><strong>Similar practice.</strong> Use \(\mathcal C=((1,1),(1,-1))\).<br><strong>Answer:</strong> \([T]_{\mathcal C\leftarrow\mathcal B}=P_{\mathcal C}^{-1}AP_{\mathcal B}=\begin{bmatrix}3&3\\0&-3\end{bmatrix}\).</div>
+    <div class="task"><strong>AI companion.</strong> Ask an AI assistant to explain why \([v]_{\mathcal B}\) and \([T]_{\mathcal C\leftarrow\mathcal B}\) are different kinds of coordinate objects. Check whether it clearly names the basis of the domain and codomain.</div>
+  </section>
+
+  <section class="card"><h2>9. Workspace</h2><textarea placeholder="Write observations here. Copy final answers to your notebook or assignment."></textarea></section>
+</main>
+<script>
+function fmt(x){if(!isFinite(x))return 'undefined'; if(Math.abs(x)<1e-10)return '0'; if(Math.abs(x-Math.round(x))<1e-10)return String(Math.round(x)); return Number(x).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
+function matHTML(M){return `<table><tbody>${M.map(row=>`<tr>${row.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function vecHTML(v){return matHTML(v.map(x=>[x]));}
+function createInputs(containerId,prefix,vals,cols){const el=document.getElementById(containerId);el.innerHTML=''; for(let i=0;i<vals.length;i++){for(let j=0;j<cols;j++){const input=document.createElement('input');input.type='number';input.step='1';input.value=vals[i][j] ?? vals[i];input.id=`${prefix}${i}${j}`;input.addEventListener('input',update);el.appendChild(input);}}}
+function getMat(prefix,rows,cols){let M=[];for(let i=0;i<rows;i++){let r=[];for(let j=0;j<cols;j++)r.push(Number(document.getElementById(`${prefix}${i}${j}`).value)||0);M.push(r);}return M;}
+function setMat(prefix,M){for(let i=0;i<M.length;i++)for(let j=0;j<M[0].length;j++)document.getElementById(`${prefix}${i}${j}`).value=M[i][j];}
+function setVec(prefix,v){for(let i=0;i<v.length;i++)document.getElementById(`${prefix}${i}0`).value=v[i];}
+function det2(A){return A[0][0]*A[1][1]-A[0][1]*A[1][0];}
+function trace2(A){return A[0][0]+A[1][1];}
+function inv2(A){let d=det2(A); if(Math.abs(d)<1e-10)return null; return [[A[1][1]/d,-A[0][1]/d],[-A[1][0]/d,A[0][0]/d]];}
+function matVec(A,v){return A.map(row=>row.reduce((s,x,j)=>s+x*v[j],0));}
+function matMul(A,B){let C=Array.from({length:A.length},()=>Array(B[0].length).fill(0));for(let i=0;i<A.length;i++)for(let j=0;j<B[0].length;j++)for(let k=0;k<B.length;k++)C[i][j]+=A[i][k]*B[k][j];return C;}
+function sub(A,B){return A.map((r,i)=>r.map((x,j)=>x-B[i][j]));}
+function isDiagonal(A){return Math.abs(A[0][1])<1e-10 && Math.abs(A[1][0])<1e-10;}
+function eigText2(A){let tr=trace2(A), de=det2(A), disc=tr*tr-4*de; if(disc>=-1e-10){disc=Math.max(0,disc);let l1=(tr+Math.sqrt(disc))/2,l2=(tr-Math.sqrt(disc))/2;return `${fmt(l1)}, ${fmt(l2)}`;} return `complex pair with trace ${fmt(tr)} and determinant ${fmt(de)}`;}
+function getPB(){return getMat('B',2,2);} function getPC(){return getMat('C',2,2);} function getA(){return getMat('A',2,2);} function getCoordCol(){return getMat('CB',2,1).map(r=>r[0]);}
+function updateCoords(){let PB=getPB(), v=getMat('V',2,1).map(r=>r[0]), inv=inv2(PB), msg=`P_B = ${matHTML(PB)} v = ${vecHTML(v)} det(P_B) = ${fmt(det2(PB))}<br>`; if(!inv){msg+=`<span class='bad'>The columns do not form a basis.</span> Coordinates are not unique or may not exist.`;} else {let c=matVec(inv,v); msg+=`<span class='ok'>The columns form a basis.</span><br>[v]_B = ${vecHTML(c)} because P_B[v]_B=v.`;} coordResult.innerHTML=msg;drawCoords(PB,v);}
+function updateRecon(){let PB=getPB(), cb=getCoordCol(); let v=matVec(PB,cb); reconResult.innerHTML=`[v]_B = ${vecHTML(cb)}<br>v = P_B[v]_B = ${vecHTML(v)}<br><span class='warn'>The coordinate column and the vector are different unless the basis is standard.</span>`;}
+function updateChange(){let PB=getPB(), PC=getPC(), cb=getCoordCol(), invC=inv2(PC);let v=matVec(PB,cb);let msg=`P_C = ${matHTML(PC)}<br>v=P_B[v]_B = ${vecHTML(v)}<br>`;if(!invC){msg+=`<span class='bad'>C is not a basis, so C-coordinates are undefined.</span>`;}else{let cc=matVec(invC,v), M=matMul(invC,PB);msg+=`Change matrix P_C^{-1}P_B = ${matHTML(M)}<br><span class='ok'>[v]_C = ${vecHTML(cc)}</span>`;}changeResult.innerHTML=msg;}
+function updateMap(){let A=getA(), PB=getPB(), PC=getPC(), invC=inv2(PC);let msg=`A = ${matHTML(A)} P_B = ${matHTML(PB)} P_C = ${matHTML(PC)}<br>`; if(!invC || !inv2(PB)){msg+=`<span class='bad'>Both B and C must be bases.</span>`;} else {let M=matMul(matMul(invC,A),PB);msg+=`<span class='ok'>[T]_{C←B}=P_C^{-1}AP_B = ${matHTML(M)}</span><br>Column 1 is [T(b_1)]_C and column 2 is [T(b_2)]_C.`;} mapResult.innerHTML=msg;}
+function updateSimilar(){let A=getA(), PB=getPB(), invB=inv2(PB);let msg=''; if(!invB){msg=`<span class='bad'>B is not a basis, so P_B^{-1}AP_B is undefined.</span>`;} else {let S=matMul(matMul(invB,A),PB);msg=`A_B=P_B^{-1}AP_B = ${matHTML(S)}<br>det(A)=${fmt(det2(A))}, det(A_B)=${fmt(det2(S))}<br>tr(A)=${fmt(trace2(A))}, tr(A_B)=${fmt(trace2(S))}<br>Eigenvalues: ${eigText2(A)}<br><span class='ok'>These invariants do not change under similarity.</span>`;} similarResult.innerHTML=msg;}
+function updateDiag(){let A=getA(), PB=getPB(), invB=inv2(PB);let msg=''; if(!invB){msg=`<span class='bad'>B is not a basis.</span>`;} else {let S=matMul(matMul(invB,A),PB);msg=`P_B^{-1}AP_B = ${matHTML(S)}` + (isDiagonal(S)?`<span class='ok'>This is diagonal. The basis vectors behave like eigenvectors.</span>`:`<span class='warn'>This is not diagonal. The chosen basis is not an eigenbasis for this A.</span>`);} diagResult.innerHTML=msg;}
+function update(){updateCoords();updateRecon();updateChange();updateMap();updateSimilar();updateDiag(); if(window.MathJax) MathJax.typesetPromise();}
+function coordPreset(t){if(t==='chapter'){setMat('B',[[1,-1],[1,2]]);setVec('V',[2,8]);} if(t==='standard'){setMat('B',[[1,0],[0,1]]);setVec('V',[2,8]);} if(t==='bad'){setMat('B',[[1,2],[2,4]]);setVec('V',[2,8]);} update();}
+function reconPreset(t){if(t==='chapter')setVec('CB',[3,-1]); if(t==='practice')setVec('CB',[2,5]); update();}
+function changePreset(t){if(t==='diagonal')setMat('C',[[1,1],[1,-1]]); if(t==='standard')setMat('C',[[1,0],[0,1]]); if(t==='same')setMat('C',getPB()); update();}
+function mapPreset(t){if(t==='upper')setMat('A',[[2,1],[0,3]]); if(t==='shear')setMat('A',[[1,2],[0,1]]); if(t==='rotation')setMat('A',[[0,-1],[1,0]]); update();}
+function diagPreset(t){if(t==='diagonalize'){setMat('A',[[2,1],[0,3]]);setMat('B',[[1,1],[0,1]]);setVec('V',[2,8]);setVec('CB',[3,-1]);setMat('C',[[1,1],[1,-1]]);} if(t==='notdiag'){setMat('A',[[2,1],[0,3]]);setMat('B',[[1,-1],[1,2]]);setVec('V',[2,8]);setVec('CB',[3,-1]);setMat('C',[[1,1],[1,-1]]);} update();}
+function drawCoords(P,v){let c=coordCanvas,ctx=c.getContext('2d'),W=c.width,H=c.height,sc=45;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);function pt(x,y){return [W/2+x*sc,H/2-y*sc];}ctx.strokeStyle='#eef2f7';ctx.lineWidth=1;for(let x=-7;x<=7;x++){let p=pt(x,0)[0];ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,H);ctx.stroke();}for(let y=-5;y<=5;y++){let p=pt(0,y)[1];ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(W,p);ctx.stroke();}let ox=pt(0,0)[0],oy=pt(0,0)[1];ctx.strokeStyle='#9ca3af';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(W,oy);ctx.stroke();ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();function vec(a,color,label){let q=pt(a[0],a[1]);ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(q[0],q[1]);ctx.stroke();ctx.beginPath();ctx.arc(q[0],q[1],5,0,2*Math.PI);ctx.fill();ctx.font='15px system-ui';ctx.fillText(label,q[0]+8,q[1]-8);}vec([P[0][0],P[1][0]],'#2563eb','b1');vec([P[0][1],P[1][1]],'#f97316','b2');vec(v,'#111827','v');}
+createInputs('basisInputs','B',[[1,-1],[1,2]],2);createInputs('vecInputs','V',[[2],[8]],1);createInputs('coordColumnInputs','CB',[[3],[-1]],1);createInputs('basisCInputs','C',[[1,1],[1,-1]],2);createInputs('AInputs','A',[[2,1],[0,3]],2);update();
+</script>
+</body>
+</html>

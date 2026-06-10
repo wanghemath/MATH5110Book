@@ -1,0 +1,871 @@
+---
+title: "Chapter 10: Inner Product Spaces, Orthogonal Projection, QR Factorization, and Adjoints"
+subtitle: "Measuring angles, finding best approximations, and turning geometry into computation"
+author: "He Wang"
+format:
+  html:
+    toc: true
+    number-sections: true
+    code-fold: true
+    code-tools: true
+jupyter: python3
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## The story: when vectors begin to have geometry
+
+Up to now, vectors have mostly been objects that can be added, scaled, transformed, and represented in different bases. But many applied questions require more than linear structure. We want to ask:
+
+- How long is a vector?
+- What is the angle between two signals?
+- What part of a data vector is explained by a model subspace?
+- What is the closest point in a subspace?
+- How can we compute least-squares solutions stably?
+- What is the correct transpose operation for complex vector spaces?
+
+These questions require an **inner product**. An inner product turns a vector space into a geometric space. Once we can measure angles and lengths, we can define orthogonality, projection, least squares, QR factorization, and adjoints.
+
+The central idea of this chapter is:
+
+> Inner products turn algebraic vector spaces into spaces where approximation and geometry make sense.
+
+```{python}
+import numpy as np
+from numpy.linalg import norm, qr, solve, lstsq
+np.set_printoptions(precision=4, suppress=True)
+```
+
+## Learning goals
+
+After this chapter, you should be able to:
+
+1. define real and complex inner products;
+2. compute norms, distances, and angles from an inner product;
+3. use the Cauchy--Schwarz inequality and the Pythagorean theorem;
+4. compute projections onto lines and subspaces;
+5. explain orthogonal decomposition and orthogonal complements;
+6. connect the row space and null space using orthogonality;
+7. apply the Gram--Schmidt process;
+8. compute and interpret QR factorizations;
+9. use QR factorization for least squares;
+10. compute adjoint operators and explain why complex spaces require conjugate transpose;
+11. use Python for projections, QR factorization, least squares, and adjoints.
+
+## Inner product spaces
+
+### Definition 10.1: Real inner product
+
+::: {.callout-note}
+Let $V$ be a real vector space. An **inner product** on $V$ is a function
+$$
+\langle -,-\rangle:V\times V\to \mathbb R
+$$
+such that for all $u,v,w\in V$ and all $c\in\mathbb R$:
+
+1. $\langle u,v\rangle=\langle v,u\rangle$;
+2. $\langle u+v,w\rangle=\langle u,w\rangle+\langle v,w\rangle$;
+3. $\langle cu,v\rangle=c\langle u,v\rangle$;
+4. $\langle u,u\rangle\ge 0$;
+5. $\langle u,u\rangle=0$ if and only if $u=0$.
+
+A vector space together with an inner product is called an **inner product space**.
+:::
+
+The standard example is the dot product on $\mathbb R^n$:
+$$
+u\cdot v=\sum_{i=1}^n u_i v_i.
+$$
+
+### Definition 10.2: Complex inner product
+
+::: {.callout-note}
+Let $V$ be a complex vector space. A complex inner product satisfies conjugate symmetry:
+$$
+\langle u,v\rangle=\overline{\langle v,u\rangle}.
+$$
+With the convention used in these notes,
+$$
+\langle u,v\rangle=\sum_{i=1}^n u_i\overline{v_i},
+$$
+so the inner product is linear in the first variable and conjugate-linear in the second variable.
+:::
+
+The conjugate is not optional. It is what makes
+$$
+\langle u,u\rangle=\sum_{i=1}^n |u_i|^2\ge 0.
+$$
+
+### Example 10.1: A weighted inner product
+
+Let
+$$
+W=\begin{bmatrix}4&0&0\\0&1&0\\0&0&9\end{bmatrix}.
+$$
+Define
+$$
+\langle x,y\rangle_W=x^T Wy.
+$$
+Then coordinates 1 and 3 are weighted more heavily than coordinate 2. This changes the geometry: “closest” now means closest after coordinate 1 is weighted by 4 and coordinate 3 is weighted by 9.
+
+```{python}
+W = np.diag([4,1,9])
+x = np.array([1,2,-1.])
+y = np.array([3,0,4.])
+standard = x @ y
+weighted = x @ W @ y
+standard, weighted
+```
+
+### Example 10.2: Inner products of polynomials
+
+For $P_n(\mathbb R)$, define
+$$
+\langle p,q\rangle=\int_0^1 p(t)q(t)\,dt.
+$$
+For $p(t)=1+t$ and $q(t)=t^2$,
+$$
+\langle p,q\rangle=\int_0^1 (1+t)t^2\,dt=\frac13+\frac14=\frac{7}{12}.
+$$
+
+This example is important because it shows that vectors do not have to be columns of numbers. Functions and polynomials can also have geometry.
+
+## Norms, angles, and inequalities
+
+### Definition 10.3: Norm induced by an inner product
+
+::: {.callout-note}
+Let $V$ be an inner product space. The **norm** induced by the inner product is
+$$
+\|v\|=\sqrt{\langle v,v\rangle}.
+$$
+A vector $u$ is a **unit vector** if $\|u\|=1$.
+:::
+
+The distance between two vectors is
+$$
+d(u,v)=\|u-v\|.
+$$
+
+### Theorem 10.4: Pythagorean theorem
+
+::: {.callout-important}
+If $u$ and $v$ are orthogonal, meaning $\langle u,v\rangle=0$, then
+$$
+\|u+v\|^2=\|u\|^2+\|v\|^2.
+$$
+:::
+
+<details>
+<summary>Proof</summary>
+
+Using bilinearity and symmetry in the real case,
+$$
+\|u+v\|^2=\langle u+v,u+v\rangle
+=\langle u,u\rangle+2\langle u,v\rangle+\langle v,v\rangle.
+$$
+If $u\perp v$, then $\langle u,v\rangle=0$, so
+$$
+\|u+v\|^2=\|u\|^2+\|v\|^2.
+$$
+
+</details>
+
+### Theorem 10.5: Cauchy--Schwarz inequality
+
+::: {.callout-important}
+For all vectors $x,y$ in an inner product space,
+$$
+|\langle x,y\rangle|\le \|x\|\,\|y\|.
+$$
+Equality holds exactly when one vector is a scalar multiple of the other.
+:::
+
+<details>
+<summary>Proof idea</summary>
+
+If $y=0$, the result is immediate. Otherwise consider
+$$
+f(t)=\|x-ty\|^2\ge 0.
+$$
+Choosing
+$$
+t=\frac{\langle x,y\rangle}{\langle y,y\rangle}
+$$
+forces the nonnegative expression to become
+$$
+\|x\|^2-\frac{|\langle x,y\rangle|^2}{\|y\|^2}\ge 0.
+$$
+Rearranging gives Cauchy--Schwarz.
+
+</details>
+
+The inequality makes the following angle formula meaningful:
+$$
+\cos\theta=\frac{\langle u,v\rangle}{\|u\|\|v\|},
+\qquad 0\le \theta\le \pi.
+$$
+
+### Python computation: angle between two vectors
+
+```{python}
+x = np.array([1, -2, 3.])
+y = np.array([4, 1, -1.])
+dot = x @ y
+angle = np.arccos(dot/(norm(x)*norm(y)))
+dot, norm(x), norm(y), angle
+```
+
+## Orthogonal projection
+
+Projection is the bridge from geometry to computation. It answers the question:
+
+> Among all vectors in a subspace, which one is closest to a given vector?
+
+### Theorem 10.6: Projection onto a line
+
+::: {.callout-important}
+Let $L=\operatorname{span}\{w\}$, where $w\ne 0$. For any vector $y$,
+$$
+\operatorname{proj}_L(y)=\frac{\langle y,w\rangle}{\langle w,w\rangle}w.
+$$
+The residual
+$$
+y^\perp=y-\operatorname{proj}_L(y)
+$$
+is orthogonal to $L$.
+:::
+
+<details>
+<summary>Proof</summary>
+
+A vector in $L$ has the form $cw$. We want $y-cw$ to be perpendicular to $w$:
+$$
+\langle y-cw,w\rangle=0.
+$$
+Thus
+$$
+\langle y,w\rangle-c\langle w,w\rangle=0,
+$$
+so
+$$
+c=\frac{\langle y,w\rangle}{\langle w,w\rangle}.
+$$
+Therefore $\operatorname{proj}_L(y)=cw$.
+
+</details>
+
+### Example 10.3: Projection onto a line
+
+Let
+$$
+y=\begin{bmatrix}2\\1\\3\end{bmatrix},
+\qquad
+w=\begin{bmatrix}1\\1\\0\end{bmatrix}.
+$$
+Then
+$$
+\operatorname{proj}_L(y)=\frac{3}{2}\begin{bmatrix}1\\1\\0\end{bmatrix}
+=\begin{bmatrix}3/2\\3/2\\0\end{bmatrix}.
+$$
+The residual is
+$$
+y^\perp=\begin{bmatrix}1/2\\-1/2\\3\end{bmatrix},
+$$
+and it is orthogonal to $w$.
+
+```{python}
+y = np.array([2,1,3.])
+w = np.array([1,1,0.])
+proj = (y @ w)/(w @ w)*w
+residual = y - proj
+proj, residual, residual @ w
+```
+
+### Theorem 10.7: Orthogonal decomposition
+
+::: {.callout-important}
+Let $W$ be a finite-dimensional subspace of an inner product space $V$. For every $y\in V$, there is a unique decomposition
+$$
+y=\operatorname{proj}_W(y)+y^\perp,
+$$
+where $\operatorname{proj}_W(y)\in W$ and $y^\perp\in W^\perp$.
+:::
+
+<details>
+<summary>Proof idea</summary>
+
+Choose an orthonormal basis $u_1,\ldots,u_p$ for $W$. Define
+$$
+p=\sum_{i=1}^p \langle y,u_i\rangle u_i.
+$$
+Then $p\in W$, and for each $j$,
+$$
+\langle y-p,u_j\rangle=\langle y,u_j\rangle-\langle y,u_j\rangle=0.
+$$
+Thus $y-p\in W^\perp$. Uniqueness follows from $W\cap W^\perp=\{0\}$.
+
+</details>
+
+### Theorem 10.8: Projection using an orthonormal basis
+
+::: {.callout-important}
+If $\{u_1,\ldots,u_p\}$ is an orthonormal basis for $W$, then
+$$
+\operatorname{proj}_W(y)=\sum_{i=1}^p \langle y,u_i\rangle u_i.
+$$
+If $U=[u_1\ \cdots\ u_p]$, then the projection matrix is
+$$
+P=UU^T.
+$$
+:::
+
+### Example 10.4: Projection onto a plane
+
+Let $W\subset\mathbb R^3$ have orthonormal basis
+$$
+u_1=\frac{1}{\sqrt2}\begin{bmatrix}1\\1\\0\end{bmatrix},
+\qquad
+u_2=\begin{bmatrix}0\\0\\1\end{bmatrix}.
+$$
+For $y=(2,0,5)^T$,
+$$
+\operatorname{proj}_W(y)=\begin{bmatrix}1\\1\\5\end{bmatrix}.
+$$
+
+```{python}
+u1 = np.array([1,1,0.])/np.sqrt(2)
+u2 = np.array([0,0,1.])
+U = np.column_stack([u1,u2])
+y = np.array([2,0,5.])
+P = U @ U.T
+P, P @ y
+```
+
+## Orthogonal complements and fundamental subspaces
+
+### Definition 10.9: Orthogonal complement
+
+::: {.callout-note}
+Let $W$ be a subset of an inner product space $V$. The **orthogonal complement** of $W$ is
+$$
+W^\perp=\{v\in V:\langle v,w\rangle=0\text{ for all }w\in W\}.
+$$
+:::
+
+### Theorem 10.10: Fundamental orthogonality theorem
+
+::: {.callout-important}
+Let $A$ be an $m\times n$ real matrix. Then
+$$
+\operatorname{Row}(A)^\perp=\operatorname{Nul}(A),
+\qquad
+\operatorname{Col}(A)^\perp=\operatorname{Nul}(A^T).
+$$
+Equivalently,
+$$
+\mathbb R^n=\operatorname{Row}(A)\oplus\operatorname{Nul}(A),
+\qquad
+\mathbb R^m=\operatorname{Col}(A)\oplus\operatorname{Nul}(A^T).
+$$
+:::
+
+<details>
+<summary>Proof</summary>
+
+The equation $Ax=0$ says that every row of $A$ has dot product zero with $x$. Thus $x$ is orthogonal to the row space of $A$. Therefore $\operatorname{Nul}(A)=\operatorname{Row}(A)^\perp$.
+
+Similarly, $A^Ty=0$ says that $y$ is orthogonal to every column of $A$, so $\operatorname{Nul}(A^T)=\operatorname{Col}(A)^\perp$.
+
+</details>
+
+### Example 10.5: Null space from row orthogonality
+
+Let
+$$
+A=\begin{bmatrix}1&1&1\\1&-1&0\end{bmatrix}.
+$$
+The null space consists of all vectors $x=(x_1,x_2,x_3)^T$ orthogonal to both rows:
+$$
+x_1+x_2+x_3=0,
+\qquad
+x_1-x_2=0.
+$$
+Thus
+$$
+\operatorname{Nul}(A)=\operatorname{span}\left\{\begin{bmatrix}1\\1\\-2\end{bmatrix}\right\}.
+$$
+
+## Gram--Schmidt process and QR factorization
+
+### Theorem 10.11: Gram--Schmidt process
+
+::: {.callout-important}
+Let $\{b_1,\ldots,b_p\}$ be a basis for a subspace $W$. Define
+$$
+v_1=b_1,
+$$
+and for $k=2,\ldots,p$,
+$$
+v_k=b_k-\sum_{i=1}^{k-1}\frac{\langle b_k,v_i\rangle}{\langle v_i,v_i\rangle}v_i.
+$$
+Then $\{v_1,
+\ldots,v_p\}$ is an orthogonal basis for $W$. After normalizing,
+$$
+u_i=\frac{v_i}{\|v_i\|},
+$$
+we obtain an orthonormal basis.
+:::
+
+<details>
+<summary>Proof idea</summary>
+
+At step $k$, we subtract from $b_k$ its projections onto all previously constructed orthogonal directions. Therefore the remaining vector $v_k$ is orthogonal to $v_1,\ldots,v_{k-1}$. The span does not change because each $v_k$ differs from $b_k$ by a linear combination of earlier vectors.
+
+</details>
+
+### Example 10.6: Gram--Schmidt in $\mathbb R^3$
+
+Let
+$$
+b_1=\begin{bmatrix}1\\1\\0\end{bmatrix},
+\qquad
+b_2=\begin{bmatrix}1\\0\\1\end{bmatrix}.
+$$
+Then
+$$
+v_1=b_1,
+\qquad
+v_2=b_2-\frac{\langle b_2,v_1\rangle}{\langle v_1,v_1\rangle}v_1
+=\begin{bmatrix}1/2\\-1/2\\1\end{bmatrix}.
+$$
+After normalization,
+$$
+u_1=\frac{1}{\sqrt2}\begin{bmatrix}1\\1\\0\end{bmatrix},
+\qquad
+u_2=\frac{1}{\sqrt6}\begin{bmatrix}1\\-1\\2\end{bmatrix}.
+$$
+
+```{python}
+def classical_gram_schmidt(A):
+    A = A.astype(float)
+    m, n = A.shape
+    Q = np.zeros((m,n))
+    R = np.zeros((n,n))
+    for j in range(n):
+        v = A[:,j].copy()
+        for i in range(j):
+            R[i,j] = Q[:,i] @ A[:,j]
+            v = v - R[i,j]*Q[:,i]
+        R[j,j] = norm(v)
+        Q[:,j] = v/R[j,j]
+    return Q, R
+
+A = np.array([[1,1],[1,0],[0,1.]], dtype=float)
+Q, R = classical_gram_schmidt(A)
+Q, R, Q.T @ Q, Q @ R
+```
+
+### Theorem 10.12: QR factorization
+
+::: {.callout-important}
+Let $A$ be an $m\times n$ matrix with linearly independent columns. Then
+$$
+A=QR,
+$$
+where $Q$ is an $m\times n$ matrix with orthonormal columns and $R$ is an $n\times n$ upper triangular matrix with positive diagonal entries.
+:::
+
+QR factorization is Gram--Schmidt written in matrix form.
+
+## Orthogonal matrices
+
+### Definition 10.13: Orthogonal matrix
+
+::: {.callout-note}
+An $n\times n$ real matrix $U$ is **orthogonal** if
+$$
+U^TU=I.
+$$
+Equivalently,
+$$
+U^{-1}=U^T.
+$$
+:::
+
+Orthogonal matrices preserve geometry:
+$$
+\|Ux\|=\|x\|,
+\qquad
+\langle Ux,Uy\rangle=\langle x,y\rangle.
+$$
+They represent rotations, reflections, and combinations of rotations and reflections.
+
+### Example 10.7: Checking an orthogonal matrix
+
+Let
+$$
+U=\frac{1}{\sqrt2}\begin{bmatrix}1&1\\1&-1\end{bmatrix}.
+$$
+Then the columns are orthonormal, so $U^TU=I$ and $U^{-1}=U^T$. Since this matrix is symmetric, $U^{-1}=U$.
+
+```{python}
+U = np.array([[1,1],[1,-1.]])/np.sqrt(2)
+U.T @ U, np.linalg.inv(U), U.T
+```
+
+## Least squares and QR
+
+### Theorem 10.14: Least squares by projection
+
+::: {.callout-important}
+For an overdetermined system
+$$
+Ax\approx b,
+$$
+a least-squares solution $\widehat x$ satisfies
+$$
+A^T(A\widehat x-b)=0.
+$$
+Equivalently,
+$$
+A^TA\widehat x=A^Tb.
+$$
+If $A=QR$ has independent columns, then the least-squares solution satisfies
+$$
+R\widehat x=Q^Tb.
+$$
+:::
+
+<details>
+<summary>Proof</summary>
+
+The vector $A\widehat x$ is the projection of $b$ onto $\operatorname{Col}(A)$. Therefore the residual
+$$
+r=b-A\widehat x
+$$
+is orthogonal to every column of $A$. This is exactly
+$$
+A^Tr=0.
+$$
+Substituting $r=b-A\widehat x$ gives the normal equations.
+
+If $A=QR$, then $\operatorname{Col}(A)=\operatorname{Col}(Q)$, and orthonormality gives
+$$
+Q^TAx=Q^Tb,
+\qquad
+Q^TQRx=Q^Tb,
+$$
+so $Rx=Q^Tb$.
+
+</details>
+
+### Python computation: least squares with QR
+
+```{python}
+A = np.array([[1,1],[1,2],[1,3],[1,4.]], dtype=float)
+b = np.array([1.1, 1.9, 3.2, 3.9])
+Q, R = np.linalg.qr(A)
+x_qr = solve(R, Q.T @ b)
+x_np, *_ = lstsq(A, b, rcond=None)
+x_qr, x_np
+```
+
+## Riesz representation and adjoints
+
+### Theorem 10.15: Riesz representation theorem, finite-dimensional version
+
+::: {.callout-important}
+Let $V$ be a finite-dimensional inner product space over $\mathbb R$ or $\mathbb C$. If $T:V\to\mathbb F$ is a linear functional, then there exists a unique vector $w\in V$ such that
+$$
+T(v)=\langle v,w\rangle
+$$
+for every $v\in V$.
+:::
+
+<details>
+<summary>Proof idea</summary>
+
+Choose an orthonormal basis $u_1,\ldots,u_n$. If
+$$
+v=c_1u_1+\cdots+c_nu_n,
+$$
+then linearity gives
+$$
+T(v)=c_1T(u_1)+\cdots+c_nT(u_n).
+$$
+The vector
+$$
+w=\sum_{i=1}^n \overline{T(u_i)}u_i
+$$
+for the convention $\langle v,w\rangle=\sum v_i\overline{w_i}$ represents the functional.
+
+</details>
+
+### Example 10.8: A complex functional
+
+Let
+$$
+T(x,y,z)=3x+iy+5z
+$$
+on $\mathbb C^3$, with
+$$
+\langle v,w\rangle=\sum v_i\overline{w_i}.
+$$
+We need
+$$
+x\overline{w_1}+y\overline{w_2}+z\overline{w_3}=3x+iy+5z.
+$$
+Thus
+$$
+w=\begin{bmatrix}3\\-i\\5\end{bmatrix}.
+$$
+
+### Definition 10.16: Adjoint operator
+
+::: {.callout-note}
+Let $T:V\to W$ be a linear map between finite-dimensional inner product spaces. The **adjoint** of $T$ is the unique linear map $T^*:W\to V$ satisfying
+$$
+\langle T(v),w\rangle_W=\langle v,T^*(w)\rangle_V
+$$
+for all $v\in V$ and $w\in W$.
+:::
+
+For real matrices with the usual dot product, the adjoint is the transpose:
+$$
+T(x)=Ax \quad\Longrightarrow\quad T^*(y)=A^Ty.
+$$
+For complex matrices, the adjoint is the conjugate transpose:
+$$
+A^*=\overline{A}^{T}.
+$$
+
+### Example 10.9: Computing an adjoint
+
+Let
+$$
+A=\begin{bmatrix}1&i\\2&3\end{bmatrix}.
+$$
+Then
+$$
+A^*=\overline A^T=\begin{bmatrix}1&2\\-i&3\end{bmatrix}.
+$$
+
+```{python}
+A = np.array([[1,1j],[2,3]], dtype=complex)
+A.conj().T
+```
+
+## Applications
+
+### Least squares regression
+
+Projection gives the geometric meaning of fitting a model. If $A\widehat x$ is the closest vector to $b$ inside $\operatorname{Col}(A)$, then the residual is perpendicular to all model directions.
+
+### Feature engineering and data science
+
+If columns of a data matrix are features, QR factorization replaces correlated features by orthonormal directions. This helps reveal redundancy and improves numerical stability.
+
+### Signal processing
+
+Signals can be viewed as vectors in inner product spaces. Orthogonal bases such as Fourier bases allow signals to be decomposed into independent frequency components. Projection gives the best approximation using selected components.
+
+### Optimization and machine learning
+
+Adjoints appear in gradients. For example,
+$$
+f(x)=\frac12\|Ax-b\|^2
+$$
+has gradient
+$$
+\nabla f(x)=A^T(Ax-b)
+$$
+in the real case. In the complex case, $A^*$ replaces $A^T$.
+
+## Challenge questions
+
+### Challenge 1: Weighted geometry
+
+A data analyst uses
+$$
+\langle x,y\rangle_W=x^TWy,
+\qquad
+W=\begin{bmatrix}4&0&0\\0&1&0\\0&0&9\end{bmatrix}.
+$$
+Explain why projection onto a line can be different from the usual Euclidean projection.
+
+<details>
+<summary>Solution</summary>
+
+The weighted inner product changes the meaning of length and angle. Coordinate 1 is weighted by 4 and coordinate 3 by 9, so errors in those coordinates are penalized more. The projection coefficient becomes
+$$
+\frac{y^TWw}{w^TWw},
+$$
+not $(y^Tw)/(w^Tw)$. Thus the closest point changes because the geometry has changed.
+
+</details>
+
+### Challenge 2: Why QR is preferred
+
+Explain why solving least squares by QR is usually more numerically stable than solving the normal equations.
+
+<details>
+<summary>Solution</summary>
+
+Forming $A^TA$ squares the condition number, which can magnify numerical errors. QR uses orthonormal columns, and orthogonal transformations preserve length and angles. Therefore QR avoids much of the instability caused by forming $A^TA$ explicitly.
+
+</details>
+
+### Challenge 3: The correct transpose in complex space
+
+Why is $A^*$, not $A^T$, the correct adjoint in complex inner product spaces?
+
+<details>
+<summary>Solution</summary>
+
+The complex inner product uses conjugation:
+$$
+\langle x,y\rangle=\sum x_i\overline{y_i}.
+$$
+The adjoint must satisfy
+$$
+\langle Ax,y\rangle=\langle x,A^*y\rangle.
+$$
+This identity requires conjugation of the matrix entries. Therefore the correct matrix is $A^*=\overline A^T$, not merely $A^T$.
+
+</details>
+
+## Practice problems
+
+### Problem 1
+
+Let
+$$
+u=\begin{bmatrix}1\\2\\-1\end{bmatrix},
+\qquad
+v=\begin{bmatrix}3\\0\\4\end{bmatrix}.
+$$
+Compute $\langle u,v\rangle$, $\|u\|$, $\|v\|$, and the angle between $u$ and $v$.
+
+<details>
+<summary>Solution</summary>
+
+$$
+\langle u,v\rangle=1(3)+2(0)+(-1)(4)=-1.
+$$
+Also,
+$$
+\|u\|=\sqrt{1+4+1}=\sqrt6,
+\qquad
+\|v\|=\sqrt{9+16}=5.
+$$
+Thus
+$$
+\cos\theta=\frac{-1}{5\sqrt6},
+\qquad
+\theta=\arccos\left(\frac{-1}{5\sqrt6}\right).
+$$
+
+</details>
+
+### Problem 2
+
+Let
+$$
+y=\begin{bmatrix}4\\1\\2\end{bmatrix},
+\qquad
+w=\begin{bmatrix}1\\2\\0\end{bmatrix}.
+$$
+Find $\operatorname{proj}_{\operatorname{span}\{w\}}(y)$ and the residual.
+
+<details>
+<summary>Solution</summary>
+
+$$
+\langle y,w\rangle=4+2=6,
+\qquad
+\langle w,w\rangle=1+4=5.
+$$
+Thus
+$$
+\operatorname{proj}_{\operatorname{span}\{w\}}(y)=\frac65w
+=\begin{bmatrix}6/5\\12/5\\0\end{bmatrix}.
+$$
+The residual is
+$$
+y-\operatorname{proj}(y)=\begin{bmatrix}14/5\\-7/5\\2\end{bmatrix}.
+$$
+It is orthogonal to $w$.
+
+</details>
+
+### Problem 3
+
+Apply Gram--Schmidt to
+$$
+b_1=\begin{bmatrix}1\\1\\1\end{bmatrix},
+\qquad
+b_2=\begin{bmatrix}1\\0\\1\end{bmatrix}.
+$$
+Find an orthonormal basis for their span.
+
+<details>
+<summary>Solution</summary>
+
+Set
+$$
+v_1=b_1.
+$$
+Then
+$$
+v_2=b_2-\frac{\langle b_2,v_1\rangle}{\langle v_1,v_1\rangle}v_1
+=b_2-\frac23 b_1
+=\begin{bmatrix}1/3\\-2/3\\1/3\end{bmatrix}.
+$$
+Normalize:
+$$
+u_1=\frac{1}{\sqrt3}\begin{bmatrix}1\\1\\1\end{bmatrix},
+\qquad
+u_2=\frac{1}{\sqrt6}\begin{bmatrix}1\\-2\\1\end{bmatrix}.
+$$
+
+</details>
+
+### Problem 4
+
+Let
+$$
+A=\begin{bmatrix}1&i\\2&1-i\end{bmatrix}.
+$$
+Compute $A^*$.
+
+<details>
+<summary>Solution</summary>
+
+Conjugate first:
+$$
+\overline A=\begin{bmatrix}1&-i\\2&1+i\end{bmatrix}.
+$$
+Then transpose:
+$$
+A^*=\overline A^T=\begin{bmatrix}1&2\\-i&1+i\end{bmatrix}.
+$$
+
+</details>
+
+## AI companion activities
+
+Use an AI assistant as a tutor, checker, and simulator. Suggested prompts:
+
+1. “Explain the difference between a dot product and a general inner product using a data-science example.”
+2. “Give me three examples of projections: onto a line, onto a plane, and onto a column space.”
+3. “Check my Gram--Schmidt computation step by step and identify arithmetic mistakes.”
+4. “Explain why QR is more stable than normal equations for least squares.”
+5. “Generate a Python example comparing least squares by normal equations and by QR for an ill-conditioned matrix.”
+6. “Explain why complex adjoints use conjugate transpose.”
+
+## Summary
+
+Inner products add geometry to vector spaces. Orthogonality allows decomposition. Projection gives best approximation. Gram--Schmidt and QR turn these ideas into algorithms. Adjoints generalize transpose and make inner-product identities work in real and complex spaces. These ideas support least squares, signal processing, data science, optimization, and numerical linear algebra.
